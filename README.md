@@ -10,5 +10,5 @@
 5. browse to http://www.acjim.dev and edit your local files in your path from 1.
 
 # Logins
-[RqbbitMQ Managment Console](http://www.acjim.dev:15672/) login guest/guest
-SSH to your Virtual Machine: Use Port 2223 and the Keyfile under acjim\puphpet\files\dot\ssh\id_rsa.ppk
+- [RqbbitMQ Managment Console](http://www.acjim.dev:15672/) login guest/guest
+- SSH to your Virtual Machine: Use Port 2223 and the Keyfile under acjim\puphpet\files\dot\ssh\id_rsa.ppk
