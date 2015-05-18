@@ -1,0 +1,12 @@
+{
+	"name": "msgs",
+	"version": "0.4.0",
+	"main": "./msgs.js",
+	"dependencies": {
+		"when": "~3"
+	},
+	"ignore": [
+		".*",
+		"test"
+	]
+}
