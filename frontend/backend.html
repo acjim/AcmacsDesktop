@@ -50,19 +50,7 @@
     <script src="/public/lib/sockjs/sockjs.js"></script>
     <script src="/public/lib/stomp-websocket/lib/stomp.js"></script>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/3.12.0/vis.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/3.12.0/vis.min.css" rel="stylesheet" type="text/css" />
 
-
-    <script type="text/javascript">
-        function draw(data) {
-            // create a network
-            var container = document.getElementById('mynetwork');
-            var options = {nodes: {shape:'circle'},stabilize: false};
-            var network = new vis.Network(container, data, options);
-
-        }
-    </script>
 </head>
 <body>
 <h1>Echo Server</h1>
@@ -96,7 +84,7 @@
         if (send) {
             form.submit(function() {
                 send(inp.val());
-                inp.val('/map.txt');
+                inp.val('');
                 return false;
             });
         }
@@ -112,17 +100,18 @@
     client.heartbeat.incoming = 0;
     client.debug = pipe('#second');
 
-    var print_first = pipe('#first', function(data) {
+    /*var print_first = pipe('#first', function(data) {
         client.send('/queue/upload', {"content-type":"text/plain"}, data);
-    });
+    });*/
+
+    var lastID = 0;
     var on_connect = function(x) {
         console.log('connected');
-        id = client.subscribe("/queue/draw", function(d) {
-            print_first(d.body);
-            console.log(d.body);
-            var doc = JSON.parse(d.body);
-            console.log(doc);
-            draw(doc);
+        id = client.subscribe("/queue/upload", function(d) {
+            //print_first(d.body);
+            var map = readTextFile(d.body);
+            client.send('/queue/draw', {"content-type":"text/plain"}, map);
+
         });
     };
     var on_error =  function() {
@@ -133,9 +122,28 @@
     $('#first input').focus(function() {
         if (!has_had_focus) {
             has_had_focus = true;
-            $(this).val("/map.txt");
+            $(this).val("");
         }
     });
+
+    function readTextFile(file)
+    {
+        var allText;
+        var rawFile = new XMLHttpRequest();
+        rawFile.open("GET", file, false);
+        rawFile.onreadystatechange = function ()
+        {
+            if(rawFile.readyState === 4)
+            {
+                if(rawFile.status === 200 || rawFile.status == 0)
+                {
+                    allText = rawFile.responseText;
+                }
+            }
+        }
+        rawFile.send(null);
+        return allText;
+    }
 </script>
 
 </body>
