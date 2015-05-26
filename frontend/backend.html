@@ -73,9 +73,11 @@
     var on_connect = function(x) {
         console.log('connected');
         id = client.subscribe("/queue/upload", function(d) {
-            //print_first(d.body);
-            var map = readTextFile(d.body);
-            client.send('/queue/draw', {"content-type":"text/plain"}, map);
+            console.log(d.body);
+            payload = JSON.parse(d.body);
+            var map = readTextFile(payload.readFile);
+            console.log(map);
+            client.send('/queue/draw', {"content-type":"text/json"}, JSON.stringify({'points': map}));
 
         });
     };

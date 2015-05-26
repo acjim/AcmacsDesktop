@@ -78,3 +78,13 @@ angular.module('acjim.map', ['ngRoute'])
     context.beginPath();
     draw($scope.data);
 }])
+
+/*
+.factory('DrawService', function() {
+
+    var Service = {
+        foo: 'Shared service'
+    };
+
+    return Service;
+});*/

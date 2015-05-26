@@ -18,7 +18,8 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script src="/public/lib/sockjs/sockjs.js"></script>
-    <script src="/public/lib/stomp-websocket/lib/stomp.js"></script>
+    <script src="/public/lib/stomp-websocket/lib/stomp.min.js"></script>
+    <script src="/public/lib/ng-stomp/ng-stomp.js"></script>
 
     <link rel="stylesheet" href="/public/style.css">
     <script src="/public/app.js"></script>
@@ -90,7 +91,7 @@
 
         <div id="second" class="box">
             <h2>Logs</h2>
-            <div></div>
+            <div><pre>{{log}}</pre></div>
         </div>
     </div>
 
