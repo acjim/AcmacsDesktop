@@ -2,7 +2,7 @@
 
 angular.module('acjim.comm', ['ngRoute'])
 
-.controller('CommCtrl', ['$scope', '$http', '$stomp', function($scope, $http, $stomp) {
+.controller('CommCtrl', ['$scope', '$http', '$stomp', 'mapService', function($scope, $http, $stomp, mapService) {
 
     // redirect debug
     $stomp.setDebug(function (args) {
@@ -22,6 +22,7 @@ angular.module('acjim.comm', ['ngRoute'])
             var subscription = $stomp.subscribe('/queue/draw', function (payload, headers, res) {
                 console.log(payload);
                 $scope.received = payload.points;
+                mapService.prepForBroadcast(payload.points);
             });
 
             // Unsubscribe

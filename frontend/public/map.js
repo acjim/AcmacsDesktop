@@ -9,9 +9,36 @@ angular.module('acjim.map', ['ngRoute'])
     });
 }])
 
-.controller('MapCtrl', ['$scope', '$http', function($scope) {
+.controller('MapCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
+
+    $scope.$on('handleBroadcast', function () {
+        var lines, lineNumber, data, length;
+
+        lines = mapService.message.match(/[^\r\n]+/g);
+        lineNumber = 0;
+
+        for (var i = lines.length - 1; i >= 0; i--) {
+
+            var l = lines[i];
+            lineNumber++;
+            data = l.split(/,/);
+
+            var id = 0;
+            if($scope.data.length > 0) {
+                id = $scope.data[$scope.data.length-1].id + 1;
+            }
+            var p = {id: id, x: data[0], y: data[1], amount: data[2]};
+            $scope.data.push(p);
+            $scope.x = '';
+            $scope.y = '';
+            $scope.amount = '';
+            draw($scope.data);
+        }
+
+    });
+
 
     $scope.data = [
 
@@ -78,13 +105,3 @@ angular.module('acjim.map', ['ngRoute'])
     context.beginPath();
     draw($scope.data);
 }])
-
-/*
-.factory('DrawService', function() {
-
-    var Service = {
-        foo: 'Shared service'
-    };
-
-    return Service;
-});*/
