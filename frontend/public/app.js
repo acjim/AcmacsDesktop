@@ -4,13 +4,14 @@
 angular.module('acjim', [
     'ngRoute',
     'acjim.map',
+    'acjim.upload',
+    'acjim.table',
     'acjim.comm',
-    'ngStomp',
     'ui.bootstrap'
 ]).
 
 config(['$routeProvider', function($routeProvider) {
-    $routeProvider.otherwise({redirectTo: '/map'});
+    $routeProvider.otherwise({redirectTo: '/'});
 }])
 
 .filter('nl2br', function(){
