@@ -1,18 +1,17 @@
 {
-    "name": "nw",
+    "name": "AcmacsDesktop",
+    "description": "A desktop app for antigenic cartography",
     "main": "index.html",
     "version": "0.1.0",
     "window": {
-        "title": "ACJIM",
-        "icon": "link.png",
-        "toolbar": true,
+        "title": "Acmacs Desktop",
+        "toolbar": false,
         "frame": true,
         "width": 1024,
         "height": 800,
         "position": "mouse",
+        "resizable": true,
         "min_width": 400,
-        "min_height": 200,
-        "max_width": 1920,
-        "max_height": 1200
+        "min_height": 200
     }
 }
