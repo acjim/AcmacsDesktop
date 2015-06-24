@@ -4,7 +4,7 @@ angular.module('acjim.table', ['ngRoute'])
 
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/table', {
-            templateUrl: 'app/components/table/table.html',
+            templateUrl: 'app/components/table/tableView.html',
             controller: 'tableCtrl'
         });
     }])
