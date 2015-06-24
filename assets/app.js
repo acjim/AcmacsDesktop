@@ -4,7 +4,7 @@
 angular.module('acjim', [
     'ngRoute',
     'acjim.map',
-    'acjim.upload',
+    'acjim.filehandling',
     'acjim.table',
     'acjim.comm',
     'ui.bootstrap'

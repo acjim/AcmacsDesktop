@@ -29,7 +29,7 @@ angular.module('acjim.comm', ['ngRoute'])
             //subscription.unsubscribe();
 
             // Send message
-            $stomp.send('/queue/upload', {
+            $stomp.send('/queue/filehandling', {
                 readFile: '/points.txt'
             }, {
                 priority: 9,
@@ -42,8 +42,8 @@ angular.module('acjim.comm', ['ngRoute'])
 
     $scope.received = 'Debug:';
     $scope.file = '/points.txt';
-    $scope.upload = function () {
-        $stomp.send('/queue/upload', {
+    $scope.filehandling = function () {
+        $stomp.send('/queue/filehandling', {
             readFile: $scope.file
         });
     };
