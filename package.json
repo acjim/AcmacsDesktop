@@ -1,0 +1,18 @@
+{
+    "name": "nw",
+    "main": "index.html",
+    "version": "0.1.0",
+    "window": {
+        "title": "ACJIM",
+        "icon": "link.png",
+        "toolbar": true,
+        "frame": true,
+        "width": 1024,
+        "height": 800,
+        "position": "mouse",
+        "min_width": 400,
+        "min_height": 200,
+        "max_width": 1920,
+        "max_height": 1200
+    }
+}
