@@ -13,7 +13,7 @@ npm install
 ```
 
 ### Start your app
-Either download and install [nw.js](http://nwjs.io/), then simply drag and drop the whole AcmacsDesktop folder on the ``nw.exe``.
+Either download [nw.js](http://nwjs.io/), then simply drag and drop the whole AcmacsDesktop folder on the ``nw.exe``.
 
 Or you can install nw.js through npm:
 ```
