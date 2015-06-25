@@ -7,11 +7,8 @@
         "title": "Acmacs Desktop",
         "toolbar": false,
         "frame": true,
-        "width": 1024,
-        "height": 800,
         "position": "mouse",
         "resizable": true,
-        "min_width": 400,
-        "min_height": 200
+        "show": false
     }
 }

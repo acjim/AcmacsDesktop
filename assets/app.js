@@ -45,6 +45,10 @@ config(['$routeProvider', function($routeProvider) {
 
     this.window = this.gui.Window.get();
 
+    // Start application in maximized mode
+    this.window.maximize();
+    this.window.show();
+
     /**
      * Create a context or window menu.
      * @param menuStructure The actual structure of the menu. This is a shortcut to avoid calling all append methods after creation.
