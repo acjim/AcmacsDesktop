@@ -6,7 +6,6 @@ angular.module('acjim', [
     'acjim.map',
     'acjim.filehandling',
     'acjim.table',
-    'acjim.comm',
     'ui.bootstrap'
 ]).
 
