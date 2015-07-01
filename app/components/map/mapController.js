@@ -1,17 +1,4 @@
-'use strict';
-
-
-angular.module('acjim.map', ['ngRoute'])
-
-    .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/map', {
-            templateUrl: 'app/components/map/mapView.html',
-            controller: 'mapCtrl'
-        });
-    }])
-
-
-    .controller('mapCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
+module.exports =  function($scope, $httd, mapService) {
         var canvas = document.getElementById('canvas');
         var context = canvas.getContext('2d');
 
@@ -106,4 +93,4 @@ angular.module('acjim.map', ['ngRoute'])
         context.globalAlpha = 1.0;
         context.beginPath();
         draw($scope.data);
-    }])
+};

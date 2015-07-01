@@ -1,43 +1,46 @@
 'use strict';
 
 // Declare app level module which depends on views, and components
-angular.module('acjim', [
+var app = angular.module('acjim', [
     'ngRoute',
-    'acjim.map',
-    'acjim.filehandling',
-    'acjim.table',
     'ui.bootstrap'
-]).
+]);
 
-config(['$routeProvider', function($routeProvider) {
+app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js'));
+app.factory('mapService', require('./app/shared/mapService.js'));
+app.filter('nl2br', require('./app/shared/nl2br.js'));
+
+app.controller('tableCtrl', ['$scope', '$http', 'mapService', require('./app/components/table/tableController.js')]);
+app.controller('mapCtrl', ['$scope', '$http', 'mapService', require('./app/components/map/mapController.js')]);
+app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog', require('./app/components/filehandling/filehandlingController.js')]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.when('/table', {
+            templateUrl: 'app/components/table/tableView.html',
+            controller: 'tableCtrl'
+    });
+
+    $routeProvider.when('/map', {
+        templateUrl: 'app/components/map/mapView.html',
+        controller: 'mapCtrl'
+    });
+
+    $routeProvider.when('/filehandling', {
+        templateUrl: 'app/components/filehandling/filehandlingView.html',
+        controller: 'filehandlingCtrl'
+    });
+
     $routeProvider.otherwise({redirectTo: '/'});
-}])
-
-.filter('nl2br', function(){
-    return function(text) {
-        return text ? text.replace(/\n/g, '<br/>') : '';
-    };
-})
+}]);
 
 
-.factory('mapService', function($rootScope) {
-    var sharedService = {};
 
-    sharedService.message = '';
 
-    sharedService.prepForBroadcast = function(msg) {
-        this.message = msg;
-        this.broadcastItem();
-    };
 
-    sharedService.broadcastItem = function() {
-        $rootScope.$broadcast('handleBroadcast');
-    };
 
-    return sharedService;
-})
 
-.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
+
+app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
 
     // Expose gui and main window
     var gui = this.gui = require("nw.gui");
@@ -144,9 +147,9 @@ config(['$routeProvider', function($routeProvider) {
         });
 
     }
-}])
+}]);
 
-    .run(function(nwService, $rootScope) {
+app.run(function(nwService, $rootScope) {
 
         // Create the menubar
         $rootScope.menubar = nwService.createMenu({
@@ -170,4 +173,4 @@ config(['$routeProvider', function($routeProvider) {
                 ]
             }
         });
-    });
+});
