@@ -75,6 +75,11 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
         // Create the top menu
         var menu = new gui.Menu(menuStructure.root);
 
+        menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
+            hideEdit: true,
+            hideWindow: false
+        });
+
         // Create sub-menu items if they're provided
         if(menuStructure.root && menuStructure.root.items) {
 
@@ -116,26 +121,26 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
 
 app.run(function(nwService, $rootScope) {
 
-        // Create the menubar
-        $rootScope.menubar = nwService.createMenu({
-            root: {
-                type:'menubar',
-                items:[
-                    {label:'File', items:[
-                        {label: 'New...', tooltip: 'Create a new file', click:'new-file'},
-                        {label: 'Open...', tooltip: 'Open a file', click:'open-file'},
-                        {label: 'Save', tooltip: 'Save a file', click:'save-file'},
-                        {label: 'Close', tooltip: 'Close a file', click:'close-file'}
-                    ]},
-                    {label:'Edit', items:[
-                        {label:'Cut', click:'cut'},
-                        {label: 'Copy', click:'copy'},
-                        {label: 'Paste', click:'paste'},
-                        {type:'separator'},
-                        {label:'Find', click:'find'},
-                        {label:'Replace', click:'find-replace'}
-                    ]}
-                ]
-            }
-        });
+    // Create the menubar
+    $rootScope.menubar = nwService.createMenu({
+        root: {
+            type:'menubar',
+            items:[
+                {label:'File', items:[
+                    {label: 'New...', tooltip: 'Create a new file', click:'new-file'},
+                    {label: 'Open...', tooltip: 'Open a file', click:'open-file'},
+                    {label: 'Save', tooltip: 'Save a file', click:'save-file'},
+                    {label: 'Close', tooltip: 'Close a file', click:'close-file'}
+                ]},
+                {label:'Edit', items:[
+                    {label:'Cut', click:'cut'},
+                    {label: 'Copy', click:'copy'},
+                    {label: 'Paste', click:'paste'},
+                    {type:'separator'},
+                    {label:'Find', click:'find'},
+                    {label:'Replace', click:'find-replace'}
+                ]}
+            ]
+        }
+    });
 });
