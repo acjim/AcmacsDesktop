@@ -89,41 +89,6 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
         return menu;
     };
 
-    /**
-     * Open the standard file dialog.
-     *
-     * @param cfg
-     */
-    this.openFileDialog = function(cfg) {
-        cfg = cfg || {};
-        var result = $q.defer();
-        var $dlg = $('#fileDialog');
-        if(!$dlg) {
-            $dlg = $("body").append('<input style="display:none;" id="fileDialog" type="file" />');
-        }
-
-        if(cfg.accept) {
-            $dlg.attr('accept', cfg.accept);
-        }
-
-        $dlg.one('change', function(evt) {
-            result.resolve($(this).val());
-            evt.preventDefault();
-        });
-        $dlg.one('cancel', function(evt) {
-            console.log("Cancel was called");
-            evt.preventDefault();
-            result.resolve(false);
-        });
-        $dlg.one('close', function(evt) {
-            console.log("Close was called");
-            evt.preventDefault();
-            result.resolve(false);
-        });
-        $dlg.trigger('click');
-        return result.promise;
-    };
-
     function createMenuItems(menu, items) {
 
         _.each(items, function(i) {
