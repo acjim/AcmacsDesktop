@@ -1,18 +1,20 @@
 <div ng-controller="mapCtrl">
-    <form ng-submit="addData()">
-        <input ng-model="x"  size="2" placeholder="X" required type="number" min="0" max="600">
-        <input ng-model="y"  size="2" placeholder="Y" required type="number" min="0" max="400">
-        <input ng-model="amount"  size="3" placeholder="Amount" required type="number" min="5" max="100">
-        <input class="btn-primary" type="submit" value="Add point">
-    </form>
-    <canvas id="canvas" style="border: 1px gray solid; float: left"></canvas>
-    <div id="list" style="margin-left: 620px;">
-        Points:
-        <ul>
-            <li ng-repeat="point in data">
-                [{{point.x}}, {{point.y}}] <a ng-click="removePoint(point)">[x]</a>
-            </li>
-        </ul>
+    <div id="banner"> <h1> Antigenic Cartography MAP Prototype </h1> </div>
+    <div id="network1"style=" float:left;position: relative;display:Block; height:16px; width: 500px; background-color: rgb(255, 255, 255); color:#0FFFFF" >
+        <div id="header1" style=" float:left;position: relative;display:Block; height:15px; width: 20px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/close.png" alt="close" width="15" height="15">	</div>
+        <div id="header2" style=" float:left;position: relative;display:Block; height:15px; width: 20px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/orange.png" alt="close" width="15" height="15">	</div>
+        <div id="header3" style=" float:left;position: relative;display:Block; height:15px; width: 20px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/green.png" alt="close" width="15" height="15">	</div>
+        <div id="add" style=" float:left;position: relative;display:Block; height:15px; width: 20px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/add.png" alt="close" width="20" height="20">	</div>
+        <div id="delete" style=" float:left;position: relative;display:Block; height:15px; width: 20px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/delete.jpg" alt="close" width="20" height="20">	</div>
+        <div id="spacer" style=" float:left;position: relative;display:Block; height:15px; width: 40px; background-color: rgb(255, 255, 255); color:#0FFFFF" > </div>
+        <div id="newmap" style=" float:left;position: relative;display:Block; height:15px; width: 20px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/new.png" alt="close" width="20" height="20">	</div>
+        <div id="compare" style=" float:left;position: relative;display:Block; height:15px; width: 40px; background-color: rgb(255, 255, 255); color:#0FFFFF" > <img src="assets/img/compare.png" alt="close" width="40" height="20">	</div>
+        <div id="wdd" style=" float:left;display:Block;"><input type="file" onchange='readText(this)' /></div>
     </div>
-    <div style="clear: both"/>
+    <div style="height:500px;width:1200px; display: block;float:left;">
+        <div id="mynetwork" style="height:500px;width:400px;float:left;display:block;"></div>
+        <div id="mynetwork2" style=" height:500px;width:400px;float:left;display:block;"></div>
+        <div id="mynetwork3" style=" height:500px;width:400px;float:left;display:block;"></div>
+    </div>
+    <div id="writingpanel" style=""></div>
 </div>
