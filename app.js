@@ -3,10 +3,11 @@
 // Declare app level module which depends on views, and components
 var app = angular.module('acjim', [
     'ngRoute',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'DWand.nw-fileDialog'
 ]);
 
-app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js'));
+//app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js')); //TODO: Fixme? Current this is a src include in the index.html
 app.factory('mapService', require('./app/shared/mapService.js'));
 app.filter('nl2br', require('./app/shared/nl2br.js'));
 
@@ -48,7 +49,7 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
     this.window = this.gui.Window.get();
 
     // Start application in maximized mode
-    this.window.maximize();
+    //this.window.maximize();
     this.window.show();
 
     /**
@@ -75,10 +76,10 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
         // Create the top menu
         var menu = new gui.Menu(menuStructure.root);
 
-        menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
+        /*menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
             hideEdit: true,
             hideWindow: false
-        });
+        });*/
 
         // Create sub-menu items if they're provided
         if(menuStructure.root && menuStructure.root.items) {
