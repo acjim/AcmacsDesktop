@@ -70,10 +70,12 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
         // Create the top menu
         var menu = new gui.Menu(menuStructure.root);
 
-        /*menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
-            hideEdit: true,
-            hideWindow: false
-        });*/
+        if(process.platform=='darwin') {
+            menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
+                hideEdit: true,
+                hideWindow: false
+            });
+        }
 
         // Create sub-menu items if they're provided
         if(menuStructure.root && menuStructure.root.items) {
