@@ -35,12 +35,6 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 
-
-
-
-
-
-
 app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
 
     // Expose gui and main window
@@ -131,7 +125,9 @@ app.run(function(nwService, $rootScope) {
                     {label: 'New...', tooltip: 'Create a new file', click:'new-file'},
                     {label: 'Open...', tooltip: 'Open a file', click:'open-file'},
                     {label: 'Save', tooltip: 'Save a file', click:'save-file'},
-                    {label: 'Close', tooltip: 'Close a file', click:'close-file'}
+                    {label: 'Close', tooltip: 'Close a file', click:'close-file'},
+                    //{type:'separator'},
+                    //{label: 'Exit', tooltip: 'Quit Application', click:'exit-app'} //TODO: See broadcast exit-app
                 ]},
                 {label:'Edit', items:[
                     {label:'Cut', click:'cut'},
@@ -145,3 +141,11 @@ app.run(function(nwService, $rootScope) {
         }
     });
 });
+
+
+/*
+ TODO: Where to put this?
+ $scope.$on('exit-app', function(e, menu, item) {
+ this.gui.Window.get().close();
+ });
+ */
