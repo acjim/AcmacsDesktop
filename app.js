@@ -73,7 +73,7 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
         if(process.platform=='darwin') {
             menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
                 hideEdit: true,
-                hideWindow: false
+                hideWindow: true
             });
         }
 
