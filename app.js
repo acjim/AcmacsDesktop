@@ -79,8 +79,6 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
 
         // Create sub-menu items if they're provided
         if(menuStructure.root && menuStructure.root.items) {
-
-            console.log("Creating %d menu items for root menu", menuStructure.root.items.length);
             createMenuItems(menu, menuStructure.root.items);
         }
 
@@ -95,8 +93,6 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
 
         _.each(items, function(i) {
 
-            console.log("Creating item", i.label);
-
             // Shortcut to integrate menu with Angular event system when click represents an eventName
             if(_.isString(i.click)) {
                 i.click = (function(menu, $rootScope, eventName) { return function() { $rootScope.$broadcast(eventName, menu, this) } })(menu, $rootScope, i.click);
@@ -109,7 +105,6 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
             }
 
             // Append the menu item to the provided menu
-            console.log("appending item %s to menu", i.label);
             menu.append(new gui.MenuItem(i));
         });
 
