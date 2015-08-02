@@ -94,8 +94,6 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
 
         _.each(items, function(i) {
 
-            console.log("Creating item", i.label);
-
             // Shortcut to integrate menu with Angular event system when click represents an eventName
             if(_.isString(i.click)) {
                 i.click = (function(menu, $rootScope, eventName) { return function() { $rootScope.$broadcast(eventName, menu, this) } })(menu, $rootScope, i.click);
