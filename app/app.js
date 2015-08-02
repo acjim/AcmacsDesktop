@@ -45,6 +45,7 @@ app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
     // Start application in maximized mode
     //this.window.maximize();
     this.window.show();
+    this.window.focus();
 
     /**
      * Create a context or window menu.
