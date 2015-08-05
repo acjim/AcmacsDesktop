@@ -4,7 +4,9 @@ var app = angular.module('acjim.filehandling',[]);
 
 app.controller('filehandlingCtrl', ['$scope', 'mapService', 'fileDialog', function($scope, mapService, fileDialog) {
 
-    $scope.fileContent = "test";
+    $scope.fileContent = "";
+
+    $scope.showTable = true;
 
     $scope.$on('new-file', function(e, menu, item) {
         $scope.openMaps.push( { title:'New Map '+$scope.openMaps.length, content:'Dynamic content '+$scope.openMaps.length, active: true } );
