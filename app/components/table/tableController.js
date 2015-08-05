@@ -9,5 +9,6 @@ app.controller('tableCtrl', ['$scope', 'mapService', function($scope, mapService
     $scope.$on('handleBroadcast', function () {
         console.log("handleBroadcast in Table", mapService.message);
         $scope.tableData = mapService.message;
+        $scope.$apply();
     });
 }]);
