@@ -2,6 +2,12 @@
 
 var app = angular.module('acjim.table',[]);
 
-app.controller('tableCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
+app.controller('tableCtrl', ['$scope', 'mapService', function($scope, mapService) {
 
+    $scope.tableData = {};
+
+    $scope.$on('handleBroadcast', function () {
+        console.log("handleBroadcast in Table", mapService.message);
+        $scope.tableData = mapService.message;
+    });
 }]);

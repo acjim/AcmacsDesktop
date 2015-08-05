@@ -2,11 +2,15 @@
 
 var app = angular.module('acjim.map',[]);
 
-app.controller('mapCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
+app.controller('mapCtrl', ['$scope', 'mapService', function($scope, mapService) {
         var canvas = document.getElementById('canvas');
         var context = canvas.getContext('2d');
 
         $scope.$on('handleBroadcast', function () {
+            console.log("handleBroadcast in Map", mapService.message);
+        });
+
+        /*$scope.$on('handleBroadcast', function () {
             var lines, lineNumber, data, length;
 
             lines = mapService.message.match(/[^\r\n]+/g);
@@ -30,7 +34,7 @@ app.controller('mapCtrl', ['$scope', '$http', 'mapService', function($scope, $ht
                 draw($scope.data);
             }
 
-        });
+        });*/
 
 
         $scope.data = [

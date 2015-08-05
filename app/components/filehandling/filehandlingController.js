@@ -2,19 +2,17 @@
 
 var app = angular.module('acjim.filehandling',[]);
 
-app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog', function($scope, $httd, mapService, fileDialog) {
+app.controller('filehandlingCtrl', ['$scope', 'mapService', 'fileDialog', function($scope, mapService, fileDialog) {
 
     $scope.fileContent = "test";
 
     $scope.$on('new-file', function(e, menu, item) {
-        console.log( $scope.openMaps, $scope.openMaps.length );
         $scope.openMaps.push( { title:'New Map '+$scope.openMaps.length, content:'Dynamic content '+$scope.openMaps.length, active: true } );
         $scope.$apply();
-        console.log( $scope.openMaps );
     });
 
     $scope.$on('open-file', function(e, menu, item) {
-        fileDialog.openFile($scope.handleFileOpen, false, 'text/html');
+        fileDialog.openFile($scope.handleFileOpen, false, '.acd1,.json');
     });
 
     $scope.$on('save-file', function(e, menu, item) {
@@ -23,11 +21,10 @@ app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog
         $scope.openMaps.forEach(function(map, index){
             if(map.active) filename = map.title;
         });
-        fileDialog.saveAs($scope.handleFileSave, filename, 'text/html');
+        fileDialog.saveAs($scope.handleFileSave, filename, '.acd1,.json');
     });
 
     $scope.$on('close-file', function(e, menu, item) {
-
         $scope.openMaps.forEach(function(map, index){
            if(map.active) $scope.openMaps.splice(index, 1);
         });
@@ -39,16 +36,16 @@ app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog
     ];
 
     $scope.selectMap = function(e) {
-
         $scope.openMaps.forEach(function(map, index){
             if(map.active) {
                 $scope.fileContent = map.content;
+                mapService.prepForBroadcast($scope.fileContent);
             }
         });
     };
 
     $scope.open = function() {
-        fileDialog.openFile($scope.handleFileOpen, false, 'text/html');
+        fileDialog.openFile($scope.handleFileOpen, false, '.acd1,.json');
     };
 
     $scope.handleFileOpen = function(filename) {
@@ -57,11 +54,13 @@ app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog
             if (err) {
                 return console.log(err);
             }
-
-            $scope.openMaps.push({title:filename, content:data, active: true});
+            var mapJsonData = data.replace(/\'/g, '"').replace(/None/g, 'null').replace(/True/g, 'true').replace(/False/g, 'false')
+                .replace(/[0-9]{1,5}:/g, function(match){return '"' + match.replace(':','') + '":';}); //For the bad formated acd1 files...
+            $scope.openMaps.push({title:filename, content: JSON.parse(mapJsonData), active: true});
 
             $scope.fileContent = data;
             $scope.$apply();
+            $scope.selectMap();
 
         });
     };

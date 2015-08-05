@@ -7,11 +7,12 @@ var app = angular.module('acjim', [
     'DWand.nw-fileDialog',
     'acjim.filehandling',
     'acjim.map',
-    'acjim.table'
+    'acjim.table',
+    'acjim.mapService'
 ]);
 
 //app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js')); //TODO: Fixme? Current this is a src include in the index.html
-app.factory('mapService', require('./app/shared/mapService.js'));
+//app.factory('mapService', require('./app/shared/mapService.js'));
 app.filter('nl2br', require('./app/shared/nl2br.js'));
 
 //app.controller('tableCtrl', ['$scope', '$http', 'mapService', require('./app/components/table/tableController.js')]);

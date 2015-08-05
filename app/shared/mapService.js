@@ -1,4 +1,8 @@
-module.exports = function($rootScope) {
+'use strict';
+
+var app = angular.module('acjim.mapService', []);
+
+app.factory('mapService', ['$rootScope', function($rootScope) {
     var sharedService = {};
 
     sharedService.message = '';
@@ -9,8 +13,9 @@ module.exports = function($rootScope) {
     };
 
     sharedService.broadcastItem = function() {
+        console.log("broadcast");
         $rootScope.$broadcast('handleBroadcast');
     };
 
     return sharedService;
-};
+}]);
