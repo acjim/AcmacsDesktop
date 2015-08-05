@@ -4,13 +4,13 @@
         <thead>
         <tr>
             <th>Antigens/Sera</th>
-            <th ng-repeat="sera in tableData.table.sera">{{sera.name}}</th>
+            <th ng-repeat="sera in tableData.sera">{{sera.name}}</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="antigen in tableData.table.antigens">
+        <tr ng-repeat="antigen in tableData.antigens">
             <td width="10%">{{antigen.name}}</td>
-            <td width="10%" ng-repeat="titer in tableData.table.titers.titers_list_of_dict[$index]">{{titer}}</td>
+            <td width="10%" ng-repeat="titer in tableData.titers.titers_list_of_dict[$index]">{{titer}}</td>
         </tr>
         </tbody>
     </table>
