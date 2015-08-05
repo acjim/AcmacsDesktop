@@ -18,7 +18,7 @@ app.filter('nl2br', require('./app/shared/nl2br.js'));
 //app.controller('mapCtrl', ['$scope', '$http', 'mapService', require('./app/components/map/mapController.js')]);
 //app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog', require('./app/components/filehandling/filehandlingController.js')]);
 
-app.config(['$routeProvider', function($routeProvider) {
+/*app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/table', {
             templateUrl: 'app/components/table/tableView.html',
             controller: 'tableCtrl'
@@ -35,7 +35,7 @@ app.config(['$routeProvider', function($routeProvider) {
     });
 
     $routeProvider.otherwise({redirectTo: '/'});
-}]);
+}]);*/
 
 
 app.service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {

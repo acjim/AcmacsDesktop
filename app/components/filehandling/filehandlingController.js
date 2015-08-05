@@ -72,4 +72,18 @@ app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog
             if (err) return console.log(err);
         });
     };
-}]);
+}])
+.directive('acTable', function() {
+    return {
+        restrict: 'E',
+        transclude: true,
+        templateUrl: './app/components/table/tableView.html'
+    };
+})
+.directive('acMap', function() {
+    return {
+        restrict: 'E',
+        transclude: true,
+        templateUrl: './app/components/map/mapView.html'
+    };
+});
