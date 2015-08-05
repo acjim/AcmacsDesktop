@@ -1,3 +1,7 @@
-module.exports = function($scope, $httd, mapService) {
-    alert('Hello World');
-};
+'use strict';
+
+var app = angular.module('acjim.table',[]);
+
+app.controller('tableCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
+
+}]);

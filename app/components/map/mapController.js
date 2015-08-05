@@ -1,4 +1,8 @@
-module.exports =  function($scope, $httd, mapService) {
+'use strict';
+
+var app = angular.module('acjim.map',[]);
+
+app.controller('mapCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
         var canvas = document.getElementById('canvas');
         var context = canvas.getContext('2d');
 
@@ -93,4 +97,4 @@ module.exports =  function($scope, $httd, mapService) {
         context.globalAlpha = 1.0;
         context.beginPath();
         draw($scope.data);
-};
+}]);

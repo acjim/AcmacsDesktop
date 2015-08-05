@@ -1,4 +1,8 @@
-module.exports = function($scope, $httd, mapService, fileDialog) {
+'use strict';
+
+var app = angular.module('acjim.filehandling',[]);
+
+app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog', function($scope, $httd, mapService, fileDialog) {
 
     $scope.fileContent = "test";
 
@@ -48,7 +52,7 @@ module.exports = function($scope, $httd, mapService, fileDialog) {
     };
 
     $scope.handleFileOpen = function(filename) {
-        fs = require('fs')
+        var fs = require('fs')
         fs.readFile(filename, 'utf8', function (err,data) {
             if (err) {
                 return console.log(err);
@@ -63,9 +67,9 @@ module.exports = function($scope, $httd, mapService, fileDialog) {
     };
 
     $scope.handleFileSave = function(filename) {
-        fs = require('fs');
+        var fs = require('fs');
         fs.writeFile(filename, $scope.fileContent, function (err) {
             if (err) return console.log(err);
         });
     };
-};
+}]);

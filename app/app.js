@@ -4,16 +4,19 @@
 var app = angular.module('acjim', [
     'ngRoute',
     'ui.bootstrap',
-    'DWand.nw-fileDialog'
+    'DWand.nw-fileDialog',
+    'acjim.filehandling',
+    'acjim.map',
+    'acjim.table'
 ]);
 
 //app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js')); //TODO: Fixme? Current this is a src include in the index.html
 app.factory('mapService', require('./app/shared/mapService.js'));
 app.filter('nl2br', require('./app/shared/nl2br.js'));
 
-app.controller('tableCtrl', ['$scope', '$http', 'mapService', require('./app/components/table/tableController.js')]);
-app.controller('mapCtrl', ['$scope', '$http', 'mapService', require('./app/components/map/mapController.js')]);
-app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog', require('./app/components/filehandling/filehandlingController.js')]);
+//app.controller('tableCtrl', ['$scope', '$http', 'mapService', require('./app/components/table/tableController.js')]);
+//app.controller('mapCtrl', ['$scope', '$http', 'mapService', require('./app/components/map/mapController.js')]);
+//app.controller('filehandlingCtrl', ['$scope', '$http', 'mapService', 'fileDialog', require('./app/components/filehandling/filehandlingController.js')]);
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/table', {
