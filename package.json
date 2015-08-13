@@ -5,7 +5,7 @@
     "version": "0.1.0",
     "window": {
         "title": "Acmacs Desktop",
-        "toolbar": false,
+        "toolbar": true,
         "frame": true,
         "width": 1024,
         "height": 600,

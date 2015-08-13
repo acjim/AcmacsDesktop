@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="node_modules/vis/dist/vis.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
-<body ng-controller="filehandlingCtrl">
-    <div class="mainView">
+<body ng-controller="appCtrl">
+    <div class="mainView" ng-controller="filehandlingCtrl">
         <div class="sidebar">
             <a class="btn btn-default" ng-click="showTable = !showTable"><span ng-hide="showTable">Show</span><span ng-show="showTable">Hide</span> Table</a>
             <a class="btn btn-default" ng-click="showMap   = !showMap  "><span ng-hide="showMap">Show</span><span ng-show="showMap">Hide</span> Map</a>
@@ -46,6 +46,7 @@
     <script src="./app/components/map/mapController.js"></script>
     <script src="./app/components/table/tableController.js"></script>
     <script src="./app/shared/mapService.js"></script>
+    <script src="./app/shared/appController.js"></script>
     <script src="./app/app.js"></script>
 
 </body>

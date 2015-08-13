@@ -8,7 +8,8 @@ var app = angular.module('acjim', [
     'acjim.filehandling',
     'acjim.map',
     'acjim.table',
-    'acjim.mapService'
+    'acjim.mapService',
+    'acjim.app'
 ]);
 
 //app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js')); //TODO: Fixme? Current this is a src include in the index.html
@@ -138,6 +139,9 @@ app.run(function(nwService, $rootScope) {
                     {type:'separator'},
                     {label:'Find', click:'find'},
                     {label:'Replace', click:'find-replace'}
+                ]},
+                {label:'Extras', items:[
+                    {label:'Open Debug Tools', click:'open-debug'}
                 ]}
             ]
         }
