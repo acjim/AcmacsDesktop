@@ -61,6 +61,7 @@ div code {
 }
 .mainView .content {
   left: 200px;
+  width: 100%;
 }
 .container {
   float: right;
