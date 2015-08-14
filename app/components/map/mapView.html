@@ -1,18 +1,3 @@
-<div ng-controller="mapCtrl">
-    <form ng-submit="addData()">
-        <input ng-model="x"  size="2" placeholder="X" required type="number" min="0" max="600">
-        <input ng-model="y"  size="2" placeholder="Y" required type="number" min="0" max="400">
-        <input ng-model="amount"  size="3" placeholder="Amount" required type="number" min="5" max="100">
-        <input class="btn-primary" type="submit" value="Add point">
-    </form>
-    <canvas id="canvas" style="border: 1px gray solid; float: left"></canvas>
-    <div id="list" style="margin-left: 620px;">
-        Points:
-        <ul>
-            <li ng-repeat="point in data">
-                [{{point.x}}, {{point.y}}] <a ng-click="removePoint(point)">[x]</a>
-            </li>
-        </ul>
-    </div>
-    <div style="clear: both"/>
+<div id="map" ng-controller="mapCtrl">
+    <d3-map data="d3Data" lable="title"></d3-map>
 </div>

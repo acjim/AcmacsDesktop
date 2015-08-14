@@ -67,3 +67,25 @@ div code {
   float: right;
   margin-left: 150px;
 }
+/*********** Map styles **************/
+.node {
+  stroke: #fff;
+  stroke-width: 1px;
+}
+.node .selected {
+  stroke: red;
+}
+.link {
+  stroke: #999;
+}
+.brush .extent {
+  fill-opacity: .1;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+.axis {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
+}

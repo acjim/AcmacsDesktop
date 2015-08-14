@@ -2,109 +2,196 @@
 
 var app = angular.module('acjim.map',[]);
 
-app.controller('mapCtrl', ['$scope', 'mapService', function($scope, mapService) {
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-
-    $scope.mapData = {};
-
-    $scope.$on('handleBroadcast', function () {
-        console.log("handleBroadcast in Table", mapService.message);
-        $scope.mapData = mapService.message.projections[0].layout;
-        $scope.$apply();
+app.controller('mapCtrl', ['$scope', function($scope){
+      $scope.title = "mapCtrl";
+      $scope.d3Data = [
+        {title: "Greg", score:12},
+        {title: "Ari", score:43},
+        {title: "Loser", score: 87}
+      ];
+    }]);
 
 
-    });
+app.directive('d3Map', [function() {
+    return {
+        restrict: 'EA',
+        scope: {
+            data: "=",
+            label: "@"
+        },
+        link: function(scope, iElement, iAttrs) {
 
-    /*$scope.$on('handleBroadcast', function () {
-        var lines, lineNumber, data, length;
+            var svg = d3.select(iElement[0])
+                .append("svg")
+                .attr("width", "100%")
+                .attr("height", "100%");
 
-        lines = mapService.message.match(/[^\r\n]+/g);
-        lineNumber = 0;
+            // on window resize, re-render d3 canvas
+            window.onresize = function() {
+                return scope.$apply();
+            };
+            scope.$watch(function(){
+                return angular.element(window)[0].innerWidth;
+            }, function(){
+                return scope.render(scope.data);
+            });
 
-        for (var i = lines.length - 1; i >= 0; i--) {
+            // watch for data changes and re-render
+            scope.$watch('data', function(newVals, oldVals) {
+                return scope.render(newVals);
+            }, true);
 
-            var l = lines[i];
-            lineNumber++;
-            data = l.split(/,/);
+            // define render function
+            scope.render = function(data){
 
-            var id = 0;
-            if($scope.data.length > 0) {
-                id = $scope.data[$scope.data.length-1].id + 1;
-            }
-            var p = {id: id, x: data[0], y: data[1], amount: data[2]};
-            $scope.data.push(p);
-            $scope.x = '';
-            $scope.y = '';
-            $scope.amount = '';
-            draw($scope.data);
+                // remove all previous items before render
+                svg.selectAll("*").remove();
+
+                // setup variables
+                var width = d3.select(iElement[0])[0][0].offsetWidth,  //TODO: BUGFIXING!! when parent hidden this returns 0!
+                    height = d3.select(iElement[0])[0][0].offsetHeight,
+                    scaleValue = 10,
+                    boxSize,
+                    shiftKey;
+
+                // this can also be found dynamically when the data is not static
+                // max = Math.max.apply(Math, _.map(data, ((val)-> val.count)))
+
+                // Scale
+                var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
+                var yScale = d3.scale.linear().domain([0,height]).range([0, height]);
+                // Zoom
+                var zoom = d3.behavior.zoom()
+                    .scaleExtent([1, 10])
+                    .x(xScale)
+                    .y(yScale)
+                    .on("zoom", function() {
+                        // Move the grid
+                        boxG.attr("transform",
+                                  "translate(" + d3.event.translate[0]%(boxSize*d3.event.scale)+","+d3.event.translate[1]%(boxSize*d3.event.scale) + ")scale(" + d3.event.scale + ")")
+                        // Move the graph
+                        elements.attr("transform",
+                                   "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    });
+
+                // Groups
+                var boxG = svg.append("g");
+                var brush = svg.append("g")
+                    .datum(function() { return {selected: false, previouslySelected: false}; })
+                    .attr("class", "brush");
+                var elements = svg.append("g");
+
+                // Links
+                var link = elements.append("g")
+                    .attr("class", "link")
+                    .selectAll("line");
+
+                // Nodes
+                var node = elements.append("g")
+                    .attr("class", "node")
+                    .selectAll(".node")
+
+                // Background Grid
+                var boxSize = 1 * scaleValue;
+                var numBoxes = width/boxSize;
+                console.log(width);
+                var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
+
+                boxEnter.append("line")
+                    .attr("class", "x axis")
+                    .attr("x1", function (d){return d * boxSize})
+                    .attr("x2", function (d){return d * boxSize;})
+                    .attr("y1", -boxSize)
+                    .attr("y2", height + boxSize);
+                boxEnter.append("line")
+                    .attr("class", "x axis")
+                    .attr("x1", -boxSize)
+                    .attr("x2", width + boxSize)
+                    .attr("y1", function (d){return d * boxSize})
+                    .attr("y2", function (d){return d * boxSize});
+
+                // Brush
+                var brusher = d3.svg.brush()
+                    .x(xScale)
+                    .y(yScale)
+                    .on("brushstart", function(d) {
+                        node.each(function(d) {
+                            d.previouslySelected = shiftKey && d.selected; });
+                    })
+                    .on("brush", function() {
+                        var extent = d3.event.target.extent();
+                        node.classed("selected", function(d) {
+                            return d.selected = d.previouslySelected ^
+                            (extent[0][0] <= d.x && d.x < extent[1][0]
+                             && extent[0][1] <= d.y && d.y < extent[1][1]);
+                        });
+                    })
+                    .on("brushend", function() {
+                        d3.event.target.clear();
+                        d3.select(this).call(d3.event.target);
+                    }
+                );
+                brush.call(brusher);
+
+//                graph.layout.forEach(function (d, i) {
+//                    data[i] = {
+//                        "x": d[0] * scaleValue,
+//                        "y": d[1] * scaleValue,
+//                        "name": graph.point_info[i],
+//                        "style": graph.styles.styles[graph.styles.points[i]]
+//                    };
+//                });
+
+                // Enter
+                node = node.data(data).enter().append("path");
+                // Update
+                node.attr("class", "point")
+                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("d",d3.svg.symbol().size("20")
+                          .type(function(d) {
+                        if (d.style.shape == "circle") { return "circle"; }
+                        else if (d.style.shape == "box") { return "square"; }
+                    }))
+                    .on("mousedown", function(d) {
+                        if (!d.selected) { // Don't deselect on shift-drag.
+                          if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
+                          else d3.select(this).classed("selected", d.selected = true);
+                          console.log(d);
+                        }
+                    })
+                    .on("mouseup", function(d) {
+                        if (d.selected && shiftKey) d3.select(this).classed("selected", d.selected = false);
+                    })
+                    .call(d3.behavior.drag()
+                        .on("dragstart", function(d) {
+                            d3.event.sourceEvent.stopPropagation();
+                        })
+                        .on("drag", function(d) {
+                            nudge(d3.event.dx, d3.event.dy);
+                        })
+                    );
+
+                    function nudge(dx, dy) {
+                        node.filter(function(d) { return d.selected; })
+                            .attr("transform", function(d) {
+                                d.x += dx;
+                                d.y += dy;
+                                return "translate(" + d.x + "," + d.y + ")";
+                            });
+                        /*
+                        link.filter(function(d) { return d.source.selected; })
+                            .attr("x1", function(d) { return d.source.x; })
+                            .attr("y1", function(d) { return d.source.y; });
+                        link.filter(function(d) { return d.target.selected; })
+                            .attr("x2", function(d) { return d.target.x; })
+                            .attr("y2", function(d) { return d.target.y; });
+                        */
+                        if(d3.event.preventDefault) d3.event.preventDefault();
+                    }
+
+
+
+              };
         }
-
-    });*/
-
-
-    $scope.data = [
-
-    ];
-
-    $scope.addData = function() {
-        var id = 0;
-        if($scope.data.length > 0) {
-            id = $scope.data[$scope.data.length-1].id + 1;
-        }
-        var p = {id: id, x: $scope.x, y: $scope.y, amount: $scope.amount};
-        $scope.data.push(p);
-        $scope.x = '';
-        $scope.y = '';
-        $scope.amount = '';
-        draw($scope.data);
-    };
-
-    $scope.removePoint = function(point) {
-        console.log(point);
-        for(var i=0; i<$scope.data.length; i++) {
-            if($scope.data[i].id === point.id) {
-                console.log("removing item at position: "+i);
-                $scope.data.splice(i, 1);
-            }
-        }
-
-        context.clearRect(0,0,600,400);
-        draw($scope.data);
-        console.log($scope.data);
-    }
-
-    function draw(data) {
-        for(var i=0; i<data.length; i++) {
-            drawDot(data[i]);
-            if(i > 0) {
-                drawLine(data[i], data[i-1]);
-            }
-        }
-    }
-
-    function drawDot(data) {
-        context.beginPath();
-        context.arc(data.x, data.y, data.amount, 0, 2*Math.PI, false);
-        context.fillStyle = "#ccddff";
-        context.fill();
-        context.lineWidth = 1;
-        context.strokeStyle = "#666666";
-        context.stroke();
-    }
-
-    function drawLine(data1, data2) {
-        context.beginPath();
-        context.moveTo(data1.x, data1.y);
-        context.lineTo(data2.x, data2.y);
-        context.strokeStyle = "black";
-        context.stroke();
-    }
-
-    // setup
-    canvas.width = 600;
-    canvas.height = 400;
-    context.globalAlpha = 1.0;
-    context.beginPath();
-    draw($scope.data);
-}]);
+      };
+    }]);
