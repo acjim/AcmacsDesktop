@@ -3,7 +3,16 @@
 var app = angular.module('acjim.map',[]);
 
 app.controller('mapCtrl', ['$scope', function($scope){
-      $scope.title = "mapCtrl";
+    $scope.title = "mapCtrl";
+
+    $scope.mapData = {};
+
+    $scope.$on('handleBroadcast', function () {
+        console.log("handleBroadcast in Table", mapService.message);
+        $scope.mapData = mapService.message.projections[0].layout;
+        $scope.$apply();
+    });
+
       $scope.d3Data = [
         {title: "Greg", score:12},
         {title: "Ari", score:43},
