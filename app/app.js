@@ -140,8 +140,9 @@ app.run(function(nwService, $rootScope) {
                     {label:'Find', click:'find'},
                     {label:'Replace', click:'find-replace'}
                 ]},
-                {label:'Extras', items:[
-                    {label:'Open Debug Tools', click:'open-debug'}
+                {label:'Debug', items:[
+                    {label:'Show Developer Tools', click:'open-debug', modifiers: 'alt, cmd', key: 'i'},
+                    {label:'Reload Application', click:'reload-app',  key:'r'}
                 ]}
             ]
         }
