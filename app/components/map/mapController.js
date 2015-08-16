@@ -13,12 +13,22 @@ app.controller('mapCtrl', ['$scope', function($scope){
         $scope.$apply();
     });
 
-      $scope.d3Data = [
-        {title: "Greg", score:12},
-        {title: "Ari", score:43},
-        {title: "Loser", score: 87}
-      ];
-    }]);
+//                // Build d3 data objects from json data
+//                graph.layout.forEach(function (d, i) {
+//                    data[i] = {
+//                        "x": d[0] * scaleValue,
+//                        "y": d[1] * scaleValue,
+//                        "name": graph.point_info[i],
+//                        "style": graph.styles.styles[graph.styles.points[i]]
+//                    };
+//                });
+
+    $scope.d3Data = [
+        {x: 30, y:12, style: {shape: "circle"}},
+        {x: 40, y:43, style: {shape: "circle"}},
+        {x: 20, y: 87, style: {shape: "box"}}
+    ];
+}]);
 
 
 app.directive('d3Map', [function() {
@@ -32,8 +42,8 @@ app.directive('d3Map', [function() {
 
             var svg = d3.select(iElement[0])
                 .append("svg")
-                .attr("width", "100%")
-                .attr("height", "100%");
+                .attr("width", 300)     //TODO: dynamic d3 size
+                .attr("height", 300);
 
             // on window resize, re-render d3 canvas
             window.onresize = function() {
@@ -57,8 +67,9 @@ app.directive('d3Map', [function() {
                 svg.selectAll("*").remove();
 
                 // setup variables
-                var width = d3.select(iElement[0])[0][0].offsetWidth,  //TODO: BUGFIXING!! when parent hidden this returns 0!
-                    height = d3.select(iElement[0])[0][0].offsetHeight,
+                //TODO: dynamic d3 size
+                var width = 300,//d3.select(iElement[0])[0][0].offsetWidth,  //TODO: BUGFIXING!! when parent hidden this returns 0!
+                    height = 300, //d3.select(iElement[0])[0][0].offsetHeight,
                     scaleValue = 10,
                     boxSize,
                     shiftKey;
@@ -98,12 +109,11 @@ app.directive('d3Map', [function() {
                 // Nodes
                 var node = elements.append("g")
                     .attr("class", "node")
-                    .selectAll(".node")
+                    .selectAll(".node");
 
                 // Background Grid
                 var boxSize = 1 * scaleValue;
                 var numBoxes = width/boxSize;
-                console.log(width);
                 var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
 
                 boxEnter.append("line")
@@ -142,14 +152,26 @@ app.directive('d3Map', [function() {
                 );
                 brush.call(brusher);
 
-//                graph.layout.forEach(function (d, i) {
-//                    data[i] = {
-//                        "x": d[0] * scaleValue,
-//                        "y": d[1] * scaleValue,
-//                        "name": graph.point_info[i],
-//                        "style": graph.styles.styles[graph.styles.points[i]]
-//                    };
-//                });
+//              graph.links.forEach(function(d) {
+//                d.source = graph.nodes[d.source];
+//                d.target = graph.nodes[d.target];
+//              });
+//
+//              link = link.data(graph.links).enter().append("line")
+//                  .attr("x1", function(d) { return d.x; })
+//                  .attr("y1", function(d) { return d.y; })
+//                  .attr("x2", function(d) { return d.target.x; })
+//                  .attr("y2", function(d) { return d.target.y; });
+                //Line test
+//                var link = linkG.selectAll("line").data(graph.layout).enter();
+//                link.append('line')
+//                        .attr("x1", function(d) {return scale(d[0]); })
+//                        .attr("y1", function(d) {return scale(d[1]); })
+//                        .attr("x2", function(d) {return scale(d[0] + 0.2); })
+//                        .attr("y2", function(d) {return scale(d[1] + 0.2); })
+//                        .attr("stroke", "gray")
+//                        .attr("stroke-width", "4");
+
 
                 // Enter
                 node = node.data(data).enter().append("path");
@@ -157,15 +179,15 @@ app.directive('d3Map', [function() {
                 node.attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
                     .attr("d",d3.svg.symbol().size("20")
-                          .type(function(d) {
-                        if (d.style.shape == "circle") { return "circle"; }
-                        else if (d.style.shape == "box") { return "square"; }
-                    }))
+                        .type(function(d) {
+                            if (d.style.shape == "circle") { return "circle"; }
+                            else if (d.style.shape == "box") { return "square"; }
+                        })
+                    )
                     .on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
                           if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
                           else d3.select(this).classed("selected", d.selected = true);
-                          console.log(d);
                         }
                     })
                     .on("mouseup", function(d) {
@@ -197,6 +219,43 @@ app.directive('d3Map', [function() {
                         */
                         if(d3.event.preventDefault) d3.event.preventDefault();
                     }
+
+                    // Tool switching TODO: Refactor
+                    d3.select("#moove").on("change", function() {
+                        if (this.checked) {
+                            // Enable zoom
+                            svg.call(zoom);
+                            // Disable brush
+                            brush.call(brusher)
+                                .on("mousedown.brush", null)
+                                .on("touchstart.brush", null)
+                                .on("touchmove.brush", null)
+                                .on("touchend.brush", null);
+                            brush.select('.background').style('cursor', 'auto');
+                        } else {
+                            // Disable zoom
+                            svg.on('.zoom', null);
+                            // Enable brush
+                            brush.select('.background').style('cursor', 'crosshair');
+                            brush.call(brusher);
+                        }
+                    });
+            /*
+            function keydown() {
+              if (!d3.event.metaKey) switch (d3.event.keyCode) {
+                case 38: nudge( 0, -1); break; // UP
+                case 40: nudge( 0, +1); break; // DOWN
+                case 37: nudge(-1,  0); break; // LEFT
+                case 39: nudge(+1,  0); break; // RIGHT
+                case 32: svg.call(zoom); break;// SPACE
+              }
+              shiftKey = d3.event.shiftKey || d3.event.metaKey;
+            }
+            function keyup() {
+                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                svg.on('.zoom', null);
+            }
+            */
 
 
 
