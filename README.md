@@ -25,4 +25,8 @@ Now you can type ``nw <PathToApp>`` to start any of your projects. Keep in mind 
 Not yet implemented
 
 # License
-TODO
+##GNU GENERAL PUBLIC LICENSE
+##Version 3, 29 June 2007
+##Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/>
+##Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
+
