@@ -147,20 +147,26 @@ app.run(function(nwService, $rootScope) {
             type:'menubar',
             items:[
                 {label:'File', items:[
-                    {label: 'New...', tooltip: 'Create a new file', click:'new-file'},
-                    {label: 'Open...', tooltip: 'Open a file', click:'open-file'},
-                    {label: 'Save', tooltip: 'Save a file', click:'save-file'},
-                    {label: 'Close', tooltip: 'Close a file', click:'close-file'},
-                    //{type:'separator'},
+                    {label: 'New...', tooltip: 'Create a new file', click:'new-file', modifiers: 'cmd', key: 'n'},
+                    {label: 'Open...', tooltip: 'Open a file', click:'open-file', modifiers: 'cmd', key: 'o'},
+                    {label: 'Close', tooltip: 'Close a file', click:'close-file', modifiers: 'cmd', key: 'w'},
+                    {label: 'Close All', tooltip: 'Close all currently open files', click:'close-all', modifiers: 'cmd, shift', key: 'w'},
+                    {type:'separator'},
+                    {label: 'Save', tooltip: 'Save a file', click:'save-file', modifiers: 'cmd', key: 's'},
+                    {label: 'Save All', tooltip: 'Save all files', click:'save-all', modifiers: 'cmd, alt', key: 's'},
+                    {label: 'Save As...', tooltip: 'Save file as...', click:'save-as', modifiers: 'cmd, shift', key: 's'}
                     //{label: 'Exit', tooltip: 'Quit Application', click:'exit-app'} //TODO: See broadcast exit-app
                 ]},
                 {label:'Edit', items:[
-                    {label:'Cut', click:'cut'},
-                    {label: 'Copy', click:'copy'},
-                    {label: 'Paste', click:'paste'},
+                    {label:'Undo', click:'undo', modifiers: 'cmd', key: 'z'},
+                    {label:'Redo', click:'redo', modifiers: 'cmd, shift', key: 'z'},
                     {type:'separator'},
-                    {label:'Find', click:'find'},
-                    {label:'Replace', click:'find-replace'}
+                    {label:'Cut', click:'cut', modifiers: 'cmd', key: 'x'},
+                    {label: 'Copy', click:'copy', modifiers: 'cmd', key: 'c'},
+                    {label: 'Paste', click:'paste', modifiers: 'cmd', key: 'v'},
+                    {type:'separator'},
+                    {label:'Find', click:'find', modifiers: 'cmd', key: 'f'},
+                    {label:'Replace', click:'find-replace', modifiers: 'cmd, alt', key: 'z'}
                 ]},
                 {label:'Debug', items:[
                     {label:'Show Developer Tools', click:'open-debug', modifiers: 'alt, cmd', key: 'i'},
