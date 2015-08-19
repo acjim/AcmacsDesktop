@@ -21,15 +21,15 @@
 */
 'use strict';
 
-var app = angular.module('acjim.table',[]);
+var app = angular.module('acjim.app',[]);
 
-app.controller('tableCtrl', ['$scope', 'mapService', function($scope, mapService) {
+app.controller('appCtrl', ['$scope', 'nwService', function($scope, nwService) {
+    $scope.$on('open-debug', function(e, menu, item) {
+        nwService.gui.Window.get().showDevTools();
+    });
 
-    $scope.tableData = {};
-
-    $scope.$on('handleBroadcast', function () {
-        console.log("handleBroadcast in Table", mapService.message);
-        $scope.tableData = mapService.message.table;
-        $scope.$apply();
+    $scope.$on('reload-app', function(e, menu, item) {
+        if (location)
+            location.reload();
     });
 }]);

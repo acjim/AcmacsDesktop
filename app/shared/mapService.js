@@ -21,15 +21,22 @@
 */
 'use strict';
 
-var app = angular.module('acjim.table',[]);
+var app = angular.module('acjim.mapService', []);
 
-app.controller('tableCtrl', ['$scope', 'mapService', function($scope, mapService) {
+app.factory('mapService', ['$rootScope', function($rootScope) {
+    var sharedService = {};
 
-    $scope.tableData = {};
+    sharedService.message = '';
 
-    $scope.$on('handleBroadcast', function () {
-        console.log("handleBroadcast in Table", mapService.message);
-        $scope.tableData = mapService.message.table;
-        $scope.$apply();
-    });
+    sharedService.prepForBroadcast = function(msg) {
+        this.message = msg;
+        this.broadcastItem();
+    };
+
+    sharedService.broadcastItem = function() {
+        console.log("broadcast");
+        $rootScope.$broadcast('handleBroadcast');
+    };
+
+    return sharedService;
 }]);

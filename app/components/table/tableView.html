@@ -1,29 +1,19 @@
 
-<div ng-class="tableCtrl">
+<div ng-controller="tableCtrl">
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Email</th>
+            <th>Antigens/Sera</th>
+            <th ng-repeat="sera in tableData.sera">{{sera.name}}</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>John</td>
-            <td>Doe</td>
-            <td>john@example.com</td>
-        </tr>
-        <tr>
-            <td>Mary</td>
-            <td>Moe</td>
-            <td>mary@example.com</td>
-        </tr>
-        <tr>
-            <td>July</td>
-            <td>Dooley</td>
-            <td>july@example.com</td>
+        <tr ng-repeat="antigen in tableData.antigens">
+            <td width="10%">{{antigen.name}}</td>
+            <td width="10%" ng-repeat="titer in tableData.titers.titers_list_of_dict[$index]">{{titer}}</td>
         </tr>
         </tbody>
     </table>
+
+    {{tableData.table.antigens}}
 </div>

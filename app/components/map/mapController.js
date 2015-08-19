@@ -1,546 +1,286 @@
+/*
+	Antigenic Cartography for Desktop
+	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. 
+	In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
+	This project aims at providing a desktop application for working with antigenic maps.
+
+	© 2015 The Antigenic Cartography Group at the University of Cambridge
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 'use strict';
 
+var app = angular.module('acjim.map',[]);
 
-angular.module('acjim.map', ['ngRoute'])
+app.controller('mapCtrl', ['$scope', 'mapService', function($scope, mapService){
+    $scope.title = "mapCtrl";
 
-    .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/map', {
-            templateUrl: 'app/components/map/mapView.html',
-            controller: 'mapCtrl'
-        });
-    }])
+    $scope.mapData = {};
+
+    $scope.$on('handleBroadcast', function () {
+        console.log("handleBroadcast in Table", mapService.message);
+        $scope.mapData = mapService.message.projections[0].layout;
+        $scope.$apply();
+    });
+
+//                // Build d3 data objects from json data
+//                graph.layout.forEach(function (d, i) {
+//                    data[i] = {
+//                        "x": d[0] * scaleValue,
+//                        "y": d[1] * scaleValue,
+//                        "name": graph.point_info[i],
+//                        "style": graph.styles.styles[graph.styles.points[i]]
+//                    };
+//                });
+
+    $scope.d3Data = [
+        {x: 30, y:12, style: {shape: "circle"}},
+        {x: 40, y:43, style: {shape: "circle"}},
+        {x: 20, y: 87, style: {shape: "box"}}
+    ];
+}]);
 
 
-    .controller('mapCtrl', ['$scope', '$http', 'mapService', function($scope, $httd, mapService) {
-        $scope.improveFactor=100;
-        var addingnodes =0;
-        var comparingMaps=0;
-        var nodes = null;
-        var edges = null;
-        var options = null;
-        var container =null;
-        var nodes = [];
-        var nodes2 =[];
-        var edges = [];
-        var network ;
-        var data2;
-        var data3;
-        var data;
-        var reader;
-        var DIR = 'img/refresh-cl/';
-        var LENGTH_MAIN = 100;
-        var LENGTH_SUB = 3;
-        var toDelete=null;
-        function checkFileAPI() {
-            if (window.File && window.FileReader && window.FileList && window.Blob) {
-                reader = new FileReader();
-                return true;
-            } else {
-                alert('The File APIs are not fully supported by your browser. Fallback required.');
-                return false;
-            }
-        }
-        function displayContents(txt){
-            var el = document.getElementById('main');
-            //alert(txt.length);
-            var obj = JSON.parse(txt);
-            document.getElementById('writingpanel').innerHTML = txt; //display output in DOM
-            updateFromFile(obj);
-        }
+app.directive('d3Map', [function() {
+    return {
+        restrict: 'EA',
+        scope: {
+            data: "=",
+            label: "@"
+        },
+        link: function(scope, iElement, iAttrs) {
 
-        function readText(filePath) {
-            checkFileAPI();
-            var output = ""; //placeholder for text output
-            if(filePath.files && filePath.files[0]) {
-                reader.onload = function (e) {
-                    output = e.target.result;
-                    displayContents(output);
-                };//end onload()
-                reader.readAsText(filePath.files[0]);
-            }//end if html5 filelist support
-            else if(ActiveXObject && filePath) { //fallback to IE 6-8 support via ActiveX
-                try {
-                    reader = new ActiveXObject("Scripting.FileSystemObject");
-                    var file = reader.OpenTextFile(filePath, 1); //ActiveX File Object
-                    output = file.ReadAll(); //text contents of file
-                    file.Close(); //close file "input stream"
-                    displayContents(output);
+            var svg = d3.select(iElement[0])
+                .append("svg")
+                .attr("width", 300)     //TODO: dynamic d3 size
+                .attr("height", 300);
 
-                } catch (e) {
-                    if (e.number == -2146827859) {
-                        alert('Unable to access local files due to browser security settings. ' +
-                        'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' +
-                        'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"');
-                    }
-                }
-            }
-            else { //this is where you could fallback to Java Applet, Flash or similar
-                return false;
-            }
-            return true;
-        }
-        function drawNewMap(container,data, options) {
-            var network2 = new vis.Network(container, data, options);
-            network2.on('doubleClick', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert("hello");
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                //alert("hello");
-            });
-            network2.on('select', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                //console.log(params);
-                //alert("select");
-                toDelete=params;
-                //
-            });
-            network2.on('dragEnd', function(params){
-                var id=-1;
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                alert("dragend");
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                console.log(params);
-                console.log(nodes);
-                if (params.nodes.length>0){
-                    // we should get the position first
-                    // To do get the array position of the element to be changed
-                    for (var i=0; i<params.nodes.length; i++){
-                        id= getPosition(params.nodes[i], nodes);
-                        nodes[id].x=params.pointer.canvas.x;
-                        nodes[id].y=params.pointer.canvas.y;
-                    }
-                    //alert(params.pointer.canvas.x);
-                    //alert(nodes[id].x);
-                }
-                // save the node's new coordinates
-                //
-            });
-            // Get the Position of an element in the array set of the nodeSet
-            function getPosition(id,nodeSet){
-                for(var i=0; i< nodeSet.length; i++){
-                    if (id== nodeSet[i].id){
-                        return i;
-                    }
-                }
-                return -1;
-            }
-
-            network2.on('click', function(params) {
-                // document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert(document.getElementById('selection').innerHTML);
-                document.getElementById('writingpanel').innerHTML= 'We Selected Virus ' + params.nodes+" with X value"+params.pointer.canvas.x+" and Y value"+params.pointer.canvas.y;
-                //console.log(params);
-                //alert("click");
-            });
-        }
-        function updateFromFile(dataFromFile) {
-            // assign the dataFromFile to the data
-            nodes = [];
-            edges= [];
-            var x=0;
-            var y=0;
-            for (var i=0; i<dataFromFile.layout.length; i++){
-                x=dataFromFile.layout[i][0]*improveFactor;
-                y=dataFromFile.layout[i][1]*improveFactor;
-                nodes.push({ id: i, title: "S"+i, label: "S"+i,size: 7,color: 'red', image: DIR + 'virus1.png', shape: 'dot',x: x, y:y});
-                nodes2.push({ id: i, title: "S"+i, label: "S"+i,size: 7,color: 'red', image: DIR + 'virus1.png', shape: 'dot',x: x, y:y});
-
-            }
-            container = document.getElementById('mynetwork');
-            container.innerHTML="";
-            data = {
-                nodes: nodes,
-                edges: edges
-            };data3 = {
-                nodes: nodes2,
-                edges: edges
+            // on window resize, re-render d3 canvas
+            window.onresize = function() {
+                return scope.$apply();
             };
-            var options = {
-                physics: false,
-                interaction:{
-                    hover: true,
-                    multiselect: true
-                },
-                edges: {
-                    smooth:true
-                }}
-            network = new vis.Network(container, data, options);
-
-            // Adding event listeners
-            network.on('select', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                //console.log(params);
-                toDelete=params;
-                //
+            scope.$watch(function(){
+                return angular.element(window)[0].innerWidth;
+            }, function(){
+                return scope.render(scope.data);
             });
-            network.on('dragEnd', function(params){
-                var id=-1;
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                alert("dragend");
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                console.log(params);
-                console.log(nodes);
-                if (params.nodes.length>0){
-                    // we should get the position first
-                    // To do get the array position of the element to be changed
-                    for (var i=0; i<params.nodes.length; i++){
-                        id= getPosition(params.nodes[i], nodes);
-                        nodes[id].x=params.pointer.canvas.x;
-                        nodes[id].y=params.pointer.canvas.y;
+
+            // watch for data changes and re-render
+            scope.$watch('data', function(newVals, oldVals) {
+                return scope.render(newVals);
+            }, true);
+
+            // define render function
+            scope.render = function(data){
+
+                // remove all previous items before render
+                svg.selectAll("*").remove();
+
+                // setup variables
+                //TODO: dynamic d3 size
+                var width = 300,//d3.select(iElement[0])[0][0].offsetWidth,  //TODO: BUGFIXING!! when parent hidden this returns 0!
+                    height = 300, //d3.select(iElement[0])[0][0].offsetHeight,
+                    scaleValue = 10,
+                    boxSize,
+                    shiftKey;
+
+                // this can also be found dynamically when the data is not static
+                // max = Math.max.apply(Math, _.map(data, ((val)-> val.count)))
+
+                // Scale
+                var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
+                var yScale = d3.scale.linear().domain([0,height]).range([0, height]);
+                // Zoom
+                var zoom = d3.behavior.zoom()
+                    .scaleExtent([1, 10])
+                    .x(xScale)
+                    .y(yScale)
+                    .on("zoom", function() {
+                        // Move the grid
+                        boxG.attr("transform",
+                                  "translate(" + d3.event.translate[0]%(boxSize*d3.event.scale)+","+d3.event.translate[1]%(boxSize*d3.event.scale) + ")scale(" + d3.event.scale + ")")
+                        // Move the graph
+                        elements.attr("transform",
+                                   "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                    });
+
+                // Groups
+                var boxG = svg.append("g");
+                var brush = svg.append("g")
+                    .datum(function() { return {selected: false, previouslySelected: false}; })
+                    .attr("class", "brush");
+                var elements = svg.append("g");
+
+                // Links
+                var link = elements.append("g")
+                    .attr("class", "link")
+                    .selectAll("line");
+
+                // Nodes
+                var node = elements.append("g")
+                    .attr("class", "node")
+                    .selectAll(".node");
+
+                // Background Grid
+                var boxSize = 1 * scaleValue;
+                var numBoxes = width/boxSize;
+                var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
+
+                boxEnter.append("line")
+                    .attr("class", "x axis")
+                    .attr("x1", function (d){return d * boxSize})
+                    .attr("x2", function (d){return d * boxSize;})
+                    .attr("y1", -boxSize)
+                    .attr("y2", height + boxSize);
+                boxEnter.append("line")
+                    .attr("class", "x axis")
+                    .attr("x1", -boxSize)
+                    .attr("x2", width + boxSize)
+                    .attr("y1", function (d){return d * boxSize})
+                    .attr("y2", function (d){return d * boxSize});
+
+                // Brush
+                var brusher = d3.svg.brush()
+                    .x(xScale)
+                    .y(yScale)
+                    .on("brushstart", function(d) {
+                        node.each(function(d) {
+                            d.previouslySelected = shiftKey && d.selected; });
+                    })
+                    .on("brush", function() {
+                        var extent = d3.event.target.extent();
+                        node.classed("selected", function(d) {
+                            return d.selected = d.previouslySelected ^
+                            (extent[0][0] <= d.x && d.x < extent[1][0]
+                             && extent[0][1] <= d.y && d.y < extent[1][1]);
+                        });
+                    })
+                    .on("brushend", function() {
+                        d3.event.target.clear();
+                        d3.select(this).call(d3.event.target);
                     }
-                }
-                // save the node's new coordinates
-                //
-            });
-            function getPosition(id,nodeSet){
-                for(var i=0; i< nodeSet.length; i++){
-                    if (id== nodeSet[i].id){
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            network.on('click', function(params) {
-                // document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert(document.getElementById('selection').innerHTML);
-                document.getElementById('writingpanel').innerHTML= 'We Selected Virus ' + params.nodes+" with X value"+params.pointer.DOM.x+" and Y value"+params.pointer.DOM.y;
-                //console.log(params);
-            });
-            network.on('doubleClick', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert("hello");
-                if (addingnodes!=0){
-                    // Adding the node in here, before then wrapping up everything
-                    nodes.push({ title: "Vir", label: 'Virus Added ',shadow: true,size: 2, image: DIR + 'virus4.png', shape: 'image',x: params.pointer.canvas.x, y: params.pointer.canvas.y,physics:false});
-                    //console.log(params.pointer.DOM.x);
-                    //console.log(params.pointer.DOM.y);
-                    update(container,data, options);
-                    //console.log(params);
-                }
-                addingnodes=0;
-            });
-        }
-        function update(container,data, options) {
-            network = new vis.Network(container, data, options);
-            network.on('select', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                //console.log(params);
-                toDelete=params;
-                //
-            });
-            network.on('click', function(params) {
-                // document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert(document.getElementById('selection').innerHTML);
-                document.getElementById('writingpanel').innerHTML= 'We Selected Virus ' + params.nodes+" with X value"+params.pointer.DOM.x+" and Y value"+params.pointer.DOM.y;
-                //console.log(params);
-            });
-            network.on('doubleClick', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert("hello");
-                if (addingnodes!=0){
-                    // Adding the node in here, before then wrapping up everything
-                    nodes.push({ title: "Vir", label: 'Virus Added ',shadow: true,size: 2, image: DIR + 'virus4.png', shape: 'image',x: params.pointer.canvas.x, y: params.pointer.canvas.y,physics:false});
-                    //console.log(params.pointer.DOM.x);
-                    //console.log(params.pointer.DOM.y);
-                    update(container,data, options);
-                    //console.log(params);
-                }
-                addingnodes=0;
-            });
+                );
+                brush.call(brusher);
 
-        }
+//              graph.links.forEach(function(d) {
+//                d.source = graph.nodes[d.source];
+//                d.target = graph.nodes[d.target];
+//              });
+//
+//              link = link.data(graph.links).enter().append("line")
+//                  .attr("x1", function(d) { return d.x; })
+//                  .attr("y1", function(d) { return d.y; })
+//                  .attr("x2", function(d) { return d.target.x; })
+//                  .attr("y2", function(d) { return d.target.y; });
+                //Line test
+//                var link = linkG.selectAll("line").data(graph.layout).enter();
+//                link.append('line')
+//                        .attr("x1", function(d) {return scale(d[0]); })
+//                        .attr("y1", function(d) {return scale(d[1]); })
+//                        .attr("x2", function(d) {return scale(d[0] + 0.2); })
+//                        .attr("y2", function(d) {return scale(d[1] + 0.2); })
+//                        .attr("stroke", "gray")
+//                        .attr("stroke-width", "4");
 
-        // Called when the Visualization API is loaded.
-        function draw() {
-            // Create a data table with nodes.
-            nodes.push({ id: 1, title: "Virus Koko", label: 'Virus koko',size: 7, image: DIR + 'virus1.png', shape: 'image',x: 100, y:10});
-            nodes.push({id: 2, label: 'Virus 2',title: "Virus 2 ",size: 7, image: DIR + 'Virus6.png', shape: 'image',x: 50, y:0});
-            //nodes.push({id: 3, label: 'Virus 3', image: DIR + 'Virus7.png', shape: 'image',x: 500, y:60});
-            //edges.push({from: 1, to: 3, length: LENGTH_MAIN});
-            /* for (var i = 4; i <= 7; i++) {
-             nodes.push({id: i, label: 'Computer', image: DIR + 'Hardware-My-Computer-3-icon.png', shape: 'image',x: 10, y:10});
-             edges.push({from: 2, to: i, length: LENGTH_SUB});
-             }*/
 
-            nodes.push({id: 4, label: 'Virus 4', color: 'red',size: 3, shape: 'dot', y:30});
-            //edges.push({from: 2, to: 101, length: LENGTH_SUB});
-
-            nodes.push({id: 5, label: 'Virus 5', image: DIR + 'virus3.png',size:5, shape: 'image',x: 50, y:30});
-            //edges.push({id: 6, from: 4, to: 10, length: LENGTH_SUB});
-            nodes.push({id: 7, label: 'Virus 7.1', size: 5,image: DIR + 'virus4.png', shape: 'image',x: 150, y:200});
-            nodes.push({id: 77, title: "Virus 7.2",label: '', size: 5,image: DIR + 'virus4.png', shape: 'image',x: 155, y:200});
-            nodes.push({id: 78, title: "Virus 7.3",label: '', size: 5,image: DIR + 'virus4.png', shape: 'image',x: 145, y:200});
-            nodes.push({ id: 999, title: "", label: '',size: 5, image: DIR + 'none.png', shape: 'image',x: 100, y:230});
-            //edges.push({from: 7, to: 999,color: 'red',smooth: false});
-            nodes.push({id: 16, label: '', title: "Virus 11",image: DIR + 'virus5.png',size: 5, color: "blue",shape: 'image',x: 350, y:230});
-            nodes.push({id: 20, label: '', title: "Virus 12",image: DIR + 'none.png',size: 5, color: "blue",shape: 'image',x: 400, y:230});
-            // edges.push({from: 17, to: 16,smooth: false});nodes.push({id: 17, label: '', title: "Virus 12",image: DIR + 'none.png',size: 5, color: "blue",shape: 'image',x: 310, y:230});
-            // Blobs doing
-            nodes.push({id: 88, label: '', title: "Trying a Blob",image: DIR + 'none.png',size: 5, color: "blue",shape: 'image',x: 310, y:230});
-            //edges.push({from: 88, to: 88,length:10});
-
-            //edges.push({from: 1, to: 103, length: LENGTH_SUB});
-            nodes.push({id: 10, label: 'virus 10', image: DIR + 'virus5.png',size: 5, shape: 'image',x: 400, y:260});
-            nodes.push({id: 11, label: '',title: "Virus 10", image: DIR + 'virus5.png', size: 5,shape: 'image',x: 410, y:280});
-            nodes.push({id: 12, label: '',title: "Virus 10", image: DIR + 'virus5.png',size: 5, shape: 'image',x: 420, y:280});
-            nodes.push({id: 13, label: '',title: "Virus 10", image: DIR + 'virus5.png',size: 5, shape: 'image',x: 430, y:280});
-            nodes.push({id: 14, label: '',title: "Virus 10", image: DIR + 'virus5.png',size: 5, shape: 'image',x: 460, y:280});
-            nodes.push({id: 15, label: '', title: "Virus 10",image: DIR + 'virus5.png', size: 5,shape: 'image',x: 470, y:280});
-
-            // edges.push({from: 1, to: 104, length: LENGTH_SUB});
-            /* for (var i = 200; i <= 201; i++ ) {
-             nodes.push({id: i, label: 'Smartphone', image: DIR + 'Hardware-My-PDA-02-icon.png', shape: 'image',x: 10, y:10});
-             edges.push({from: 3, to: i, length: LENGTH_SUB});
-             }*/
-
-            // create a network
-            container = document.getElementById('mynetwork');
-            container.innerHTML="";
-            data = {
-                nodes: nodes,
-                edges: edges
-            };
-            var options = {
-                physics: false,
-                interaction:{
-                    hover: true,
-                    multiselect: true
-                },
-                edges: {
-                    smooth:true
-                }
-            }
-            network = new vis.Network(container, data, options);
-            // The select event listener offers more options compared to the click one
-            network.on('select', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert("hello");
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                //console.log(params);
-                toDelete=params;
-                //
-            });
-
-            var head = document.getElementById("header2");
-            var deleteN = document.getElementById("delete");
-            var newMap = document.getElementById("newmap");
-            var compareMaps = document.getElementById("compare");
-            var addNode = document.getElementById("add");
-            var addaNode = function(){
-                alert("Double click on the location you want to place your element");
-                addingnodes= 1;
-            }
-            var compareTwoMaps = function (){
-                if(comparingMaps==0){
-                    alert("There Should Be Two Maps to Compare");
-                }
-                else{
-                    alert("Comparing Maps to Start");
-                    compare(data,data3);
-                    //comparing data in the two formats.
-                }
-
-            }
-            var compare= function (data, data2){
-                //console.log(data);
-                var id=-1;
-                var node = [];
-                var edge= [];
-                alert(data.nodes.length);
-                console.log(data.nodes);
-                //console.log(data2.nodes);
-                for (var i=0; i< data.nodes.length; i++){
-                    // Get an Id of a specific node in set 2, then draw both
-                    id= getPosition(data.nodes[i].id, data2.nodes);
-                    // one for one
-
-                    node.push({id: i, label: 'Virus:'+i,title: 'Virus:'+i,size: 7, image: DIR + 'Virus6.png',color: 'red',shape: 'dot',x: data.nodes[i].x, y:data.nodes[i].y});
-                    node.push({id: i+".1", label: '', image: DIR + 'none.png', shape: 'dot',size: 7,color: 'blue',x: data2.nodes[id].x, y:data2.nodes[id].y});
-                    edge.push({from: i, to:  i+".1",color: 'red',smooth: false});
-                    //edges.push({from: 7, to: 999,color: 'red',smooth: false});
-
-                }
-                container= document.getElementById('mynetwork3');
-                container.innerHTML="";
-                var data = {
-                    nodes: node,
-                    edges: edge
-                };
-                var options = {
-                    physics: false,
-                    interaction:{
-                        multiselect: true
-                    },
-                    edges: {
-                        edges:{
-                            arrows: {
-                                to:     {enabled: true, scaleFactor:1},
-                                from:   {enabled: true, scaleFactor:1}
-                            },
-                            color: {
-                                color:'#848484',
-                                highlight:'#848484',
-                                hover: '#848484',
-                                inherit: 'from',
-                                opacity:1.0
-                            },
-                            dashes: true,
-                            font: {
-                                color: '#343434',
-                                size: 14, // px
-                                face: 'arial',
-                                background: 'none',
-                                strokeWidth: 2, // px
-                                strokeColor: '#ffffff',
-                                align:'horizontal'
-                            },
-                            hidden: false,
-                            hoverWidth: 1.5,
-                            label: undefined,
-                            length: undefined,
-                            selectionWidth: 1,
-                            selfReferenceSize:20,
-                            title:undefined,
-                            width: 1
+                // Enter
+                node = node.data(data).enter().append("path");
+                // Update
+                node.attr("class", "point")
+                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("d",d3.svg.symbol().size("20")
+                        .type(function(d) {
+                            if (d.style.shape == "circle") { return "circle"; }
+                            else if (d.style.shape == "box") { return "square"; }
+                        })
+                    )
+                    .on("mousedown", function(d) {
+                        if (!d.selected) { // Don't deselect on shift-drag.
+                          if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
+                          else d3.select(this).classed("selected", d.selected = true);
                         }
-                    }
-                }
-                update(container,data, options);
-            }
-            var addNewMap = function (){
-                if(toDelete==null){
-                    alert("Please Select a set of Nodes to Create a New Map");
-                }
-                else{
-                    var container2 = document.getElementById('mynetwork2');
-                    container2.innerHTML="";
-                    //console.log(data);
-                    var data2=remove(toDelete, data);
-                    //console.log(data3);
-                    //console.log(data2);
-                    comparingMaps=1;
-                    drawNewMap(container2,data,options);
-                    // function call to have only data 2data2
-                    // call the drawnewMap function
-                    // done
-                }
+                    })
+                    .on("mouseup", function(d) {
+                        if (d.selected && shiftKey) d3.select(this).classed("selected", d.selected = false);
+                    })
+                    .call(d3.behavior.drag()
+                        .on("dragstart", function(d) {
+                            d3.event.sourceEvent.stopPropagation();
+                        })
+                        .on("drag", function(d) {
+                            nudge(d3.event.dx, d3.event.dy);
+                        })
+                    );
 
-            }
-            var remove = function (toKeep, arraySet){
-                var flag=0;
-                for	(var index = 0; index < arraySet.nodes.length; index++) {
-                    //data.nodes.splice
-                    //alert(toDelete.nodes[index]);
-                    flag=0;
-                    for	(var index2 = 0; index2 < toKeep.nodes.length; index2++) {
-                        if (toKeep.nodes[index2]==arraySet.nodes[index].id){
-                            flag=1;
+                    function nudge(dx, dy) {
+                        node.filter(function(d) { return d.selected; })
+                            .attr("transform", function(d) {
+                                d.x += dx;
+                                d.y += dy;
+                                return "translate(" + d.x + "," + d.y + ")";
+                            });
+                        /*
+                        link.filter(function(d) { return d.source.selected; })
+                            .attr("x1", function(d) { return d.source.x; })
+                            .attr("y1", function(d) { return d.source.y; });
+                        link.filter(function(d) { return d.target.selected; })
+                            .attr("x2", function(d) { return d.target.x; })
+                            .attr("y2", function(d) { return d.target.y; });
+                        */
+                        if(d3.event.preventDefault) d3.event.preventDefault();
+                    }
+
+                    // Tool switching TODO: Refactor
+                    d3.select("#moove").on("change", function() {
+                        if (this.checked) {
+                            // Enable zoom
+                            svg.call(zoom);
+                            // Disable brush
+                            brush.call(brusher)
+                                .on("mousedown.brush", null)
+                                .on("touchstart.brush", null)
+                                .on("touchmove.brush", null)
+                                .on("touchend.brush", null);
+                            brush.select('.background').style('cursor', 'auto');
+                        } else {
+                            // Disable zoom
+                            svg.on('.zoom', null);
+                            // Enable brush
+                            brush.select('.background').style('cursor', 'crosshair');
+                            brush.call(brusher);
                         }
-                    }
-                    if (flag==0) {
-                        //alert(arraySet.nodes[index].id);
-                        arraySet.nodes.splice(index,1);
-                        remove(toKeep,arraySet);
-                    }
-                    flag =0;
-                }
-                return arraySet;
+                    });
+            /*
+            function keydown() {
+              if (!d3.event.metaKey) switch (d3.event.keyCode) {
+                case 38: nudge( 0, -1); break; // UP
+                case 40: nudge( 0, +1); break; // DOWN
+                case 37: nudge(-1,  0); break; // LEFT
+                case 39: nudge(+1,  0); break; // RIGHT
+                case 32: svg.call(zoom); break;// SPACE
+              }
+              shiftKey = d3.event.shiftKey || d3.event.metaKey;
             }
-            var deleteNode = function(){
-                //draw();
-                if(toDelete==null){
-                    alert("Please Select a Node to Delete");
-                }
-                else{
-                    //console.log(toDelete);
-                    for	(var index = 0; index < toDelete.nodes.length; index++) {
-                        //data.nodes.splice
-                        //alert(toDelete.nodes[index]);
-                        for	(var index2 = 0; index2 < data.nodes.length; index2++) {
-                            if (toDelete.nodes[index]==data.nodes[index2].id){
-                                //alert(index2);
-                                data.nodes.splice(index2,1);
-                            }
-                        }}
-                }
-                //alert("out");
-                //console.log(data);
-                update(container,data, options);
-                toDelete=null;
-                //console.log(data);
-            };
-            var contentTest = function(){
-                draw();
-                //console.log(data);
-            };
-            head.addEventListener('click',contentTest, false);
-            compareMaps.addEventListener('click', compareTwoMaps,false);
-            newMap.addEventListener('click', addNewMap,false);
-            deleteN.addEventListener('click',deleteNode, false);
-            addNode.addEventListener('click',addaNode, false);
-            network.on('doubleClick', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert("hello");
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                if (addingnodes!=0){
-                    // Adding the node in here, before then wrapping up everything
-                    nodes.push({ title: "Virus dd", label: 'Virus Added ',shadow: true,size: 5, image: DIR + 'virus4.png', shape: 'dot',x: params.pointer.canvas.x, y: params.pointer.canvas.y});
-                    //console.log(params.pointer.DOM.x);
-                    //console.log(params.pointer.DOM.y);
-                    update(container,data, options);
-                    //console.log(params);
-                }
-                addingnodes=0;
-            });
-            network.on('select', function(params) {
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                //console.log(params);
-                //alert("select");
-                toDelete=params;
-                //
-            });
-            network.on('dragEnd', function(params){
-                var id=-1;
-                //document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                alert("dragend");
-                //document.getElementById('writingpanel').innerHTML= 'Selected ' + params.nodes;
-                console.log(params);
-                console.log(nodes);
-                if (params.nodes.length>0){
-                    // we should get the position first
-                    // To do get the array position of the element to be changed
-                    for (var i=0; i<params.nodes.length; i++){
-                        id= getPosition(params.nodes[i], nodes);
-                        nodes[id].x=params.pointer.canvas.x;
-                        nodes[id].y=params.pointer.canvas.y;
-                    }
-                    //alert(params.pointer.canvas.x);
-                    //alert(nodes[id].x);
-                }
-                // save the node's new coordinates
-                //
-            });
-            // Get the Position of an element in the array set of the nodeSet
-            function getPosition(id,nodeSet){
-                for(var i=0; i< nodeSet.length; i++){
-                    if (id== nodeSet[i].id){
-                        return i;
-                    }
-                }
-                return -1;
+            function keyup() {
+                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                svg.on('.zoom', null);
             }
+            */
 
-            network.on('click', function(params) {
-                // document.getElementById('selection').innerHTML = 'Selection: ' + params.nodes;
-                //alert(document.getElementById('selection').innerHTML);
-                document.getElementById('writingpanel').innerHTML= 'We Selected Virus ' + params.nodes+" with X value"+params.pointer.canvas.x+" and Y value"+params.pointer.canvas.y;
-                //console.log(params);
-                //alert("click");
-            });
+
+
+              };
         }
-
-    }])
+      };
+    }]);

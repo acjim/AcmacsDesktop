@@ -7,7 +7,8 @@
         "title": "Acmacs Desktop",
         "toolbar": false,
         "frame": true,
-        "position": "mouse",
+        "width": 1024,
+        "height": 600,
         "resizable": true,
         "show": false
     },
@@ -15,7 +16,7 @@
         "angular": "^1.4.1",
         "angular-route": "^1.4.1",
         "underscore": "^1.8.3",
-        "vis": "^4.3.0",
+        "d3": "^3.5.6",
         "angular-bootstrap": "^0.12.0",
         "bootstrap": "3.3.5",
         "jquery": "2.1.4"

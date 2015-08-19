@@ -1,0 +1,21 @@
+# -*- Python -*-
+inf = float('inf')
+nan = float('nan')
+data = {'chart_info': {'assay': 'HI', 'lab': 'EU', 'name': '3ags 2sr H', 'virus': 'influenza', 'virus_type': 'A', 'rbc_species': 'turkey'},
+ 'projections': [{'comment': None,
+                  'layout': [[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0], [0.5, 0.5]],
+                  'number_of_iterations': 1,
+                  'stress': 2.6715728752538106,
+                  'stress_evaluator_parameters': {'antigens_sera_attributes': None,
+                                                  'antigens_sera_gradient_multipliers': None,
+                                                  'antigens_sera_titers_multipliers': None,
+                                                  'column_bases': None,
+                                                  'stress_diff_to_stop': 0.0},
+                  'transformation': [[1.0, 0.0], [0.0, -1.0]]}],
+ 'table': {'antigens': [{'raw_name': 'A1', 'reference': True, 'type': 'designation_raw'},
+                        {'raw_name': 'A2', 'reference': True, 'type': 'designation_raw'},
+                        {'raw_name': 'A3', 'reference': True, 'type': 'designation_raw'}],
+           'sera': [{'raw_name': 'S1', 'type': 'designation_raw'}, {'raw_name': 'S2', 'type': 'designation_raw'}],
+           'titers': {'minimum_column_basis': '1280', 'number_of_layers': 0, 'titers_list_of_list': [['1280', '640'], ['640', '1280'], ['640', '640']], 'type': 'normal'},
+           'type': 'antigenic'},
+ 'version': 3}

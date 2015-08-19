@@ -5,57 +5,48 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>The new ACJIM</title>
+    <title>Acmacs Destktop</title>
 
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="node_modules/vis/dist/vis.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
 </head>
-<body>
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle"  ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">The new ACJIM</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="#/filehandling">open File</a></li>
-                    <li><a href="#/table">table</a></li>
-                    <li><a href="#/map">map</a></li>
-                </ul>
-            </div><!--/.navbar-collapse -->
+<body ng-controller="appCtrl">
+    <div class="mainView" ng-controller="filehandlingCtrl">
+        <div class="sidebar">
+            <a class="btn btn-default" ng-click="showTable = !showTable"><span ng-hide="showTable">Show</span><span ng-show="showTable">Hide</span> Table</a>
+            <a class="btn btn-default" ng-click="showMap   = !showMap  "><span ng-hide="showMap">Show</span><span ng-show="showMap">Hide</span> Map</a>
         </div>
-    </nav>
+        <div class="content">
 
-    <div class="container">
+            <div>
+                <tabset>
+                    <tab select="selectMap()" ng-repeat="map in openMaps" heading="{{map.title}}" active="map.active" disable="map.disabled">
 
-        <div ng-view></div>
+                        <ac-table ng-show="showTable"></ac-table>
+                        <ac-map ng-show="showMap"></ac-map>
+                        <hr>
+                        {{map.content}}
+                    </tab>
+                </tabset>
+            </div>
+            <div ng-view></div>
 
-        <hr>
-
-        <footer>
-            <p>&copy; JIM 2014</p>
-        </footer>
-    </div> <!-- /container -->
+        </div> <!-- /container -->
+    </div> <!-- /mainView -->
 
     <script src="node_modules/underscore/underscore.js"></script>
     <script src="node_modules/angular/angular.js"></script>
     <script src="node_modules/angular-route/angular-route.js"></script>
-    <script src="node_modules/angular-bootstrap/dist/ui-bootstrap.js"></script>
-    <script src="node_modules/vis/dist/vis.js"></script>
+    <script src="node_modules/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="node_modules/d3/d3.js"></script>
     <script src="node_modules/jquery/dist/jquery.js"></script>
-
-    <!--<script src="app/shared/nw-fileDialog.js"></script>-->
-    <script src="./app.js"></script>
-    <script src="app/components/filehandling/filehandlingController.js"></script>
-    <script src="app/components/map/mapController.js"></script>
-    <script src="app/components/table/tableController.js"></script>
+    <script src="./app/components/filehandling/filehandlingController.js"></script>
+    <script src="./app/components/filehandling/fileDialog.js"></script>
+    <script src="./app/components/map/mapController.js"></script>
+    <script src="./app/components/table/tableController.js"></script>
+    <script src="./app/shared/mapService.js"></script>
+    <script src="./app/shared/appController.js"></script>
+    <script src="./app/app.js"></script>
 
 </body>
 </html>

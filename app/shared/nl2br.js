@@ -19,17 +19,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-'use strict';
 
-var app = angular.module('acjim.table',[]);
-
-app.controller('tableCtrl', ['$scope', 'mapService', function($scope, mapService) {
-
-    $scope.tableData = {};
-
-    $scope.$on('handleBroadcast', function () {
-        console.log("handleBroadcast in Table", mapService.message);
-        $scope.tableData = mapService.message.table;
-        $scope.$apply();
-    });
-}]);
+module.exports = function() {
+    return function(text) {
+        return text ? text.replace(/\n/g, '<br/>') : '';
+    };
+}
