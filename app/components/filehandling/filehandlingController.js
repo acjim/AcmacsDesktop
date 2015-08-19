@@ -56,6 +56,7 @@ app.controller('filehandlingCtrl', ['$scope', 'mapService', 'fileDialog', functi
             if (err) {
                 return console.log(err);
             }
+            data = data.substring(data.indexOf("{")-1);
             var mapJsonData = data.replace(/\'/g, '"').replace(/None/g, 'null').replace(/True/g, 'true').replace(/False/g, 'false')
                 .replace(/[0-9]{1,5}:/g, function(match){return '"' + match.replace(':','') + '":';}); //For the bad formated acd1 files...
             $scope.openMaps.push({title:filename, content: JSON.parse(mapJsonData), active: true});

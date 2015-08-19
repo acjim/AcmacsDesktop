@@ -21,13 +21,15 @@
             <div>
                 <tabset>
                     <tab select="selectMap()" ng-repeat="map in openMaps" heading="{{map.title}}" active="map.active" disable="map.disabled">
+                        <ce-box-creator ng-model="map"><ce-box-creator/>
 
-                        <ac-table ng-show="showTable"></ac-table>
-                        <ac-map ng-show="showMap"></ac-map>
+                        <!--ac-table ng-show="showTable"></ac-table>
+                        <ac-map ng-show="showMap"></ac-map-->
                         <hr>
                         {{map.content}}
                     </tab>
                 </tabset>
+
             </div>
             <div ng-view></div>
 

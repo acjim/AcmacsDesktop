@@ -2,7 +2,7 @@
 
 var app = angular.module('acjim.map',[]);
 
-app.controller('mapCtrl', ['$scope', function($scope){
+app.controller('mapCtrl', ['$scope', 'mapService', function($scope, mapService){
     $scope.title = "mapCtrl";
 
     $scope.mapData = {};
