@@ -23,13 +23,20 @@
 
 var app = angular.module('acjim.table',[]);
 
-app.controller('tableCtrl', ['$scope', 'mapService', function($scope, mapService) {
+app.controller('tableCtrl', ['$scope', function($scope) {
 
-    $scope.tableData = {};
+}])
 
-    $scope.$on('handleBroadcast', function () {
-        console.log("handleBroadcast in Table", mapService.message);
-        $scope.tableData = mapService.message.table;
-        $scope.$apply();
-    });
-}]);
+.directive('acTable', function() {
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {},
+        bindToController: {
+            table: '='
+        },
+        controller: 'tableCtrl',
+        controllerAs: 'tableData',
+        templateUrl: './app/components/table/tableView.html'
+    }
+});

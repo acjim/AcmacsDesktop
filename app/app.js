@@ -30,8 +30,9 @@ var app = angular.module('acjim', [
     'acjim.filehandling',
     'acjim.map',
     'acjim.table',
-    'acjim.mapService',
-    'acjim.app'
+    'acjim.app',
+    'ngWindowManager',
+    'bgDirectives'
 ]);
 
 //app.factory('fileDialog', require('./app/components/filehandling/fileDialog.js')); //TODO: Fixme? Current this is a src include in the index.html

@@ -32,4 +32,21 @@ app.controller('appCtrl', ['$scope', 'nwService', function($scope, nwService) {
         if (location)
             location.reload();
     });
+
+
+    $scope.win ={};
+    $scope.win.newtitle = '';
+
+    $scope.myfunction = function (){
+        console.log ('myfunction close');
+    };
+
+    $scope.options = {
+        position: {x: 0, y:0},
+        size: {width: 600, height:500},
+        windowContainer: 'myMoveZone',
+        maximizeTo: 'myMoveZone'
+
+    };
+
 }]);
