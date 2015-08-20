@@ -1,19 +1,18 @@
-
-<div ng-controller="tableCtrl">
+<div>
     <table class="table table-bordered">
         <thead>
         <tr>
             <th>Antigens/Sera</th>
-            <th ng-repeat="sera in tableData.sera">{{sera.name}}</th>
+            <th ng-repeat="sera in tableData.table.sera"><span tooltip-placement="bottom" tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="antigen in tableData.antigens">
-            <td width="10%">{{antigen.name}}</td>
-            <td width="10%" ng-repeat="titer in tableData.titers.titers_list_of_dict[$index]">{{titer}}</td>
+        <tr ng-repeat="antigen in tableData.table.antigens">
+            <td width="10%" tooltip-placement="right" tooltip="{{antigen.name || antigen.raw_name}}">{{antigen.name || antigen.raw_name  | limitTo: 10}}</td>
+            <td width="10%" ng-repeat="titer in tableData.table.titers.titers_list_of_dict[$index]">{{titer}}</td>
         </tr>
         </tbody>
     </table>
 
-    {{tableData.table.antigens}}
+    {{tableData.table.sera}}
 </div>

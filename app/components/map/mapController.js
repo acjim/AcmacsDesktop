@@ -23,17 +23,7 @@
 
 var app = angular.module('acjim.map',[]);
 
-app.controller('mapCtrl', ['$scope', 'mapService', function($scope, mapService){
-    $scope.title = "mapCtrl";
-
-    $scope.mapData = {};
-
-    $scope.$on('handleBroadcast', function () {
-        console.log("handleBroadcast in Table", mapService.message);
-        $scope.mapData = mapService.message.projections[0].layout;
-        $scope.$apply();
-    });
-
+app.controller('mapCtrl', ['$scope', function($scope){
 //                // Build d3 data objects from json data
 //                graph.layout.forEach(function (d, i) {
 //                    data[i] = {
@@ -44,13 +34,31 @@ app.controller('mapCtrl', ['$scope', 'mapService', function($scope, mapService){
 //                    };
 //                });
 
-    $scope.d3Data = [
-        {x: 30, y:12, style: {shape: "circle"}},
-        {x: 40, y:43, style: {shape: "circle"}},
-        {x: 20, y: 87, style: {shape: "box"}}
-    ];
-}]);
 
+    $scope.d3Data = [
+        //{x: 30, y:12, style: {shape: "circle"}},
+        //{x: 40, y:43, style: {shape: "circle"}},
+        //{x: 20, y: 87, style: {shape: "box"}}
+    ];
+    $scope.mapData.map[0].layout.forEach(function(point) {
+        console.log(point)
+        $scope.d3Data.push({x: point[0]*50+150, y:point[1]*50+150, style: {shape: "circle"}})
+    });
+}])
+
+.directive('acMap', function() {
+    return {
+        restrict: 'E',
+        transclude: true,
+        scope: {},
+        bindToController: {
+            map: '='
+        },
+        controller: 'mapCtrl',
+        controllerAs: 'mapData',
+        templateUrl: './app/components/map/mapView.html'
+    }
+});
 
 app.directive('d3Map', [function() {
     return {
