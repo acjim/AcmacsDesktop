@@ -9,27 +9,38 @@
 
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/wmwindow.css">
+    <link rel="stylesheet" href="./css/splitter.css">
 </head>
 <body ng-controller="appCtrl">
     <div class="mainView" ng-controller="filehandlingCtrl">
         <div class="sidebar">
-            <a class="btn btn-default" ng-click="showTable = !showTable"><span ng-hide="showTable">Show</span><span ng-show="showTable">Hide</span> Table</a>
-            <a class="btn btn-default" ng-click="showMap   = !showMap  "><span ng-hide="showMap">Show</span><span ng-show="showMap">Hide</span> Map</a>
+            <a class="btn btn-default">Lore ipsum</a>
+            <div id="windowPane"></div>
         </div>
-        <div class="content">
+        <div class="content fullWindowZone" id="myMoveZone">
+            <wmwindow ng-repeat="map in openMaps" options={{options}} title="{{map.title}}" close="myfunction()" >
 
-            <div>
-                <tabset>
-                    <tab select="selectMap()" ng-repeat="map in openMaps" heading="{{map.title}}" active="map.active" disable="map.disabled">
+                <bg-splitter orientation="horizontal">
+                    <bg-pane min-size="10"><div class="pane-container" style="overflow: hidden">
+                        <ac-table table="map.content.table"></ac-table>
+                    </div></bg-pane>
+                    <bg-pane min-size="150">
+                        <div class="pane-container">
+                            <ac-map map="map.content.projections"></ac-map>
+                        </div>
+                    </bg-pane>
+                </bg-splitter>
 
-                        <ac-table ng-show="showTable"></ac-table>
-                        <ac-map ng-show="showMap"></ac-map>
-                        <hr>
-                        {{map.content}}
-                    </tab>
-                </tabset>
-            </div>
-            <div ng-view></div>
+            </wmwindow>
+            <!--tabset>
+                <tab select="selectMap()" ng-repeat="map in openMaps" heading="{{map.title}}" active="map.active" disable="map.disabled">
+                    <ac-table ng-show="showTable"></ac-table>
+                    <ac-map ng-show="showMap"></ac-map>
+                    <hr>
+                    {{map.content}}
+                </tab>
+            </tabset-->
 
         </div> <!-- /container -->
     </div> <!-- /mainView -->
@@ -44,9 +55,9 @@
     <script src="./app/components/filehandling/fileDialog.js"></script>
     <script src="./app/components/map/mapController.js"></script>
     <script src="./app/components/table/tableController.js"></script>
-    <script src="./app/shared/mapService.js"></script>
     <script src="./app/shared/appController.js"></script>
     <script src="./app/app.js"></script>
-
+    <script src="./app/shared/wmwindow.js"></script>
+    <script src="./app/shared/splitter.js"></script>
 </body>
 </html>
