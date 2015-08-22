@@ -13,14 +13,17 @@
     <link rel="stylesheet" href="./css/splitter.css">
 </head>
 <body ng-controller="appCtrl">
+
     <div class="mainView" ng-controller="filehandlingCtrl">
+        <!-- sidebar -->
         <div class="sidebar">
             <a class="btn btn-default">Lore ipsum</a>
             <div id="windowPane"></div>
-        </div>
+        </div> <!-- /sidebar -->
+
+        <!-- workspace -->
         <div class="content fullWindowZone" id="myMoveZone">
             <wmwindow ng-repeat="map in openMaps" options={{options}} title="{{map.title}}" close="myfunction()" >
-
                 <bg-splitter orientation="horizontal">
                     <bg-pane min-size="10"><div class="pane-container" style="overflow: hidden">
                         <ac-table table="map.content.table"></ac-table>
@@ -31,32 +34,32 @@
                         </div>
                     </bg-pane>
                 </bg-splitter>
-
             </wmwindow>
-            <!--tabset>
-                <tab select="selectMap()" ng-repeat="map in openMaps" heading="{{map.title}}" active="map.active" disable="map.disabled">
-                    <ac-table ng-show="showTable"></ac-table>
-                    <ac-map ng-show="showMap"></ac-map>
-                    <hr>
-                    {{map.content}}
-                </tab>
-            </tabset-->
-
-        </div> <!-- /container -->
+        </div> <!-- /workspace -->
     </div> <!-- /mainView -->
+    <!-- end app UI-->
 
+    <!-- vendor -->
     <script src="node_modules/underscore/underscore.js"></script>
     <script src="node_modules/angular/angular.js"></script>
     <script src="node_modules/angular-route/angular-route.js"></script>
     <script src="node_modules/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="node_modules/d3/d3.js"></script>
     <script src="node_modules/jquery/dist/jquery.js"></script>
-    <script src="./app/components/filehandling/filehandlingController.js"></script>
     <script src="./app/components/filehandling/fileDialog.js"></script>
+
+    <!-- app -->
+    <script src="./app/app.js"></script>
+
+    <!-- services -->
+    <script src="./app/shared/nwService.js"></script>
+
+    <!-- controllers -->
+    <script src="./app/components/filehandling/filehandlingController.js"></script>
+
     <script src="./app/components/map/mapController.js"></script>
     <script src="./app/components/table/tableController.js"></script>
     <script src="./app/shared/appController.js"></script>
-    <script src="./app/app.js"></script>
     <script src="./app/shared/wmwindow.js"></script>
     <script src="./app/shared/splitter.js"></script>
 </body>
