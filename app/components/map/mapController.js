@@ -41,14 +41,13 @@ app.controller('mapCtrl', ['$scope', function($scope){
         //{x: 20, y: 87, style: {shape: "box"}}
     ];
     $scope.mapData.map[0].layout.forEach(function(point) {
-        console.log(point)
         $scope.d3Data.push({x: point[0]*50+150, y:point[1]*50+150, style: {shape: "circle"}})
     });
 }])
 
 .directive('acMap', function() {
     return {
-        restrict: 'E',
+        restrict: 'A',
         transclude: true,
         scope: {},
         bindToController: {
@@ -62,7 +61,7 @@ app.controller('mapCtrl', ['$scope', function($scope){
 
 app.directive('d3Map', [function() {
     return {
-        restrict: 'EA',
+        restrict: 'A',
         scope: {
             data: "=",
             label: "@"
@@ -71,16 +70,11 @@ app.directive('d3Map', [function() {
 
             var svg = d3.select(iElement[0])
                 .append("svg")
-                .attr("width", 300)     //TODO: dynamic d3 size
-                .attr("height", 300);
+                .attr("width", "100%")
+                .attr("height", "100%");
 
-            // on window resize, re-render d3 canvas
-            window.onresize = function() {
-                return scope.$apply();
-            };
-            scope.$watch(function(){
-                return angular.element(window)[0].innerWidth;
-            }, function(){
+            // on container resize, re-render d3
+            scope.$on('container-resized', function(event) {
                 return scope.render(scope.data);
             });
 
@@ -96,15 +90,11 @@ app.directive('d3Map', [function() {
                 svg.selectAll("*").remove();
 
                 // setup variables
-                //TODO: dynamic d3 size
-                var width = 300,//d3.select(iElement[0])[0][0].offsetWidth,  //TODO: BUGFIXING!! when parent hidden this returns 0!
-                    height = 300, //d3.select(iElement[0])[0][0].offsetHeight,
+                var width = d3.select(iElement[0])[0][0].offsetWidth,
+                    height = d3.select(iElement[0])[0][0].offsetHeight,
                     scaleValue = 10,
                     boxSize,
                     shiftKey;
-
-                // this can also be found dynamically when the data is not static
-                // max = Math.max.apply(Math, _.map(data, ((val)-> val.count)))
 
                 // Scale
                 var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
@@ -142,7 +132,7 @@ app.directive('d3Map', [function() {
 
                 // Background Grid
                 var boxSize = 1 * scaleValue;
-                var numBoxes = width/boxSize;
+                var numBoxes = ((width >= height) ? width : height)/boxSize;
                 var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
 
                 boxEnter.append("line")
