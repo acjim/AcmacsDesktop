@@ -91,6 +91,10 @@ div code {
   float: right;
   margin-left: 150px;
 }
+.split-pane2 div {
+  width: 100%;
+  height: 100%;
+}
 /*********** Map styles **************/
 .node {
   stroke: #fff;
