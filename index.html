@@ -17,7 +17,16 @@
     <div class="mainView" ng-controller="filehandlingCtrl">
         <!-- sidebar -->
         <div class="sidebar">
-            <a class="btn btn-default">Lore ipsum</a>
+            <div class="toolbar" ng-controller="toolbarCtrl">
+                <div class="btn-group" role="group">
+                    <label class="btn btn-default" ng-model="mapTool" btn-radio="'brush'">
+                        <span class="glyphicon glyphicon-unchecked"></span>
+                    </label>
+                    <label class="btn btn-default" ng-model="mapTool" btn-radio="'zoom'">
+                        <span class="glyphicon glyphicon-move"></span>
+                    </label>
+                </div>
+            </div>
             <div id="windowPane"></div>
         </div> <!-- /sidebar -->
 
@@ -30,7 +39,7 @@
                     </div></bg-pane>
                     <bg-pane min-size="150">
                         <div class="pane-container">
-                            <ac-map map="map.content.projections"></ac-map>
+                            <div ac-map map="map.content.projections"></div>
                         </div>
                     </bg-pane>
                 </bg-splitter>
@@ -56,11 +65,12 @@
 
     <!-- controllers -->
     <script src="./app/components/filehandling/filehandlingController.js"></script>
-
+    <script src="./app/components/toolbar/toolbarController.js"></script>
+    <script src="./app/shared/wmwindow.js"></script>
     <script src="./app/components/map/mapController.js"></script>
     <script src="./app/components/table/tableController.js"></script>
     <script src="./app/shared/appController.js"></script>
-    <script src="./app/shared/wmwindow.js"></script>
+
     <script src="./app/shared/splitter.js"></script>
 </body>
 </html>

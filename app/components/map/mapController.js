@@ -59,7 +59,7 @@ app.controller('mapCtrl', ['$scope', function($scope){
     }
 });
 
-app.directive('d3Map', [function() {
+app.directive('d3Map', ['$rootScope', function($rootScope) {
     return {
         restrict: 'A',
         scope: {
@@ -81,7 +81,7 @@ app.directive('d3Map', [function() {
             // watch for data changes and re-render
             scope.$watch('data', function(newVals, oldVals) {
                 return scope.render(newVals);
-            }, true);
+            }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
 
             // define render function
             scope.render = function(data){
@@ -99,6 +99,8 @@ app.directive('d3Map', [function() {
                 // Scale
                 var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
                 var yScale = d3.scale.linear().domain([0,height]).range([0, height]);
+
+                console.log("zoom");
                 // Zoom
                 var zoom = d3.behavior.zoom()
                     .scaleExtent([1, 10])
@@ -169,7 +171,6 @@ app.directive('d3Map', [function() {
                         d3.select(this).call(d3.event.target);
                     }
                 );
-                brush.call(brusher);
 
 //              graph.links.forEach(function(d) {
 //                d.source = graph.nodes[d.source];
@@ -239,26 +240,38 @@ app.directive('d3Map', [function() {
                         if(d3.event.preventDefault) d3.event.preventDefault();
                     }
 
-                    // Tool switching TODO: Refactor
-                    d3.select("#moove").on("change", function() {
-                        if (this.checked) {
-                            // Enable zoom
-                            svg.call(zoom);
-                            // Disable brush
-                            brush.call(brusher)
-                                .on("mousedown.brush", null)
-                                .on("touchstart.brush", null)
-                                .on("touchmove.brush", null)
-                                .on("touchend.brush", null);
-                            brush.select('.background').style('cursor', 'auto');
-                        } else {
-                            // Disable zoom
-                            svg.on('.zoom', null);
-                            // Enable brush
-                            brush.select('.background').style('cursor', 'crosshair');
-                            brush.call(brusher);
+
+                    function addTools() {
+                        var tools = {
+                            'brush': function () {
+                                // Remove zoom
+                                svg.on('.zoom', null);
+
+                                // Enable brush
+                                brush.select('.background').style('cursor', 'crosshair');
+                                brush.call(brusher);
+                            },
+                            'zoom': function () {
+                                // Disable brush
+                                brush.call(brusher)
+                                    .on("mousedown.brush", null)
+                                    .on("touchstart.brush", null)
+                                    .on("touchmove.brush", null)
+                                    .on("touchend.brush", null);
+                                brush.select('.background').style('cursor', 'default');
+
+                                //Enable zoom
+                                svg.call(zoom);
+                            }
                         }
+                        tools[$rootScope.mapTool]();
+                    }
+                    addTools();
+                    $rootScope.$on('tool.changed', function(event) {
+                        addTools();
                     });
+
+
             /*
             function keydown() {
               if (!d3.event.metaKey) switch (d3.event.keyCode) {

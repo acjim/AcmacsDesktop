@@ -43,7 +43,7 @@ angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($
     $scope.win.newtitle = '';
 
     $scope.myfunction = function (){
-        console.log ('myfunction close');
+//        console.log ('myfunction close');
     };
 
     $scope.options = {
