@@ -138,7 +138,7 @@
 }
 .wmWindow {
     opacity: 1;
-    display: none;
+    /*display: none;*/                                          /* FIXME: display: none results in map not drawn correctly. see #5 */
     -webkit-touch-callout: none;
     user-select: none;
     -webkit-user-select: none;

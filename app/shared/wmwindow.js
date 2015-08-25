@@ -159,6 +159,7 @@ angular.module('ngWindowManager',[])
                         );
                     }
 
+                    scope.$broadcast('container-resized');
                     e.preventDefault();
                 };
 

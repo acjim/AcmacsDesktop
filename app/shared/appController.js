@@ -21,24 +21,29 @@
 */
 'use strict';
 
-var app = angular.module('acjim.app',[]);
+angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($scope, nwService) {
 
-app.controller('appCtrl', ['$scope', 'nwService', function($scope, nwService) {
+    // Open Debug Window
     $scope.$on('open-debug', function(e, menu, item) {
         nwService.gui.Window.get().showDevTools();
     });
 
+    // Reload
     $scope.$on('reload-app', function(e, menu, item) {
         if (location)
             location.reload();
     });
 
+    //Close app
+    $scope.$on('exit-app', function(e, menu, item) {
+        nwService.window.get().close();
+    });
 
     $scope.win ={};
     $scope.win.newtitle = '';
 
     $scope.myfunction = function (){
-        console.log ('myfunction close');
+//        console.log ('myfunction close');
     };
 
     $scope.options = {
