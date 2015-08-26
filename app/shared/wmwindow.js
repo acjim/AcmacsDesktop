@@ -297,6 +297,8 @@ angular.module('ngWindowManager',[])
                         scope.maximize(winHandler);
                     }
 
+                    scope.$broadcast('container-resized');
+
                 };
 
                 winHandler.restore = function (){
