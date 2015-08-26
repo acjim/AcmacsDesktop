@@ -41,7 +41,7 @@ app.controller('mapCtrl', ['$scope', function($scope){
         //{x: 20, y: 87, style: {shape: "box"}}
     ];
     $scope.mapData.map[0].layout.forEach(function(point) {
-        $scope.d3Data.push({x: point[0]*50+150, y:point[1]*50+150, style: {shape: "circle"}})
+        $scope.d3Data.push({x: point[0], y:point[1], style: {shape: "circle"}})
     });
 }])
 
@@ -73,18 +73,11 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 .attr("width", "100%")
                 .attr("height", "100%");
 
-            // on container resize, re-render d3
-            scope.$on('container-resized', function(event) {
-                return scope.render(scope.data);
-            });
+            var initialWidth = d3.select(iElement[0])[0][0].offsetWidth;
+            scope.dataExtent = d3.extent(scope.data, function(d) { return d.x;});
 
-            // watch for data changes and re-render
-            scope.$watch('data', function(newVals, oldVals) {
-                return scope.render(newVals);
-            }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
-
-            // define render function
-            scope.render = function(data){
+            // Render with data
+            scope.renderWithData = function(data){
 
                 // remove all previous items before render
                 svg.selectAll("*").remove();
@@ -92,15 +85,14 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 // setup variables
                 var width = d3.select(iElement[0])[0][0].offsetWidth,
                     height = d3.select(iElement[0])[0][0].offsetHeight,
-                    scaleValue = 10,
-                    boxSize,
+                    boxSize = initialWidth/(Math.abs(scope.dataExtent[1] - scope.dataExtent[0])),
                     shiftKey;
 
                 // Scale
                 var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
                 var yScale = d3.scale.linear().domain([0,height]).range([0, height]);
+                var dataScale = d3.scale.linear().domain(d3.extent(data, function(d) { return d.x; })).range([0, initialWidth]);
 
-                console.log("zoom");
                 // Zoom
                 var zoom = d3.behavior.zoom()
                     .scaleExtent([1, 10])
@@ -133,7 +125,6 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     .selectAll(".node");
 
                 // Background Grid
-                var boxSize = 1 * scaleValue;
                 var numBoxes = ((width >= height) ? width : height)/boxSize;
                 var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
 
@@ -197,7 +188,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 node = node.data(data).enter().append("path");
                 // Update
                 node.attr("class", "point")
-                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("transform", function(d) { return "translate(" + xScale(d.x = dataScale(d.x)) + "," + yScale(d.y = dataScale(d.y)) + ")"; })
                     .attr("d",d3.svg.symbol().size("20")
                         .type(function(d) {
                             if (d.style.shape == "circle") { return "circle"; }
@@ -292,6 +283,19 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
 
               };
+
+
+            //****************** Listeners **********************//
+
+            // on container resize, re-render d3
+            scope.$on('container-resized', function(event) {
+                return scope.renderWithData(scope.data);
+            });
+
+            // watch for data changes and re-render
+            scope.$watch('data', function(newVals, oldVals) {
+                return scope.renderWithData(newVals);
+            }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
         }
       };
     }]);
