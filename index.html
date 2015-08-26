@@ -14,9 +14,10 @@
 </head>
 <body ng-controller="appCtrl">
 
-    <div class="mainView" ng-controller="filehandlingCtrl">
+<div class="container-fluid">
+    <div class="row" ng-controller="filehandlingCtrl">
         <!-- sidebar -->
-        <div class="sidebar">
+        <div class="col-sm-2 col-md-2 col-xs-2 sidebar">
             <div class="toolbar" ng-controller="toolbarCtrl">
                 <div class="btn-group" role="group">
                     <label class="btn btn-default" ng-model="mapTool" btn-radio="'brush'">
@@ -31,7 +32,7 @@
         </div> <!-- /sidebar -->
 
         <!-- workspace -->
-        <div class="content fullWindowZone" id="myMoveZone">
+        <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 col-xs-10 cols-xs-offset-2 fullWindowZone" id="myMoveZone">
             <wmwindow ng-repeat="map in openMaps" options={{options}} title="{{map.title}}" close="myfunction()" >
                 <bg-splitter orientation="horizontal">
                     <bg-pane min-size="10"><div class="pane-container" style="overflow: hidden">
@@ -47,30 +48,31 @@
         </div> <!-- /workspace -->
     </div> <!-- /mainView -->
     <!-- end app UI-->
+</div>
 
-    <!-- vendor -->
-    <script src="node_modules/underscore/underscore.js"></script>
-    <script src="node_modules/angular/angular.js"></script>
-    <script src="node_modules/angular-route/angular-route.js"></script>
-    <script src="node_modules/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="node_modules/d3/d3.js"></script>
-    <script src="node_modules/jquery/dist/jquery.js"></script>
-    <script src="./app/components/filehandling/fileDialog.js"></script>
+<!-- vendor -->
+<script src="node_modules/underscore/underscore.js"></script>
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-route/angular-route.js"></script>
+<script src="node_modules/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="node_modules/d3/d3.js"></script>
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="./app/components/filehandling/fileDialog.js"></script>
 
-    <!-- app -->
-    <script src="./app/app.js"></script>
+<!-- app -->
+<script src="./app/app.js"></script>
 
-    <!-- services -->
-    <script src="./app/shared/nwService.js"></script>
+<!-- services -->
+<script src="./app/shared/nwService.js"></script>
 
-    <!-- controllers -->
-    <script src="./app/components/filehandling/filehandlingController.js"></script>
-    <script src="./app/components/toolbar/toolbarController.js"></script>
-    <script src="./app/shared/wmwindow.js"></script>
-    <script src="./app/components/map/mapController.js"></script>
-    <script src="./app/components/table/tableController.js"></script>
-    <script src="./app/shared/appController.js"></script>
+<!-- controllers -->
+<script src="./app/components/filehandling/filehandlingController.js"></script>
+<script src="./app/components/toolbar/toolbarController.js"></script>
+<script src="./app/shared/wmwindow.js"></script>
+<script src="./app/components/map/mapController.js"></script>
+<script src="./app/components/table/tableController.js"></script>
+<script src="./app/shared/appController.js"></script>
 
-    <script src="./app/shared/splitter.js"></script>
+<script src="./app/shared/splitter.js"></script>
 </body>
 </html>
