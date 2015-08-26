@@ -73,8 +73,21 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 .attr("width", "100%")
                 .attr("height", "100%");
 
-            var initialWidth = d3.select(iElement[0])[0][0].offsetWidth;
+            scope.initialWidth = d3.select(iElement[0])[0][0].offsetWidth;
             scope.dataExtent = d3.extent(scope.data, function(d) { return d.x;});
+
+            // Initial zoom values
+            scope.translate = [0,0];
+            scope.scale = 1;
+            scope.gridScale = 1;
+            scope.gridTranslate = [0, 0];
+
+
+            //Cache zoom values
+            scope.cacheZoomValues = function() {
+                scope.translate = scope.zoom.translate();
+                scope.scale = scope.zoom.scale();
+            }
 
             // Render with data
             scope.renderWithData = function(data){
@@ -85,27 +98,36 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 // setup variables
                 var width = d3.select(iElement[0])[0][0].offsetWidth,
                     height = d3.select(iElement[0])[0][0].offsetHeight,
-                    boxSize = initialWidth/(Math.abs(scope.dataExtent[1] - scope.dataExtent[0])),
+                    boxSize = scope.initialWidth/(Math.abs(scope.dataExtent[1] - scope.dataExtent[0])),
                     shiftKey;
 
                 // Scale
                 var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
                 var yScale = d3.scale.linear().domain([0,height]).range([0, height]);
-                var dataScale = d3.scale.linear().domain(d3.extent(data, function(d) { return d.x; })).range([0, initialWidth]);
+                var dataScale = d3.scale.linear().domain(d3.extent(data, function(d) { return d.x; })).range([0, scope.initialWidth]);
+
 
                 // Zoom
-                var zoom = d3.behavior.zoom()
+                scope.zoom = d3.behavior.zoom()
                     .scaleExtent([1, 10])
                     .x(xScale)
                     .y(yScale)
+                    .translate(scope.translate)
+                    .scale(scope.scale)
                     .on("zoom", function() {
+
                         // Move the grid
+                        scope.gridTranslate = d3.event.translate[0]%(boxSize*d3.event.scale)+","+d3.event.translate[1]%(boxSize*d3.event.scale);
+                        scope.gridScale = d3.event.scale;
                         boxG.attr("transform",
-                                  "translate(" + d3.event.translate[0]%(boxSize*d3.event.scale)+","+d3.event.translate[1]%(boxSize*d3.event.scale) + ")scale(" + d3.event.scale + ")")
+                                  "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")")
                         // Move the graph
-                        elements.attr("transform",
-                                   "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                        node.attr("transform", function (d) {
+                            return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
+
+                        });
                     });
+
 
                 // Groups
                 var boxG = svg.append("g");
@@ -127,6 +149,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 // Background Grid
                 var numBoxes = ((width >= height) ? width : height)/boxSize;
                 var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
+                boxG.attr("transform", "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
 
                 boxEnter.append("line")
                     .attr("class", "x axis")
@@ -140,6 +163,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     .attr("x2", width + boxSize)
                     .attr("y1", function (d){return d * boxSize})
                     .attr("y2", function (d){return d * boxSize});
+
 
                 // Brush
                 var brusher = d3.svg.brush()
@@ -163,6 +187,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     }
                 );
 
+                //TODO: Add links and error lines
 //              graph.links.forEach(function(d) {
 //                d.source = graph.nodes[d.source];
 //                d.target = graph.nodes[d.target];
@@ -189,7 +214,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 // Update
                 node.attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x = dataScale(d.x)) + "," + yScale(d.y = dataScale(d.y)) + ")"; })
-                    .attr("d",d3.svg.symbol().size("20")
+                    .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
                             if (d.style.shape == "circle") { return "circle"; }
                             else if (d.style.shape == "box") { return "square"; }
@@ -216,9 +241,9 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     function nudge(dx, dy) {
                         node.filter(function(d) { return d.selected; })
                             .attr("transform", function(d) {
-                                d.x += dx;
-                                d.y += dy;
-                                return "translate(" + d.x + "," + d.y + ")";
+                                d.x += dx/scope.zoom.scale();
+                                d.y += dy/scope.zoom.scale();
+                                return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                             });
                         /*
                         link.filter(function(d) { return d.source.selected; })
@@ -231,7 +256,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         if(d3.event.preventDefault) d3.event.preventDefault();
                     }
 
-
+                    // Tool handling
                     function addTools() {
                         var tools = {
                             'brush': function () {
@@ -252,7 +277,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                                 brush.select('.background').style('cursor', 'default');
 
                                 //Enable zoom
-                                svg.call(zoom);
+                                svg.call(scope.zoom);
                             }
                         }
                         tools[$rootScope.mapTool]();
@@ -289,6 +314,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
             // on container resize, re-render d3
             scope.$on('container-resized', function(event) {
+                scope.cacheZoomValues();
                 return scope.renderWithData(scope.data);
             });
 
