@@ -130,7 +130,8 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
 
                 // Groups
-                var boxG = svg.append("g");
+                var boxG = svg.append("g")
+                    .attr("transform", "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
                 var brush = svg.append("g")
                     .datum(function() { return {selected: false, previouslySelected: false}; })
                     .attr("class", "brush");
@@ -147,18 +148,20 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     .selectAll(".node");
 
                 // Background Grid
-                var numBoxes = ((width >= height) ? width : height)/boxSize;
-                var boxEnter = boxG.selectAll("line").data(d3.range(0, numBoxes + 1)).enter();
-                boxG.attr("transform", "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
+                var numBoxesX = width/boxSize;
+                var xLines = boxG.append("g").selectAll("line").data(d3.range(0, numBoxesX + 1)).enter();
 
-                boxEnter.append("line")
+                var numBoxesY = height/boxSize;
+                var yLines = boxG.append("g").selectAll("line").data(d3.range(0, numBoxesY + 1)).enter();
+
+                xLines.append("line")
                     .attr("class", "x axis")
                     .attr("x1", function (d){return d * boxSize})
                     .attr("x2", function (d){return d * boxSize;})
                     .attr("y1", -boxSize)
                     .attr("y2", height + boxSize);
-                boxEnter.append("line")
-                    .attr("class", "x axis")
+                yLines.append("line")
+                    .attr("class", "y axis")
                     .attr("x1", -boxSize)
                     .attr("x2", width + boxSize)
                     .attr("y1", function (d){return d * boxSize})
