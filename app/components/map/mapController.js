@@ -1,24 +1,20 @@
 /*
-	Antigenic Cartography for Desktop
-	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. 
-	In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
-	This project aims at providing a desktop application for working with antigenic maps.
-
-	© 2015 The Antigenic Cartography Group at the University of Cambridge
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ Antigenic Cartography for Desktop
+ [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
+ In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
+ This project aims at providing a desktop application for working with antigenic maps.
+ © 2015 The Antigenic Cartography Group at the University of Cambridge
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 'use strict';
 
 var app = angular.module('acjim.map',[]);
@@ -45,19 +41,19 @@ app.controller('mapCtrl', ['$scope', function($scope){
     });
 }])
 
-.directive('acMap', function() {
-    return {
-        restrict: 'A',
-        transclude: true,
-        scope: {},
-        bindToController: {
-            map: '='
-        },
-        controller: 'mapCtrl',
-        controllerAs: 'mapData',
-        templateUrl: './app/components/map/mapView.html'
-    }
-});
+    .directive('acMap', function() {
+        return {
+            restrict: 'A',
+            transclude: true,
+            scope: {},
+            bindToController: {
+                map: '='
+            },
+            controller: 'mapCtrl',
+            controllerAs: 'mapData',
+            templateUrl: './app/components/map/mapView.html'
+        }
+    });
 
 app.directive('d3Map', ['$rootScope', function($rootScope) {
     return {
@@ -72,12 +68,35 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 .append("svg")
                 .attr("width", "100%")
                 .attr("height", "100%");
-
+            scope.padding = 0; // top, left, right, down for padding purposes. 2% of the height and width. This variable will be dynamically computed by getting the width and height.
             scope.initialWidth = d3.select(iElement[0])[0][0].offsetWidth;
+            scope.initialHeight = d3.select(iElement[0])[0][0].offsetHeight;
             scope.dataExtent = d3.extent(scope.data, function(d) { return d.x;});
+            scope.dataExtenty = d3.extent(scope.data, function(d) { return d.y;});
+
 
             // Initial zoom values
-            scope.translate = [0,0];
+
+            function centerNodes (scope){
+                var dx= scope.dataExtent;
+                var dy= scope.dataExtenty;
+                var xDistance =Math.abs(dx[0] - dx[1]);
+
+
+
+                xDistance =(scope.initialWidth-xDistance)/2;
+                alert(scope.initialWidth);
+                alert(xDistance);
+                xDistance= xDistance-dx[0];
+                alert(xDistance);
+                var yDistance =Math.abs(dy[0] - dy[1]);
+                yDistance =(scope.initialHeight-yDistance)/2;
+                yDistance= yDistance-dy[0];
+                return [xDistance,yDistance];
+
+            }
+            scope.translate = centerNodes(scope);
+
             scope.scale = 1;
             scope.gridScale = 1;
             scope.gridTranslate = [0, 0];
@@ -120,7 +139,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         scope.gridTranslate = d3.event.translate[0]%(boxSize*d3.event.scale)+","+d3.event.translate[1]%(boxSize*d3.event.scale);
                         scope.gridScale = d3.event.scale;
                         boxG.attr("transform",
-                                  "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")")
+                            "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")")
                         // Move the graph
                         node.attr("transform", function (d) {
                             return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
@@ -181,7 +200,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         node.classed("selected", function(d) {
                             return d.selected = d.previouslySelected ^
                             (extent[0][0] <= d.x && d.x < extent[1][0]
-                             && extent[0][1] <= d.y && d.y < extent[1][1]);
+                            && extent[0][1] <= d.y && d.y < extent[1][1]);
                         });
                     })
                     .on("brushend", function() {
@@ -222,11 +241,11 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                             if (d.style.shape == "circle") { return "circle"; }
                             else if (d.style.shape == "box") { return "square"; }
                         })
-                    )
+                )
                     .on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
-                          if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
-                          else d3.select(this).classed("selected", d.selected = true);
+                            if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
+                            else d3.select(this).classed("selected", d.selected = true);
                         }
                     })
                     .on("mouseup", function(d) {
@@ -239,78 +258,78 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         .on("drag", function(d) {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                    );
+                );
 
-                    function nudge(dx, dy) {
-                        node.filter(function(d) { return d.selected; })
-                            .attr("transform", function(d) {
-                                d.x += dx/scope.zoom.scale();
-                                d.y += dy/scope.zoom.scale();
-                                return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
-                            });
-                        /*
-                        link.filter(function(d) { return d.source.selected; })
-                            .attr("x1", function(d) { return d.source.x; })
-                            .attr("y1", function(d) { return d.source.y; });
-                        link.filter(function(d) { return d.target.selected; })
-                            .attr("x2", function(d) { return d.target.x; })
-                            .attr("y2", function(d) { return d.target.y; });
-                        */
-                        if(d3.event.preventDefault) d3.event.preventDefault();
-                    }
+                function nudge(dx, dy) {
+                    node.filter(function(d) { return d.selected; })
+                        .attr("transform", function(d) {
+                            d.x += dx/scope.zoom.scale();
+                            d.y += dy/scope.zoom.scale();
+                            return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                        });
+                    /*
+                     link.filter(function(d) { return d.source.selected; })
+                     .attr("x1", function(d) { return d.source.x; })
+                     .attr("y1", function(d) { return d.source.y; });
+                     link.filter(function(d) { return d.target.selected; })
+                     .attr("x2", function(d) { return d.target.x; })
+                     .attr("y2", function(d) { return d.target.y; });
+                     */
+                    if(d3.event.preventDefault) d3.event.preventDefault();
+                }
 
-                    // Tool handling
-                    function addTools() {
-                        var tools = {
-                            'brush': function () {
-                                // Remove zoom
-                                svg.on('.zoom', null);
+                // Tool handling
+                function addTools() {
+                    var tools = {
+                        'brush': function () {
+                            // Remove zoom
+                            svg.on('.zoom', null);
 
-                                // Enable brush
-                                brush.select('.background').style('cursor', 'crosshair');
-                                brush.call(brusher);
-                            },
-                            'zoom': function () {
-                                // Disable brush
-                                brush.call(brusher)
-                                    .on("mousedown.brush", null)
-                                    .on("touchstart.brush", null)
-                                    .on("touchmove.brush", null)
-                                    .on("touchend.brush", null);
-                                brush.select('.background').style('cursor', 'default');
+                            // Enable brush
+                            brush.select('.background').style('cursor', 'crosshair');
+                            brush.call(brusher);
+                        },
+                        'zoom': function () {
+                            // Disable brush
+                            brush.call(brusher)
+                                .on("mousedown.brush", null)
+                                .on("touchstart.brush", null)
+                                .on("touchmove.brush", null)
+                                .on("touchend.brush", null);
+                            brush.select('.background').style('cursor', 'default');
 
-                                //Enable zoom
-                                svg.call(scope.zoom);
-                            }
+                            //Enable zoom
+                            svg.call(scope.zoom);
                         }
-                        tools[$rootScope.mapTool]();
                     }
+                    tools[$rootScope.mapTool]();
+                }
+                addTools();
+                $rootScope.$on('tool.changed', function(event) {
                     addTools();
-                    $rootScope.$on('tool.changed', function(event) {
-                        addTools();
-                    });
+                });
 
 
-            /*
-            function keydown() {
-              if (!d3.event.metaKey) switch (d3.event.keyCode) {
-                case 38: nudge( 0, -1); break; // UP
-                case 40: nudge( 0, +1); break; // DOWN
-                case 37: nudge(-1,  0); break; // LEFT
-                case 39: nudge(+1,  0); break; // RIGHT
-                case 32: svg.call(zoom); break;// SPACE
-              }
-              shiftKey = d3.event.shiftKey || d3.event.metaKey;
-            }
-            function keyup() {
-                shiftKey = d3.event.shiftKey || d3.event.metaKey;
-                svg.on('.zoom', null);
-            }
-            */
+                /*
+                 function keydown() {
+                 if (!d3.event.metaKey) switch (d3.event.keyCode) {
+                 case 38: nudge( 0, -1); break; // UP
+                 case 40: nudge( 0, +1); break; // DOWN
+                 case 37: nudge(-1,  0); break; // LEFT
+                 case 39: nudge(+1,  0); break; // RIGHT
+                 case 32: svg.call(zoom); break;// SPACE
+                 }
+                 shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                 }
+                 function keyup() {
+                 shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                 svg.on('.zoom', null);
+                 }
+                 */
 
 
 
-              };
+            };
 
 
             //****************** Listeners **********************//
@@ -326,5 +345,5 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 return scope.renderWithData(newVals);
             }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
         }
-      };
-    }]);
+    };
+}]);
