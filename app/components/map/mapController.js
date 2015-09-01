@@ -130,7 +130,8 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
 
                 // Groups
-                var boxG = svg.append("g");
+                var boxG = svg.append("g")
+                    .attr("transform", "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
                 var brush = svg.append("g")
                     .datum(function() { return {selected: false, previouslySelected: false}; })
                     .attr("class", "brush");
