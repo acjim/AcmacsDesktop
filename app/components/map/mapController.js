@@ -85,10 +85,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
 
                 xDistance =(scope.initialWidth-xDistance)/2;
-                alert(scope.initialWidth);
-                alert(xDistance);
                 xDistance= xDistance-dx[0];
-                alert(xDistance);
                 var yDistance =Math.abs(dy[0] - dy[1]);
                 yDistance =(scope.initialHeight-yDistance)/2;
                 yDistance= yDistance-dy[0];
