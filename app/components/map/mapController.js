@@ -64,86 +64,46 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
         },
         link: function(scope, iElement, iAttrs) {
 
+            var initialWidth = d3.select(iElement[0])[0][0].offsetWidth,
+                width,
+                height,
+                dataExtentX = d3.extent(scope.data, function(d) { return d.x;}),
+                dataExtentY = d3.extent(scope.data, function(d) { return d.y;}),
+                boxSize = initialWidth / (Math.abs(dataExtentX[1] - dataExtentX[0])),
+                centerMap = true,
+                shiftKey;
+
             var svg = d3.select(iElement[0])
                 .append("svg")
                 .attr("width", "100%")
                 .attr("height", "100%");
-            scope.padding = 0; // top, left, right, down for padding purposes. 2% of the height and width. This variable will be dynamically computed by getting the width and height.
-            scope.initialWidth = d3.select(iElement[0])[0][0].offsetWidth;
-            scope.initialHeight = d3.select(iElement[0])[0][0].offsetHeight;
-            scope.dataExtent = d3.extent(scope.data, function(d) { return d.x;});
-            scope.dataExtenty = d3.extent(scope.data, function(d) { return d.y;});
 
-
-            // Initial zoom values
-
-            function centerNodes (scope){
-                var dx= scope.dataExtent;
-                var dy= scope.dataExtenty;
-                var xDistance =Math.abs(dx[0] - dx[1]);
-
-
-
-                xDistance =(scope.initialWidth-xDistance)/2;
-                xDistance= xDistance-dx[0];
-                var yDistance =Math.abs(dy[0] - dy[1]);
-                yDistance =(scope.initialHeight-yDistance)/2;
-                yDistance= yDistance-dy[0];
-                return [xDistance,yDistance];
-
-            }
-            scope.translate = centerNodes(scope);
-
-            scope.scale = 1;
+            scope.gridTranslate = [0,0];
             scope.gridScale = 1;
-            scope.gridTranslate = [0, 0];
 
 
-            //Cache zoom values
-            scope.cacheZoomValues = function() {
-                scope.translate = scope.zoom.translate();
-                scope.scale = scope.zoom.scale();
-            }
+            /*
+             * Redraws the map. Caches the current zoom and applies it to the new drawn map.
+             * The map gets centered the first time this function is called.
+             * To center the map nodes,
+             */
+            function renderWithData (data) {
 
-            // Render with data
-            scope.renderWithData = function(data){
+                scope.translate = scope.zoom ? scope.zoom.translate() : [0, 0];
+                scope.scale = scope.zoom ? scope.zoom.scale() : 1;
 
                 // remove all previous items before render
                 svg.selectAll("*").remove();
 
                 // setup variables
-                var width = d3.select(iElement[0])[0][0].offsetWidth,
-                    height = d3.select(iElement[0])[0][0].offsetHeight,
-                    boxSize = scope.initialWidth/(Math.abs(scope.dataExtent[1] - scope.dataExtent[0])),
-                    shiftKey;
+                width = d3.select(iElement[0])[0][0].offsetWidth;
+                height = d3.select(iElement[0])[0][0].offsetHeight;
+
 
                 // Scale
-                var xScale = d3.scale.linear().domain([0,width]).range([0,width]);
-                var yScale = d3.scale.linear().domain([0,height]).range([0, height]);
-                var dataScale = d3.scale.linear().domain(d3.extent(data, function(d) { return d.x; })).range([0, scope.initialWidth]);
-
-
-                // Zoom
-                scope.zoom = d3.behavior.zoom()
-                    .scaleExtent([1, 10])
-                    .x(xScale)
-                    .y(yScale)
-                    .translate(scope.translate)
-                    .scale(scope.scale)
-                    .on("zoom", function() {
-
-                        // Move the grid
-                        scope.gridTranslate = d3.event.translate[0]%(boxSize*d3.event.scale)+","+d3.event.translate[1]%(boxSize*d3.event.scale);
-                        scope.gridScale = d3.event.scale;
-                        boxG.attr("transform",
-                            "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")")
-                        // Move the graph
-                        node.attr("transform", function (d) {
-                            return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
-
-                        });
-                    });
-
+                var xScale = d3.scale.linear().domain([0, width]).range([0, width]);
+                var yScale = d3.scale.linear().domain([0, height]).range([0, height]);
+                var dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([0, initialWidth]);
 
                 // Groups
                 var boxG = svg.append("g")
@@ -163,25 +123,17 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     .attr("class", "node")
                     .selectAll(".node");
 
-                // Background Grid
-                var numBoxesX = width/boxSize;
-                var xLines = boxG.append("g").selectAll("line").data(d3.range(0, numBoxesX + 1)).enter();
+                // Zoom
+                scope.zoom = d3.behavior.zoom()
+                    .scaleExtent([1, 10])
+                    .x(xScale)
+                    .y(yScale)
+                    .translate(scope.translate || [0, 0])
+                    .scale(scope.scale || 1)
+                    .on("zoom", applyZoom);
 
-                var numBoxesY = height/boxSize;
-                var yLines = boxG.append("g").selectAll("line").data(d3.range(0, numBoxesY + 1)).enter();
 
-                xLines.append("line")
-                    .attr("class", "x axis")
-                    .attr("x1", function (d){return d * boxSize})
-                    .attr("x2", function (d){return d * boxSize;})
-                    .attr("y1", -boxSize)
-                    .attr("y2", height + boxSize);
-                yLines.append("line")
-                    .attr("class", "y axis")
-                    .attr("x1", -boxSize)
-                    .attr("x2", width + boxSize)
-                    .attr("y1", function (d){return d * boxSize})
-                    .attr("y2", function (d){return d * boxSize});
+                createBackgroundGrid(boxG, boxSize, width, height);
 
 
                 // Brush
@@ -196,8 +148,8 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         var extent = d3.event.target.extent();
                         node.classed("selected", function(d) {
                             return d.selected = d.previouslySelected ^
-                            (extent[0][0] <= d.x && d.x < extent[1][0]
-                            && extent[0][1] <= d.y && d.y < extent[1][1]);
+                                (extent[0][0] <= d.x && d.x < extent[1][0]
+                                && extent[0][1] <= d.y && d.y < extent[1][1]);
                         });
                     })
                     .on("brushend", function() {
@@ -257,6 +209,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         })
                 );
 
+
                 function nudge(dx, dy) {
                     node.filter(function(d) { return d.selected; })
                         .attr("transform", function(d) {
@@ -274,6 +227,41 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                      */
                     if(d3.event.preventDefault) d3.event.preventDefault();
                 }
+
+
+                function applyZoom() {
+                    if(d3.event) {
+                        // Move the grid
+                        scope.gridTranslate = d3.event.translate[0] % (boxSize * d3.event.scale) + "," + d3.event.translate[1] % (boxSize * d3.event.scale);
+                        scope.gridScale = d3.event.scale;
+                    }
+                    boxG.attr("transform",
+                        "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
+                    // Move the graph
+                    node.attr("transform", function (d) {
+                        return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
+
+                    });
+
+                }
+
+                // Center the nodes in the middle of the map
+                function centerNodes () {
+
+                    var dx= dataExtentX;
+                    var dy= dataExtentY;
+
+                    var xDistance =Math.abs(dataScale(dx[0]) - dataScale(dx[1]));
+                    xDistance =(width-xDistance)/2;
+                    xDistance= xDistance-(dataScale(dx[0]));
+
+                    var yDistance =Math.abs(dataScale(dy[0]) - dataScale(dy[1]));
+                    yDistance =(height-yDistance)/2;
+                    yDistance= yDistance-dataScale(dy[0]);
+
+                    scope.zoom.translate([xDistance, yDistance]);
+                    applyZoom();
+                };
 
                 // Tool handling
                 function addTools() {
@@ -324,23 +312,70 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                  }
                  */
 
+                if (centerMap) {
+                    centerMap = !centerMap;
+                    centerNodes();
+                }
 
 
             };
 
 
+            /*
+             * Creates the background grid of the map
+             *
+             * parentContainer: d3 container to append the grid to
+             * boxSize: the wanted box size of the grid
+             * width: width of wanted grid
+             * height: height of wanted grid
+             */
+            function createBackgroundGrid(parentContainer, boxSize, width, height) {
+
+                // Background Grid
+                var numBoxesX = width / boxSize;
+                var xLines = parentContainer.append("g").selectAll("line").data(d3.range(0, numBoxesX + 1)).enter();
+
+                var numBoxesY = height / boxSize;
+                var yLines = parentContainer.append("g").selectAll("line").data(d3.range(0, numBoxesY + 1)).enter();
+
+                xLines.append("line")
+                    .attr("class", "x axis")
+                    .attr("x1", function (d) {
+                        return d * boxSize
+                    })
+                    .attr("x2", function (d) {
+                        return d * boxSize;
+                    })
+                    .attr("y1", -boxSize)
+                    .attr("y2", height + boxSize);
+                yLines.append("line")
+                    .attr("class", "y axis")
+                    .attr("x1", -boxSize)
+                    .attr("x2", width + boxSize)
+                    .attr("y1", function (d) {
+                        return d * boxSize
+                    })
+                    .attr("y2", function (d) {
+                        return d * boxSize
+                    });
+
+            }
+
+
             //****************** Listeners **********************//
 
-            // on container resize, re-render d3
+            /*
+             * Listens for the "container-resized" event and rerenders the map
+             */
             scope.$on('container-resized', function(event) {
-                scope.cacheZoomValues();
-                return scope.renderWithData(scope.data);
+                renderWithData(scope.data);
             });
 
             // watch for data changes and re-render
             scope.$watch('data', function(newVals, oldVals) {
-                return scope.renderWithData(newVals);
+                renderWithData(newVals);
             }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
+
         }
     };
 }]);
