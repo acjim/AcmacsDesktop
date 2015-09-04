@@ -23,7 +23,7 @@
 
 var app = angular.module('acjim.filehandling',[]);
 
-app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fileDialog) {
+app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($scope, fileDialog, api) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -2064,7 +2064,10 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
     };
 
     $scope.handleFileOpen = function(filename) {
-        var fs = require('fs')
+        var fs = require('fs');
+        console.log('orginal-'+filename);
+        filename = api.createMapFile(filename);
+        console.log('modified - '+filename);
         fs.readFile(filename, 'utf8', function (err,data) {
             if (err) {
                 return console.log(err);

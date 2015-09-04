@@ -31,7 +31,8 @@ var app = angular.module('acjim', [
     'acjim.map',
     'acjim.table',
     'ngWindowManager',
-    'bgDirectives'
+    'bgDirectives',
+    'acjim.api',
 ]);
 
 app.filter('nl2br', require('./app/shared/nl2br.js'));
