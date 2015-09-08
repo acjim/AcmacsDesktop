@@ -2065,9 +2065,9 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
 
     $scope.handleFileOpen = function(filename) {
         var fs = require('fs');
-        console.log('orginal-'+filename);
-        //filename = api.createMapFile(filename);
-        console.log('modified - '+filename);
+        //console.log('orginal-'+filename);
+        filename = api.createMapFile(filename);
+        //console.log('modified - '+filename);
         fs.readFile(filename, 'utf8', function (err,data) {
             if (err) {
                 return console.log(err);

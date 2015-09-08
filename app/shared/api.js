@@ -22,12 +22,15 @@
 'use strict';
 
 var sys = require('sys');
+var config = require('./config.js');
 var exec = require('child_process').exec;
 
 angular.module('acjim.api', [])
     .factory('api', [function () {
         var api = {};
         api.createMapFile = function (file_path) {
+
+
             var env_variable = 'ACMACS_ROOT';
             var env = process.env[env_variable];
             //@todo get env_variable working
@@ -35,13 +38,13 @@ angular.module('acjim.api', [])
 
             // extract file_name from file_path parameter
             var file = file_path.split('/').pop();
-            var file_name = file.substr(0, file.lastIndexOf(".")) + ".json";
+            var file_name = file.substr(0, file.lastIndexOf(".")) + '_'+ Date.now() +  ".json";
 
-            // store_path is the path where the files are stored inside the system, to be configured
-            var store_path = "/Users/rohan/Documents/workspace/AcmacsDesktop/data/";
+            // store_path is the path where the files are stored inside the system, configured in config.js
+            var store_path = config.store.path;
             // script to be called
             var script = "im";
-            // @todo fetch store_path, env_variable from configuration file.
+
             function puts(error, stdout, stderr) {
                 if (error) {
                     return console.log(error);
@@ -49,9 +52,8 @@ angular.module('acjim.api', [])
                 sys.puts(stdout);
             }
 
-            var command = env + "/bin/c2env " + script + " " + file_path + " " + store_path + file_name;
-
-            exec(command, puts);
+            //var command = env + "/bin/c2env " + script + " " + file_path + " " + store_path + file_name;
+            //exec(command, puts);
 
             return store_path+file_name;
         };
