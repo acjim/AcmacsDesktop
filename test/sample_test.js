@@ -1,7 +1,9 @@
 /*
 USAGE:
 To run the test cases, on command line:
- $ node_modules/nodeunit/bin/nodeunit test/sample_test.js
+$node_modules/nodeunit/bin/nodeunit test/sample_test.js
+all tests must end with test.done();
+and test.expect() gives number of expected tests.
  */
 var api = require('../app/shared/api.js');
 
