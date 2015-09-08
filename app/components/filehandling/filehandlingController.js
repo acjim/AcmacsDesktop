@@ -73,6 +73,1095 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
                 "titers": {"minimum_column_basis": "1280", "number_of_layers": 0, "titers_list_of_list": [["1280", "640"], ["640", "1280"], ["640", "640"]], "type": "normal"},
                 "type": "antigenic"},
             "version": 3}, active: true},
+        {title:"Sample Concentric Circles", content: {"chart_info": {"assay": "HI", "lab": "EU", "name": "3ags 2sr L", "virus": "influenza", "virus_type": "A", "rbc_species": "turkey"},
+            "projections": [{"comment": null,
+                "layout": [
+                    [
+                        -2.4222557773073325,
+                        -0.3135975067547265
+                    ],
+                    [
+                        -2.357981991205597,
+                        0.43243753248662525
+                    ],
+                    [
+                        -2.1788373914549286,
+                        1.190983863536589
+                    ],
+                    [
+                        -1.6372180068389501,
+                        1.7484520546365079
+                    ],
+                    [
+                        -1.0449994455089995,
+                        2.203853303600885
+                    ],
+                    [
+                        -0.31702022530164153,
+                        2.371697713737634
+                    ],
+                    [
+                        0.455471789666959,
+                        2.436011723038462
+                    ],
+                    [
+                        1.1525503071051812,
+                        2.093710819466852
+                    ],
+                    [
+                        1.768627359244586,
+                        1.6717084497566321
+                    ],
+                    [
+                        2.1532117195091423,
+                        1.0315296186341398
+                    ],
+                    [
+                        2.4531332099802228,
+                        0.3169209282743665
+                    ],
+                    [
+                        2.3433328278351806,
+                        -0.44865802391785603
+                    ],
+                    [
+                        2.1335386409981605,
+                        -1.1645070078703614
+                    ],
+                    [
+                        1.6459097338520332,
+                        -1.7275923494937435
+                    ],
+                    [
+                        1.0619468565470274,
+                        -2.2344780268698705
+                    ],
+                    [
+                        0.30194240144707635,
+                        -2.369620257129427
+                    ],
+                    [
+                        -0.44308776508131403,
+                        -2.395540366512581
+                    ],
+                    [
+                        -1.1331855838520775,
+                        -2.1086495783313595
+                    ],
+                    [
+                        -1.8022616346074198,
+                        -1.7075415090902422
+                    ],
+                    [
+                        -2.1694019517282936,
+                        -1.0198406436272605
+                    ],
+                    [
+                        -1.4260810547322023,
+                        -0.18299838127704957
+                    ],
+                    [
+                        -1.3026398539192672,
+                        0.7149841408432389
+                    ],
+                    [
+                        -0.6125023510219794,
+                        1.2968255941805997
+                    ],
+                    [
+                        0.2736851738058461,
+                        1.4559055639594434
+                    ],
+                    [
+                        1.0400281692806532,
+                        0.9802775027137761
+                    ],
+                    [
+                        1.4653349437937315,
+                        0.18717375376055714
+                    ],
+                    [
+                        1.2517780936913054,
+                        -0.6847864907299033
+                    ],
+                    [
+                        0.633593354212049,
+                        -1.3343812298981699
+                    ],
+                    [
+                        -0.2566212716325122,
+                        -1.4077342003189708
+                    ],
+                    [
+                        -1.078939071895938,
+                        -1.022671981385709
+                    ],
+                    [
+                        -0.5582642504746846,
+                        -0.07111703585357558
+                    ],
+                    [
+                        -0.23609903621426073,
+                        0.5054351391941843
+                    ],
+                    [
+                        0.4069553461165629,
+                        0.38020647827967485
+                    ],
+                    [
+                        0.4855148540774039,
+                        -0.26627975018895206
+                    ],
+                    [
+                        0.07782853687715124,
+                        -0.5818347801356125
+                    ],
+                    [
+                        -2.4100235940821952,
+                        -0.3159903683062315
+                    ],
+                    [
+                        -2.347316348385016,
+                        0.4273273035608511
+                    ],
+                    [
+                        -2.173406720879617,
+                        1.1809337758894507
+                    ],
+                    [
+                        -1.6357870452867942,
+                        1.739130454049804
+                    ],
+                    [
+                        -1.0460737885266762,
+                        2.197357831188417
+                    ],
+                    [
+                        -0.3192140552358601,
+                        2.3685648787817373
+                    ],
+                    [
+                        0.4544220275248414,
+                        2.436207750284638
+                    ],
+                    [
+                        1.1516350317292385,
+                        2.097424281200176
+                    ],
+                    [
+                        1.7699697253912101,
+                        1.6781538453612337
+                    ],
+                    [
+                        2.157910518090213,
+                        1.0397064591316008
+                    ],
+                    [
+                        2.4618250542893794,
+                        0.32433361406507233
+                    ],
+                    [
+                        2.355123912348379,
+                        -0.4477416222559089
+                    ],
+                    [
+                        2.145809955880507,
+                        -1.1666902043134515
+                    ],
+                    [
+                        1.6551047676978905,
+                        -1.7340726361577044
+                    ],
+                    [
+                        1.0645083804069952,
+                        -2.242914819466897
+                    ],
+                    [
+                        0.2957629168977161,
+                        -2.375507709469048
+                    ],
+                    [
+                        -0.4513646164061186,
+                        -2.393994652183412
+                    ],
+                    [
+                        -1.1368236857723835,
+                        -2.100928661472568
+                    ],
+                    [
+                        -1.7968277976689282,
+                        -1.7005978270225321
+                    ],
+                    [
+                        -2.1584878127710736,
+                        -1.0171157508230246
+                    ],
+                    [
+                        -1.4145564419922225,
+                        -0.18684476438096623
+                    ],
+                    [
+                        -1.2990152841167122,
+                        0.7034200351177651
+                    ],
+                    [
+                        -0.6161313975930088,
+                        1.2895676137307506
+                    ],
+                    [
+                        0.2702204746677093,
+                        1.4565525887506525
+                    ],
+                    [
+                        1.0392632224009406,
+                        0.9883560472377472
+                    ],
+                    [
+                        1.4728888373328084,
+                        0.1966502552732685
+                    ],
+                    [
+                        1.263914118470086,
+                        -0.6853587502938636
+                    ],
+                    [
+                        0.6371188203538156,
+                        -1.343148186508563
+                    ],
+                    [
+                        -0.26874846013631243,
+                        -1.405469418845848
+                    ],
+                    [
+                        -1.0724870775617348,
+                        -1.0157682992729806
+                    ],
+                    [
+                        -0.5488949205074238,
+                        -0.07310226938581664
+                    ],
+                    [
+                        -0.2423035475691902,
+                        0.5014564897819715
+                    ],
+                    [
+                        0.40260497976243276,
+                        0.38615626885996945
+                    ],
+                    [
+                        0.4949691684604566,
+                        -0.267809847960047
+                    ],
+                    [
+                        -0.28257597247622657,
+                        -0.5145287648610501
+                    ]
+                ],
+                "number_of_antigens": 35,
+                "point_indices_per_page": {
+                    "-1": [],
+                    "0": null
+                },
+                "point_info": [
+                    {
+                        "label_capitalized": "A1",
+                        "label_capitalized_short": "A1",
+                        "label_full": "A1",
+                        "label_lab_id": "A1",
+                        "label_short": "A1",
+                        "name": "A1"
+                    },
+                    {
+                        "label_capitalized": "A2",
+                        "label_capitalized_short": "A2",
+                        "label_full": "A2",
+                        "label_lab_id": "A2",
+                        "label_short": "A2",
+                        "name": "A2"
+                    },
+                    {
+                        "label_capitalized": "A3",
+                        "label_capitalized_short": "A3",
+                        "label_full": "A3",
+                        "label_lab_id": "A3",
+                        "label_short": "A3",
+                        "name": "A3"
+                    },
+                    {
+                        "label_capitalized": "A4",
+                        "label_capitalized_short": "A4",
+                        "label_full": "A4",
+                        "label_lab_id": "A4",
+                        "label_short": "A4",
+                        "name": "A4"
+                    },
+                    {
+                        "label_capitalized": "A5",
+                        "label_capitalized_short": "A5",
+                        "label_full": "A5",
+                        "label_lab_id": "A5",
+                        "label_short": "A5",
+                        "name": "A5"
+                    },
+                    {
+                        "label_capitalized": "A6",
+                        "label_capitalized_short": "A6",
+                        "label_full": "A6",
+                        "label_lab_id": "A6",
+                        "label_short": "A6",
+                        "name": "A6"
+                    },
+                    {
+                        "label_capitalized": "A7",
+                        "label_capitalized_short": "A7",
+                        "label_full": "A7",
+                        "label_lab_id": "A7",
+                        "label_short": "A7",
+                        "name": "A7"
+                    },
+                    {
+                        "label_capitalized": "A8",
+                        "label_capitalized_short": "A8",
+                        "label_full": "A8",
+                        "label_lab_id": "A8",
+                        "label_short": "A8",
+                        "name": "A8"
+                    },
+                    {
+                        "label_capitalized": "A9",
+                        "label_capitalized_short": "A9",
+                        "label_full": "A9",
+                        "label_lab_id": "A9",
+                        "label_short": "A9",
+                        "name": "A9"
+                    },
+                    {
+                        "label_capitalized": "A10",
+                        "label_capitalized_short": "A10",
+                        "label_full": "A10",
+                        "label_lab_id": "A10",
+                        "label_short": "A10",
+                        "name": "A10"
+                    },
+                    {
+                        "label_capitalized": "A11",
+                        "label_capitalized_short": "A11",
+                        "label_full": "A11",
+                        "label_lab_id": "A11",
+                        "label_short": "A11",
+                        "name": "A11"
+                    },
+                    {
+                        "label_capitalized": "A12",
+                        "label_capitalized_short": "A12",
+                        "label_full": "A12",
+                        "label_lab_id": "A12",
+                        "label_short": "A12",
+                        "name": "A12"
+                    },
+                    {
+                        "label_capitalized": "A13",
+                        "label_capitalized_short": "A13",
+                        "label_full": "A13",
+                        "label_lab_id": "A13",
+                        "label_short": "A13",
+                        "name": "A13"
+                    },
+                    {
+                        "label_capitalized": "A14",
+                        "label_capitalized_short": "A14",
+                        "label_full": "A14",
+                        "label_lab_id": "A14",
+                        "label_short": "A14",
+                        "name": "A14"
+                    },
+                    {
+                        "label_capitalized": "A15",
+                        "label_capitalized_short": "A15",
+                        "label_full": "A15",
+                        "label_lab_id": "A15",
+                        "label_short": "A15",
+                        "name": "A15"
+                    },
+                    {
+                        "label_capitalized": "A16",
+                        "label_capitalized_short": "A16",
+                        "label_full": "A16",
+                        "label_lab_id": "A16",
+                        "label_short": "A16",
+                        "name": "A16"
+                    },
+                    {
+                        "label_capitalized": "A17",
+                        "label_capitalized_short": "A17",
+                        "label_full": "A17",
+                        "label_lab_id": "A17",
+                        "label_short": "A17",
+                        "name": "A17"
+                    },
+                    {
+                        "label_capitalized": "A18",
+                        "label_capitalized_short": "A18",
+                        "label_full": "A18",
+                        "label_lab_id": "A18",
+                        "label_short": "A18",
+                        "name": "A18"
+                    },
+                    {
+                        "label_capitalized": "A19",
+                        "label_capitalized_short": "A19",
+                        "label_full": "A19",
+                        "label_lab_id": "A19",
+                        "label_short": "A19",
+                        "name": "A19"
+                    },
+                    {
+                        "label_capitalized": "A20",
+                        "label_capitalized_short": "A20",
+                        "label_full": "A20",
+                        "label_lab_id": "A20",
+                        "label_short": "A20",
+                        "name": "A20"
+                    },
+                    {
+                        "label_capitalized": "A21",
+                        "label_capitalized_short": "A21",
+                        "label_full": "A21",
+                        "label_lab_id": "A21",
+                        "label_short": "A21",
+                        "name": "A21"
+                    },
+                    {
+                        "label_capitalized": "A22",
+                        "label_capitalized_short": "A22",
+                        "label_full": "A22",
+                        "label_lab_id": "A22",
+                        "label_short": "A22",
+                        "name": "A22"
+                    },
+                    {
+                        "label_capitalized": "A23",
+                        "label_capitalized_short": "A23",
+                        "label_full": "A23",
+                        "label_lab_id": "A23",
+                        "label_short": "A23",
+                        "name": "A23"
+                    },
+                    {
+                        "label_capitalized": "A24",
+                        "label_capitalized_short": "A24",
+                        "label_full": "A24",
+                        "label_lab_id": "A24",
+                        "label_short": "A24",
+                        "name": "A24"
+                    },
+                    {
+                        "label_capitalized": "A25",
+                        "label_capitalized_short": "A25",
+                        "label_full": "A25",
+                        "label_lab_id": "A25",
+                        "label_short": "A25",
+                        "name": "A25"
+                    },
+                    {
+                        "label_capitalized": "A26",
+                        "label_capitalized_short": "A26",
+                        "label_full": "A26",
+                        "label_lab_id": "A26",
+                        "label_short": "A26",
+                        "name": "A26"
+                    },
+                    {
+                        "label_capitalized": "A27",
+                        "label_capitalized_short": "A27",
+                        "label_full": "A27",
+                        "label_lab_id": "A27",
+                        "label_short": "A27",
+                        "name": "A27"
+                    },
+                    {
+                        "label_capitalized": "A28",
+                        "label_capitalized_short": "A28",
+                        "label_full": "A28",
+                        "label_lab_id": "A28",
+                        "label_short": "A28",
+                        "name": "A28"
+                    },
+                    {
+                        "label_capitalized": "A29",
+                        "label_capitalized_short": "A29",
+                        "label_full": "A29",
+                        "label_lab_id": "A29",
+                        "label_short": "A29",
+                        "name": "A29"
+                    },
+                    {
+                        "label_capitalized": "A30",
+                        "label_capitalized_short": "A30",
+                        "label_full": "A30",
+                        "label_lab_id": "A30",
+                        "label_short": "A30",
+                        "name": "A30"
+                    },
+                    {
+                        "label_capitalized": "A31",
+                        "label_capitalized_short": "A31",
+                        "label_full": "A31",
+                        "label_lab_id": "A31",
+                        "label_short": "A31",
+                        "name": "A31"
+                    },
+                    {
+                        "label_capitalized": "A32",
+                        "label_capitalized_short": "A32",
+                        "label_full": "A32",
+                        "label_lab_id": "A32",
+                        "label_short": "A32",
+                        "name": "A32"
+                    },
+                    {
+                        "label_capitalized": "A33",
+                        "label_capitalized_short": "A33",
+                        "label_full": "A33",
+                        "label_lab_id": "A33",
+                        "label_short": "A33",
+                        "name": "A33"
+                    },
+                    {
+                        "label_capitalized": "A34",
+                        "label_capitalized_short": "A34",
+                        "label_full": "A34",
+                        "label_lab_id": "A34",
+                        "label_short": "A34",
+                        "name": "A34"
+                    },
+                    {
+                        "label_capitalized": "A35",
+                        "label_capitalized_short": "A35",
+                        "label_full": "A35",
+                        "label_lab_id": "A35",
+                        "label_short": "A35",
+                        "name": "A35"
+                    },
+                    {
+                        "label_capitalized": "S1",
+                        "label_capitalized_short": "S1",
+                        "label_full": "S1",
+                        "label_lab_id": "S1",
+                        "label_short": "S1",
+                        "name": "S1"
+                    },
+                    {
+                        "label_capitalized": "S2",
+                        "label_capitalized_short": "S2",
+                        "label_full": "S2",
+                        "label_lab_id": "S2",
+                        "label_short": "S2",
+                        "name": "S2"
+                    },
+                    {
+                        "label_capitalized": "S3",
+                        "label_capitalized_short": "S3",
+                        "label_full": "S3",
+                        "label_lab_id": "S3",
+                        "label_short": "S3",
+                        "name": "S3"
+                    },
+                    {
+                        "label_capitalized": "S4",
+                        "label_capitalized_short": "S4",
+                        "label_full": "S4",
+                        "label_lab_id": "S4",
+                        "label_short": "S4",
+                        "name": "S4"
+                    },
+                    {
+                        "label_capitalized": "S5",
+                        "label_capitalized_short": "S5",
+                        "label_full": "S5",
+                        "label_lab_id": "S5",
+                        "label_short": "S5",
+                        "name": "S5"
+                    },
+                    {
+                        "label_capitalized": "S6",
+                        "label_capitalized_short": "S6",
+                        "label_full": "S6",
+                        "label_lab_id": "S6",
+                        "label_short": "S6",
+                        "name": "S6"
+                    },
+                    {
+                        "label_capitalized": "S7",
+                        "label_capitalized_short": "S7",
+                        "label_full": "S7",
+                        "label_lab_id": "S7",
+                        "label_short": "S7",
+                        "name": "S7"
+                    },
+                    {
+                        "label_capitalized": "S8",
+                        "label_capitalized_short": "S8",
+                        "label_full": "S8",
+                        "label_lab_id": "S8",
+                        "label_short": "S8",
+                        "name": "S8"
+                    },
+                    {
+                        "label_capitalized": "S9",
+                        "label_capitalized_short": "S9",
+                        "label_full": "S9",
+                        "label_lab_id": "S9",
+                        "label_short": "S9",
+                        "name": "S9"
+                    },
+                    {
+                        "label_capitalized": "S10",
+                        "label_capitalized_short": "S10",
+                        "label_full": "S10",
+                        "label_lab_id": "S10",
+                        "label_short": "S10",
+                        "name": "S10"
+                    },
+                    {
+                        "label_capitalized": "S11",
+                        "label_capitalized_short": "S11",
+                        "label_full": "S11",
+                        "label_lab_id": "S11",
+                        "label_short": "S11",
+                        "name": "S11"
+                    },
+                    {
+                        "label_capitalized": "S12",
+                        "label_capitalized_short": "S12",
+                        "label_full": "S12",
+                        "label_lab_id": "S12",
+                        "label_short": "S12",
+                        "name": "S12"
+                    },
+                    {
+                        "label_capitalized": "S13",
+                        "label_capitalized_short": "S13",
+                        "label_full": "S13",
+                        "label_lab_id": "S13",
+                        "label_short": "S13",
+                        "name": "S13"
+                    },
+                    {
+                        "label_capitalized": "S14",
+                        "label_capitalized_short": "S14",
+                        "label_full": "S14",
+                        "label_lab_id": "S14",
+                        "label_short": "S14",
+                        "name": "S14"
+                    },
+                    {
+                        "label_capitalized": "S15",
+                        "label_capitalized_short": "S15",
+                        "label_full": "S15",
+                        "label_lab_id": "S15",
+                        "label_short": "S15",
+                        "name": "S15"
+                    },
+                    {
+                        "label_capitalized": "S16",
+                        "label_capitalized_short": "S16",
+                        "label_full": "S16",
+                        "label_lab_id": "S16",
+                        "label_short": "S16",
+                        "name": "S16"
+                    },
+                    {
+                        "label_capitalized": "S17",
+                        "label_capitalized_short": "S17",
+                        "label_full": "S17",
+                        "label_lab_id": "S17",
+                        "label_short": "S17",
+                        "name": "S17"
+                    },
+                    {
+                        "label_capitalized": "S18",
+                        "label_capitalized_short": "S18",
+                        "label_full": "S18",
+                        "label_lab_id": "S18",
+                        "label_short": "S18",
+                        "name": "S18"
+                    },
+                    {
+                        "label_capitalized": "S19",
+                        "label_capitalized_short": "S19",
+                        "label_full": "S19",
+                        "label_lab_id": "S19",
+                        "label_short": "S19",
+                        "name": "S19"
+                    },
+                    {
+                        "label_capitalized": "S20",
+                        "label_capitalized_short": "S20",
+                        "label_full": "S20",
+                        "label_lab_id": "S20",
+                        "label_short": "S20",
+                        "name": "S20"
+                    },
+                    {
+                        "label_capitalized": "S21",
+                        "label_capitalized_short": "S21",
+                        "label_full": "S21",
+                        "label_lab_id": "S21",
+                        "label_short": "S21",
+                        "name": "S21"
+                    },
+                    {
+                        "label_capitalized": "S22",
+                        "label_capitalized_short": "S22",
+                        "label_full": "S22",
+                        "label_lab_id": "S22",
+                        "label_short": "S22",
+                        "name": "S22"
+                    },
+                    {
+                        "label_capitalized": "S23",
+                        "label_capitalized_short": "S23",
+                        "label_full": "S23",
+                        "label_lab_id": "S23",
+                        "label_short": "S23",
+                        "name": "S23"
+                    },
+                    {
+                        "label_capitalized": "S24",
+                        "label_capitalized_short": "S24",
+                        "label_full": "S24",
+                        "label_lab_id": "S24",
+                        "label_short": "S24",
+                        "name": "S24"
+                    },
+                    {
+                        "label_capitalized": "S25",
+                        "label_capitalized_short": "S25",
+                        "label_full": "S25",
+                        "label_lab_id": "S25",
+                        "label_short": "S25",
+                        "name": "S25"
+                    },
+                    {
+                        "label_capitalized": "S26",
+                        "label_capitalized_short": "S26",
+                        "label_full": "S26",
+                        "label_lab_id": "S26",
+                        "label_short": "S26",
+                        "name": "S26"
+                    },
+                    {
+                        "label_capitalized": "S27",
+                        "label_capitalized_short": "S27",
+                        "label_full": "S27",
+                        "label_lab_id": "S27",
+                        "label_short": "S27",
+                        "name": "S27"
+                    },
+                    {
+                        "label_capitalized": "S28",
+                        "label_capitalized_short": "S28",
+                        "label_full": "S28",
+                        "label_lab_id": "S28",
+                        "label_short": "S28",
+                        "name": "S28"
+                    },
+                    {
+                        "label_capitalized": "S29",
+                        "label_capitalized_short": "S29",
+                        "label_full": "S29",
+                        "label_lab_id": "S29",
+                        "label_short": "S29",
+                        "name": "S29"
+                    },
+                    {
+                        "label_capitalized": "S30",
+                        "label_capitalized_short": "S30",
+                        "label_full": "S30",
+                        "label_lab_id": "S30",
+                        "label_short": "S30",
+                        "name": "S30"
+                    },
+                    {
+                        "label_capitalized": "S31",
+                        "label_capitalized_short": "S31",
+                        "label_full": "S31",
+                        "label_lab_id": "S31",
+                        "label_short": "S31",
+                        "name": "S31"
+                    },
+                    {
+                        "label_capitalized": "S32",
+                        "label_capitalized_short": "S32",
+                        "label_full": "S32",
+                        "label_lab_id": "S32",
+                        "label_short": "S32",
+                        "name": "S32"
+                    },
+                    {
+                        "label_capitalized": "S33",
+                        "label_capitalized_short": "S33",
+                        "label_full": "S33",
+                        "label_lab_id": "S33",
+                        "label_short": "S33",
+                        "name": "S33"
+                    },
+                    {
+                        "label_capitalized": "S34",
+                        "label_capitalized_short": "S34",
+                        "label_full": "S34",
+                        "label_lab_id": "S34",
+                        "label_short": "S34",
+                        "name": "S34"
+                    },
+                    {
+                        "label_capitalized": "S35",
+                        "label_capitalized_short": "S35",
+                        "label_full": "S35",
+                        "label_lab_id": "S35",
+                        "label_short": "S35",
+                        "name": "S35"
+                    }
+                ],
+                "scale": {
+                    "label_size_scale": 1.0,
+                    "object_size_scale": 1.0
+                },
+                "show_labels": false,
+                "styles": {
+                    "drawing_order": [
+                        [
+                            35,
+                            36,
+                            37,
+                            38,
+                            39,
+                            40,
+                            41,
+                            42,
+                            43,
+                            44,
+                            45,
+                            46,
+                            47,
+                            48,
+                            49,
+                            50,
+                            51,
+                            52,
+                            53,
+                            54,
+                            55,
+                            56,
+                            57,
+                            58,
+                            59,
+                            60,
+                            61,
+                            62,
+                            63,
+                            64,
+                            65,
+                            66,
+                            67,
+                            68,
+                            69
+                        ],
+                        [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12,
+                            13,
+                            14,
+                            15,
+                            16,
+                            17,
+                            18,
+                            19,
+                            20,
+                            21,
+                            22,
+                            23,
+                            24,
+                            25,
+                            26,
+                            27,
+                            28,
+                            29,
+                            30,
+                            31,
+                            32,
+                            33,
+                            34
+                        ]
+                    ],
+                    "points": [
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2,
+                        2
+                    ],
+                    "styles": [
+                        {
+                            "aspect": 1.0,
+                            "fill_color": "#00ff00",
+                            "label_version": 1,
+                            "outline_color": "#000000",
+                            "rotation": 0.0,
+                            "shape": "circle",
+                            "size": 1.0,
+                            "version": 1
+                        },
+                        {
+                            "aspect": 1.0,
+                            "fill_color": [
+                                "#000000",
+                                0.0
+                            ],
+                            "label_version": 1,
+                            "outline_color": "#000000",
+                            "rotation": 0.0,
+                            "shape": "circle",
+                            "size": 1.5,
+                            "version": 1
+                        },
+                        {
+                            "aspect": 1.0,
+                            "fill_color": [
+                                "#000000",
+                                0.0
+                            ],
+                            "label_version": 1,
+                            "outline_color": "#000000",
+                            "rotation": 0.0,
+                            "shape": "box",
+                            "size": 1.5,
+                            "version": 1
+                        }
+                    ]
+                },
+                "title": {
+                    "0": {
+                        "offset": [
+                            20,
+                            20
+                        ],
+                        "style": {
+                            "background": [
+                                "#e0e0ff",
+                                0.7490196078431373
+                            ],
+                            "border": {
+                                "color": "#000080",
+                                "version": 1,
+                                "width": 1.0
+                            },
+                            "text": {
+                                "color": "#0000ff",
+                                "font_face": "sans-serif",
+                                "font_slant": "normal",
+                                "font_weight": "bold",
+                                "rotation": 0.0,
+                                "size": 1.0,
+                                "version": 1
+                            },
+                            "version": 1
+                        },
+                        "text": null
+                    }
+                },
+                "number_of_iterations": 1,
+                "stress": 14.755165010255075,
+                "stress_evaluator_parameters": {"antigens_sera_attributes": null,
+                    "antigens_sera_gradient_multipliers": null,
+                    "antigens_sera_titers_multipliers": null,
+                    "column_bases": null,
+                    "stress_diff_to_stop": 0.0},
+                "transformation": [[1.0, 0.0], [0.0, -1.0]]}],
+            "table": {"antigens": [{"raw_name": "A1", "reference": true, "type": "designation_raw"},
+                {"raw_name": "A2", "reference": true, "type": "designation_raw"},
+                {"raw_name": "A3", "reference": true, "type": "designation_raw"}],
+                "sera": [{"raw_name": "S1", "type": "designation_raw"}, {"raw_name": "S2", "type": "designation_raw"}],
+                "titers": {"minimum_column_basis": "1280", "number_of_layers": 0, "titers_list_of_list": [["1280", "640"], ["640", "1280"], ["640", "640"]], "type": "normal"},
+                "type": "antigenic"},
+            "version": 3}, active: true},
         {title:"Sample Map 2", content: {   "chart_info": {"_flu_type": "A(H8N8)", "_lab": "ANTIGENIC-CARTOGRAPHY", "_name_suffix": "for-tests"},
             "drawing_order": null,
             "plot_spec": null,

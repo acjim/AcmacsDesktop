@@ -36,8 +36,34 @@ app.controller('mapCtrl', ['$scope', function($scope){
         //{x: 40, y:43, style: {shape: "circle"}},
         //{x: 20, y: 87, style: {shape: "box"}}
     ];
-    $scope.mapData.map[0].layout.forEach(function(point) {
-        $scope.d3Data.push({x: point[0], y:point[1], style: {shape: "circle"}})
+    //$scope.mapData.map[0].layout.forEach(function(point) {
+    //    $scope.d3Data.push({x: point[0], y:point[1], style: {shape: "circle"}})
+    //});
+
+    $scope.mapData.map[0].layout.forEach(function(point, i) {
+        //$scope.d3Data.push({x: point[0], y:point[1], style: {shape: "circle"}})
+        var node_name, node_style;
+        console.log(i);
+
+
+        if ($scope.mapData.map[0] && $scope.mapData.map[0].point_info && $scope.mapData.map[0].point_info[i]) {
+            node_name = $scope.mapData.map[0].point_info[i].name;
+            console.log(node_name);
+        } else {
+            node_name = "undefined";
+        }
+        if ($scope.mapData.map[0] && $scope.mapData.map[0].styles && $scope.mapData.map[0].styles.points && $scope.mapData.map[0].styles.points[i] && $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]]) {
+            node_style = $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]];
+            console.log(i);
+        } else {
+            node_style = {shape: "box"};
+        }
+        $scope.d3Data.push({
+            "x": point[0],
+            "y": point[1],
+            "name": node_name,
+            "style": node_style
+        })
     });
 }])
 
