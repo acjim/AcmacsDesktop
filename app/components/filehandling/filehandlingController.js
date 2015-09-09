@@ -1105,7 +1105,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
                         {
                             "aspect": 1.0,
                             "fill_color": [
-                                "#000000",
+                                "#ff0000",
                                 0.0
                             ],
                             "label_version": 1,

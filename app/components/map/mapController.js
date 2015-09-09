@@ -42,7 +42,7 @@ app.controller('mapCtrl', ['$scope', function($scope){
 
     $scope.mapData.map[0].layout.forEach(function(point, i) {
         //$scope.d3Data.push({x: point[0], y:point[1], style: {shape: "circle"}})
-        var node_name, node_style;
+        var node_name, node_style, node_shape, node_fill;
         console.log(i);
 
 
@@ -53,11 +53,16 @@ app.controller('mapCtrl', ['$scope', function($scope){
             node_name = "undefined";
         }
         if ($scope.mapData.map[0] && $scope.mapData.map[0].styles && $scope.mapData.map[0].styles.points && $scope.mapData.map[0].styles.points[i] && $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]]) {
-            node_style = $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]];
+            //node_style = $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]];
+            node_shape = $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]].shape;
+            node_fill = $scope.mapData.map[0].styles.styles[$scope.mapData.map[0].styles.points[i]].fill_color[0];
             console.log(i);
+            console.log(node_fill);
         } else {
-            node_style = {shape: "box"};
+            node_shape = "circle";
+            node_fill = "#000000";
         }
+        node_style = {shape: node_shape, fill_color: node_fill};
         $scope.d3Data.push({
             "x": point[0],
             "y": point[1],
@@ -217,6 +222,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                             else if (d.style.shape == "box") { return "square"; }
                         })
                 )
+                    .attr("fill", function(d){ return d.style.fill_color })
                     .on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
                             if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
