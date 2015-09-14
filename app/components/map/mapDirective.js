@@ -53,137 +53,107 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
         },
         link: function(scope, iElement) {
 
-            var initialWidth = d3.select(iElement[0])[0][0].offsetWidth,
-                width,
-                height,
-                dataExtentX = d3.extent(scope.data, function(d) { return d.x;}),
-                dataExtentY = d3.extent(scope.data, function(d) { return d.y;}),
-                boxSize = initialWidth / (Math.abs(dataExtentX[1] - dataExtentX[0])),
+            var svg = null,
+                width = 0,
+                height = 0,
+                xScale = null,
+                yScale = null,
+                dataScale = null,
+                zoom = null,
+                translate = [0, 0],
+                scale = 1,
+                gridTranslate = [0,0],
+                gridScale = 1,
+                selectedTool = null,
+                brush = null,
+                dataExtentX = null,
+                dataExtentY = null,
+                boxSize = 0,
                 centerMap = true,
                 shiftKey;
 
-            var svg = d3.select(iElement[0])
-                .append("svg")
-                .attr("width", "100%")
-                .attr("height", "100%");
+            //TODO: FirstTool --> event fire
+            //TODO: centerMap --> eent
 
-            scope.gridTranslate = [0,0];
-            scope.gridScale = 1;
+            // d3 groups
+            var boxGroup,
+                brushGroup,
+                elementGroup,
+                nodeGroup;
 
 
-            /*
-             * Redraws the map. Caches the current zoom and applies it to the new drawn map.
-             * The map gets centered the first time this function is called.
-             * To center the map nodes,
+            /**
+             * (Re)draws the d3 map without removing the data points.
+             * Redefines x and y scales and reapplies them to the zoom, nodes and brush.
+             * Initializes zoom (with cached values if possible).
+             * Creates background grid.
              */
-            function renderWithData (data) {
+            function renderWithoutData() {
 
-                scope.translate = scope.zoom ? scope.zoom.translate() : [0, 0];
-                scope.scale = scope.zoom ? scope.zoom.scale() : 1;
-
-                // remove all previous items before render
-                svg.selectAll("*").remove();
-
-                // setup variables
-                width = d3.select(iElement[0])[0][0].offsetWidth;
-                height = d3.select(iElement[0])[0][0].offsetHeight;
-
+                // get new width and height of svg
+                width = getContainerWidth();
+                height = getContainerHeight();
 
                 // Scale
-                var xScale = d3.scale.linear().domain([0, width]).range([0, width]);
-                var yScale = d3.scale.linear().domain([0, height]).range([0, height]);
-                var dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([0, initialWidth]);
-
-                // Groups
-                var boxG = svg.append("g")
-                    .attr("transform", "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
-                var brush = svg.append("g")
-                    .datum(function() { return {selected: false, previouslySelected: false}; })
-                    .attr("class", "brush");
-                var elements = svg.append("g");
-
-                // Links
-                var link = elements.append("g")
-                    .attr("class", "link")
-                    .selectAll("line");
-
-                // Nodes
-                var node = elements.append("g")
-                    .attr("class", "node")
-                    .selectAll(".node");
+                xScale = d3.scale.linear().domain([0, width]).range([0, width]);
+                yScale = d3.scale.linear().domain([0, height]).range([0, height]);
 
                 // Zoom
-                scope.zoom = d3.behavior.zoom()
+                zoom = d3.behavior.zoom()
                     .scaleExtent([1, 10])
                     .x(xScale)
                     .y(yScale)
-                    .translate(scope.translate || [0, 0])
-                    .scale(scope.scale || 1)
+                    .translate(translate)
+                    .scale(scale)
                     .on("zoom", applyZoom);
 
+                // reapply scales on the data
+                nodeGroup.attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; });
 
-                createBackgroundGrid(boxG, boxSize, width, height);
+                // Create brush
+                brush = createBrush();
+                brushGroup.call(brush); //TODO: Check if tool is brush
+
+                // Create background grid
+                boxGroup = redrawGrid(boxGroup, boxSize, width, height);
+
+            }
 
 
-                // Brush
-                var brusher = d3.svg.brush()
-                    .x(xScale)
-                    .y(yScale)
-                    .on("brushstart", function(d) {
-                        node.each(function(d) {
-                            d.previouslySelected = shiftKey && d.selected; });
-                    })
-                    .on("brush", function() {
-                        var extent = d3.event.target.extent();
-                        node.classed("selected", function(d) {
-                            return d.selected = d.previouslySelected ^
-                                (extent[0][0] <= d.x && d.x < extent[1][0]
-                                && extent[0][1] <= d.y && d.y < extent[1][1]);
-                        });
-                    })
-                    .on("brushend", function() {
-                        d3.event.target.clear();
-                        d3.select(this).call(d3.event.target);
-                    }
-                );
+            /**
+             * Renders the complete d3 map with data
+             * @param data
+             */
+            function renderWithData (data) {
 
-                //TODO: Add links and error lines
-//              graph.links.forEach(function(d) {
-//                d.source = graph.nodes[d.source];
-//                d.target = graph.nodes[d.target];
-//              });
-//
-//              link = link.data(graph.links).enter().append("line")
-//                  .attr("x1", function(d) { return d.x; })
-//                  .attr("y1", function(d) { return d.y; })
-//                  .attr("x2", function(d) { return d.target.x; })
-//                  .attr("y2", function(d) { return d.target.y; });
-                //Line test
-//                var link = linkG.selectAll("line").data(graph.layout).enter();
-//                link.append('line')
-//                        .attr("x1", function(d) {return scale(d[0]); })
-//                        .attr("y1", function(d) {return scale(d[1]); })
-//                        .attr("x2", function(d) {return scale(d[0] + 0.2); })
-//                        .attr("y2", function(d) {return scale(d[1] + 0.2); })
-//                        .attr("stroke", "gray")
-//                        .attr("stroke-width", "4");
+                // checks if the map is drawn the for the first time, adds svg, groups and zoom if necessary
+                if (!svg) {
+                    initializeSVG();
+                }
+
+                renderWithoutData();
 
 
                 // Enter
-                node = node.data(data).enter().append("path");
+                nodeGroup = nodeGroup.data(data).enter().append("path");
+
+
                 // Update
-                node.attr("class", "point")
+                nodeGroup.attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x = dataScale(d.x)) + "," + yScale(d.y = dataScale(d.y)) + ")"; })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
                             if (d.style.shape == "circle") { return "circle"; }
                             else if (d.style.shape == "box") { return "square"; }
                         })
-                )
-                    .attr("fill", function(d){ return d.style.fill_color })
-                    .on("mousedown", function(d) {
+                    )
+                    .attr("fill", function(d){ return d.style.fill_color });
+
+
+                // mouse event handlers
+                nodeGroup.on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
-                            if (!shiftKey) node.classed("selected", function(p) { return p.selected = d === p; });
+                            if (!shiftKey) nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
                             else d3.select(this).classed("selected", d.selected = true);
                         }
                     })
@@ -197,59 +167,8 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         .on("drag", function(d) {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                );
+                    );
 
-
-                function nudge(dx, dy) {
-
-                    node.filter(function(d) { return d.selected; })
-                        .attr("transform", function(d) {
-                            d.x += dx/scope.zoom.scale();
-                            d.y += dy/scope.zoom.scale();
-                            return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
-                        });
-
-                    if(d3.event.preventDefault) d3.event.preventDefault();
-
-                }
-
-
-                function applyZoom() {
-
-                    if(d3.event) {
-                        // Move the grid
-                        scope.gridTranslate = d3.event.translate[0] % (boxSize * d3.event.scale) + "," + d3.event.translate[1] % (boxSize * d3.event.scale);
-                        scope.gridScale = d3.event.scale;
-                    }
-                    boxG.attr("transform",
-                        "translate(" + scope.gridTranslate + ")scale(" + scope.gridScale + ")");
-                    // Move the graph
-                    node.attr("transform", function (d) {
-                        return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
-
-                    });
-
-
-                }
-
-                // Center the nodes in the middle of the map
-                function centerNodes () {
-
-                    var dx= dataExtentX;
-                    var dy= dataExtentY;
-
-                    var xDistance =Math.abs(dataScale(dx[0]) - dataScale(dx[1]));
-                    xDistance =(width-xDistance)/2;
-                    xDistance= xDistance-(dataScale(dx[0]));
-
-                    var yDistance =Math.abs(dataScale(dy[0]) - dataScale(dy[1]));
-                    yDistance =(height-yDistance)/2;
-                    yDistance= yDistance-dataScale(dy[0]);
-
-                    scope.zoom.translate([xDistance, yDistance]);
-                    applyZoom();
-
-                };
 
                 // Tool handling
                 function addTools() {
@@ -259,20 +178,20 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                             svg.on('.zoom', null);
 
                             // Enable brush
-                            brush.select('.background').style('cursor', 'crosshair');
-                            brush.call(brusher);
+                            brushGroup.select('.background').style('cursor', 'crosshair');
+                            brushGroup.call(brush);
                         },
                         'zoom': function () {
                             // Disable brush
-                            brush.call(brusher)
+                            brushGroup.call(brush)
                                 .on("mousedown.brush", null)
                                 .on("touchstart.brush", null)
                                 .on("touchmove.brush", null)
                                 .on("touchend.brush", null);
-                            brush.select('.background').style('cursor', 'default');
+                            brushGroup.select('.background').style('cursor', 'default');
 
                             //Enable zoom
-                            svg.call(scope.zoom);
+                            svg.call(zoom);
                         }
                     }
                     tools[$rootScope.mapTool]();
@@ -291,15 +210,159 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
             };
 
 
-            /*
-             * Creates the background grid of the map
-             *
-             * parentContainer: d3 container to append the grid to
-             * boxSize: the wanted box size of the grid
-             * width: width of wanted grid
-             * height: height of wanted grid
+            /**
+             * Initializes the svg. This function should only be called once for each directive.
              */
-            function createBackgroundGrid(parentContainer, boxSize, width, height) {
+            function initializeSVG() {
+
+                if (svg) {
+                    return;
+                }
+
+                // Initialize SVG element
+                svg = d3.select(iElement[0])
+                    .append("svg")
+                    .attr("width", "100%")
+                    .attr("height", "100%");
+
+                // Add groups in the right order to the svg
+                boxGroup = svg.append("g")
+                    .attr("transform", "translate(" + gridTranslate + ")scale(" + gridScale + ")");
+
+                brushGroup = svg.append("g")
+                    .datum(function () { return {selected: false, previouslySelected: false}; })
+                    .attr("class", "brush");
+
+                elementGroup = svg.append("g");
+
+                nodeGroup = elementGroup.append("g")
+                    .attr("class", "node")
+                    .selectAll(".node");
+
+
+                width = getContainerWidth();
+                height = getContainerHeight();
+
+                dataExtentX = d3.extent(scope.data, function(d) { return d.x;});
+                dataExtentY = d3.extent(scope.data, function(d) { return d.y;});
+
+                // Calculate box size of the grid and data scale. Those depend on the initial width of the svg
+                boxSize = width / (Math.abs(dataExtentX[1] - dataExtentX[0]));
+                dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([0, width]);
+
+            }
+
+
+            /**
+             * Creates the brush
+             * @returns {d3.svg.brush}
+             */
+            function createBrush() {
+
+                brush =  d3.svg.brush()
+                    .x(xScale)
+                    .y(yScale)
+                    .on("brushstart", function () {
+                        nodeGroup.each(function (d) {
+                            d.previouslySelected = shiftKey && d.selected;
+                        });
+                    })
+                    .on("brush", function () {
+                        var extent = d3.event.target.extent();
+                        nodeGroup.classed("selected", function (d) {
+                            return d.selected = d.previouslySelected ^
+                                (extent[0][0] <= d.x && d.x < extent[1][0]
+                                && extent[0][1] <= d.y && d.y < extent[1][1]);
+                        });
+                    })
+                    .on("brushend", function () {
+                        d3.event.target.clear();
+                        d3.select(this).call(d3.event.target);
+                    }
+                );
+
+                return brush;
+
+            }
+
+
+            /**
+             * Moves each selected point the distance provided by the parameters
+             * @param dx The delta x value
+             * @param dy The delta y value
+             */
+            function nudge(dx, dy) {
+
+                nodeGroup.filter(function(d) { return d.selected; })
+                    .attr("transform", function(d) {
+                        d.x += dx/zoom.scale();
+                        d.y += dy/zoom.scale();
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                    });
+
+                if(d3.event.preventDefault) d3.event.preventDefault();
+
+            }
+
+
+            /**
+             * Center the nodes in the middle of the svg
+             */
+            function centerNodes () {
+
+                var dx= dataExtentX;
+                var dy= dataExtentY;
+
+                var xDistance =Math.abs(dataScale(dx[0]) - dataScale(dx[1]));
+                xDistance =(width-xDistance)/2;
+                xDistance= xDistance-(dataScale(dx[0]));
+
+                var yDistance =Math.abs(dataScale(dy[0]) - dataScale(dy[1]));
+                yDistance =(height-yDistance)/2;
+                yDistance= yDistance-dataScale(dy[0]);
+
+                zoom.translate([xDistance, yDistance]);
+                applyZoom();
+
+            };
+
+
+            /**
+             * Applies the current zoom and moves the objects accordingly.
+             * Also caches translate and scale values of the zoom for later use.
+             */
+            function applyZoom() {
+
+                // Move the grid
+                if(d3.event) {
+                    gridTranslate = d3.event.translate[0] % (boxSize * d3.event.scale) + "," + d3.event.translate[1] % (boxSize * d3.event.scale);
+                    gridScale = d3.event.scale;
+                }
+                boxGroup.attr("transform",
+                    "translate(" + gridTranslate + ")scale(" + gridScale + ")");
+
+                translate = zoom.translate();
+                scale = zoom.scale();
+                // Move the graph
+                nodeGroup.attr("transform", function (d) {
+                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
+
+                });
+
+            }
+
+
+            /**
+             * Redraws/creates only the background grid of the map
+             * @param parentContainer d3 container to append the grid to
+             * @param boxSize the box size of the grid
+             * @param width intended width of the grid
+             * @param height intended heiht of the grid
+             * @returns parentContainer
+             */
+            function redrawGrid (parentContainer, boxSize, width, height) {
+
+                parentContainer.selectAll("*").remove();
 
                 // Background Grid
                 var numBoxesX = width / boxSize;
@@ -329,19 +392,41 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                         return d * boxSize
                     });
 
+                return parentContainer;
+
+            };
+
+
+            /**
+             * Checks the width of the svg container
+             * @returns {number} width
+             */
+            function getContainerWidth() {
+                return d3.select(iElement[0])[0][0].offsetWidth;
+            };
+
+
+            /**
+             * Checks the height of the svg container
+             * @returns {number} height
+             */
+            function getContainerHeight() {
+                return d3.select(iElement[0])[0][0].offsetHeight;
             }
 
 
-            //****************** Listeners **********************//
-
-            /*
+            /**
              * Listens for the "container-resized" event and rerenders the map
              */
             scope.$on('container-resized', function(event) {
-                renderWithData(scope.data);
+
+                renderWithoutData();
+
             });
 
-            // watch for data changes and re-render
+            /**
+             *  Watch for data changes and re-render
+             */
             scope.$watch('data', function(newVals, oldVals) {
                 renderWithData(newVals);
             }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
