@@ -55,31 +55,33 @@ module.exports = {
                 } else {
                     input_parameter.data.parse_antigen_names = false;
                 }
-                var json_parameters = JSON.stringify(input_parameter, null, 4);
-                console.log(json_parameters);
-                var file_path = store_path + file_name;
-                fs.writeFile(file_path, json_parameters, function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                });
                 break;
             case 'get_table':
                 var input_parameter = {command: 'get_table', data: {}};
-                // check if additional_params has name property else file_name= input_TIMESTAMP().json
                 var file_name = this.extract_name(input_file);
                 file_name = file_name + '_' + DATE_NOW + ".json";
-                var file_path = store_path + file_name;
-                console.log(input_parameter);
-                fs.writeFile(file_path, JSON.stringify(input_parameter, null, 4), function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                });
+
+                break;
+            case 'get_map':
+                if (additional_params.hasOwnProperty('projection')) {
+                    var projection = additional_params.projection;
+                    var input_parameter = {command: 'get_map', data: {projection: projection}};
+                } else {
+                    var input_parameter = {command: 'get_map', data: {projection: "best"}};
+                }
+                var file_name = this.extract_name(input_file);
+                file_name = file_name + '_' + DATE_NOW + ".json";
                 break;
             default :
                 break;
         }
+        var json_parameters = JSON.stringify(input_parameter, null, 4);
+        var file_path = store_path + file_name;
+        fs.writeFile(file_path, json_parameters, function (err) {
+            if (err) {
+                throw err;
+            }
+        });
 
         return file_path;
     },
@@ -120,7 +122,6 @@ module.exports = {
         var command = "get_table";
         // @todo get data params from user (question: what data parameters are supported)
         var additional_params = {};
-        var store_path = config.store.temp;
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
         // callback function for exec
@@ -147,6 +148,31 @@ module.exports = {
     },
     get_map: function () {
         var command = "get_map";
+        // @todo get data params from user (question: what data parameters are supported)
+        var additional_params = {};
+        // create and fetch input_parameter file
+        var input_param_file = this.create_input_parameter(command, additional_params, input_file);
+        // callback function for exec
+        function puts(error, stdout, stderr) {
+            if (error) {
+                // @todo handle error/exception properly
+                //this.emit('error', error);
+                console.log(error);
+            }
+            //sys.puts(stdout);
+        }
+
+        var script = config.api.script;
+        var data_path = config.store.path;
+        var output_json = this.create_file_path(data_path, input_file, '.json', 'map');
+        var command = script + input_param_file + " " + output_acd1 + " " + output_json;
+        //console.log(command);
+        try {
+            exec(command, puts);
+        } catch (Error) {
+            console.log('error is there');
+        }
+        return output_json;
     },
     relax_map: function () {
         var command = "relax";
@@ -185,44 +211,15 @@ module.exports = {
 
 }
 
+/**
+ * code below is commented for future reference (adding it as angular module)
+ */
 //angular.module('acjim.api', [])
 //    .factory('api', [function () {
 //        var api = {};
-//        api.createMapFile = function (file_path) {
-//
-//
-//            var env_variable = 'ACMACS_ROOT';
-//            var env = process.env[env_variable];
-//            //@todo get env_variable working
-//            var env = "/Users/rohan/Documents/workspace/acmacs_core/acmacs";
-//
-//            // extract file_name from file_path parameter
-//            var file = file_path.split('/').pop();
-//            var file_name = file.substr(0, file.lastIndexOf(".")) + '_'+ Date.now() +  ".json";
-//
-//            // store_path is the path where the files are stored inside the system, configured in config.js
-//            var store_path = config.store.path;
-//            // script to be called
-//            var script = "im";
-//
-//            // callback function for exec
-//            function puts(error, stdout, stderr) {
-//                if (error) {
-//                    return console.log(error);
-//                }
-//                sys.puts(stdout);
-//            }
-//
-//            //var command = env + "/bin/c2env " + script + " " + file_path + " " + store_path + file_name;
-//            //exec(command, puts);
-//
-//            return store_path+file_name;
-//        };
-//
 //        api.convertFile = function () {
 //
 //        };
-//
 //        return api;
 //    }]);
 

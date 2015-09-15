@@ -3173,7 +3173,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
             // @todo handle error properly
             var table_filename = api.get_table_data(filename, output_acd1);
             // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
-            var map_filename = api.get_map_data(filename, output_acd1);
+            var map_filename = api.get_map(filename, output_acd1);
         }
 
 

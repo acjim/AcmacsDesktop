@@ -44,9 +44,26 @@ exports.input_parameter = function (test) {
 };
 
 exports.in_param_get_table = function (test) {
-    //test.expect(2); // number of expected tests
+    test.expect(1); // number of expected tests
     // testing input_parameter command as get_table
     var command = "get_table";
+    var additional_params = {};
+    var store_path = config.store.temp;
+    var input_file = './test/data/concentric-circles.acd1';
+    var expected_file_name = store_path + 'concentric-circles' + '_' + api.date_now() + ".json";
+    test.equals(api.create_input_parameter(command, additional_params, input_file), expected_file_name);
+    //var file_exists = fs.existsSync(expected_file_name);
+    //test.ok(file_exists);
+    //fs.unlink(expected_file_name);
+
+    // test get_table as parameter
+    test.done();
+}
+
+exports.in_param_get_map = function (test) {
+    test.expect(1); // number of expected tests
+    // testing input_parameter command as get_map
+    var command = "get_map";
     var additional_params = {};
     var store_path = config.store.temp;
     var input_file = './test/data/concentric-circles.acd1';
@@ -76,7 +93,22 @@ exports.get_table = function (test) {
     test.expect(1);
     var input_file = './test/data/concentric-circles.acd1';
     var output_acd1 = api.import_user_data(input_file, 'table');
-    var output_json = api.get_table_data(input_file, output_acd1);
+    var file_exists = fs.existsSync(output_acd1);
+    if(file_exists) {
+        var output_json = api.get_table_data(input_file, output_acd1);
+        var expected_file = './data/concentric-circles' + "_table_" + api.date_now() + ".json";
+        test.equals(output_json, expected_file);
+    }
+    test.done();
+}
+
+//temporary test
+exports.test_file_exists = function (test) {
+    test.expect(1);
+    var input_file = './test/data/concentric-circles.acd1';
+    var file = "./data/concentric-circles_1442359685352.acd1";
+    var file_exists = fs.existsSync(file);
+    var output_json = api.get_table_data(input_file, file);
     var expected_file = './data/concentric-circles' + "_table_" + api.date_now() + ".json";
     test.equals(output_json, expected_file);
     test.done();
