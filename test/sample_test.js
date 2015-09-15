@@ -11,7 +11,7 @@ exports.create_file = function (test) {
     test.expect(1); // number of expected tests
     var file_name = '../test/data/concentric-circles.acd1';
     var expected_name = 'concentric-circles.json';
-    test.equals(api.createMapFile(file_name), expected_name);
+    test.equals(api.import_user_data(), 'import');
     test.done();
 
 };

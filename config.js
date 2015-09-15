@@ -19,5 +19,7 @@ config.server_name =  'ACJIM';
 config.api.location = '/Users/rohan/Desktop/';
 config.api.file = '';
 config.store.path = './data/';
+config.store.temp = './data/tmp/';
+config.api.script = './core/AcmacsCore.bundle/bin/c2env api-acjim.py ';
 
 module.exports = config;
