@@ -112,10 +112,12 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
                 // Create brush
                 brush = createBrush();
-                brushGroup.call(brush); //TODO: Check if tool is brush
+                //brushGroup.call(brush); //TODO: Check if tool is brush
 
                 // Create background grid
                 boxGroup = redrawGrid(boxGroup, boxSize, width, height);
+
+                addTools();
 
             }
 
@@ -170,32 +172,6 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                     );
 
 
-                // Tool handling
-                function addTools() {
-                    var tools = {
-                        'brush': function () {
-                            // Remove zoom
-                            svg.on('.zoom', null);
-
-                            // Enable brush
-                            brushGroup.select('.background').style('cursor', 'crosshair');
-                            brushGroup.call(brush);
-                        },
-                        'zoom': function () {
-                            // Disable brush
-                            brushGroup.call(brush)
-                                .on("mousedown.brush", null)
-                                .on("touchstart.brush", null)
-                                .on("touchmove.brush", null)
-                                .on("touchend.brush", null);
-                            brushGroup.select('.background').style('cursor', 'default');
-
-                            //Enable zoom
-                            svg.call(zoom);
-                        }
-                    }
-                    tools[$rootScope.mapTool]();
-                }
                 addTools();
                 $rootScope.$on('tool.changed', function(event) {
                     addTools();
@@ -208,6 +184,35 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
 
             };
+
+            /**
+             * Adds the selecte tool functionality to the d3 map
+             */
+            function addTools() {
+                var tools = {
+                    'brush': function () {
+                        // Remove zoom
+                        svg.on('.zoom', null);
+
+                        // Enable brush
+                        brushGroup.select('.background').style('cursor', 'crosshair');
+                        brushGroup.call(brush);
+                    },
+                    'zoom': function () {
+                        // Disable brush
+                        brushGroup.call(brush)
+                            .on("mousedown.brush", null)
+                            .on("touchstart.brush", null)
+                            .on("touchmove.brush", null)
+                            .on("touchend.brush", null);
+                        brushGroup.select('.background').style('cursor', 'default');
+
+                        //Enable zoom
+                        svg.call(zoom);
+                    }
+                }
+                tools[$rootScope.mapTool]();
+            }
 
 
             /**
