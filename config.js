@@ -21,5 +21,7 @@ config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
 config.api.script = './core/AcmacsCore.bundle/bin/c2env api-acjim.py ';
+// if this file_path doesn't exist, and environment is development
+config.api.path = './core/AcamcsCore.bundle';
 
 module.exports = config;

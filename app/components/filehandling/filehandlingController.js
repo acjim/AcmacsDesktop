@@ -22,6 +22,7 @@
 'use strict';
 
 var app = angular.module('acjim.filehandling',[]);
+var config = require('./config.js');
 
 app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fileDialog) {
     $scope.fileContent = "";
@@ -3156,7 +3157,26 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
         var fs = require('fs');
         //console.log('orginal-'+filename);
         var api = require('./app/shared/api.js');
-        //filename = api.import_user_data(filename);
+        // fs.existsSync(config.api.path) @todo check if api exists if not use stub data
+        if(process.platform === 'win32')
+        {
+            var output = api.stub();
+            var output_acd1 = output.output_acd1;
+            // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
+            var table_filename = output.table_json;
+            // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
+            var map_filename = output.map_json;
+            console.log('stub-called'); // @everyone left for debugging reasons on windows, if this works please remove this log
+        } else {
+            var output_acd1 = api.import_user_data(filename);
+            // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
+            // @todo handle error properly
+            var table_filename = api.get_table_data(filename, output_acd1);
+            // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
+            var map_filename = api.get_map_data(filename, output_acd1);
+        }
+
+
         //console.log('modified - '+filename);
         fs.readFile(filename, 'utf8', function (err,data) {
             if (err) {

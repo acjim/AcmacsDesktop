@@ -58,7 +58,7 @@ module.exports = {
                 var json_parameters = JSON.stringify(input_parameter, null, 4);
                 console.log(json_parameters);
                 var file_path = store_path + file_name;
-                fs.writeFile(file_path,json_parameters , function (err) {
+                fs.writeFile(file_path, json_parameters, function (err) {
                     if (err) {
                         throw err;
                     }
@@ -173,7 +173,16 @@ module.exports = {
     date_now: function () {
         // maintain single instance of date through out the request
         return DATE_NOW;
+    },
+    stub: function () {
+        var output = {
+            "output_acd1": 'output_EU.acd1',
+            "table_json": './test/data/get_table_concentric.json',
+            "map_json": './test/data/get_map.json',
+        }
+        return output;
     }
+
 }
 
 //angular.module('acjim.api', [])
