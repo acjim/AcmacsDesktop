@@ -23,7 +23,7 @@
 
 var sys = require('sys');
 var config = require('./../../config.js');
-var exec = require('child_process').exec;
+var execSync = require('child_process');
 var fs = require('fs');
 var DATE_NOW = Date.now();
 
@@ -95,7 +95,7 @@ module.exports = {
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
 
-        // callback function for exec
+        // callback function for execSync
         function puts(error, stdout, stderr) {
             if (error) {
                 // @todo handle error/exception properly
@@ -112,9 +112,9 @@ module.exports = {
         var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
         //console.log(command);
         try {
-            exec(command, puts);
+            execSync(command, puts);
         } catch (Error) {
-            console.log('error is there');
+            console.log(Error.message);
         }
         return output_acd1;
     },
@@ -124,7 +124,7 @@ module.exports = {
         var additional_params = {};
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
-        // callback function for exec
+        // callback function for execSync
         function puts(error, stdout, stderr) {
             if (error) {
                 // @todo handle error/exception properly
@@ -140,19 +140,19 @@ module.exports = {
         var command = script + input_param_file + " " + output_acd1 + " " + output_json;
         //console.log(command);
         try {
-            exec(command, puts);
+            execSync(command, puts);
         } catch (Error) {
-            console.log('error is there');
+            console.log(Error.message);
         }
         return output_json;
     },
-    get_map: function () {
+    get_map: function (input_file, output_acd1) {
         var command = "get_map";
         // @todo get data params from user (question: what data parameters are supported)
         var additional_params = {};
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
-        // callback function for exec
+        // callback function for execSync
         function puts(error, stdout, stderr) {
             if (error) {
                 // @todo handle error/exception properly
@@ -168,9 +168,9 @@ module.exports = {
         var command = script + input_param_file + " " + output_acd1 + " " + output_json;
         //console.log(command);
         try {
-            exec(command, puts);
+            execSync(command, puts);
         } catch (Error) {
-            console.log('error is there');
+            console.log(Error.message);
         }
         return output_json;
     },
