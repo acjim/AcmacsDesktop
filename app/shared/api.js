@@ -23,7 +23,7 @@
 
 var sys = require('sys');
 var config = require('./../../config.js');
-var execSync = require('child_process');
+var exec = require('child_process').exec;
 var fs = require('fs');
 var DATE_NOW = Date.now();
 
@@ -95,7 +95,7 @@ module.exports = {
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
 
-        // callback function for execSync
+        // callback function for exec
         function puts(error, stdout, stderr) {
             if (error) {
                 // @todo handle error/exception properly
@@ -112,7 +112,7 @@ module.exports = {
         var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
         //console.log(command);
         try {
-            execSync(command, puts);
+            exec(command, puts);
         } catch (Error) {
             console.log(Error.message);
         }
@@ -124,7 +124,7 @@ module.exports = {
         var additional_params = {};
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
-        // callback function for execSync
+        // callback function for exec
         function puts(error, stdout, stderr) {
             if (error) {
                 // @todo handle error/exception properly
@@ -133,16 +133,14 @@ module.exports = {
             }
             //sys.puts(stdout);
         }
-
         var script = config.api.script;
         var data_path = config.store.path;
         var output_json = this.create_file_path(data_path, input_file, '.json', 'table');
         var command = script + input_param_file + " " + output_acd1 + " " + output_json;
-        //console.log(command);
         try {
-            execSync(command, puts);
+            exec(command, puts);
         } catch (Error) {
-            console.log(Error.message);
+            console.log('get_table - '+ Error.message);
         }
         return output_json;
     },
@@ -152,7 +150,7 @@ module.exports = {
         var additional_params = {};
         // create and fetch input_parameter file
         var input_param_file = this.create_input_parameter(command, additional_params, input_file);
-        // callback function for execSync
+        // callback function for exec
         function puts(error, stdout, stderr) {
             if (error) {
                 // @todo handle error/exception properly
@@ -168,7 +166,7 @@ module.exports = {
         var command = script + input_param_file + " " + output_acd1 + " " + output_json;
         //console.log(command);
         try {
-            execSync(command, puts);
+            exec(command, puts);
         } catch (Error) {
             console.log(Error.message);
         }
