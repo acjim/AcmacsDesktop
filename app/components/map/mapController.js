@@ -28,37 +28,36 @@ app.controller('mapCtrl', ['$scope', function($scope){
 
     $scope.d3Data = [];
 
-    $scope.mapData.map[0].layout.forEach(function(point, i) {
+    $scope.mapData.map.layout.forEach(function(layout, i) {
+        $scope.d3Data[i] = {
+            "x": layout[0],
+            "y": layout[1]
+        };
+    });
 
-        var node_name, node_style, node_shape, node_fill;
+    $scope.mapData.map.point_info.forEach(function(point_info, i) {
 
-        var mapData = $scope.mapData.map[0];
+        var node_name = "undefined";
 
-        if (mapData && mapData.point_info && mapData.point_info[i]) {
-
-            node_name = $scope.mapData.map[0].point_info[i].name;
-
-        } else {
-            node_name = "undefined";
-        }
-        if (mapData && mapData.styles && mapData.styles.points && mapData.styles.points[i] && mapData.styles.styles[mapData.styles.points[i]]) {
-
-            node_shape = mapData.styles.styles[mapData.styles.points[i]].shape;
-            node_fill = mapData.styles.styles[mapData.styles.points[i]].fill_color[0];
-
-        } else {
-            node_shape = "circle";
-            node_fill = "#000000";
+        if (!_.isUndefined(point_info.name)) {
+            node_name = point_info.name;
         }
 
-        node_style = {shape: node_shape, fill_color: node_fill};
+        $scope.d3Data[i].name = node_name;
+    });
 
-        $scope.d3Data.push({
-            "x": point[0],
-            "y": point[1],
-            "name": node_name,
-            "style": node_style
-        });
+    $scope.mapData.map.styles.points.forEach(function(point, i) {
 
+        var node_shape = "circle";
+        var node_fill = "#000000";
+
+        if (!_.isUndefined($scope.mapData.map.styles.styles[point].fill_color)) {
+            node_fill = $scope.mapData.map.styles.styles[point].fill_color[0];
+        }
+        if (!_.isUndefined($scope.mapData.map.styles.styles[point].shape)) {
+            node_shape = $scope.mapData.map.styles.styles[point].shape;
+        }
+
+        $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
     });
 }]);
