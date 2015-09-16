@@ -29,9 +29,15 @@ var DATE_NOW = Date.now();
 
 module.exports = {
 
-    error: '',
-    // creates json file with input parameters
-    // for example: input.json - json object telling acmacs core api what to do
+    /**
+     * creates json file with input parameters
+     * for example: input.json - json object telling acmacs core api what to do
+     *
+     * @param command string
+     * @param additional_params object
+     * @param input_file string
+     * @returns {string}
+     */
     create_input_parameter: function (command, additional_params, input_file) {
         var store_path = config.store.temp;
         switch (command) {
@@ -60,17 +66,34 @@ module.exports = {
                 var input_parameter = {command: 'get_table', data: {}};
                 var file_name = this.extract_name(input_file);
                 file_name = file_name + '_' + DATE_NOW + ".json";
-
                 break;
             case 'get_map':
+                var input_parameter = {command: 'get_map', data: {projection: 0}};
                 if (additional_params.hasOwnProperty('projection')) {
                     var projection = additional_params.projection;
                     var input_parameter = {command: 'get_map', data: {projection: projection}};
-                } else {
-                    var input_parameter = {command: 'get_map', data: {projection: "best"}};
                 }
+                input_parameter.data.error_lines = false;
+                input_parameter.data.blob_stress_diff = 0.1;
+                input_parameter.data.blob_number_of_directions = 36;
+                input_parameter.data.blobs = false;
+
+                if (additional_params.hasOwnProperty('error_lines')) {
+                    input_parameter.data.error_lines = additional_params.error_lines;
+                }
+                if (additional_params.hasOwnProperty('blob_stress_diff')) {
+                    input_parameter.data.blob_stress_diff = additional_params.blob_stress_diff;
+                }
+                if (additional_params.hasOwnProperty('blob_number_of_directions')) {
+                    input_parameter.data.blob_number_of_directions = additional_params.blob_number_of_directions;
+                }
+                if (additional_params.hasOwnProperty('blobs')) {
+                    input_parameter.data.blobs = additional_params.blobs;
+                }
+
                 var file_name = this.extract_name(input_file);
-                file_name = file_name + '_' + DATE_NOW + ".json";
+                var random_number = Math.random() * 89;
+                file_name = file_name + '_' + DATE_NOW + random_number+ ".json";
                 break;
             default :
                 break;
@@ -85,8 +108,13 @@ module.exports = {
 
         return file_path;
     },
-    // first step of the api call, import user data
-    import_user_data: function (input_file) {
+    /**
+     * first step of the api call, import user data and return acd1 file (used for further processing)
+     * @param input_file String
+     * @param task String
+     * @returns {*}
+     */
+    import_user_data: function (input_file, task) {
         var command = "import";
         // @todo get parameters name ,and parse_antigen_names (boolean) from user
         //var additional_params = {name: 'test_file', parse_antigen_names: true};
@@ -101,6 +129,10 @@ module.exports = {
                 // @todo handle error/exception properly
                 //this.emit('error', error);
                 console.log(error);
+            } else if(task === 'new-open') {
+                var api = require('./api.js');
+                var output_table_json = api.get_table_data(input_file, output_acd1);
+                var output_map_json = api.get_map(input_file, output_acd1);
             }
             //sys.puts(stdout);
         }
@@ -110,13 +142,20 @@ module.exports = {
         var output_json = this.create_file_path(data_path, input_file, '.json', '');
         var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', '');
         var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
-        //console.log(command);
+        // callback function for exec
         try {
             exec(command, puts);
         } catch (Error) {
             console.log(Error.message);
         }
-        return output_acd1;
+        var output_table_json = this.create_file_path(data_path, input_file, '.json', 'table');
+        var output_map_json = this.create_file_path(data_path, input_file, '.json', 'map');
+        var output = {
+            "output_acd1": output_acd1,
+            "table_json": output_table_json,
+            "map_json": output_map_json,
+        }
+        return output;
     },
     get_table_data: function (input_file, output_acd1) {
         var command = "get_table";
@@ -131,7 +170,6 @@ module.exports = {
                 //this.emit('error', error);
                 console.log(error);
             }
-            //sys.puts(stdout);
         }
         var script = config.api.script;
         var data_path = config.store.path;
@@ -140,7 +178,7 @@ module.exports = {
         try {
             exec(command, puts);
         } catch (Error) {
-            console.log('get_table - '+ Error.message);
+            console.log('get_table - ' + Error.message);
         }
         return output_json;
     },

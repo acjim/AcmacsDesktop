@@ -2607,19 +2607,15 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
         if(!fs.existsSync(config.api.path))
         {
             var output = api.stub();
-            var output_acd1 = output.output_acd1;
-            // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
-            var table_filename = output.table_json;
-            // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
-            var map_filename = output.map_json;
         } else {
-            var output_acd1 = api.import_user_data(filename);
-            // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
-            // @todo handle error properly
-            var table_filename = api.get_table_data(filename, output_acd1);
-            // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
-            var map_filename = api.get_map(filename, output_acd1);
+            var output = api.import_user_data(filename, 'new-open');
         }
+
+        var output_acd1 = output.output_acd1;
+        // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
+        var table_filename = output.table_json;
+        // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
+        var map_filename = output.map_json;
 
         var numOpenMaps = $scope.openMaps.length;
         $scope.openMaps[numOpenMaps] = {};

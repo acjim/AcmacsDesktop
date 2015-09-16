@@ -39,12 +39,12 @@ exports.input_parameter = function (test) {
     test.equals(api.create_input_parameter(command, additional_params, input_file), expected_file_name);
     var file_exists = fs.existsSync(expected_file_name);
     test.ok(file_exists);
-    //fs.unlink(expected_file_name);
+    fs.unlink(expected_file_name);
     test.done();
 };
 
 exports.in_param_get_table = function (test) {
-    test.expect(1); // number of expected tests
+    test.expect(2); // number of expected tests
     // testing input_parameter command as get_table
     var command = "get_table";
     var additional_params = {};
@@ -52,9 +52,9 @@ exports.in_param_get_table = function (test) {
     var input_file = './test/data/concentric-circles.acd1';
     var expected_file_name = store_path + 'concentric-circles' + '_' + api.date_now() + ".json";
     test.equals(api.create_input_parameter(command, additional_params, input_file), expected_file_name);
-    //var file_exists = fs.existsSync(expected_file_name);
-    //test.ok(file_exists);
-    //fs.unlink(expected_file_name);
+    var file_exists = fs.existsSync(expected_file_name);
+    test.ok(file_exists);
+    fs.unlink(expected_file_name);
 
     // test get_table as parameter
     test.done();
@@ -69,9 +69,9 @@ exports.in_param_get_map = function (test) {
     var input_file = './test/data/concentric-circles.acd1';
     var expected_file_name = store_path + 'concentric-circles' + '_' + api.date_now() + ".json";
     test.equals(api.create_input_parameter(command, additional_params, input_file), expected_file_name);
-    //var file_exists = fs.existsSync(expected_file_name);
+    var file_exists = fs.existsSync(expected_file_name);
     //test.ok(file_exists);
-    //fs.unlink(expected_file_name);
+    fs.unlink(expected_file_name);
 
     // test get_table as parameter
     test.done();
@@ -81,24 +81,16 @@ exports.import = function (test) {
     test.expect(1);
     var input_file = './test/data/concentric-circles.acd1';
     var expected_file = './data/concentric-circles' + "_" + api.date_now() + ".acd1";
-    var output_file = api.import_user_data(input_file);
+    var output = api.import_user_data(input_file, 'new-open');
+    var output_file = output.output_acd1;
+    // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
+    var table_filename = output.table_json;
+    // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
+    var map_filename = output.map_json;
     test.equals(output_file, expected_file);
     var file_exists = fs.existsSync(expected_file);
     console.log(file_exists);
     //test.ok(file_exists);
-    test.done();
-}
-
-exports.get_table = function (test) {
-    test.expect(1);
-    var input_file = './test/data/concentric-circles.acd1';
-    var output_acd1 = api.import_user_data(input_file, 'table');
-    var file_exists = fs.existsSync(output_acd1);
-    //if(file_exists) {
-        var output_json = api.get_table_data(input_file, output_acd1);
-        var expected_file = './data/concentric-circles' + "_table_" + api.date_now() + ".json";
-        test.equals(output_json, expected_file);
-    //}
     test.done();
 }
 
