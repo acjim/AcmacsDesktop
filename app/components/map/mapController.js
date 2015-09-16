@@ -60,4 +60,32 @@ app.controller('mapCtrl', ['$scope', function($scope){
 
         $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
     });
+    // checking if the drawing order is available
+    if (!_.isUndefined($scope.mapData.map.styles.drawing_order)) {
+        // In case the drawing_order is defined, we order the nodes based on their drawing order.
+        var order_list = $scope.mapData.map.styles.drawing_order[0].concat($scope.mapData.map.styles.drawing_order[1]);
+        var length = order_list.length;
+        if ($scope.d3Data.length == length) {
+            // start a bubble sort.
+            // The start of the sorting of drawing order following Bubble sort algorithm
+            for (var i = 0; i < length; i++) {
+                for (var j = (length - 1); j > 0; j--) {
+                    if (order_list[j] < order_list[j - 1]) {
+                        // swapping the order_list  to keep the reference
+                        var temp = order_list[j - 1];
+                        order_list[j - 1] = order_list[j];
+                        order_list[j] = temp;
+                        // swapping the data
+                        temp = $scope.d3Data[j - 1];
+                        $scope.d3Data[j - 1] = $scope.d3Data[j];
+                        $scope.d3Data[j] = temp;
+                    }
+                }
+            }
+        }else {
+            // keep ordering in default, meaning we don't do anything
+        }
+    }
+
+
 }]);
