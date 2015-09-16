@@ -3157,7 +3157,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
         var fs = require('fs');
         //console.log('orginal-'+filename);
         var api = require('./app/shared/api.js');
-        if(process.platform === 'win32' || !fs.existsSync(config.api.path))
+        if(!fs.existsSync(config.api.path))
         {
             var output = api.stub();
             var output_acd1 = output.output_acd1;

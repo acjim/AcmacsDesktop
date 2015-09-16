@@ -20,7 +20,6 @@
         "angular-bootstrap": "^0.12.0",
         "bootstrap": "3.3.5",
         "jquery": "2.1.4",
-        "nconf": "0.7.2",
         "nodeunit": "0.7.x"
     }
 }
