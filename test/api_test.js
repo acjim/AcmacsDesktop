@@ -94,14 +94,23 @@ exports.get_table = function (test) {
     var input_file = './test/data/concentric-circles.acd1';
     var output_acd1 = api.import_user_data(input_file, 'table');
     var file_exists = fs.existsSync(output_acd1);
-    if(file_exists) {
+    //if(file_exists) {
         var output_json = api.get_table_data(input_file, output_acd1);
         var expected_file = './data/concentric-circles' + "_table_" + api.date_now() + ".json";
         test.equals(output_json, expected_file);
-    }
+    //}
     test.done();
 }
 
+exports.api_exists = function(test)
+{
+    test.expect(1);
+    var path = config.api.path;
+    var exists = 1;
+    exists = fs.openSync(path,'r');
+    test.ok(exists);
+    test.done();
+}
 //temporary test
 exports.test_file_exists = function (test) {
     test.expect(1);
@@ -113,3 +122,4 @@ exports.test_file_exists = function (test) {
     test.equals(output_json, expected_file);
     test.done();
 }
+

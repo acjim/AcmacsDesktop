@@ -3157,8 +3157,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
         var fs = require('fs');
         //console.log('orginal-'+filename);
         var api = require('./app/shared/api.js');
-        // fs.existsSync(config.api.path) @todo check if api exists if not use stub data
-        if(process.platform === 'win32')
+        if(process.platform === 'win32' || !fs.existsSync(config.api.path))
         {
             var output = api.stub();
             var output_acd1 = output.output_acd1;
@@ -3166,7 +3165,6 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
             var table_filename = output.table_json;
             // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
             var map_filename = output.map_json;
-            console.log('stub-called'); // @everyone left for debugging reasons on windows, if this works please remove this log
         } else {
             var output_acd1 = api.import_user_data(filename);
             // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
