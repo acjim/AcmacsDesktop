@@ -10,3 +10,6 @@ node_modules/
 
 #temporary files
 /data/tmp/*.json
+
+# core bundle
+core/AcmacsCore.bundle/
