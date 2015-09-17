@@ -68,6 +68,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
+                padding= 20,
                 boxSize = 0,
                 centerMap = true,
                 shiftKey;
@@ -253,7 +254,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
                 // Calculate box size of the grid and data scale. Those depend on the initial width of the svg
                 boxSize = width / (Math.abs(dataExtentX[1] - dataExtentX[0]));
-                dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([0, width]);
+                dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([padding, width-padding]);
 
             }
 
