@@ -2595,6 +2595,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
             ]
         }, active: true}
     ];
+    console.log($scope.openMaps);
 
     $scope.open = function() {
         fileDialog.openFile($scope.handleFileOpen, false, '.acd1,.json');
@@ -2646,6 +2647,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
             $scope.openMaps[numOpenMaps].title = $scope.openMaps[numOpenMaps].table.info.name;
             $scope.$apply();
         });
+
 
         /*
         // old .acd1
