@@ -87,8 +87,9 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         }
     }
 
-    // Setting the color using sthe Hue Saturation Value Scheme
+    // Setting the color using the Hue Saturation Value Scheme
    if (!_.isUndefined($scope.table)) {
+      // Missing Isolate
    // $scope.info.assay;
        var name =  $scope.table.info.assay;
        var isolate=$scope.table.info.assay;
