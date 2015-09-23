@@ -24,18 +24,18 @@
 
 var app = angular.module('acjim.map',[]);
 
-app.controller('mapCtrl', ['$scope', function($scope){
+app.controller('mapCtrl', ['$scope', function($scope) {
 
     $scope.d3Data = [];
 
-    $scope.mapData.map.layout.forEach(function(layout, i) {
+    $scope.mapData.map.layout.forEach(function (layout, i) {
         $scope.d3Data[i] = {
             "x": layout[0],
             "y": layout[1]
         };
     });
 
-    $scope.mapData.map.point_info.forEach(function(point_info, i) {
+    $scope.mapData.map.point_info.forEach(function (point_info, i) {
 
         var node_name = "undefined";
 
@@ -46,7 +46,7 @@ app.controller('mapCtrl', ['$scope', function($scope){
         $scope.d3Data[i].name = node_name;
     });
 
-    $scope.mapData.map.styles.points.forEach(function(point, i) {
+    $scope.mapData.map.styles.points.forEach(function (point, i) {
 
         var node_shape = "circle";
         var node_fill = "#000000";
@@ -82,10 +82,152 @@ app.controller('mapCtrl', ['$scope', function($scope){
                     }
                 }
             }
-        }else {
+        } else {
             // keep ordering in default, meaning we don't do anything
         }
     }
 
+    // Setting the color using the Hue Saturation Value Scheme
+   if (!_.isUndefined($scope.table)) {
+      // Missing Isolate
+   // $scope.info.assay;
+       var name =  $scope.table.info.assay;
+       var isolate=$scope.table.info.assay;
+       var year= $scope.table.info.date;
+        var h, s, v;
+        var firstChar =name.charAt(0);
+
+       // Computing the Hue Value
+        if (isNumeric(firstChar)) {
+            h= firstChar/10;
+        }
+        else if (isLetter(firstChar)) {
+            // Case Derek Trolling Dutch People
+            if(name.toUpperCase=="NL"|| name.toUpperCase=="BI"||name.toUpperCase== "RD"||name.toUpperCase== "UT"||name.toUpperCase== "AM"){
+                h=0.1;
+            } else if (firstChar.toUpperCase()=="A"||firstChar=="A"){
+                h=0/25;
+            }else if (firstChar.toUpperCase()=="B"||firstChar=="B"){
+                h=2/25;
+            }else if (firstChar.toUpperCase()=="C"||firstChar=="C"){
+                h=3/25;
+            }else if (firstChar.toUpperCase()=="D"||firstChar=="D"){
+                h=4/25;
+            }else if (firstChar.toUpperCase()=="E"||firstChar=="E"){
+                h=5/25;
+            }else if (firstChar.toUpperCase()=="F"||firstChar=="F"){
+                h=6/25;
+            }else if (firstChar.toUpperCase()=="G"||firstChar=="G"){
+                h=7/25;
+            }else if (firstChar.toUpperCase()=="H"||firstChar=="H"){
+                h=8/25;
+            }else if (firstChar.toUpperCase()=="I"||firstChar=="I"){
+                h=9/25;
+            }else if (firstChar.toUpperCase()=="J"||firstChar=="J"){
+                h=10/25;
+            }else if (firstChar.toUpperCase()=="K"||firstChar=="K"){
+                h=11/25;
+            }else if (firstChar.toUpperCase()=="L"||firstChar=="L"){
+                h=12/25;
+            }else if (firstChar.toUpperCase()=="M"||firstChar=="M"){
+                h=13/25;
+            }else if (firstChar.toUpperCase()=="N"||firstChar=="N"){
+                h=1/25;
+            }else if (firstChar.toUpperCase()=="O"||firstChar=="O"){
+                h=14/25;
+            }else if (firstChar.toUpperCase()=="P"||firstChar=="P"){
+                h=15/25;
+            }else if (firstChar.toUpperCase()=="Q"||firstChar=="Q"){
+                h=16/25;
+            }else if (firstChar.toUpperCase()=="R"||firstChar=="R"){
+                h=17/25;
+            }else if (firstChar.toUpperCase()=="S"||firstChar=="S"){
+                h=18/25;
+            }else if (firstChar.toUpperCase()=="T"||firstChar=="T"){
+                h=19/25;
+            }else if (firstChar.toUpperCase()=="U"||firstChar=="U"){
+                h=20/25;
+            }else if (firstChar.toUpperCase()=="V"||firstChar=="V"){
+                h=21/25;
+            }else if (firstChar.toUpperCase()=="W"||firstChar=="W"){
+                h=22/25;
+            }else if (firstChar.toUpperCase()=="X"||firstChar=="X"){
+                h=23/25;
+            }else if (firstChar.toUpperCase()=="Y"||firstChar=="Y"){
+                h=24/25;
+            }else if (firstChar.toUpperCase()=="Z"||firstChar=="Z"){
+                h=25/25;
+            }
+            else{
+             // we don't have a way to compute the H value, meaning we can't compute the color
+            }
+        }else{
+            // Not Numeric and not Alphabet, meaning it is special charachters. Not taken into consideration
+        }
+
+
+        }else{
+       // we can't compute the color.
+        }
+
+            // computing the Saturation
+            if(!isNumeric(isolate)){
+                s=0.5;
+            } else{
+                s=(log20(isolate)/5);
+            }
+
+         // Computing the Value
+        if (isNumeric(year)){
+            v=1;
+        }
+        else{
+            v=0;
+        }
+
+        // computing the total if all flags are 1
+
+
+    function log20(val) {
+        return (Math.log(n)) / (Math.log(20));
+    }
+
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    function isLetter(letter) {
+        if (letter.toLowerCase() != letter) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    // HSVtoRGB
+    function HSVtoRGB(h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        if (arguments.length === 1) {
+            s = h.s, v = h.v, h = h.h;
+        }
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    }
 
 }]);
