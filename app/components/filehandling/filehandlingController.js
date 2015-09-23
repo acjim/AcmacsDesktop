@@ -2595,7 +2595,6 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
             ]
         }, active: true}
     ];
-    console.log($scope.openMaps);
 
     $scope.open = function() {
         fileDialog.openFile($scope.handleFileOpen, false, '.acd1,.json');
