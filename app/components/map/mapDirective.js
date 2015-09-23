@@ -44,7 +44,7 @@ app.directive('acMap', function() {
 /*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', function($rootScope) {
+app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootScope, toolbar, toolbarItems) {
     return {
         restrict: 'A',
         scope: {
@@ -64,7 +64,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
                 scale = 1,
                 gridTranslate = [0,0],
                 gridScale = 1,
-                selectedTool = null,
+                currentTool = null,
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
@@ -174,9 +174,6 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
 
                 addTools();
-                $rootScope.$on('tool.changed', function(event) {
-                    addTools();
-                });
 
                 if (centerMap) {
                     centerMap = !centerMap;
@@ -186,35 +183,64 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
 
             };
 
+
+
+
             /**
-             * Adds the selecte tool functionality to the d3 map
+             * Adds the selected tool functionality to the d3 map
              */
             function addTools() {
-                var tools = {
-                    'brush': function () {
-                        // Remove zoom
-                        svg.on('.zoom', null);
 
-                        // Enable brush
-                        brushGroup.select('.background').style('cursor', 'crosshair');
-                        brushGroup.call(brush);
-                    },
-                    'zoom': function () {
-                        // Disable brush
-                        brushGroup.call(brush)
-                            .on("mousedown.brush", null)
-                            .on("touchstart.brush", null)
-                            .on("touchmove.brush", null)
-                            .on("touchend.brush", null);
-                        brushGroup.select('.background').style('cursor', 'default');
+                currentTool = toolbar.getCurrentTool();
+                var toolID = toolbarItems.SELECTION;        //Default tool
 
-                        //Enable zoom
-                        svg.call(zoom);
-                    }
+                if (currentTool != null) {
+                    toolID = currentTool.id;
                 }
-                tools[$rootScope.mapTool]();
+
+                switch(toolID) {
+                    case toolbarItems.SELECTION:
+                        enableSelectionTool();
+                        break;
+                    case toolbarItems.MOVEMENT:
+                        enableMovementTool();
+                        break;
+                    default:
+                        console.log("Don't recognize the tool given. Did nothing.");
+                        break;
+                }
+
             }
 
+
+            /**
+             * Enables the selection tool (brush) on the SVG
+             */
+            function enableSelectionTool() {
+                // Remove zoom
+                svg.on('.zoom', null);
+
+                // Enable brush
+                brushGroup.select('.background').style('cursor', 'crosshair');
+                brushGroup.call(brush);
+            }
+
+
+            /**
+             * Enables the movement tool (zoom) on the SVG
+             */
+            function enableMovementTool() {
+                // Disable brush
+                brushGroup.call(brush)
+                    .on("mousedown.brush", null)
+                    .on("touchstart.brush", null)
+                    .on("touchmove.brush", null)
+                    .on("touchend.brush", null);
+                brushGroup.select('.background').style('cursor', 'default');
+
+                //Enable zoom
+                svg.call(zoom);
+            }
 
             /**
              * Initializes the svg. This function should only be called once for each directive.
@@ -421,13 +447,21 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
             }
 
 
+            /////////////////////// LISTENERS ///////////////////////
+
+            /**
+             * Watches for a tool change
+             */
+            $rootScope.$watch(toolbar.getCurrentTool, function() {
+                addTools();
+            });
+
+
             /**
              * Listens for the "container-resized" event and rerenders the map
              */
             scope.$on('container-resized', function(event) {
-
                 renderWithoutData();
-
             });
 
             /**
@@ -435,7 +469,7 @@ app.directive('d3Map', ['$rootScope', function($rootScope) {
              */
             scope.$watch('data', function(newVals, oldVals) {
                 renderWithData(newVals);
-            }); //, true); //FIXME: seems to have a problem. Maybe use a notification+listener for new data instead
+            }); //, true); //FIXME: Scaling the data triggers this twice. Maybe use notification + listener for new data instead
 
         }
     };
