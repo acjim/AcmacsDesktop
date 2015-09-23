@@ -19,14 +19,9 @@
         <!-- sidebar -->
         <div class="col-sm-2 col-md-2 col-xs-2 sidebar">
             <div class="toolbar" ng-controller="toolbarCtrl">
-                <div class="btn-group" role="group">
-                    <label class="btn btn-default" ng-model="mapTool" btn-radio="'brush'">
-                        <span class="glyphicon glyphicon-unchecked"></span>
-                    </label>
-                    <label class="btn btn-default" ng-model="mapTool" btn-radio="'zoom'">
-                        <span class="glyphicon glyphicon-move"></span>
-                    </label>
-                </div>
+                <label ng-repeat="tool in tools" class="btn btn-default" ng-class="{'active': tool.active}" ng-click="tool.click()">
+                    <span title="{{tool.caption}}" class="{{tool.icon}}"></span>
+                </label>
             </div>
             <div id="windowPane"></div>
         </div> <!-- /sidebar -->
@@ -64,6 +59,8 @@
 
 <!-- services -->
 <script src="./app/shared/nwService.js"></script>
+<script src="./app/components/toolbar/toolbarItems.js"></script>
+<script src="./app/components/toolbar/toolbarService.js"></script>
 
 <!-- controllers -->
 <script src="./app/components/filehandling/filehandlingController.js"></script>
