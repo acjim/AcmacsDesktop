@@ -23,22 +23,18 @@
 (function() {
     'use strict';
 
-angular
-    .module('acjim')
-    .controller('toolbarCtrl', ['$scope', '$rootScope', 'toolbar', 'toolbarItems', toolbarCtrl]);
+    angular.module('acjim')
+        .factory('toolbarItems', [toolbarItems]);
 
-    function toolbarCtrl($scope, $rootScope, toolbar, toolbarItems) {
+    function toolbarItems () {
 
-        //Add toolbar items to the service. TODO: Move this to own file?
-        toolbar.addGlobalScopeItem(toolbarItems.SELECTION, 'Selection Tool', 'glyphicon glyphicon-unchecked', null);
-        toolbar.addGlobalScopeItem(toolbarItems.MOVEMENT, 'Movement Tool', 'glyphicon glyphicon-move', null);
+        var tools = {
+            SELECTION: 1,
+            MOVEMENT: 2,
+            RE_OPTIMIZE: 3
+        };
 
-        // The tool array for display in html
-        $scope.tools = toolbar.getItems();
-
-        // Set default tool on startup
-        var defaultTool = $scope.tools[0];
-        toolbar.setCurrentTool(defaultTool);
+        return tools;
 
     }
 

@@ -2643,6 +2643,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
             $scope.$apply();
         });
 
+
         /*
         // old .acd1
         fs.readFile(filename, 'utf8', function (err,data) {
