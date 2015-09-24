@@ -35,7 +35,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
     });
 
     $scope.$on('open-file', function(e, menu, item) {
-        fileDialog.openFile($scope.handleFileOpen, false, '.acd1,.json');
+        fileDialog.openFile($scope.handleFileOpen, false, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     });
 
     $scope.$on('save-file', function(e, menu, item) {
@@ -44,7 +44,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
         $scope.openMaps.forEach(function(map, index){
             if(map.active) filename = map.title;
         });
-        fileDialog.saveAs($scope.handleFileSave, filename, '.acd1,.json');
+        fileDialog.saveAs($scope.handleFileSave, filename, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     });
 
     $scope.$on('close-file', function(e, menu, item) {
@@ -2597,7 +2597,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
     ];
 
     $scope.open = function() {
-        fileDialog.openFile($scope.handleFileOpen, false, '.acd1,.json');
+        fileDialog.openFile($scope.handleFileOpen, false, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     };
 
     $scope.handleFileOpen = function(filename) {
