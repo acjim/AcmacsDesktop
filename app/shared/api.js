@@ -140,7 +140,6 @@ angular.module('acjim.api', [])
                 } else if (task === 'new-open') {
                 }
                 //sys.puts(stdout);
-                console.log("exec ready, in puts, call resolve now");
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
@@ -151,7 +150,6 @@ angular.module('acjim.api', [])
             var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
             // callback function for exec
             try {
-                console.log("call exec in import_user_data");
                 exec(command, puts);
             } catch (Error) {
                 console.log(Error.message);
@@ -184,7 +182,6 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
-                console.log("exec get_table_data ready, in puts, call resolve now");
                 deferred.resolve(stdout); // return call
             }
 
@@ -198,7 +195,7 @@ angular.module('acjim.api', [])
                 console.log('get_table - ' + Error.message);
                 deferred.reject(Error.message);
             }
-            return output_json;
+            return deferred.promise;
         };
 
         api.get_map = function (input_file, output_acd1) {
@@ -216,7 +213,6 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
-                console.log("exec get_map ready, in puts, call resolve now");
                 deferred.resolve(stdout); // return call
                 //sys.puts(stdout);
             }
@@ -232,7 +228,7 @@ angular.module('acjim.api', [])
                 console.log(Error.message);
                 deferred.reject(Error.message);
             }
-            return output_json;
+            return deferred.promise;
         };
 
         api.relax_map = function () {
@@ -276,23 +272,11 @@ angular.module('acjim.api', [])
         };
 
         api.asyncTest = function() {
-            console.log("in asyncTest");
             var deferred = $q.defer();
 
             $timeout(function() {
                 deferred.resolve(['Hello', 'world!']);
-            }, 2000);
-
-            return deferred.promise;
-        };
-
-        api.asyncTest2 = function() {
-            console.log("in asyncTest2");
-            var deferred = $q.defer();
-
-            $timeout(function() {
-                deferred.reject(['Hello', 'world 2!']);
-            }, 2000);
+            }, 200);
 
             return deferred.promise;
         };
