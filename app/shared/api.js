@@ -74,10 +74,10 @@ angular.module('acjim.api', [])
                         var projection = additional_params.projection;
                         var input_parameter = {command: 'get_map', data: {projection: projection}};
                     }
-                    input_parameter.data.error_lines = true;
+                    input_parameter.data.error_lines = false;
                     input_parameter.data.blob_stress_diff = 0.1;
                     input_parameter.data.blob_number_of_directions = 36;
-                    input_parameter.data.blobs = true;
+                    input_parameter.data.blobs = false;
 
                     if (additional_params.hasOwnProperty('error_lines')) {
                         input_parameter.data.error_lines = additional_params.error_lines;
