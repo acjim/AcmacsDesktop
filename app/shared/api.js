@@ -140,7 +140,7 @@ angular.module('acjim.api', [])
                 }
                 //sys.puts(stdout);
                 console.log("exec ready, in puts, call resolve now");
-                deferred.resolve(output_acd1); // return call
+                deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
             var script = config.api.script;

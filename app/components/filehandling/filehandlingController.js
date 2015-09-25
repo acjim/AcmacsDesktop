@@ -24,7 +24,7 @@
 var app = angular.module('acjim.filehandling',[]);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($scope, fileDialog, api) {
+app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', function($scope, $q, fileDialog, api) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -2618,20 +2618,23 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
         } else {
             var additional_params = {};
             console.log("start calling import_user_data");
-            var output = api.import_user_data(filename, 'new-open', additional_params).then(function(output_acd1){
+            var output = api.import_user_data(filename, 'new-open', additional_params).then(function(output){
                 console.log("response from import_user_data:");
-                console.log(output_acd1);
+                console.log(output.output_acd1);
                 // get table
                 console.log("start calling q.all");
                 $q.all([
-                    api.get_table_data(input_file, output_acd1),
-                    api.get_map(input_file, output_acd1)
+                    api.get_table_data(output.input_file, output.output_acd1),
+                    api.get_map(output.input_file, output.output_acd1)
                 ]).then(function(data) {
                     var output_table_json = data[0];
                     var output_map_json = data[1];
 
+                    console.log(output_table_json);
+                    console.log(output_map_json);
+
                     $scope.handleOpenComplete({
-                        output_acd1: output_acd1,
+                        output_acd1: output.output_acd1,
                         table_json: output_table_json,
                         map_json: output_map_json
                     });
@@ -2649,6 +2652,8 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
 
         var numOpenMaps = $scope.openMaps.length;
         $scope.openMaps[numOpenMaps] = {};
+
+        console.log(map_filename);
 
         fs.readFile(table_filename, 'utf8', function (err,data) {
             if (err) {

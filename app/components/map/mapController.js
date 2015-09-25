@@ -28,6 +28,8 @@ app.controller('mapCtrl', ['$scope', function($scope) {
 
     $scope.d3Data = [];
 
+    console.log($scope.mapData);
+
     $scope.mapData.map.layout.forEach(function (layout, i) {
         $scope.d3Data[i] = {
             "x": layout[0],
