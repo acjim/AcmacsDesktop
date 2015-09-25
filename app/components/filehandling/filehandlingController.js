@@ -2610,7 +2610,18 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', functio
             api.asyncTest().then(function(response) {
                 console.log(response[1]);
                 api.asyncTest2().then(function(response) {
+                    console.log("asyncTest2 success");
                     console.log(response[1]);
+                }, function(reason) {
+                    // error: handle the error if possible and
+                    //        resolve promiseB with newPromiseOrValue,
+                    //        otherwise forward the rejection to promiseB
+                    /*if (canHandle(reason)) {
+                     // handle the error and recover
+                     return newPromiseOrValue;
+                     }*/
+                    console.log("error");
+                    return $q.reject(reason);
                 });
             });
 
@@ -2638,7 +2649,25 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', functio
                         table_json: output_table_json,
                         map_json: output_map_json
                     });
+                }, function(reason) {
+                    // error: handle the error if possible and
+                    //        resolve promiseB with newPromiseOrValue,
+                    //        otherwise forward the rejection to promiseB
+                    /*if (canHandle(reason)) {
+                        // handle the error and recover
+                        return newPromiseOrValue;
+                    }*/
+                    return $q.reject(reason);
                 });
+            }, function(reason) {
+                // error: handle the error if possible and
+                //        resolve promiseB with newPromiseOrValue,
+                //        otherwise forward the rejection to promiseB
+                /*if (canHandle(reason)) {
+                    // handle the error and recover
+                    return newPromiseOrValue;
+                }*/
+                return $q.reject(reason);
             });
         }
     };

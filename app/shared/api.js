@@ -136,6 +136,7 @@ angular.module('acjim.api', [])
                     // @todo handle error/exception properly
                     //this.emit('error', error);
                     console.log(error);
+                    deferred.reject(error);
                 } else if (task === 'new-open') {
                 }
                 //sys.puts(stdout);
@@ -181,6 +182,7 @@ angular.module('acjim.api', [])
                     // @todo handle error/exception properly
                     //this.emit('error', error);
                     console.log(error);
+                    deferred.reject(error);
                 }
                 console.log("exec get_table_data ready, in puts, call resolve now");
                 deferred.resolve(stdout); // return call
@@ -212,6 +214,7 @@ angular.module('acjim.api', [])
                     // @todo handle error/exception properly
                     //this.emit('error', error);
                     console.log(error);
+                    deferred.reject(error);
                 }
                 console.log("exec get_map ready, in puts, call resolve now");
                 deferred.resolve(stdout); // return call
@@ -288,7 +291,7 @@ angular.module('acjim.api', [])
             var deferred = $q.defer();
 
             $timeout(function() {
-                deferred.resolve(['Hello', 'world 2!']);
+                deferred.reject(['Hello', 'world 2!']);
             }, 2000);
 
             return deferred.promise;
