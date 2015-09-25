@@ -81,7 +81,7 @@ exports.import = function (test) {
     test.expect(1);
     var input_file = './test/data/concentric-circles.acd1';
     var expected_file = './data/concentric-circles' + "_" + api.date_now() + ".acd1";
-    var output = api.import_user_data(input_file, 'new-open');
+    var output = api.import_user_data(input_file, 'new-open', {});
     var output_file = output.output_acd1;
     // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
     var table_filename = output.table_json;

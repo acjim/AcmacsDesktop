@@ -24,7 +24,7 @@
 var app = angular.module('acjim.filehandling',[]);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fileDialog) {
+app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($scope, fileDialog, api) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -2603,12 +2603,14 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', function($scope, fil
     $scope.handleFileOpen = function(filename) {
         var fs = require('fs');
         //console.log('orginal-'+filename);
-        var api = require('./app/shared/api.js');
         if(!fs.existsSync(config.api.path))
         {
             var output = api.stub();
         } else {
-            var output = api.import_user_data(filename, 'new-open');
+            var additional_params = {};
+            var output = api.import_user_data(filename, 'new-open', additional_params);
+            // get table
+
         }
 
         var output_acd1 = output.output_acd1;
