@@ -28,7 +28,7 @@ var fs = require('fs');
 var DATE_NOW = Date.now();
 
 angular.module('acjim.api', [])
-    .factory('api', [function (filehandlingCtrl) {
+    .factory('api', ['$q', '$timeout', function ($q, $timeout) {
         var api = {};
         /**
          * creates json file with input parameters
@@ -119,6 +119,9 @@ angular.module('acjim.api', [])
          * @returns {{output_acd1: *, table_json: *, map_json: *}}
          */
         api.import_user_data = function (input_file, task, additional_params) {
+
+            var deferred = $q.defer();
+
             var command = "import";
             // @todo get parameters name ,and parse_antigen_names (boolean) from user
             //var additional_params = {name: 'test_file', parse_antigen_names: true};
@@ -134,10 +137,10 @@ angular.module('acjim.api', [])
                     //this.emit('error', error);
                     console.log(error);
                 } else if (task === 'new-open') {
-                    var output_table_json = api.get_table_data(input_file, output_acd1);
-                    var output_map_json = api.get_map(input_file, output_acd1);
                 }
                 //sys.puts(stdout);
+                console.log("exec ready, in puts, call resolve now");
+                deferred.resolve(output_acd1); // return call
             }
 
             var script = config.api.script;
@@ -147,10 +150,13 @@ angular.module('acjim.api', [])
             var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
             // callback function for exec
             try {
+                console.log("call exec in import_user_data");
                 exec(command, puts);
             } catch (Error) {
                 console.log(Error.message);
+                deferred.reject(Error.message);
             }
+            /*
             var output_table_json = this.create_file_path(data_path, input_file, '.json', 'table');
             var output_map_json = this.create_file_path(data_path, input_file, '.json', 'map');
             var output = {
@@ -158,10 +164,12 @@ angular.module('acjim.api', [])
                 "table_json": output_table_json,
                 "map_json": output_map_json,
             }
-            return output;
+            return output;*/
+            return deferred.promise;
         };
 
         api.get_table_data = function (input_file, output_acd1) {
+            var deferred = $q.defer();
             var command = "get_table";
             // @todo get data params from user (question: what data parameters are supported)
             var additional_params = {};
@@ -174,6 +182,8 @@ angular.module('acjim.api', [])
                     //this.emit('error', error);
                     console.log(error);
                 }
+                console.log("exec get_table_data ready, in puts, call resolve now");
+                deferred.resolve(stdout); // return call
             }
 
             var script = config.api.script;
@@ -184,11 +194,13 @@ angular.module('acjim.api', [])
                 exec(command, puts);
             } catch (Error) {
                 console.log('get_table - ' + Error.message);
+                deferred.reject(Error.message);
             }
             return output_json;
         };
 
         api.get_map = function (input_file, output_acd1) {
+            var deferred = $q.defer();
             var command = "get_map";
             // @todo get data params from user (question: what data parameters are supported)
             var additional_params = {};
@@ -201,6 +213,8 @@ angular.module('acjim.api', [])
                     //this.emit('error', error);
                     console.log(error);
                 }
+                console.log("exec get_map ready, in puts, call resolve now");
+                deferred.resolve(stdout); // return call
                 //sys.puts(stdout);
             }
 
@@ -213,6 +227,7 @@ angular.module('acjim.api', [])
                 exec(command, puts);
             } catch (Error) {
                 console.log(Error.message);
+                deferred.reject(Error.message);
             }
             return output_json;
         };
@@ -255,6 +270,28 @@ angular.module('acjim.api', [])
                 "map_json": './test/data/get_map.json',
             }
             return output;
+        };
+
+        api.asyncTest = function() {
+            console.log("in asyncTest");
+            var deferred = $q.defer();
+
+            $timeout(function() {
+                deferred.resolve(['Hello', 'world!']);
+            }, 2000);
+
+            return deferred.promise;
+        };
+
+        api.asyncTest2 = function() {
+            console.log("in asyncTest2");
+            var deferred = $q.defer();
+
+            $timeout(function() {
+                deferred.resolve(['Hello', 'world 2!']);
+            }, 2000);
+
+            return deferred.promise;
         };
 
         return api;

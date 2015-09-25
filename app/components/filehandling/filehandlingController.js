@@ -2606,13 +2606,41 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
         if(!fs.existsSync(config.api.path))
         {
             var output = api.stub();
+            console.log("call asyncTest");
+            api.asyncTest().then(function(response) {
+                console.log(response[1]);
+                api.asyncTest2().then(function(response) {
+                    console.log(response[1]);
+                });
+            });
+
+            $scope.handleOpenComplete(output);
         } else {
             var additional_params = {};
-            var output = api.import_user_data(filename, 'new-open', additional_params);
-            // get table
+            console.log("start calling import_user_data");
+            var output = api.import_user_data(filename, 'new-open', additional_params).then(function(output_acd1){
+                console.log("response from import_user_data:");
+                console.log(output_acd1);
+                // get table
+                console.log("start calling q.all");
+                $q.all([
+                    api.get_table_data(input_file, output_acd1),
+                    api.get_map(input_file, output_acd1)
+                ]).then(function(data) {
+                    var output_table_json = data[0];
+                    var output_map_json = data[1];
 
+                    $scope.handleOpenComplete({
+                        output_acd1: output_acd1,
+                        table_json: output_table_json,
+                        map_json: output_map_json
+                    });
+                });
+            });
         }
+    };
 
+    $scope.handleOpenComplete = function(output) {
         var output_acd1 = output.output_acd1;
         // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
         var table_filename = output.table_json;
@@ -2645,21 +2673,7 @@ app.controller('filehandlingCtrl', ['$scope', 'fileDialog', 'api', function($sco
             $scope.$apply();
         });
 
-
-        /*
-        // old .acd1
-        fs.readFile(filename, 'utf8', function (err,data) {
-            if (err) {
-                return console.log(err);
-            }
-            data = data.substring(data.indexOf("{")-1);
-            var mapJsonData = data.replace(/\'/g, '"').replace(/None/g, 'null').replace(/True/g, 'true').replace(/False/g, 'false')
-                .replace(/[0-9]{1,5}:/g, function(match){return '"' + match.replace(':','') + '":';}); //For the bad formated acd1 files...
-            $scope.openMaps.push({title:filename, content: JSON.parse(mapJsonData), active: true});
-
-            $scope.$apply();
-        });*/
-    };
+    }
 
     $scope.handleFileSave = function(filename) {
         var fs = require('fs');
