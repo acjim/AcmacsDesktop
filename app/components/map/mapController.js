@@ -29,14 +29,15 @@ app.controller('mapCtrl', ['$scope', function($scope) {
     $scope.d3Data = [];
 
     if (_.isUndefined($scope.mapData.map)) return;
-    $scope.mapData.map.layout.forEach(function (layout, i) {
+
+    $scope.mapData.map.map.layout.forEach(function (layout, i) {
         $scope.d3Data[i] = {
             "x": layout[0],
             "y": layout[1]
         };
     });
 
-    $scope.mapData.map.point_info.forEach(function (point_info, i) {
+    $scope.mapData.map.map.point_info.forEach(function (point_info, i) {
 
         var node_name = "undefined";
 
@@ -47,24 +48,24 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         $scope.d3Data[i].name = node_name;
     });
 
-    $scope.mapData.map.styles.points.forEach(function (point, i) {
+    $scope.mapData.map.map.styles.points.forEach(function (point, i) {
 
         var node_shape = "circle";
         var node_fill = "#000000";
 
-        if (!_.isUndefined($scope.mapData.map.styles.styles[point].fill_color)) {
-            node_fill = $scope.mapData.map.styles.styles[point].fill_color[0];
+        if (!_.isUndefined($scope.mapData.map.map.styles.styles[point].fill_color)) {
+            node_fill = $scope.mapData.map.map.styles.styles[point].fill_color[0];
         }
-        if (!_.isUndefined($scope.mapData.map.styles.styles[point].shape)) {
-            node_shape = $scope.mapData.map.styles.styles[point].shape;
+        if (!_.isUndefined($scope.mapData.map.map.styles.styles[point].shape)) {
+            node_shape = $scope.mapData.map.map.styles.styles[point].shape;
         }
 
         $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
     });
     // checking if the drawing order is available
-    if (!_.isUndefined($scope.mapData.map.styles.drawing_order)) {
+    if (!_.isUndefined($scope.mapData.map.map.styles.drawing_order)) {
         // In case the drawing_order is defined, we order the nodes based on their drawing order.
-        var order_list = $scope.mapData.map.styles.drawing_order[0].concat($scope.mapData.map.styles.drawing_order[1]);
+        var order_list = $scope.mapData.map.map.styles.drawing_order[0].concat($scope.mapData.map.map.styles.drawing_order[1]);
         var length = order_list.length;
         if ($scope.d3Data.length == length) {
             // start a bubble sort.

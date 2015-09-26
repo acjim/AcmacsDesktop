@@ -182,7 +182,7 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
-                deferred.resolve(stdout); // return call
+                deferred.resolve(output_json); // return call
             }
 
             var script = config.api.script;
@@ -213,7 +213,7 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
-                deferred.resolve(stdout); // return call
+                deferred.resolve(output_json); // return call
                 //sys.puts(stdout);
             }
 
