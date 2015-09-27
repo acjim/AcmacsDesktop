@@ -77,17 +77,22 @@
             var toolbarItem = {
                 id: options.id || null,
                 order: options.order || items.length,
+                icon: options.icon || null,
                 caption: options.caption || null,
                 type: options.type || 'button',
                 buttons: options.buttons ? loopItems(options.buttons) : null,
-                icon: options.icon || null,
                 active: options.active || false,
+                togglable: options.togglable || false,
                 groupID: options.groupID || null,
                 click: function() {
 
                     if (this.groupID != null && groups[this.groupID]) {
                         groupSelectItem(this.groupID, this);
                     };
+
+                    if (this.togglable) {
+                        this.toggle();
+                    }
 
                     if (options.callback != null) {
                         options.callback();
@@ -99,6 +104,9 @@
                 },
                 isButtonGroup: function() {
                     return this.type == 'buttonGroup'
+                },
+                toggle: function() {
+                    this.select(!this.active);
                 }
             };
 
@@ -173,6 +181,16 @@
                 return activeItem;
             }
 
+        }
+
+
+        /**
+         * Gets the item with the specified ID from the items array
+         * @param itemID
+         * @returns {*} item object if found or undefined, if not found
+         */
+        function getItem(itemID) {
+            return _.find(items, function(item) { return item.id == itemID; });
         }
 
     }

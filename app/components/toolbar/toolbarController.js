@@ -57,7 +57,8 @@ angular
             {
                 id: 2,
                 caption: 'Sample Button',
-                icon: 'glyphicon glyphicon-heart'
+                icon: 'glyphicon glyphicon-heart',
+                togglable: true
             }
         ]);
 
