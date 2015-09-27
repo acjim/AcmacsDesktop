@@ -36,8 +36,27 @@ angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($
 
     //Close app
     $scope.$on('exit-app', function(e, menu, item) {
-        nwService.window.get().close();
+        console.log("Closing and removing generated files...");
+        var store_path = config.store.path;
+        $scope.rmDir(store_path);
+        nwService.gui.Window.get().close();
     });
+
+    $scope.rmDir = function(dirPath) {
+        try { var files = fs.readdirSync(dirPath); }
+        catch(e) { return; }
+        if (files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                var filePath = dirPath + '/' + files[i];
+                if(files[i] !== '.gitkeep') {
+                    if (fs.statSync(filePath).isFile())
+                        fs.unlinkSync(filePath);
+                    else
+                        this.rmDir(filePath);
+                }
+            }
+        }
+    };
 
     $scope.win ={};
     $scope.win.newtitle = '';

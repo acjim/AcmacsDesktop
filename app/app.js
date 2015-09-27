@@ -54,8 +54,8 @@ app.run(function(nwService, $rootScope) {
                     {type:'separator'},
                     {label: 'Save', tooltip: 'Save a file', click:'save-file', modifiers: osModifier, key: 's'},
                     {label: 'Save All', tooltip: 'Save all files', click:'save-all', modifiers: osModifier + 'alt', key: 's'},
-                    {label: 'Save As...', tooltip: 'Save file as...', click:'save-as', modifiers: osModifier + 'shift', key: 's'}
-                    //{label: 'Exit', tooltip: 'Quit Application', click:'exit-app'} //TODO: See broadcast exit-app
+                    {label: 'Save As...', tooltip: 'Save file as...', click:'save-as', modifiers: osModifier + 'shift', key: 's'},
+                    {label: 'Exit', tooltip: 'Quit Application', click:'exit-app'} //TODO: See broadcast exit-app
                 ]},
                 {label:'Edit', items:[
                     {label:'Undo', click:'undo', modifiers: osModifier, key: 'z'},
