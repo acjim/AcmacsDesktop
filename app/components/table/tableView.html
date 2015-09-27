@@ -9,7 +9,8 @@
         <tbody>
         <tr ng-repeat="antigen in tableData.table.antigens">
             <td width="10%" tooltip-placement="right" tooltip="{{antigen.name || antigen.raw_name}}">{{antigen.name || antigen.raw_name  | limitTo: 10}}</td>
-            <td width="10%" ng-repeat="titer in tableData.table.titers.titers_list_of_list[$index] track by $index">{{titer}}</td>
+            <td width="10%" ng-if="tableData.table.titers.titers_list_of_list" ng-repeat="titer in tableData.table.titers.titers_list_of_list[$index] track by $index">{{titer}}</td>
+            <td width="10%" ng-if="tableData.table.titers.titers_list_of_dict" ng-repeat="titer in tableData.table.titers.titers_list_of_dict[$index] track by $index">{{titer}}</td>
         </tr>
         </tbody>
     </table>
