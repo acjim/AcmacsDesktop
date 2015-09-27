@@ -26,10 +26,12 @@ var config = require('./config.js');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var DATE_NOW = Date.now();
+var COMMANDS = {GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax'};
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
         var api = {};
+
         /**
          * creates json file with input parameters
          * for example: input.json - json object telling acmacs core api what to do
@@ -96,6 +98,10 @@ angular.module('acjim.api', [])
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
+                case 'relax':
+                    break;
+                case 'make_new_projection_and_relax':
+                    break;
                 default :
                     break;
             }
@@ -154,43 +160,12 @@ angular.module('acjim.api', [])
         };
 
         /**
-         * Obtains table data (antigens, sera, titers) file for the given output_acd1 and additional parameters provided
-         * additional_params = {};
+         * Executes api commands, function supports commands defined in VAR commands
+         * For each set of command, different parameters are supported
          *
-         * @param output_acd1 *.acd1 file retrieved from importing user data
-         * @param additional_params Object
-         * @returns {*}
-         */
-        api.get_table_data = function (output_acd1, additional_params) {
-            var command = "get_table";
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            // callback function for exec
-            function puts(error, stdout, stderr) {
-                if (error) {
-                    // @todo handle error/exception properly
-                    //this.emit('error', error);
-                    console.log(error);
-                    deferred.reject(error);
-                }
-                deferred.resolve(output_json); // return call
-            }
-
-            var script = config.api.script;
-            var data_path = config.store.path;
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'table');
-            var command = script + input_param_file + " " + output_acd1 + " " + output_json;
-            try {
-                exec(command, puts);
-            } catch (Error) {
-                deferred.reject(Error.message);
-            }
-            return deferred.promise;
-        };
-
-        /**
-         * Obtains map data (coordinates, plot specification) file for the given output_acd1 and additional parameters provided
+         * ------------
+         * command = 'get_map'
+         * -> Obtains map data (coordinates, plot specification) file for the given output_acd1 and additional parameters provided
          * additional_params = {
          *                      name: 'name_for_map',
          *                      parse_antigen_names: false // default; boolean,
@@ -200,14 +175,21 @@ angular.module('acjim.api', [])
          *                      blobs: bool (default: False),
          *                      projection: int (default: 0)
          *                      };
+         * -------------
          *
-         * @param output_acd1 *.acd1 file retrieved from importing user data
-         * @param additional_params Object
-         * @returns {*}
+         * command = 'get_table'
+         * Obtains table data (antigens, sera, titers) file for the given output_acd1 and additional parameters provided
+         * additional_params = {};
+         *
+         * -------------
+         *
+         * @param command
+         * @param output_acd1
+         * @param additional_params
+         * @returns {*} Name of the files generated in general
          */
-        api.get_map = function (output_acd1, additional_params) {
+        api.execute = function (command, additional_params, output_acd1) {
 
-            var command = "get_map";
             var deferred = $q.defer();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
@@ -223,7 +205,7 @@ angular.module('acjim.api', [])
 
             var script = config.api.script;
             var data_path = config.store.path;
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'map');
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var command = script + input_param_file + " " + output_acd1 + " " + output_json;
             try {
                 exec(command, puts);
@@ -234,37 +216,64 @@ angular.module('acjim.api', [])
             return deferred.promise;
         };
 
-        api.relax_map = function (output_acd1, additional_params) {
-            var command = "relax";
-        };
-
-        api.make_new_projection = function (output_acd1, additional_params) {
-            var command = "make_new_projection_and_relax";
-        };
-
-        api.create_file_path = function (path, file_name, extension, extra) {
+        /**
+         * Create file path
+         *
+         * @param path
+         * @param file_name
+         * @param extension
+         * @param command
+         * @returns {string}
+         */
+        api.create_file_path = function (path, file_name, extension, command) {
             var file = file_name.split('/').pop();
             var date_now = DATE_NOW;
-            if (extra.length <= 0) {
+            if (command.length <= 0) {
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + date_now + extension;
-            } else {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + extra + '_' + date_now + extension;
+            } else if(command === this.get_commands().GET_MAP) {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_map_' + date_now + extension;
+            } else if(command === this.get_commands().GET_TABLE) {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_table_' + date_now + extension;
             }
+
 
             return output;
         };
 
+        /**
+         * Extract just the file_name from the file_name.extension
+         *
+         * @param file_name
+         * @returns {string}
+         */
         api.extract_name = function (file_name) {
             var file = file_name.split('/').pop();
             var output = file.substr(0, file.lastIndexOf("."));
             return output;
         };
 
+        /**
+         * maintain single instance of date through out the request
+         *
+         * @returns {number} Datestamp
+         */
         api.date_now = function () {
-            // maintain single instance of date through out the request
             return DATE_NOW;
         };
 
+        /**
+         *
+         * @returns {{GET_MAP: string, GET_TABLE: string, RELAX: string, NEW_PROJECTION: string}}
+         */
+        api.get_commands = function() {
+            return COMMANDS;
+        }
+
+        /**
+         * stub function to be called when on windows system
+         *
+         * @returns {{output_acd1: string, table_json: string, map_json: string}}
+         */
         api.stub = function () {
             var output = {
                 "output_acd1": 'output_EU.acd1',
@@ -274,6 +283,10 @@ angular.module('acjim.api', [])
             return output;
         };
 
+        /**
+         *
+         * @returns {*}
+         */
         api.asyncTest = function() {
             var deferred = $q.defer();
 
