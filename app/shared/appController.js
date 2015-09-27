@@ -36,10 +36,21 @@ angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($
 
     //Close app
     $scope.$on('exit-app', function(e, menu, item) {
-        console.log("Closing and removing generated files...");
-        var store_path = config.store.path;
-        $scope.rmDir(store_path);
         nwService.gui.Window.get().close();
+    });
+
+    // Load native UI library
+    var gui = require('nw.gui'); //or global.window.nwDispatcher.requireNwGui() (see https://github.com/rogerwang/node-webkit/issues/707)
+
+    // Get the current window
+    var win = gui.Window.get();
+
+    win.on('close', function () {
+        this.hide(); // Pretend to be closed already
+        var store_path = config.store.path;
+        console.log("Closing and removing generated files...");
+        $scope.rmDir(store_path);
+        this.close(true);
     });
 
     $scope.rmDir = function(dirPath) {
