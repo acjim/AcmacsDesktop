@@ -6,10 +6,10 @@
          ng-if="item.isButtonGroup()">
 
         <label class="btn btn-default"
-               ng-repeat="groupItem in item.buttons"
-               ng-class="{'active': item.active}"
-               ng-click="item.click()">
-            <span title="{{item.caption}}" class="{{item.icon}}"></span>
+               ng-repeat="groupItem in item.buttons | orderBy:'order'"
+               ng-class="{'active': groupItem.active}"
+               ng-click="groupItem.click()">
+            <span title="{{groupItem.caption}}" class="{{groupItem.icon}}"></span>
         </label>
 
     </div>

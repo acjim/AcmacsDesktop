@@ -33,7 +33,6 @@
 
         var service = {
             init: init,
-            addItem: addItem,
             getAllItems: getAllItems,
             getActiveItemFromGroup: getActiveItemFromGroup
         };
@@ -44,28 +43,43 @@
 
 
         /**
-         * @desc Initializes the toolbar buttons
-         * @param options
+         * Initializes the toolbar
+         * @param options Array of options
          */
         function init(options) {
+            items = loopItems(options);
+        }
+
+        /**
+         * Loops through each item of the given options array, returns an items array
+         * @param options
+         * @returns {Array}
+         */
+        function loopItems(options) {
+
+            var items = [];
 
             for (var i = 0; i < options.length; i++) {
-                addItem(options[i]);
+                items.push(constructItem(options[i]));
             }
+
+            return items;
 
         }
 
         /**
-         *
-         * @param options {}
+         * Constructs the item from the given options object. If the item has a group id, adds the item to that group.
+         * @param options
+         * @returns {{id: (*|null), order: (*|boolean|Number), caption: (*|string|string|string|HTMLTableCaptionElement|null), type: (*|string), buttons: *, icon: (*|string|string|string|null), active: (*|boolean), groupID: (*|null), click: Function, select: Function, isButtonGroup: Function}}
          */
-        function addItem(options) {
+        function constructItem(options) {
 
             var toolbarItem = {
                 id: options.id || null,
                 order: options.order || items.length,
                 caption: options.caption || null,
                 type: options.type || 'button',
+                buttons: options.buttons ? loopItems(options.buttons) : null,
                 icon: options.icon || null,
                 active: options.active || false,
                 groupID: options.groupID || null,
@@ -82,22 +96,18 @@
                 },
                 select: function(selected) {
                     this.active = selected;
+                },
+                isButtonGroup: function() {
+                    return this.type == 'buttonGroup'
                 }
             };
 
             // If group id is provided, add item to that group
             if (toolbarItem.groupID) {
-                addToGroup(toolbarItem, toolbarItem.groupID);
+                addItemToGroup(toolbarItem, toolbarItem.groupID);
             }
 
-            // Add item to the items array
-            items.push(toolbarItem);
-
-
-            // If the new item is a  button group, call recursively
-            if (options.type == "buttonGroup") {
-                init(options.buttons);
-            }
+            return toolbarItem;
 
         }
 
@@ -125,7 +135,7 @@
          * @param item
          * @param groupID
          */
-        function addToGroup (item, groupID) {
+        function addItemToGroup (item, groupID) {
             var group;
 
             if (!groups[groupID]) {

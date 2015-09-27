@@ -34,17 +34,12 @@
             SHOW_ERROR_LINES: 3,
             SHOW_BLOBS: 4,
             SHOW_LABELS: 5,
-            RE_OPTIMIZE: 6
+            RE_OPTIMIZE: 6,
+            //// GROUPS ////
+            MAP_TOOLS: 7
         };
 
-        var groups = {
-            MAP_TOOLS: 1
-        };
-
-        return {
-            tools : tools,
-            groups: groups
-        };
+        return tools;
 
     }
 

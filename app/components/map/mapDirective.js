@@ -114,7 +114,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // Create background grid
                 boxGroup = redrawGrid(boxGroup, boxSize, width, height);
 
-                addTools();
+                manageMapTools();
 
             }
 
@@ -169,7 +169,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     );
 
 
-                addTools();
+                manageMapTools();
 
                 if (centerMap) {
                     centerMap = !centerMap;
@@ -185,15 +185,15 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              * Adds the selected tool functionality to the d3 map
              */
-            function addTools() {
+            function manageMapTools() {
 
-                var currentTool = toolbar.getActiveItemFromGroup(toolbarItems.groups.MAP_TOOLS).id;
+                var currentTool = toolbar.getActiveItemFromGroup(toolbarItems.MAP_TOOLS);
 
-                switch(currentTool) {
-                    case toolbarItems.tools.SELECTION:
+                switch(currentTool.id) {
+                    case toolbarItems.SELECTION:
                         enableSelectionTool();
                         break;
-                    case toolbarItems.tools.MOVEMENT:
+                    case toolbarItems.MOVEMENT:
                         enableMovementTool();
                         break;
                     default:
@@ -443,8 +443,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              * Watches for a tool change
              */
-            $rootScope.$on('tool.selected', function(event, args) {
-                addTools();
+            $rootScope.$on('tool.selected', function() {
+                manageMapTools();
             });
 
 

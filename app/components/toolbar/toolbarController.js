@@ -30,25 +30,34 @@ angular
     function toolbarCtrl($scope, $rootScope, toolbar, toolbarItems) {
 
         toolbar.init([
-
-                        {
-                            id: toolbarItems.tools.SELECTION,
-                            caption: 'Selection Tool',
-                            active: true,
-                            groupID: toolbarItems.groups.MAP_TOOLS,
-                            icon: 'glyphicon glyphicon-unchecked',
-                            callback: function () {
-                                $rootScope.$emit('tool.selected', {tool: toolbarItems.tools.SELECTION});
-                            }
-                        },
             {
-                id: toolbarItems.tools.MOVEMENT,
-                caption: 'Movement Tool',
-                groupID: toolbarItems.groups.MAP_TOOLS,
-                icon: 'glyphicon glyphicon-move',
-                callback: function () {
-                    $rootScope.$emit('tool.selected', {tool: toolbarItems.tools.MOVEMENT});
-                }
+                type: "buttonGroup",
+                buttons: [
+                    {
+                        id: toolbarItems.SELECTION,
+                        caption: 'Selection Tool',
+                        active: true,
+                        groupID: toolbarItems.MAP_TOOLS,
+                        icon: 'glyphicon glyphicon-unchecked',
+                        callback: function () {
+                            $rootScope.$emit('tool.selected');
+                        }
+                    },
+                    {
+                        id: toolbarItems.MOVEMENT,
+                        caption: 'Movement Tool',
+                        groupID: toolbarItems.MAP_TOOLS,
+                        icon: 'glyphicon glyphicon-move',
+                        callback: function () {
+                            $rootScope.$emit('tool.selected');
+                        }
+                    }
+                ]
+            },
+            {
+                id: 2,
+                caption: 'Sample Button',
+                icon: 'glyphicon glyphicon-heart'
             }
         ]);
 
