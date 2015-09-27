@@ -64,7 +64,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 scale = 1,
                 gridTranslate = [0,0],
                 gridScale = 1,
-                currentTool = null,
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
@@ -72,9 +71,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 boxSize = 0,
                 centerMap = true,
                 shiftKey;
-
-            //TODO: FirstTool --> event fire
-            //TODO: centerMap --> eent
 
             // d3 groups
             var boxGroup,
@@ -191,22 +187,17 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             function addTools() {
 
-                currentTool = toolbar.getCurrentTool();
-                var toolID = toolbarItems.SELECTION;        //Default tool
+                var currentTool = toolbar.getActiveItemFromGroup(toolbarItems.groups.MAP_TOOLS).id;
 
-                if (currentTool != null) {
-                    toolID = currentTool.id;
-                }
-
-                switch(toolID) {
-                    case toolbarItems.SELECTION:
+                switch(currentTool) {
+                    case toolbarItems.tools.SELECTION:
                         enableSelectionTool();
                         break;
-                    case toolbarItems.MOVEMENT:
+                    case toolbarItems.tools.MOVEMENT:
                         enableMovementTool();
                         break;
                     default:
-                        console.log("Don't recognize the tool given. Did nothing.");
+                        console.log("Didn't recognize the tool given and did nothing. Could it be that no tool is selected?");
                         break;
                 }
 
@@ -452,7 +443,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              * Watches for a tool change
              */
-            $rootScope.$watch(toolbar.getCurrentTool, function() {
+            $rootScope.$on('tool.selected', function(event, args) {
                 addTools();
             });
 

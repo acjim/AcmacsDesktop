@@ -1,0 +1,25 @@
+<span ng-repeat="item in items | orderBy:'order'">
+
+    <!-- If button group-->
+    <div class="btn-group"
+         ng-class="{'active': item.active}"
+         ng-if="item.isButtonGroup()">
+
+        <label class="btn btn-default"
+               ng-repeat="groupItem in item.buttons"
+               ng-class="{'active': item.active}"
+               ng-click="item.click()">
+            <span title="{{item.caption}}" class="{{item.icon}}"></span>
+        </label>
+
+    </div>
+
+    <!-- If normal button -->
+    <label class="btn btn-default"
+           ng-class="{'active': item.active}"
+           ng-if="!item.isButtonGroup()"
+           ng-click="item.click()">
+        <span title="{{item.caption}}" class="{{item.icon}}"></span>
+    </label>
+
+</span>
