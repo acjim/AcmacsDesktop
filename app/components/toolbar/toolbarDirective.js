@@ -23,24 +23,31 @@
 (function() {
     'use strict';
 
+    /**
+     * @desc Provides the application toolbar
+     * @example <div acjim-toolbar options="{...}"></div>
+     */
     angular.module('acjim')
-        .factory('toolbarItems', [toolbarItems]);
+        .directive('acjimToolbar', ['toolbar', toolbar]);
 
-    function toolbarItems () {
-
-        var tools = {
-            SELECTION: 1,
-            MOVEMENT: 2,
-            SHOW_ERROR_LINES: 3,
-            SHOW_BLOBS: 4,
-            SHOW_LABELS: 5,
-            RE_OPTIMIZE: 6,
-            //// GROUPS ////
-            MAP_TOOLS: 7
+    function toolbar(toolbar) {
+        var directive = {
+            link: link,
+            templateUrl: './app/components/toolbar/toolbarTemplate.html',
+            restrict: 'EA',
+            replace: true
         };
+        return directive;
 
-        return tools;
+        function link(scope, element) {
 
+            scope.$watch(toolbar.getAllItems(), function() {
+                scope.items = toolbar.getAllItems();
+            });
+
+
+
+
+        }
     }
-
 })();

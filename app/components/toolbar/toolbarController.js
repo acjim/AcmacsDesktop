@@ -29,16 +29,38 @@ angular
 
     function toolbarCtrl($scope, $rootScope, toolbar, toolbarItems) {
 
-        //Add toolbar items to the service. TODO: Move this to own file?
-        toolbar.addGlobalScopeItem(toolbarItems.SELECTION, 'Selection Tool', 'glyphicon glyphicon-unchecked', null);
-        toolbar.addGlobalScopeItem(toolbarItems.MOVEMENT, 'Movement Tool', 'glyphicon glyphicon-move', null);
-
-        // The tool array for display in html
-        $scope.tools = toolbar.getItems();
-
-        // Set default tool on startup
-        var defaultTool = $scope.tools[0];
-        toolbar.setCurrentTool(defaultTool);
+        toolbar.init([
+            {
+                type: "buttonGroup",
+                buttons: [
+                    {
+                        id: toolbarItems.SELECTION,
+                        caption: 'Selection Tool',
+                        active: true,
+                        groupID: toolbarItems.MAP_TOOLS,
+                        icon: 'glyphicon glyphicon-unchecked',
+                        callback: function () {
+                            $rootScope.$emit('tool.selected');
+                        }
+                    },
+                    {
+                        id: toolbarItems.MOVEMENT,
+                        caption: 'Movement Tool',
+                        groupID: toolbarItems.MAP_TOOLS,
+                        icon: 'glyphicon glyphicon-move',
+                        callback: function () {
+                            $rootScope.$emit('tool.selected');
+                        }
+                    }
+                ]
+            },
+            {
+                id: 2,
+                caption: 'Sample Button',
+                icon: 'glyphicon glyphicon-heart',
+                togglable: true
+            }
+        ]);
 
     }
 

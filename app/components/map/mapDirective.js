@@ -64,7 +64,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 scale = 1,
                 gridTranslate = [0,0],
                 gridScale = 1,
-                currentTool = null,
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
@@ -72,9 +71,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 boxSize = 0,
                 centerMap = true,
                 shiftKey;
-
-            //TODO: FirstTool --> event fire
-            //TODO: centerMap --> eent
 
             // d3 groups
             var boxGroup,
@@ -118,7 +114,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // Create background grid
                 boxGroup = redrawGrid(boxGroup, boxSize, width, height);
 
-                addTools();
+                manageMapTools();
 
             }
 
@@ -173,7 +169,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     );
 
 
-                addTools();
+                manageMapTools();
 
                 if (centerMap) {
                     centerMap = !centerMap;
@@ -189,16 +185,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              * Adds the selected tool functionality to the d3 map
              */
-            function addTools() {
+            function manageMapTools() {
 
-                currentTool = toolbar.getCurrentTool();
-                var toolID = toolbarItems.SELECTION;        //Default tool
+                var currentTool = toolbar.getActiveItemFromGroup(toolbarItems.MAP_TOOLS);
 
-                if (currentTool != null) {
-                    toolID = currentTool.id;
-                }
-
-                switch(toolID) {
+                switch(currentTool.id) {
                     case toolbarItems.SELECTION:
                         enableSelectionTool();
                         break;
@@ -206,7 +197,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         enableMovementTool();
                         break;
                     default:
-                        console.log("Don't recognize the tool given. Did nothing.");
+                        console.log("Didn't recognize the tool given and did nothing. Could it be that no tool is selected?");
                         break;
                 }
 
@@ -452,8 +443,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              * Watches for a tool change
              */
-            $rootScope.$watch(toolbar.getCurrentTool, function() {
-                addTools();
+            $rootScope.$on('tool.selected', function() {
+                manageMapTools();
             });
 
 

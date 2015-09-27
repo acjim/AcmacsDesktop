@@ -28,77 +28,169 @@
 
     function toolbar () {
 
-        var currentTool = null;
-
-        var items = [];
+        var items = [],
+            groups = [];
 
         var service = {
-            getCurrentTool: getCurrentTool,
-            setCurrentTool: setCurrentTool,
-            getItems: getItems,
-            addGlobalScopeItem: addGlobalScopeItem
+            init: init,
+            getAllItems: getAllItems,
+            getActiveItemFromGroup: getActiveItemFromGroup
         };
 
         return service;
 
         ///////////////////
 
+
         /**
-         * Adds a toolbar item that has a global effect, i.e. affects all of the opened maps. Only only one global scope
-         * tool at a time can be activated. This is to be used for map manipulation tools like the move or the selection
-         * tool.
-         * @param id
-         * @param caption
-         * @param callback The callback handler of this item. Sets itself as the current tool
+         * Initializes the toolbar
+         * @param options Array of options
          */
-        function addGlobalScopeItem(id, caption, icon, callback) { //, icon, tooltip, active, callbackFunction) {
+        function init(options) {
+            items = loopItems(options);
+        }
+
+        /**
+         * Loops through each item of the given options array, returns an items array
+         * @param options
+         * @returns {Array}
+         */
+        function loopItems(options) {
+
+            var items = [];
+
+            for (var i = 0; i < options.length; i++) {
+                items.push(constructItem(options[i]));
+            }
+
+            return items;
+
+        }
+
+        /**
+         * Constructs the item from the given options object. If the item has a group id, adds the item to that group.
+         * @param options
+         * @returns {{id: (*|null), order: (*|boolean|Number), caption: (*|string|string|string|HTMLTableCaptionElement|null), type: (*|string), buttons: *, icon: (*|string|string|string|null), active: (*|boolean), groupID: (*|null), click: Function, select: Function, isButtonGroup: Function}}
+         */
+        function constructItem(options) {
 
             var toolbarItem = {
-                id: id,
-                caption: caption,
-                icon: icon,
-                active: false,
+                id: options.id || null,
+                order: options.order || items.length,
+                icon: options.icon || null,
+                caption: options.caption || null,
+                type: options.type || 'button',
+                buttons: options.buttons ? loopItems(options.buttons) : null,
+                active: options.active || false,
+                togglable: options.togglable || false,
+                groupID: options.groupID || null,
                 click: function() {
-                    setCurrentTool(this);
-                    if (callback != null) {
-                        callback();
+
+                    if (this.groupID != null && groups[this.groupID]) {
+                        groupSelectItem(this.groupID, this);
+                    };
+
+                    if (this.togglable) {
+                        this.toggle();
                     }
+
+                    if (options.callback != null) {
+                        options.callback();
+                    }
+
+                },
+                select: function(selected) {
+                    this.active = selected;
+                },
+                isButtonGroup: function() {
+                    return this.type == 'buttonGroup'
+                },
+                toggle: function() {
+                    this.select(!this.active);
                 }
             };
 
-            items.push(toolbarItem);
+            // If group id is provided, add item to that group
+            if (toolbarItem.groupID) {
+                addItemToGroup(toolbarItem, toolbarItem.groupID);
+            }
+
+            return toolbarItem;
+
         }
 
 
         /**
-         * Returns array of toolbar items
+         * Selects the given item in the group provided in the parameter
+         * @param groupID
+         * @param item
+         */
+        function groupSelectItem(groupID, item) {
+
+            var group = groups[groupID];
+
+            for (var i = 0; i < group.length; i ++) {
+                group[i].select(false);
+            }
+
+            item.select(true);
+
+        }
+
+
+        /**
+         * Adds the item to the given group.
+         * @param item
+         * @param groupID
+         */
+        function addItemToGroup (item, groupID) {
+            var group;
+
+            if (!groups[groupID]) {
+                group = groups[groupID] = [];
+            } else {
+                group = groups[groupID];
+            }
+
+            group.push(item);
+        }
+
+
+        /**
+         * Returns an array of all toolbar items.
          * @returns {Array}
          */
-        function getItems() {
+        function getAllItems() {
             return items;
         }
 
 
         /**
-         * Gets the current tool
+         * Searches for the active item of a given group. Returns the first active item it finds. If no active item is
+         * found, returns undefined.
+         * @param groupID
+         * @returns {*}
          */
-        function getCurrentTool() {
-            return currentTool;
+        function getActiveItemFromGroup(groupID) {
+
+            var activeItem = _.find(groups[groupID], function(item) { return item.active == true; });
+
+            if (!activeItem) {
+                return { id: -1 };
+            } else {
+                return activeItem;
+            }
+
         }
 
 
         /**
-         * Sets the current tool to the given toolbar item. Sets previous tools active state to false.
-         * @param toolbarItem
+         * Gets the item with the specified ID from the items array
+         * @param itemID
+         * @returns {*} item object if found or undefined, if not found
          */
-        function setCurrentTool(toolbarItem) {
-
-            if (currentTool != null)
-                currentTool.active = false
-
-            currentTool = toolbarItem;
-            currentTool.active = true;
-
+        function getItem(itemID) {
+            return _.find(items, function(item) { return item.id == itemID; });
         }
 
     }
