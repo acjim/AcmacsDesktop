@@ -21,7 +21,6 @@
  */
 'use strict';
 
-//var sys = require('sys');
 var config = require('./config.js');
 var exec = require('child_process').exec;
 var fs = require('fs');
@@ -76,10 +75,6 @@ angular.module('acjim.api', [])
                         var projection = additional_params.projection;
                         var input_parameter = {command: 'get_map', data: {projection: projection}};
                     }
-                    input_parameter.data.error_lines = false;
-                    input_parameter.data.blob_stress_diff = 0.1;
-                    input_parameter.data.blob_number_of_directions = 36;
-                    input_parameter.data.blobs = false;
 
                     if (additional_params.hasOwnProperty('error_lines')) {
                         input_parameter.data.error_lines = additional_params.error_lines;
@@ -99,8 +94,77 @@ angular.module('acjim.api', [])
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case 'relax':
+                    var input_parameter = {command: 'relax', data: {number_of_dimensions: 2}};
+                    if (additional_params.hasOwnProperty('number_of_dimensions')) {
+                        var number_of_dimensions = additional_params.number_of_dimensions;
+                        var input_parameter = {command: 'relax', data: {number_of_dimensions: number_of_dimensions}};
+                    }
+                    input_parameter.data.number_of_optimizations = 10; // default
+                    if (additional_params.hasOwnProperty('number_of_optimizations')) {
+                        input_parameter.data.number_of_optimizations = additional_params.number_of_optimizations;
+                    }
+                    if (additional_params.hasOwnProperty('best_map')) {
+                        input_parameter.data.best_map = additional_params.best_map;
+                    }
+                    if (additional_params.hasOwnProperty('minimum_column_basis')) {
+                        input_parameter.data.minimum_column_basis = additional_params.minimum_column_basis;
+                    }
+                    if (additional_params.hasOwnProperty('disconnect_having_few_titers')) {
+                        input_parameter.data.disconnect_having_few_titers = additional_params.disconnect_having_few_titers;
+                    }
+                    if (additional_params.hasOwnProperty('rough_optimization')) {
+                        input_parameter.data.rough_optimization = additional_params.rough_optimization;
+                    }
+                    if (additional_params.hasOwnProperty('error_lines')) {
+                        input_parameter.data.error_lines = additional_params.error_lines;
+                    }
+                    if (additional_params.hasOwnProperty('blob_stress_diff')) {
+                        input_parameter.data.blob_stress_diff = additional_params.blob_stress_diff;
+                    }
+                    if (additional_params.hasOwnProperty('blob_number_of_directions')) {
+                        input_parameter.data.blob_number_of_directions = additional_params.blob_number_of_directions;
+                    }
+                    if (additional_params.hasOwnProperty('blobs')) {
+                        input_parameter.data.blobs = additional_params.blobs;
+                    }
+
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case 'make_new_projection_and_relax':
+                    var input_parameter = {command: 'make_new_projection_and_relax', data: {projection: 0}};
+                    if (additional_params.hasOwnProperty('projection')) {
+                        var projection = additional_params.projection;
+                        var input_parameter = {command: 'relax', data: {projection: projection}};
+                    }
+
+                    if (!additional_params.hasOwnProperty('coordinates')) {
+                        throw new Error('Please pass coordinates');
+                    }
+                    input_parameter.data.coordinates = additional_params.coordinates;
+                    if (additional_params.hasOwnProperty('map')) {
+                        input_parameter.data.map = additional_params.map;
+                    }
+                    if (additional_params.hasOwnProperty('rough_optimization')) {
+                        input_parameter.data.rough_optimization = additional_params.rough_optimization;
+                    }
+                    if (additional_params.hasOwnProperty('error_lines')) {
+                        input_parameter.data.error_lines = additional_params.error_lines;
+                    }
+                    if (additional_params.hasOwnProperty('blob_stress_diff')) {
+                        input_parameter.data.blob_stress_diff = additional_params.blob_stress_diff;
+                    }
+                    if (additional_params.hasOwnProperty('blob_number_of_directions')) {
+                        input_parameter.data.blob_number_of_directions = additional_params.blob_number_of_directions;
+                    }
+                    if (additional_params.hasOwnProperty('blobs')) {
+                        input_parameter.data.blobs = additional_params.blobs;
+                    }
+
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 default :
                     break;
@@ -167,7 +231,7 @@ angular.module('acjim.api', [])
          * command = 'get_map'
          * -> Obtains map data (coordinates, plot specification) file for the given output_acd1 and additional parameters provided
          * additional_params = {
-         *                      name: 'name_for_map',
+         *                      name: 'name_for_map',  //mandatory
          *                      parse_antigen_names: false // default; boolean,
          *                      error_lines: bool (default: False),
          *                      blob_stress_diff: float (default: 0.1),
@@ -182,6 +246,36 @@ angular.module('acjim.api', [])
          * additional_params = {};
          *
          * -------------
+         *
+         * command = 'relax'
+         * additional_params = {
+         *                      number_of_dimensions: int, //mandatory
+         *                      number_of_optimizations: int, //mandatory
+         *                      //Optional data fields:
+         *                      error_lines: bool (default: False),
+         *                      minimum_column_basis: str (default: 'none')
+         *                      disconnect_having_few_titers: bool (default: True)
+         *                      rough_optimization: bool (default: False)
+         *                      best_map: bool (default: False)
+         *                      blob_number_of_directions: int (default: 36)
+         *                      blob_stress_diff: float (default: 0.1)
+         *                      blobs: bool (default: False)
+         *                      };
+         *
+         * ----------------
+         * command = make_new_projection_and_relax
+         * additional_params = {
+         *                      coordinates: list //mandatory
+         *                      projection: int //mandatory
+         *                      // Optional data fields:
+         *                      error_lines: bool (default: False)
+         *                      blob_stress_diff: float (default: 0.1)
+         *                      blobs: bool (default: False)
+         *                      rough_optimization: bool (default: False)
+         *                      map: bool (default: False)
+         *                      blob_number_of_directions: int (default: 36)
+         *                      };
+         * -----------------
          *
          * @param command
          * @param output_acd1
@@ -198,6 +292,7 @@ angular.module('acjim.api', [])
                 if (error) {
                     // @todo handle error/exception properly
                     //this.emit('error', error);
+                    console.log(error);
                     deferred.reject(error);
                 }
                 deferred.resolve(output_json); // return call
@@ -234,9 +329,11 @@ angular.module('acjim.api', [])
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_map_' + date_now + extension;
             } else if(command === this.get_commands().GET_TABLE) {
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_table_' + date_now + extension;
+            } else if(command === this.get_commands().RELAX) {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_relax_' + date_now + extension;
+            } else if(command === this.get_commands().NEW_PROJECTION) {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_new_projection_' + date_now + extension;
             }
-
-
             return output;
         };
 
