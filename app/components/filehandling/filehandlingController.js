@@ -145,6 +145,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', functio
         });
     };
 
+    $scope.handleFileOpen("./test/data/test.save"); //TODO: Remove me, for developmental purposes
 
     $scope.handleFileSave = function(filename) {
         var fs = require('fs');
