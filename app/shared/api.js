@@ -34,9 +34,9 @@ angular.module('acjim.api', [])
          * creates json file with input parameters
          * for example: input.json - json object telling acmacs core api what to do
          *
-         * @param command
-         * @param additional_params
-         * @param input_file
+         * @param command [import, get_table, get_map, relax, make_new_projection_and_relax]
+         * @param additional_params [depends on command, check further documentation on each of command handling functions]
+         * @param input_file [User input file]
          * @returns {string}
          */
         api.create_input_parameter = function (command, additional_params, input_file) {
@@ -111,22 +111,19 @@ angular.module('acjim.api', [])
         };
 
         /**
-         * first step of the api call, import user data and return acd1 file (used for further processing)
-         *
-         * @param input_file
-         * @param task
-         * @param additional_params
-         * @returns {{output_acd1: *, table_json: *, map_json: *}}
+         * Imports table or chart in one of the supported by acmacs format (txt, xls, acd1, etc.)
+         * First step of the api call, import user data and return acd1 file (used for further processing)
+         * additional_params = { name: str,
+         *                      parse_antigen_names: bool (default: False)
+         *                      };
+         * @param input_file (any file format supported by acmacs api)
+         * @param additional_params Object
+         * @returns {*}
          */
-        api.import_user_data = function (input_file, task, additional_params) {
+        api.import_user_data = function (input_file, additional_params) {
 
             var deferred = $q.defer();
-
             var command = "import";
-            // @todo get parameters name ,and parse_antigen_names (boolean) from user
-            //var additional_params = {name: 'test_file', parse_antigen_names: true};
-            //var additional_params = {};
-            var store_path = config.store.temp;
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, input_file);
 
@@ -137,9 +134,7 @@ angular.module('acjim.api', [])
                     //this.emit('error', error);
                     console.log(error);
                     deferred.reject(error);
-                } else if (task === 'new-open') {
                 }
-                //sys.puts(stdout);
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
@@ -155,25 +150,22 @@ angular.module('acjim.api', [])
                 console.log(Error.message);
                 deferred.reject(Error.message);
             }
-            /*
-            var output_table_json = this.create_file_path(data_path, input_file, '.json', 'table');
-            var output_map_json = this.create_file_path(data_path, input_file, '.json', 'map');
-            var output = {
-                "output_acd1": output_acd1,
-                "table_json": output_table_json,
-                "map_json": output_map_json,
-            }
-            return output;*/
             return deferred.promise;
         };
 
-        api.get_table_data = function (input_file, output_acd1) {
-            var deferred = $q.defer();
+        /**
+         * Obtains table data (antigens, sera, titers) file for the given output_acd1 and additional parameters provided
+         * additional_params = {};
+         *
+         * @param output_acd1 *.acd1 file retrieved from importing user data
+         * @param additional_params Object
+         * @returns {*}
+         */
+        api.get_table_data = function (output_acd1, additional_params) {
             var command = "get_table";
-            // @todo get data params from user (question: what data parameters are supported)
-            var additional_params = {};
+            var deferred = $q.defer();
             // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, input_file);
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
             // callback function for exec
             function puts(error, stdout, stderr) {
                 if (error) {
@@ -187,41 +179,52 @@ angular.module('acjim.api', [])
 
             var script = config.api.script;
             var data_path = config.store.path;
-            var output_json = this.create_file_path(data_path, input_file, '.json', 'table');
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'table');
             var command = script + input_param_file + " " + output_acd1 + " " + output_json;
             try {
                 exec(command, puts);
             } catch (Error) {
-                console.log('get_table - ' + Error.message);
                 deferred.reject(Error.message);
             }
             return deferred.promise;
         };
 
-        api.get_map = function (input_file, output_acd1) {
-            var deferred = $q.defer();
+        /**
+         * Obtains map data (coordinates, plot specification) file for the given output_acd1 and additional parameters provided
+         * additional_params = {
+         *                      name: 'name_for_map',
+         *                      parse_antigen_names: false // default; boolean,
+         *                      error_lines: bool (default: False),
+         *                      blob_stress_diff: float (default: 0.1),
+         *                      blob_number_of_directions: int (default: 36),
+         *                      blobs: bool (default: False),
+         *                      projection: int (default: 0)
+         *                      };
+         *
+         * @param output_acd1 *.acd1 file retrieved from importing user data
+         * @param additional_params Object
+         * @returns {*}
+         */
+        api.get_map = function (output_acd1, additional_params) {
+
             var command = "get_map";
-            // @todo get data params from user (question: what data parameters are supported)
-            var additional_params = {};
+            var deferred = $q.defer();
             // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, input_file);
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
             // callback function for exec
             function puts(error, stdout, stderr) {
                 if (error) {
                     // @todo handle error/exception properly
                     //this.emit('error', error);
-                    console.log(error);
                     deferred.reject(error);
                 }
                 deferred.resolve(output_json); // return call
-                //sys.puts(stdout);
             }
 
             var script = config.api.script;
             var data_path = config.store.path;
-            var output_json = this.create_file_path(data_path, input_file, '.json', 'map');
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'map');
             var command = script + input_param_file + " " + output_acd1 + " " + output_json;
-            //console.log(command);
             try {
                 exec(command, puts);
             } catch (Error) {
@@ -231,11 +234,11 @@ angular.module('acjim.api', [])
             return deferred.promise;
         };
 
-        api.relax_map = function () {
+        api.relax_map = function (output_acd1, additional_params) {
             var command = "relax";
         };
 
-        api.make_new_projection = function () {
+        api.make_new_projection = function (output_acd1, additional_params) {
             var command = "make_new_projection_and_relax";
         };
 

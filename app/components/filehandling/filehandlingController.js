@@ -69,10 +69,12 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', functio
             });
         } else {
             var additional_params = {};
-            var output = api.import_user_data(filename, 'new-open', additional_params).then(function(output){
+            var table_additional_params = {}; // check documentation on get_table_data for additional params
+            var map_additional_params = {}; // check documentation on get_map for what params can be passed
+            var output = api.import_user_data(filename, additional_params).then(function(output){
                 $q.all([
-                    api.get_table_data(output.input_file, output.output_acd1),
-                    api.get_map(output.input_file, output.output_acd1)
+                    api.get_table_data(output.output_acd1, table_additional_params),
+                    api.get_map(output.output_acd1, map_additional_params)
                 ]).then(function(data) {
                     var output_table_json = data[0];
                     var output_map_json = data[1];
