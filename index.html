@@ -17,13 +17,8 @@
 <div class="container-fluid">
     <div class="row" ng-controller="filehandlingCtrl">
         <!-- sidebar -->
-        <div class="col-sm-2 col-md-2 col-xs-2 sidebar">
-            <div class="toolbar" ng-controller="toolbarCtrl">
-                <label ng-repeat="tool in tools" class="btn btn-default" ng-class="{'active': tool.active}" ng-click="tool.click()">
-                    <span title="{{tool.caption}}" class="{{tool.icon}}"></span>
-                </label>
-            </div>
-            <div id="windowPane"></div>
+        <div class="col-sm-2 col-md-2 col-xs-2 sidebar" ng-controller="toolbarCtrl">
+            <div acjim-toolbar></div>
         </div> <!-- /sidebar -->
 
         <!-- workspace -->
@@ -75,6 +70,7 @@
 
 <!-- directives -->
 <script src="./app/components/map/mapDirective.js"></script>
+<script src="./app/components/toolbar/toolbarDirective.js"></script>
 
 <script src="./app/shared/splitter.js"></script>
 </body>
