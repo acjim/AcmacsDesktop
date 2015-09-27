@@ -21,10 +21,10 @@
 */
 'use strict';
 
-var app = angular.module('acjim.filehandling',[]);
+var app = angular.module('acjim.filehandling',['flash']);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', function($scope, $q, fileDialog, api) {
+app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', function($scope, $q, fileDialog, api, Flash) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -92,6 +92,12 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', functio
                         // handle the error and recover
                         return newPromiseOrValue;
                     }*/
+                    /**
+                     * TODO: set flash message based on environment
+                     *
+                     * for example: show reason.message only on dev
+                     */
+                    Flash.create('danger', reason.message);
                     return $q.reject(reason);
                 });
             }, function(reason) {
@@ -102,6 +108,9 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', functio
                     // handle the error and recover
                     return newPromiseOrValue;
                 }*/
+
+                // TODO: set flash message based on environment
+                Flash.create('danger', reason.message);
                 return $q.reject(reason);
             });
         }

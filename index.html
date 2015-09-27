@@ -8,6 +8,7 @@
     <title>Acmacs Destktop</title>
 
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="node_modules/angular-flash-alert/dist/angular-flash.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/wmwindow.css">
     <link rel="stylesheet" href="./css/splitter.css">
@@ -23,6 +24,7 @@
 
         <!-- workspace -->
         <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 col-xs-10 cols-xs-offset-2 fullWindowZone" id="myMoveZone">
+            <div flash-message="5000" ></div>
             <wmwindow ng-repeat="openFile in openMaps" options={{options}} title="{{openFile.title}}" close="myfunction()" >
                 <bg-splitter orientation="horizontal">
                     <bg-pane min-size="10"><div class="pane-container" style="overflow: hidden">
@@ -48,6 +50,7 @@
 <script src="node_modules/d3/d3.js"></script>
 <script src="node_modules/jquery/dist/jquery.js"></script>
 <script src="./app/components/filehandling/fileDialog.js"></script>
+<script src="node_modules/angular-flash-alert/dist/angular-flash.min.js"></script>
 
 <!-- app -->
 <script src="./app/app.js"></script>
