@@ -27,9 +27,11 @@
             <div flash-message="5000" ></div>
             <wmwindow ng-repeat="openFile in openMaps" options={{options}} title="{{openFile.title}}" close="myfunction()" >
                 <bg-splitter orientation="horizontal">
-                    <bg-pane min-size="10" style="overflow: scroll"><div class="pane-container" style="overflow: hidden">
-                        <ac-table table="openFile.table.table"></ac-table>
-                    </div></bg-pane>
+                    <bg-pane min-size="10" style="overflow-y: scroll">
+                        <div class="pane-container">
+                            <ac-table table="openFile.table.table"></ac-table>
+                        </div>
+                    </bg-pane>
                     <bg-pane min-size="150">
                         <div class="pane-container">
                             <div ac-map map="openFile.map"></div>
