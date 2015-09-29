@@ -97,7 +97,8 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
                      *
                      * for example: show reason.message only on dev
                      */
-                    Flash.create('danger', reason.message);
+                    var error_message = 'Unable to open the file, creating map and table data failed.';
+                    Flash.create('danger', error_message);
                     return $q.reject(reason);
                 });
             }, function(reason) {
@@ -110,7 +111,8 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
                 }*/
 
                 // TODO: set flash message based on environment
-                Flash.create('danger', reason.message);
+                var error_message = 'Unable to open the file, file import failed!';
+                Flash.create('danger', error_message);
                 return $q.reject(reason);
             });
         }

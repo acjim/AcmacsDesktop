@@ -24,7 +24,7 @@
 
         <!-- workspace -->
         <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 col-xs-10 cols-xs-offset-2 fullWindowZone" id="myMoveZone">
-            <div flash-message="5000" ></div>
+            <div flash-message="5000" style="z-index: 10;"></div>
             <wmwindow ng-repeat="openFile in openMaps" options={{options}} title="{{openFile.title}}" close="myfunction()" >
                 <bg-splitter orientation="horizontal">
                     <bg-pane min-size="10" style="overflow-y: scroll">
