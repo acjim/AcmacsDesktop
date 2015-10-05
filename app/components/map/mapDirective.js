@@ -212,6 +212,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // Enable brush
                 brushGroup.select('.background').style('cursor', 'crosshair');
+                brushGroup.selectAll(".extent").style('cursor', 'crosshair');
                 brushGroup.call(brush);
             }
 
@@ -226,7 +227,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .on("touchstart.brush", null)
                     .on("touchmove.brush", null)
                     .on("touchend.brush", null);
-                brushGroup.select('.background').style('cursor', 'default');
+                brushGroup.select('.background').style('cursor', '');
 
                 //Enable zoom
                 svg.call(zoom);
