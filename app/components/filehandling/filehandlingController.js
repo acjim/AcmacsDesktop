@@ -24,13 +24,14 @@
 var app = angular.module('acjim.filehandling',['flash']);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', function($scope, $q, fileDialog, api, Flash) {
+app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', function($scope, $q, fileDialog, api, Flash, winHandler) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
 
     $scope.$on('new-file', function(e, menu, item) {
-        $scope.openMaps.push( { title:'New Map '+$scope.openMaps.length, content:'Dynamic content '+$scope.openMaps.length, active: true } );
+
+        winHandler.addEmptyWindow();
         $scope.$apply();
     });
 
@@ -148,13 +149,19 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             var tableJsonData = data[0];
             var mapJsonData = data[1];
 
-            var numOpenMaps = $scope.openMaps.length;
-            $scope.openMaps[numOpenMaps] = {};
-            $scope.openMaps[numOpenMaps].table = JSON.parse(tableJsonData);
-            $scope.openMaps[numOpenMaps].map   = JSON.parse(mapJsonData);
-            $scope.openMaps[numOpenMaps].title = $scope.openMaps[numOpenMaps].table.info.name;
+            winHandler.addWindow({
+                map: JSON.parse(mapJsonData),
+                table: JSON.parse(tableJsonData)
+            });
+
         });
     };
+
+
+    // Watch opened windows
+    $scope.$watch(winHandler.getOpenWindows(), function () {
+        $scope.openMaps = winHandler.getOpenWindows();
+    });
 
     $scope.handleFileOpen("./test/data/test.save"); //TODO: Remove me, for developmental purposes
 

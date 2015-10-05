@@ -448,11 +448,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
 
             /**
-             * Listens for the "container-resized" event and rerenders the map
+             * Listens for the window resize event and re-renders the map
              */
-            scope.$on('container-resized', function(event) {
-                renderWithoutData();
-            });
+            scope.$on('ngWindow.resize', renderWithoutData);
+
+
+            /**
+             * Listens for container resize event and re-renders the map
+             */
+            scope.$on('container-resized', renderWithoutData);
+
 
             /**
              *  Watch for data changes and re-render
