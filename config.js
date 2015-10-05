@@ -9,19 +9,24 @@
  */
 
 
-var config = {}
+var config = {};
 
 config.store = {};
 config.debug = {};
 config.api = {};
 
 config.server_name =  'ACJIM';
-config.api.location = '/Users/rohan/Desktop/';
+config.api.location = '/vagrant/';
 config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
-config.api.script = './core/AcmacsCore.bundle/bin/c2env api-acjim.py ';
+config.api.script = 'C:\\HashiCorp\\Vagrant\\bin\\vagrant';
 // if this file_path doesn't exist, and environment is development
-config.api.path = './core/AcmacsCore.bundle/';
+config.api.path = '/vagrant/core/';
+config.api.params = [];
+config.api.params[0] = "ssh";
+config.api.params[1] = "-c";
+config.api.params[2] = "'cd /vagrant/ && /acjim/AcmacsCore.bundle/bin/c2env api-acjim.py ";
+config.api.systemPre = "'";
 
 module.exports = config;

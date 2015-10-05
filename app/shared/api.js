@@ -22,7 +22,7 @@
 'use strict';
 
 var config = require('./config.js');
-var exec = require('child_process').exec;
+var exec = require('child_process').execFile;
 var fs = require('fs');
 var DATE_NOW = Date.now();
 var COMMANDS = {GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax'};
@@ -205,6 +205,7 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
+                console.log(stdout);
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
@@ -212,10 +213,10 @@ angular.module('acjim.api', [])
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, input_file, '.json', '');
             var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', '');
-            var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
+            config.api.params[2] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1 + config.api.systemPre;
             // callback function for exec
             try {
-                exec(command, puts);
+                exec(script, config.api.params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
@@ -301,7 +302,7 @@ angular.module('acjim.api', [])
             var script = config.api.script;
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var command = script + input_param_file + " " + output_acd1 + " " + output_json;
+            var command = config.api.systemPost + script + input_param_file + " " + output_acd1 + " " + output_json + config.api.systemPre;
             try {
                 exec(command, puts);
             } catch (Error) {
