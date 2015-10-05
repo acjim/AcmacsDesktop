@@ -20,14 +20,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/***************************************************************
- *** ATTENTION! *** ATTENTION! *** ATTENTION! *** ATTENTION! ***
- ***************************************************************
- * Pleas do NOT make any changes in the file "style.css"!      *
- * If you want to change something, please edit "style.less".  *
- * Otherwise all of your changes will be lost the next time    *
- * the less file is compiled.                                  *
- ***************************************************************/
+
 body,
 html {
   padding: 0;

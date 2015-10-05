@@ -109,7 +109,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // Create brush
                 brush = createBrush();
-                //brushGroup.call(brush); //TODO: Check if tool is brush
 
                 // Create background grid
                 boxGroup = redrawGrid(boxGroup, boxSize, width, height);
@@ -458,7 +457,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              *  Watch for data changes and re-render
              */
-            scope.$watch('data', function(newVals, oldVals) {
+            scope.$watch('data', function(newVals) {
                 renderWithData(newVals);
             }); //, true); //FIXME: Scaling the data triggers this twice. Maybe use notification + listener for new data instead
 
