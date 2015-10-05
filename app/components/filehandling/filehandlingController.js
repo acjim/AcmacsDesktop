@@ -113,7 +113,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
 
                 // TODO: set flash message based on environment
                 var error_message = 'Unable to open the file, file import failed!';
-                Flash.create('danger', error_message);
+                Flash.create('danger', error_message + reason);
                 return $q.reject(reason);
             });
         }

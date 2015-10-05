@@ -1,4 +1,4 @@
-{
+{"map":{
   "background":{
     "background_color":16777215,
     "borderline_color":null
@@ -969,4 +969,4 @@
     8.0,
     8.0
   ]
-}
+}}
