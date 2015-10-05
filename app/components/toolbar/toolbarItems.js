@@ -37,6 +37,7 @@
             RE_OPTIMIZE: 6,
             //// GROUPS ////
             MAP_TOOLS: 7,
+            SHOW_CONNECTION_LINES: 8,
         };
 
         return tools;

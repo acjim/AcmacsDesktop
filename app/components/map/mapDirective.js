@@ -306,7 +306,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .selectAll(".errorline");
 
                 connectionlineGroup = elementGroup.append("g")
-                    .attr("class", "connectionline");
+                    .attr("class", "connectionline")
+                    .attr("id", "connectionlineLayer")
+                    .selectAll(".connectionline");
 
 
                 width = getContainerWidth();

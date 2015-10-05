@@ -64,10 +64,24 @@ angular
                         icon: 'glyphicon glyphicon-transfer',
                         togglable: true,
                         callback: function () {
-                            if ($('#errorlineLayer').is(':hidden')){
-                                $('#errorlineLayer').show();
+                            if ($('#errorlineLayer').css('visibility') == 'hidden'){
+                                $('#errorlineLayer').css({'visibility': 'visible'});
                             }else{
-                                $('#errorlineLayer').hide();
+                                $('#errorlineLayer').css({'visibility':'hidden'});
+                            }
+                        }
+                    },
+                    {
+                        id: toolbarItems.SHOW_CONNECTION_LINES,
+                        caption: 'Show Connection Lines',
+                        groupID: toolbarItems.MAP_TOOLS,
+                        icon: 'glyphicon glyphicon glyphicon-road',
+                        togglable: true,
+                        callback: function () {
+                            if ($('#connectionlineLayer').css('visibility') == 'hidden'){
+                                $('#connectionlineLayer').css({'visibility': 'visible'});
+                            }else{
+                                $('#connectionlineLayer').css({'visibility':'hidden'});
                             }
                         }
                     }
