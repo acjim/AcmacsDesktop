@@ -36,7 +36,7 @@
             SHOW_LABELS: 5,
             RE_OPTIMIZE: 6,
             //// GROUPS ////
-            MAP_TOOLS: 7
+            MAP_TOOLS: 7,
         };
 
         return tools;

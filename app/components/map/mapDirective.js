@@ -76,7 +76,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             var boxGroup,
                 brushGroup,
                 elementGroup,
-                nodeGroup;
+                nodeGroup,
+                errorlineGroup,
+                connectionlineGroup;
 
 
             /**
@@ -167,6 +169,42 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         })
                     );
 
+                var lineData = [
+                    {
+                        start: [1, 5],
+                        end: [20, 20],
+                        stroke: 'red',
+                        width: 0.6,
+                        opacity: 1.0
+                    },
+                    {
+                        start: [40, 10],
+                        end: [60, 40],
+                        stroke: 'grey',
+                        width: 0.6,
+                        opacity: 1.0
+                    },
+                    {
+                        start: [80, 5],
+                        end: [100, 60],
+                        stroke: 'blue',
+                        width: 0.6,
+                        opacity: 1.0
+                    }
+                ];
+
+                errorlineGroup = errorlineGroup.data(lineData).enter();
+
+                console.log(lineData);
+
+                errorlineGroup.append("line")
+                    .attr("x1",(function(d) { return d.start[0]; }))
+                    .attr("y1",(function(d) { return d.start[1]; }))
+                    .attr("x2",(function(d) { return d.end[0]; }))
+                    .attr("y2",(function(d) { return d.end[1]; }))
+                    .attr("stroke", (function(d) { return d.stroke; } ))
+                    .attr("stroke-width", (function(d) { return d.width; }))
+                    .attr("opacity", (function(d) { return d.opacity; }));
 
                 manageMapTools();
 
@@ -261,6 +299,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup = elementGroup.append("g")
                     .attr("class", "node")
                     .selectAll(".node");
+
+                errorlineGroup = elementGroup.append("g")
+                    .attr("class", "errorline")
+                    .attr("id", "errorlineLayer")
+                    .selectAll(".errorline");
+
+                connectionlineGroup = elementGroup.append("g")
+                    .attr("class", "connectionline");
 
 
                 width = getContainerWidth();

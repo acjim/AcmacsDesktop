@@ -55,6 +55,25 @@ angular
                 ]
             },
             {
+                type: "buttonGroup",
+                buttons: [
+                    {
+                        id: toolbarItems.SHOW_ERROR_LINES,
+                        caption: 'Show Error Lines',
+                        groupID: toolbarItems.MAP_TOOLS,
+                        icon: 'glyphicon glyphicon-transfer',
+                        togglable: true,
+                        callback: function () {
+                            if ($('#errorlineLayer').is(':hidden')){
+                                $('#errorlineLayer').show();
+                            }else{
+                                $('#errorlineLayer').hide();
+                            }
+                        }
+                    }
+                ]
+            },
+            {
                 id: 2,
                 caption: 'Sample Button',
                 icon: 'glyphicon glyphicon-heart',

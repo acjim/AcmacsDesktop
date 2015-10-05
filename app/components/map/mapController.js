@@ -27,8 +27,13 @@ var app = angular.module('acjim.map',[]);
 app.controller('mapCtrl', ['$scope', function($scope) {
 
     $scope.d3Data = [];
+    $scope.d3Errorlines = [];
+    $scope.d3Connectionlines = [];
 
     var map = $scope.mapData.map.map;
+    var errorlines = $scope.mapData.map.error_lines;
+
+    console.log($scope.mapData);
 
     if (map) {
 
@@ -66,6 +71,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
 
             $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
         });
+
         // checking if the drawing order is available
         if (!_.isUndefined(map.styles.drawing_order)) {
             // In case the drawing_order is defined, we order the nodes based on their drawing order.
@@ -237,5 +243,207 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         };
     }
 
+
+
+    //calculate error and connection lines
+    function calculateLines() {
+        var positive,
+            connect,
+            colour,
+            selected = {},
+            connection = {},
+            pointsConnected = {};
+
+        // Determine the sign of the error.
+        positive = function (p1, p2, probe) {
+            var arg;//, t, r, s1, s2, sProbe;
+
+
+            if (p1[0] === p2[0]) {
+                return Math.abs(probe[1] - p2[1]) >= Math.abs(probe[1] - p1[1]);
+            }
+            else {
+                //TODO: Figure out what this calculation actually does
+                arg = Math.atan((p2[1] - p1[1]) / (p2[0] - p1[0])) * 360 / (2 * Math.PI);
+                //t = this.canvasDOMNode.createSVGMatrix().rotate(-arg);
+                //s1 = this.svgPoint(p1[0], p1[1]).matrixTransform(t);
+                //s2 = this.svgPoint(p2[0], p2[1]).matrixTransform(t);
+                //sProbe = this.svgPoint(probe[0], probe[1]).matrixTransform(t);
+                //return (
+                //    (sProbe.x >= s1.x && s1.x >= s2.x) ||
+                //    (sProbe.x <= s1.x && s1.x <= s2.x)
+                //);
+            }
+        }
+
+        //Connect lines (error/connection) in one direction
+        connect = function(arg){
+            var
+            // The set of pre-calculated error line endpoints pointing to the
+            // opposite end of each of the the current point's connections
+                errorLineEnd,
+
+            // The co-ordinates of the current line's origin
+                from,
+
+            // The co-ordinates of the current line's destination
+                to,
+
+                nAntigens = errorlines.antigens.length,
+                nSera = errorlines.sera.length,
+
+                originIndex,
+                destIndex,
+                o, d;
+
+            for (o = 0; o < errorlines[arg.from].length; o += 1) {
+                if (arg.from === 'antigens') {
+                    originIndex = o;
+                }
+                else {
+                    originIndex = nAntigens + o;
+                }
+
+                from = map.layout[originIndex];
+                pointsConnected[from] = true;
+
+                // Cache this point's selection status to reduce complex property
+                // look-ups.
+                selected[originIndex] = true;
+
+                errorLineEnd = errorlines[arg.from][o];
+                for (d = 0; d < errorLineEnd.length; d += 1) {
+                    if (arg.from === 'antigens') {
+                        destIndex = nAntigens + d;
+                    }
+                    else {
+                        destIndex = d;
+                    }
+
+                    if (
+                        connection[originIndex + ':' + destIndex] ||
+                        connection[destIndex + ':' + originIndex]
+                    ) {
+                        // This connection has already been plotted.
+                        continue;
+                    }
+
+                    to = map.layout[destIndex];
+
+                    if (positive(from, to, errorLineEnd[d])) {
+                        colour = 'red';
+                    }
+                    else {
+                        colour = 'blue';
+                    }
+
+                    $scope.d3Connectionlines.push({
+                        start: from,
+                        end: to,
+                        stroke: 'grey',
+                        width: 0.4,
+                        opacity: 1.0
+                    });
+                    /*if (this.get('renderConnectionLines')) {
+                     this.addLine({
+                     start: from,
+                     end: to,
+                     stroke: 'grey',
+                     width: 0.4,
+                     opacity: this.attributeOrProfileSetting('connectionLineOpacity')
+                     });
+                     }*/
+
+                    $scope.d3Errorlines.push({
+                        start: from,
+                        end: errorLineEnd[d],
+                        stroke: colour,
+                        width: 0.6,
+                        opacity: 1.0
+                    });
+
+                    /*if (this.get('renderErrorLines')) {
+                     this.addLine({
+                     start: from,
+                     end: errorLineEnd[d],
+                     stroke: colour,
+                     width: 0.6,
+                     opacity: this.attributeOrProfileSetting('errorLineOpacity')
+                     });
+                     }*/
+
+                    // Mark this connection to allow testing for duplicates.
+                    connection[originIndex + ':' + destIndex] = true;
+                }
+            } // for each origin: connection lines or the near-end error lines
+
+            // Render the error lines at the opposite end of each connection
+            for (d = 0; d < errorlines[arg.to].length; d += 1) {
+                if (arg.from === 'antigens') {
+                    destIndex = nAntigens + d;
+                }
+                else {
+                    destIndex = d;
+                }
+                to = map.layout[destIndex];
+
+                errorLineEnd = errorlines[arg.to][d];
+                for (o = 0; o < errorLineEnd.length; o += 1) {
+                    if (arg.from === 'antigens') {
+                        originIndex = o;
+                    }
+                    else {
+                        originIndex = nAntigens + o;
+                    }
+                    from = map.layout[originIndex];
+
+                    if (connection[destIndex + ':' + originIndex]) {
+                        // This connection has already been plotted.
+                        continue;
+                    }
+
+                    // This filter selects only the error lines corresponding to selected points
+                    if (selected[originIndex]) {
+                        // Note the reversal of `to` and `from` in this case.
+                        if (positive(to, from, errorLineEnd[o])) {
+                            colour = 'red';
+                        }
+                        else {
+                            colour = 'blue';
+                        }
+
+                        $scope.d3Errorlines.push({
+                            start: to,
+                            end: errorLineEnd[o],
+                            stroke: colour,
+                            width: 0.6,
+                            opacity: 1.0
+                        });
+
+                        /*this.addLine({
+                         start: to,
+                         end: errorLineEnd[o],
+                         stroke: colour,
+                         width: 0.6,
+                         opacity: this.attributeOrProfileSetting('errorLineOpacity')
+                         });*/
+                    }
+                }
+            } // renderErrorLines (at the opposite end)
+
+        } //connet lines
+
+        //probs leaving this out or moving it to different point
+        if (!map || !errorlines) {
+            console.log(map);
+            console.log('ConnectionsLayer: bailing out because there is no data to plot');
+            return false;
+        }
+
+        // First, draw the error lines for antigens
+        connect({from: 'antigens', to: 'sera'});
+        connect({from: 'sera', to: 'antigens'});
+
+    }
 
 }]);
