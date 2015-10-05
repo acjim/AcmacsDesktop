@@ -28,166 +28,171 @@ app.controller('mapCtrl', ['$scope', function($scope) {
 
     $scope.d3Data = [];
 
-    if (_.isUndefined($scope.mapData.map)) return;
+    var map = $scope.mapData.map.map;
 
-    $scope.mapData.map.map.layout.forEach(function (layout, i) {
-        $scope.d3Data[i] = {
-            "x": layout[0],
-            "y": layout[1]
-        };
-    });
+    if (map) {
 
-    $scope.mapData.map.map.point_info.forEach(function (point_info, i) {
+        if (_.isUndefined($scope.mapData.map)) return;
 
-        var node_name = "undefined";
+        map.layout.forEach(function (layout, i) {
+            $scope.d3Data[i] = {
+                "x": layout[0],
+                "y": layout[1]
+            };
+        });
 
-        if (!_.isUndefined(point_info.name)) {
-            node_name = point_info.name;
-        }
+        map.point_info.forEach(function (point_info, i) {
 
-        $scope.d3Data[i].name = node_name;
-    });
+            var node_name = "undefined";
 
-    $scope.mapData.map.map.styles.points.forEach(function (point, i) {
+            if (!_.isUndefined(point_info.name)) {
+                node_name = point_info.name;
+            }
 
-        var node_shape = "circle";
-        var node_fill = "#000000";
+            $scope.d3Data[i].name = node_name;
+        });
 
-        if (!_.isUndefined($scope.mapData.map.map.styles.styles[point].fill_color)) {
-            node_fill = $scope.mapData.map.map.styles.styles[point].fill_color[0];
-        }
-        if (!_.isUndefined($scope.mapData.map.map.styles.styles[point].shape)) {
-            node_shape = $scope.mapData.map.map.styles.styles[point].shape;
-        }
+        map.styles.points.forEach(function (point, i) {
 
-        $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
-    });
-    // checking if the drawing order is available
-    if (!_.isUndefined($scope.mapData.map.map.styles.drawing_order)) {
-        // In case the drawing_order is defined, we order the nodes based on their drawing order.
-        var order_list = $scope.mapData.map.map.styles.drawing_order[0].concat($scope.mapData.map.map.styles.drawing_order[1]);
-        var length = order_list.length;
-        if ($scope.d3Data.length == length) {
-            // start a bubble sort.
-            // The start of the sorting of drawing order following Bubble sort algorithm
-            for (var i = 0; i < length; i++) {
-                for (var j = (length - 1); j > 0; j--) {
-                    if (order_list[j] < order_list[j - 1]) {
-                        // swapping the order_list  to keep the reference
-                        var temp = order_list[j - 1];
-                        order_list[j - 1] = order_list[j];
-                        order_list[j] = temp;
-                        // swapping the data
-                        temp = $scope.d3Data[j - 1];
-                        $scope.d3Data[j - 1] = $scope.d3Data[j];
-                        $scope.d3Data[j] = temp;
+            var node_shape = "circle";
+            var node_fill = "#000000";
+
+            if (!_.isUndefined(map.styles.styles[point].fill_color)) {
+                node_fill = map.styles.styles[point].fill_color[0];
+            }
+            if (!_.isUndefined(map.styles.styles[point].shape)) {
+                node_shape = map.styles.styles[point].shape;
+            }
+
+            $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
+        });
+        // checking if the drawing order is available
+        if (!_.isUndefined(map.styles.drawing_order)) {
+            // In case the drawing_order is defined, we order the nodes based on their drawing order.
+            var order_list = map.styles.drawing_order[0].concat(map.styles.drawing_order[1]);
+            var length = order_list.length;
+            if ($scope.d3Data.length == length) {
+                // start a bubble sort.
+                // The start of the sorting of drawing order following Bubble sort algorithm
+                for (var i = 0; i < length; i++) {
+                    for (var j = (length - 1); j > 0; j--) {
+                        if (order_list[j] < order_list[j - 1]) {
+                            // swapping the order_list  to keep the reference
+                            var temp = order_list[j - 1];
+                            order_list[j - 1] = order_list[j];
+                            order_list[j] = temp;
+                            // swapping the data
+                            temp = $scope.d3Data[j - 1];
+                            $scope.d3Data[j - 1] = $scope.d3Data[j];
+                            $scope.d3Data[j] = temp;
+                        }
                     }
                 }
+            } else {
+                // keep ordering in default, meaning we don't do anything
             }
+        }
+
+        // Setting the color using the Hue Saturation Value Scheme
+        if (!_.isUndefined($scope.table)) {
+            // Missing Isolate
+            // $scope.info.assay;
+            var name = $scope.table.info.assay;
+            var isolate = $scope.table.info.assay;
+            var year = $scope.table.info.date;
+            var h, s, v;
+            var firstChar = name.charAt(0);
+
+            // Computing the Hue Value
+            if (isNumeric(firstChar)) {
+                h = firstChar / 10;
+            }
+            else if (isLetter(firstChar)) {
+                // Case Derek Trolling Dutch People
+                if (name.toUpperCase == "NL" || name.toUpperCase == "BI" || name.toUpperCase == "RD" || name.toUpperCase == "UT" || name.toUpperCase == "AM") {
+                    h = 0.1;
+                } else if (firstChar.toUpperCase() == "A" || firstChar == "A") {
+                    h = 0 / 25;
+                } else if (firstChar.toUpperCase() == "B" || firstChar == "B") {
+                    h = 2 / 25;
+                } else if (firstChar.toUpperCase() == "C" || firstChar == "C") {
+                    h = 3 / 25;
+                } else if (firstChar.toUpperCase() == "D" || firstChar == "D") {
+                    h = 4 / 25;
+                } else if (firstChar.toUpperCase() == "E" || firstChar == "E") {
+                    h = 5 / 25;
+                } else if (firstChar.toUpperCase() == "F" || firstChar == "F") {
+                    h = 6 / 25;
+                } else if (firstChar.toUpperCase() == "G" || firstChar == "G") {
+                    h = 7 / 25;
+                } else if (firstChar.toUpperCase() == "H" || firstChar == "H") {
+                    h = 8 / 25;
+                } else if (firstChar.toUpperCase() == "I" || firstChar == "I") {
+                    h = 9 / 25;
+                } else if (firstChar.toUpperCase() == "J" || firstChar == "J") {
+                    h = 10 / 25;
+                } else if (firstChar.toUpperCase() == "K" || firstChar == "K") {
+                    h = 11 / 25;
+                } else if (firstChar.toUpperCase() == "L" || firstChar == "L") {
+                    h = 12 / 25;
+                } else if (firstChar.toUpperCase() == "M" || firstChar == "M") {
+                    h = 13 / 25;
+                } else if (firstChar.toUpperCase() == "N" || firstChar == "N") {
+                    h = 1 / 25;
+                } else if (firstChar.toUpperCase() == "O" || firstChar == "O") {
+                    h = 14 / 25;
+                } else if (firstChar.toUpperCase() == "P" || firstChar == "P") {
+                    h = 15 / 25;
+                } else if (firstChar.toUpperCase() == "Q" || firstChar == "Q") {
+                    h = 16 / 25;
+                } else if (firstChar.toUpperCase() == "R" || firstChar == "R") {
+                    h = 17 / 25;
+                } else if (firstChar.toUpperCase() == "S" || firstChar == "S") {
+                    h = 18 / 25;
+                } else if (firstChar.toUpperCase() == "T" || firstChar == "T") {
+                    h = 19 / 25;
+                } else if (firstChar.toUpperCase() == "U" || firstChar == "U") {
+                    h = 20 / 25;
+                } else if (firstChar.toUpperCase() == "V" || firstChar == "V") {
+                    h = 21 / 25;
+                } else if (firstChar.toUpperCase() == "W" || firstChar == "W") {
+                    h = 22 / 25;
+                } else if (firstChar.toUpperCase() == "X" || firstChar == "X") {
+                    h = 23 / 25;
+                } else if (firstChar.toUpperCase() == "Y" || firstChar == "Y") {
+                    h = 24 / 25;
+                } else if (firstChar.toUpperCase() == "Z" || firstChar == "Z") {
+                    h = 25 / 25;
+                }
+                else {
+                    // we don't have a way to compute the H value, meaning we can't compute the color
+                }
+            } else {
+                // Not Numeric and not Alphabet, meaning it is special charachters. Not taken into consideration
+            }
+
+
         } else {
-            // keep ordering in default, meaning we don't do anything
+            // we can't compute the color.
         }
     }
 
-    // Setting the color using the Hue Saturation Value Scheme
-   if (!_.isUndefined($scope.table)) {
-      // Missing Isolate
-   // $scope.info.assay;
-       var name =  $scope.table.info.assay;
-       var isolate=$scope.table.info.assay;
-       var year= $scope.table.info.date;
-        var h, s, v;
-        var firstChar =name.charAt(0);
+    // computing the Saturation
+    if(!isNumeric(isolate)){
+        s=0.5;
+    } else{
+        s=(log20(isolate)/5);
+    }
 
-       // Computing the Hue Value
-        if (isNumeric(firstChar)) {
-            h= firstChar/10;
-        }
-        else if (isLetter(firstChar)) {
-            // Case Derek Trolling Dutch People
-            if(name.toUpperCase=="NL"|| name.toUpperCase=="BI"||name.toUpperCase== "RD"||name.toUpperCase== "UT"||name.toUpperCase== "AM"){
-                h=0.1;
-            } else if (firstChar.toUpperCase()=="A"||firstChar=="A"){
-                h=0/25;
-            }else if (firstChar.toUpperCase()=="B"||firstChar=="B"){
-                h=2/25;
-            }else if (firstChar.toUpperCase()=="C"||firstChar=="C"){
-                h=3/25;
-            }else if (firstChar.toUpperCase()=="D"||firstChar=="D"){
-                h=4/25;
-            }else if (firstChar.toUpperCase()=="E"||firstChar=="E"){
-                h=5/25;
-            }else if (firstChar.toUpperCase()=="F"||firstChar=="F"){
-                h=6/25;
-            }else if (firstChar.toUpperCase()=="G"||firstChar=="G"){
-                h=7/25;
-            }else if (firstChar.toUpperCase()=="H"||firstChar=="H"){
-                h=8/25;
-            }else if (firstChar.toUpperCase()=="I"||firstChar=="I"){
-                h=9/25;
-            }else if (firstChar.toUpperCase()=="J"||firstChar=="J"){
-                h=10/25;
-            }else if (firstChar.toUpperCase()=="K"||firstChar=="K"){
-                h=11/25;
-            }else if (firstChar.toUpperCase()=="L"||firstChar=="L"){
-                h=12/25;
-            }else if (firstChar.toUpperCase()=="M"||firstChar=="M"){
-                h=13/25;
-            }else if (firstChar.toUpperCase()=="N"||firstChar=="N"){
-                h=1/25;
-            }else if (firstChar.toUpperCase()=="O"||firstChar=="O"){
-                h=14/25;
-            }else if (firstChar.toUpperCase()=="P"||firstChar=="P"){
-                h=15/25;
-            }else if (firstChar.toUpperCase()=="Q"||firstChar=="Q"){
-                h=16/25;
-            }else if (firstChar.toUpperCase()=="R"||firstChar=="R"){
-                h=17/25;
-            }else if (firstChar.toUpperCase()=="S"||firstChar=="S"){
-                h=18/25;
-            }else if (firstChar.toUpperCase()=="T"||firstChar=="T"){
-                h=19/25;
-            }else if (firstChar.toUpperCase()=="U"||firstChar=="U"){
-                h=20/25;
-            }else if (firstChar.toUpperCase()=="V"||firstChar=="V"){
-                h=21/25;
-            }else if (firstChar.toUpperCase()=="W"||firstChar=="W"){
-                h=22/25;
-            }else if (firstChar.toUpperCase()=="X"||firstChar=="X"){
-                h=23/25;
-            }else if (firstChar.toUpperCase()=="Y"||firstChar=="Y"){
-                h=24/25;
-            }else if (firstChar.toUpperCase()=="Z"||firstChar=="Z"){
-                h=25/25;
-            }
-            else{
-             // we don't have a way to compute the H value, meaning we can't compute the color
-            }
-        }else{
-            // Not Numeric and not Alphabet, meaning it is special charachters. Not taken into consideration
-        }
+    // Computing the Value
+    if (isNumeric(year)){
+        v=1;
+    }
+    else{
+        v=0;
+    }
 
-
-        }else{
-       // we can't compute the color.
-        }
-
-            // computing the Saturation
-            if(!isNumeric(isolate)){
-                s=0.5;
-            } else{
-                s=(log20(isolate)/5);
-            }
-
-         // Computing the Value
-        if (isNumeric(year)){
-            v=1;
-        }
-        else{
-            v=0;
-        }
-
-        // computing the total if all flags are 1
+    // computing the total if all flags are 1
 
 
     function log20(val) {
@@ -231,5 +236,6 @@ app.controller('mapCtrl', ['$scope', function($scope) {
             b: Math.round(b * 255)
         };
     }
+
 
 }]);

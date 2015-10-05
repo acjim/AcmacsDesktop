@@ -21,7 +21,7 @@
 */
 'use strict';
 
-angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($scope, nwService) {
+angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', 'winHandler', function($scope, nwService, winHandler) {
 
     // Open Debug Window
     $scope.$on('open-debug', function(e, menu, item) {
@@ -67,21 +67,6 @@ angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($
                 }
             }
         }
-    };
-
-    $scope.win ={};
-    $scope.win.newtitle = '';
-
-    $scope.myfunction = function (){
-//        console.log ('myfunction close');
-    };
-
-    $scope.options = {
-        position: {x: 0, y:0},
-        size: {width: 600, height:500},
-        windowContainer: 'myMoveZone',
-        maximizeTo: 'myMoveZone'
-
     };
 
 }]);
