@@ -178,13 +178,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         opacity: 1.0
                     },
                     {
-                        start: [40, 10],
-                        end: [60, 40],
-                        stroke: 'grey',
-                        width: 0.6,
-                        opacity: 1.0
-                    },
-                    {
                         start: [80, 5],
                         end: [100, 60],
                         stroke: 'blue',
@@ -193,11 +186,32 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     }
                 ];
 
+                var connlineData = [
+                    {
+                        start: [40, 10],
+                        end: [60, 40],
+                        stroke: 'grey',
+                        width: 0.4,
+                        opacity: 1.0
+                    }
+                ]
+
+
+                // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
                 errorlineGroup = errorlineGroup.data(lineData).enter();
 
-                console.log(lineData);
-
                 errorlineGroup.append("line")
+                    .attr("x1",(function(d) { return d.start[0]; }))
+                    .attr("y1",(function(d) { return d.start[1]; }))
+                    .attr("x2",(function(d) { return d.end[0]; }))
+                    .attr("y2",(function(d) { return d.end[1]; }))
+                    .attr("stroke", (function(d) { return d.stroke; } ))
+                    .attr("stroke-width", (function(d) { return d.width; }))
+                    .attr("opacity", (function(d) { return d.opacity; }));
+
+                connectionlineGroup = connectionlineGroup.data(connlineData).enter();
+
+                connectionlineGroup.append("line")
                     .attr("x1",(function(d) { return d.start[0]; }))
                     .attr("y1",(function(d) { return d.start[1]; }))
                     .attr("x2",(function(d) { return d.end[0]; }))
