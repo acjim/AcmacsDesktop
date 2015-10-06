@@ -192,6 +192,11 @@ angular.module('acjim.api', [])
          */
         api.import_user_data = function (input_file, additional_params) {
 
+            if(process.platform == "win32") {
+                input_file = input_file.replace(/C:\\Users\\Felix\\Dropbox\\www\\acjim\\/, '');
+                input_file = input_file.replace(/\\/g, '/');
+            }
+
             var deferred = $q.defer();
             var command = "import";
             // create and fetch input_parameter file
@@ -205,7 +210,6 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
-                console.log(stdout);
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
@@ -213,10 +217,11 @@ angular.module('acjim.api', [])
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, input_file, '.json', '');
             var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', '');
-            config.api.params[2] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1 + config.api.systemPre;
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            params[params.length-1] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
             // callback function for exec
             try {
-                exec(script, config.api.params, puts);
+                exec(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
@@ -302,9 +307,11 @@ angular.module('acjim.api', [])
             var script = config.api.script;
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var command = config.api.systemPost + script + input_param_file + " " + output_acd1 + " " + output_json + config.api.systemPre;
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            // callback function for exec
             try {
-                exec(command, puts);
+                exec(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);

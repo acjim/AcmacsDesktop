@@ -62,7 +62,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
     };
 
     $scope.handleFileOpen = function(filename) {
-        if(false && !fs.existsSync(config.api.path))
+        if(false && !fs.existsSync(config.api.path)) //todo: remove the false
         {
             api.asyncTest().then(function(response) {
                 var output = api.stub();
@@ -72,45 +72,49 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             var additional_params = {};
             var table_additional_params = {}; // check documentation on get_table_data for additional params
             var map_additional_params = {}; // check documentation on get_map for what params can be passed
-            var output = api.import_user_data(filename, additional_params).then(function(output){
-                $q.all([
-                    api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
-                ]).then(function(data) {
-                    var output_table_json = data[0];
-                    var output_map_json = data[1];
-
-                    $scope.handleOpenComplete({
-                        output_acd1: output.output_acd1,
-                        table_json: output_table_json,
-                        map_json: output_map_json
+            api.import_user_data(filename, additional_params).then(function(output){
+                if(process.platform == "win32") { //vagrant can't handle 2 async calls
+                    api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function(output1){
+                        var output_table_json = output1;
+                        api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function(output2){
+                            var output_map_json = output2;
+                            $scope.handleOpenComplete({
+                                output_acd1: output.output_acd1,
+                                table_json: output_table_json,
+                                map_json: output_map_json
+                            });
+                        }, function(reason) {
+                            var error_message = 'Unable to open the file, creating map and table data failed.';
+                            Flash.create('danger', error_message);
+                            return $q.reject(reason);
+                        });
                     });
-                }, function(reason) {
-                    // error: handle the error if possible and
-                    //        resolve promiseB with newPromiseOrValue,
-                    //        otherwise forward the rejection to promiseB
-                    /*if (canHandle(reason)) {
-                        // handle the error and recover
-                        return newPromiseOrValue;
-                    }*/
-                    /**
-                     * TODO: set flash message based on environment
-                     *
-                     * for example: show reason.message only on dev
-                     */
-                    var error_message = 'Unable to open the file, creating map and table data failed.';
-                    Flash.create('danger', error_message);
-                    return $q.reject(reason);
-                });
-            }, function(reason) {
-                // error: handle the error if possible and
-                //        resolve promiseB with newPromiseOrValue,
-                //        otherwise forward the rejection to promiseB
-                /*if (canHandle(reason)) {
-                    // handle the error and recover
-                    return newPromiseOrValue;
-                }*/
+                }else{
+                    //asynchronous is probably faster...
+                    $q.all([
+                        api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
+                        api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
+                    ]).then(function(data) {
+                        var output_table_json = data[0];
+                        var output_map_json = data[1];
 
+                        $scope.handleOpenComplete({
+                            output_acd1: output.output_acd1,
+                            table_json: output_table_json,
+                            map_json: output_map_json
+                        });
+                    }, function(reason) {
+                        /**
+                         * TODO: set flash message based on environment
+                         *
+                         * for example: show reason.message only on dev
+                         */
+                        var error_message = 'Unable to open the file, creating map and table data failed.';
+                        Flash.create('danger', error_message);
+                        return $q.reject(reason);
+                    });
+                }
+            }, function(reason) {
                 // TODO: set flash message based on environment
                 var error_message = 'Unable to open the file, file import failed!';
                 console.log(reason)
