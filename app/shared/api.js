@@ -326,6 +326,56 @@ angular.module('acjim.api', [])
         };
 
         /**
+         * Updates table with changes supplied by the user.
+         * Supplied data corresponds to the data obtained via get_table command.
+         * Antigens/sera can be removed and new antigens/sera can be added.
+         * Modifying titers, removing/adding antigens/sera is forbidden if chart has
+         * projections and remove_existing_projections optional argument is false (default).
+         *
+         *   additional_params = {
+         *      table: dict,
+         *      version: int,
+         *      info: dict,
+         *      remove_existing_projections: bool (default: False) //Optional data field
+         *   }
+         *
+         * @param command
+         * @param additional_params
+         * @param output_acd1
+         * @returns {*} Name of the files generated in general
+         */
+        api.update_table = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.UPDATE_TABLE;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+            // callback function for exec
+            function puts(error, stdout, stderr) {
+                if (error) {
+                    // @todo handle error/exception properly
+                    //this.emit('error', error);
+                    console.log(error);
+                    deferred.reject(error);
+                }
+                deferred.resolve(new_output_acd1); // return call
+            }
+
+            var script = config.api.script;
+            var data_path = config.store.path;
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
+            var command = script + input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
+            try {
+                exec(command, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+            return deferred.promise;
+        };
+
+        /**
          * Create file path
          *
          * @param path
@@ -349,6 +399,8 @@ angular.module('acjim.api', [])
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_new_projection_' + date_now + extension;
             } else if(command === this.get_commands().UPDATE_TABLE) {
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_updated_table_' + date_now + extension;
+            } else if(command === "updated_acd1") {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_updated_acd1_' + date_now + extension;
             }
             return output;
         };
