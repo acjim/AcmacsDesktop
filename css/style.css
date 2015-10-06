@@ -77,3 +77,9 @@ html {
   shape-rendering: crispEdges;
   vector-effect: non-scaling-stroke;
 }
+
+.fullsize {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
