@@ -72,8 +72,8 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             });
         } else {
             var additional_params = {};
-            var table_additional_params = {}; // check documentation on get_table_data for additional params
-            var map_additional_params = {}; // check documentation on get_map for what params can be passed
+            var table_additional_params = {}; // check documentation on execute>get_table for additional params
+            var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
             var output = api.import_user_data(filename, additional_params).then(function(output){
                 $q.all([
                     api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
