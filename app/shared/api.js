@@ -25,7 +25,7 @@ var config = require('./config.js');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var DATE_NOW = Date.now();
-var COMMANDS = {GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax'};
+var COMMANDS = {IMPORT: 'import', GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax', UPDATE_TABLE: 'update_table'};
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
@@ -43,10 +43,10 @@ angular.module('acjim.api', [])
         api.create_input_parameter = function (command, additional_params, input_file) {
             var store_path = config.store.temp;
             switch (command) {
-                case 'import':
+                case COMMANDS.IMPORT:
                     var file_name = 'input';
                     var input_parameter = {};
-                    input_parameter.command = 'import';
+                    input_parameter.command = COMMANDS.IMPORT;
                     input_parameter.data = {};
                     // check if additional_params has name property else file_name= input_TIMESTAMP().json
                     if ('name' in additional_params) {
@@ -64,13 +64,13 @@ angular.module('acjim.api', [])
                         input_parameter.data.parse_antigen_names = false;
                     }
                     break;
-                case 'get_table':
-                    var input_parameter = {command: 'get_table', data: {}};
+                case COMMANDS.GET_TABLE:
+                    var input_parameter = {command: COMMANDS.GET_TABLE, data: {}};
                     var file_name = this.extract_name(input_file);
                     file_name = file_name + '_' + DATE_NOW + ".json";
                     break;
-                case 'get_map':
-                    var input_parameter = {command: 'get_map', data: {projection: 0}};
+                case COMMANDS.GET_MAP:
+                    var input_parameter = {command: COMMANDS.GET_MAP, data: {projection: 0}};
                     if (additional_params.hasOwnProperty('projection')) {
                         var projection = additional_params.projection;
                         var input_parameter = {command: 'get_map', data: {projection: projection}};
@@ -93,8 +93,8 @@ angular.module('acjim.api', [])
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
-                case 'relax':
-                    var input_parameter = {command: 'relax', data: {number_of_dimensions: 2}};
+                case COMMANDS.RELAX:
+                    var input_parameter = {command: COMMANDS.RELAX, data: {number_of_dimensions: 2}};
                     if (additional_params.hasOwnProperty('number_of_dimensions')) {
                         var number_of_dimensions = additional_params.number_of_dimensions;
                         var input_parameter = {command: 'relax', data: {number_of_dimensions: number_of_dimensions}};
@@ -132,8 +132,8 @@ angular.module('acjim.api', [])
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
-                case 'make_new_projection_and_relax':
-                    var input_parameter = {command: 'make_new_projection_and_relax', data: {projection: 0}};
+                case COMMANDS.NEW_PROJECTION:
+                    var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: 0}};
                     if (additional_params.hasOwnProperty('projection')) {
                         var projection = additional_params.projection;
                         var input_parameter = {command: 'relax', data: {projection: projection}};
@@ -162,6 +162,20 @@ angular.module('acjim.api', [])
                         input_parameter.data.blobs = additional_params.blobs;
                     }
 
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
+                case COMMANDS.UPDATE_TABLE:
+                    var input_parameter = {command: COMMANDS.UPDATE_TABLE, data: {}};
+
+                    if (!additional_params.hasOwnProperty('table') || !additional_params.hasOwnProperty('info') || additional_params.hasOwnProperty('version'))
+                    {
+                        throw new Error('Missing mandatory datas, please make sure your data has: table, info and version');
+                    }
+                    if (additional_params.hasOwnProperty('remove_existing_projections')) {
+                        input_parameter.data.remove_existing_projections = additional_params.remove_existing_projections; // boolean
+                    }
                     var file_name = this.extract_name(input_file);
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
@@ -333,6 +347,8 @@ angular.module('acjim.api', [])
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_relax_' + date_now + extension;
             } else if(command === this.get_commands().NEW_PROJECTION) {
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_new_projection_' + date_now + extension;
+            } else if(command === this.get_commands().UPDATE_TABLE) {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_updated_table_' + date_now + extension;
             }
             return output;
         };

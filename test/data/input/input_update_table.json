@@ -62,7 +62,7 @@
       },
       "type": "antigenic"
     },
-    "version": 1,
-    "remove_existing_projections": false
+    "version": 2,
+    "remove_existing_projections": true
   }
 }
