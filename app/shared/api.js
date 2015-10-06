@@ -374,8 +374,8 @@ angular.module('acjim.api', [])
         api.stubOpen = function () {
             var output = {
                 "output_acd1": 'output_EU.acd1',
-                "table_json": './test/data/get_table_concentric.json',
-                "map_json": './test/data/get_map.json',
+                "table_json": './test/data/output/get_table_concentric.json',
+                "map_json": './test/data/output/get_map.json',
             }
             return output;
         };
