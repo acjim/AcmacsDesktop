@@ -12,9 +12,7 @@ node_modules/
 data/tmp/*.json
 data/*.json
 data/*.acd1
-data/tmp/*.json.~01~
-data/*.json.~01~
-data/*.acd1.~01~
+*.json.~*
 
 
 # core bundle
