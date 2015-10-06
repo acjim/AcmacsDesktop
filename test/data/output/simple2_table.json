@@ -1,0 +1,64 @@
+{
+  "info":{
+    "assay":"HI",
+    "influenza":{
+      "rbc_species":"turkey",
+      "virus_type":"A"
+    },
+    "lab":"EU",
+    "name":"simple2",
+    "virus":"influenza"
+  },
+  "table":{
+    "antigens":[
+      {
+        "few_titers":1,
+        "name":"A1 designation_raw",
+        "reference":1,
+        "type":"designation_raw"
+      },
+      {
+        "few_titers":1,
+        "name":"A2 designation_raw",
+        "reference":1,
+        "type":"designation_raw"
+      },
+      {
+        "few_titers":1,
+        "name":"A3 designation_raw",
+        "reference":1,
+        "type":"designation_raw"
+      }
+    ],
+    "names_unmodifiable":true,
+    "sera":[
+      {
+        "name":"S1 designation_raw",
+        "type":"designation_raw"
+      },
+      {
+        "name":"S2 designation_raw",
+        "type":"designation_raw"
+      }
+    ],
+    "titers":{
+      "number_of_layers":0,
+      "titers_list_of_list":[
+        [
+          "1280",
+          "640"
+        ],
+        [
+          "640",
+          "1280"
+        ],
+        [
+          "640",
+          "640"
+        ]
+      ]
+    },
+    "type":"antigenic"
+  },
+  "version":1
+}
