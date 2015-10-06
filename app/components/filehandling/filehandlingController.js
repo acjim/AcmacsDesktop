@@ -127,14 +127,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
     $scope.readFile = function(filename) {
         var deferred = $q.defer();
         fs.readFile(filename, 'utf8', function (err,data) {
-            if (err) {
-                return console.log(err);
-            }
-            data = data.substring(data.indexOf("{")-1);
-            var mapJsonData = data.replace(/\'/g, '"').replace(/None/g, 'null').replace(/True/g, 'true').replace(/False/g, 'false')
-                .replace(/[0-9]{1,5}:/g, function(match){return '"' + match.replace(':','') + '":';}); //For the bad formated acd1 files...
-
-            deferred.resolve(mapJsonData);
+            deferred.resolve(data);
         });
         return deferred.promise;
     };

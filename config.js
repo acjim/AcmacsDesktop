@@ -21,7 +21,7 @@ config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
 if(process.platform == "win32") {
- config.api.script = 'C:\\HashiCorp\\Vagrant\\bin\\vagrant';
+ config.api.script = 'vagrant';
  // if this file_path doesn't exist, and environment is development
  config.api.path = '/vagrant/core/';
  config.api.params = [];
@@ -30,7 +30,7 @@ if(process.platform == "win32") {
  config.api.params[2] = "cd /vagrant/ && /acjim/AcmacsCore.bundle/bin/c2env api-acjim.py ";
 }else{
  config.api.script = './core/AcmacsCore.bundle/bin/c2env';
-// if this file_path doesn't exist, and environment is development
+ // if this file_path doesn't exist, and environment is development
  config.api.path = './core/AcmacsCore.bundle/';
 
  config.api.params = [];

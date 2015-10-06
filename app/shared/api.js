@@ -22,7 +22,7 @@
 'use strict';
 
 var config = require('./config.js');
-var exec = require('child_process').execFile;
+var execFile = require('child_process').execFile;
 var fs = require('fs');
 var DATE_NOW = Date.now();
 var COMMANDS = {GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax'};
@@ -218,10 +218,17 @@ angular.module('acjim.api', [])
             var output_json = this.create_file_path(data_path, input_file, '.json', '');
             var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', '');
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length-1] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length - 1] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = input_file;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1;
+            }
             // callback function for exec
             try {
-                exec(script, params, puts);
+                execFile(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
@@ -308,10 +315,17 @@ angular.module('acjim.api', [])
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1;
+            }
             // callback function for exec
             try {
-                exec(script, params, puts);
+                execFile(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
