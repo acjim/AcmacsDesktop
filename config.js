@@ -21,6 +21,7 @@ config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
 if(process.platform == "win32") {
+ config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\";
  config.api.script = 'vagrant';
  // if this file_path doesn't exist, and environment is development
  config.api.path = '/vagrant/core/';
@@ -34,7 +35,7 @@ if(process.platform == "win32") {
  config.api.path = './core/AcmacsCore.bundle/';
 
  config.api.params = [];
- config.api.params[0] = "api-acjim.py ";
+ config.api.params[0] = "api-acjim.py";
 }
 
 module.exports = config;

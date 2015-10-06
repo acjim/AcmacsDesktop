@@ -193,7 +193,8 @@ angular.module('acjim.api', [])
         api.import_user_data = function (input_file, additional_params) {
 
             if(process.platform == "win32") {
-                input_file = input_file.replace(/C:\\Users\\Felix\\Dropbox\\www\\acjim\\/, '');
+                //hack: Windows files outside the vagrant shared project folder would need to be copied to it first...
+                input_file = input_file.replace(config.store.projectRoot, '');
                 input_file = input_file.replace(/\\/g, '/');
             }
 
