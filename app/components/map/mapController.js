@@ -26,9 +26,10 @@ var app = angular.module('acjim.map',[]);
 
 app.controller('mapCtrl', ['$scope', function($scope) {
 
-    $scope.d3Data = [];
-    $scope.d3Errorlines = [];
-    $scope.d3Connectionlines = [];
+    $scope.d3Data = {};
+    $scope.d3Data.d3Nodes = [];
+    $scope.d3Data.d3Errorlines = [];
+    $scope.d3Data.d3Connectionlines = [];
 
     var map = $scope.mapData.map.map;
     var errorlines = $scope.mapData.map.error_lines;
@@ -40,7 +41,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         if (_.isUndefined($scope.mapData.map)) return;
 
         map.layout.forEach(function (layout, i) {
-            $scope.d3Data[i] = {
+            $scope.d3Data.d3Nodes[i] = {
                 "x": layout[0],
                 "y": layout[1]
             };
@@ -54,7 +55,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                 node_name = point_info.name;
             }
 
-            $scope.d3Data[i].name = node_name;
+            $scope.d3Data.d3Nodes[i].name = node_name;
         });
 
         map.styles.points.forEach(function (point, i) {
@@ -69,7 +70,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                 node_shape = map.styles.styles[point].shape;
             }
 
-            $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
+            $scope.d3Data.d3Nodes[i].style = {shape: node_shape, fill_color: node_fill};
         });
 
         // checking if the drawing order is available
@@ -77,7 +78,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
             // In case the drawing_order is defined, we order the nodes based on their drawing order.
             var order_list = map.styles.drawing_order[0].concat(map.styles.drawing_order[1]);
             var length = order_list.length;
-            if ($scope.d3Data.length == length) {
+            if ($scope.d3Data.d3Nodes.length == length) {
                 // start a bubble sort.
                 // The start of the sorting of drawing order following Bubble sort algorithm
                 for (var i = 0; i < length; i++) {
@@ -88,9 +89,9 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                             order_list[j - 1] = order_list[j];
                             order_list[j] = temp;
                             // swapping the data
-                            temp = $scope.d3Data[j - 1];
-                            $scope.d3Data[j - 1] = $scope.d3Data[j];
-                            $scope.d3Data[j] = temp;
+                            temp = $scope.d3Data.d3Nodes[j - 1];
+                            $scope.d3Data.d3Nodes[j - 1] = $scope.d3Data.d3Nodes[j];
+                            $scope.d3Data.d3Nodes[j] = temp;
                         }
                     }
                 }
@@ -181,6 +182,10 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         } else {
             // we can't compute the color.
         }
+    }
+
+    if(errorlines){
+        calculateLines();
     }
 
     // computing the Saturation
@@ -337,7 +342,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                         colour = 'blue';
                     }
 
-                    $scope.d3Connectionlines.push({
+                    $scope.d3Data.d3Connectionlines.push({
                         start: from,
                         end: to,
                         stroke: 'grey',
@@ -354,7 +359,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                      });
                      }*/
 
-                    $scope.d3Errorlines.push({
+                    $scope.d3Data.d3Errorlines.push({
                         start: from,
                         end: errorLineEnd[d],
                         stroke: colour,
@@ -412,7 +417,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                             colour = 'blue';
                         }
 
-                        $scope.d3Errorlines.push({
+                        $scope.d3Data.d3Errorlines.push({
                             start: to,
                             end: errorLineEnd[o],
                             stroke: colour,
@@ -444,6 +449,7 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         connect({from: 'antigens', to: 'sera'});
         connect({from: 'sera', to: 'antigens'});
 
+        console.log($scope.d3Data.d3Errorlines);
     }
 
 }]);

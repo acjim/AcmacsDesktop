@@ -135,7 +135,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
 
                 // Enter
-                nodeGroup = nodeGroup.data(data).enter().append("path");
+                nodeGroup = nodeGroup.data(data.d3Nodes).enter().append("path");
 
 
                 // Update
@@ -169,7 +169,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         })
                     );
 
-                var lineData = [
+               /* var lineData = [
                     {
                         start: [1, 5],
                         end: [20, 20],
@@ -194,13 +194,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         width: 0.4,
                         opacity: 1.0
                     }
-                ]
+                ]*/
 
 
                 // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
-                errorlineGroup = errorlineGroup.data(lineData).enter();
-
+                errorlineGroup = errorlineGroup.data(data.d3Errorlines).enter();
                 errorlineGroup.append("line")
+                    //.attr("transform", function(d) { return "translate(" + xScale(d.start[0] = dataScale(d.start[0])) + "," + yScale(d.start[1] = dataScale(d.start[1])) + ")"; })
                     .attr("x1",(function(d) { return d.start[0]; }))
                     .attr("y1",(function(d) { return d.start[1]; }))
                     .attr("x2",(function(d) { return d.end[0]; }))
@@ -209,9 +209,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
 
-                connectionlineGroup = connectionlineGroup.data(connlineData).enter();
-
+                connectionlineGroup = connectionlineGroup.data(data.d3Connectionlines).enter();
                 connectionlineGroup.append("line")
+                    .attr("transform", function(d) { return "translate(" + xScale(d.start[0] = dataScale(d.start[0])) + "," + yScale(d.start[1] = dataScale(d.start[1])) + ")"; })
                     .attr("x1",(function(d) { return d.start[0]; }))
                     .attr("y1",(function(d) { return d.start[1]; }))
                     .attr("x2",(function(d) { return d.end[0]; }))
@@ -328,12 +328,12 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                dataExtentX = d3.extent(scope.data, function(d) { return d.x;});
-                dataExtentY = d3.extent(scope.data, function(d) { return d.y;});
+                dataExtentX = d3.extent(scope.data.d3Nodes, function(d) { return d.x;});
+                dataExtentY = d3.extent(scope.data.d3Nodes, function(d) { return d.y;});
 
                 // Calculate box size of the grid and data scale. Those depend on the initial width of the svg
                 boxSize = width / (Math.abs(dataExtentX[1] - dataExtentX[0]));
-                dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([padding, width-padding]);
+                dataScale = d3.scale.linear().domain(d3.extent(scope.data.d3Nodes, function(d) { return d.x;})).range([padding, width-padding]);
 
             }
 

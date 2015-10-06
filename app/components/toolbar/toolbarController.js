@@ -60,7 +60,6 @@ angular
                     {
                         id: toolbarItems.SHOW_ERROR_LINES,
                         caption: 'Show Error Lines',
-                        groupID: toolbarItems.MAP_TOOLS,
                         icon: 'glyphicon glyphicon-transfer',
                         togglable: true,
                         callback: function () {
@@ -74,7 +73,6 @@ angular
                     {
                         id: toolbarItems.SHOW_CONNECTION_LINES,
                         caption: 'Show Connection Lines',
-                        groupID: toolbarItems.MAP_TOOLS,
                         icon: 'glyphicon glyphicon glyphicon-road',
                         togglable: true,
                         callback: function () {
