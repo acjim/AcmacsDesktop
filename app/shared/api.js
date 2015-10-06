@@ -371,7 +371,7 @@ angular.module('acjim.api', [])
          *
          * @returns {{output_acd1: string, table_json: string, map_json: string}}
          */
-        api.stub = function () {
+        api.stubOpen = function () {
             var output = {
                 "output_acd1": 'output_EU.acd1',
                 "table_json": './test/data/get_table_concentric.json',

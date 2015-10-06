@@ -65,7 +65,9 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
         if(!fs.existsSync(config.api.path))
         {
             api.asyncTest().then(function(response) {
-                var output = api.stub();
+                var output = api.stubOpen();
+                var error_message = 'Core api is missing, please add core api';
+                Flash.create('danger', error_message);
                 $scope.handleOpenComplete(output);
             });
         } else {
