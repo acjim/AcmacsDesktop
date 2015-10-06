@@ -178,7 +178,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         opacity: 1.0
                     },
                     {
-                        start: [80, 5],
+                        start: [80, 6],
                         end: [100, 60],
                         stroke: 'blue',
                         width: 0.6,
