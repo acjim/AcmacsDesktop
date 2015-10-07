@@ -74,7 +74,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             var additional_params = {};
             var table_additional_params = {}; // check documentation on execute>get_table for additional params
             var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
-            var output = api.import_user_data(filename, additional_params).then(function(output){
+            api.import_user_data(filename, additional_params).then(function(output){
                 if(process.platform == "win32") { //vagrant can't handle 2 async calls
                     api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function(output1){
                         var output_table_json = output1;
@@ -86,12 +86,13 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
                                 map_json: output_map_json
                             });
                         }, function(reason) {
-                            var error_message = 'Unable to open the file, creating map and table data failed.';
-                            Flash.create('danger', error_message);
-                            return $q.reject(reason);
+                            return $scope.errorReason(reason);
                         });
+                    }, function(reason) {
+                        return $scope.errorReason(reason);
                     });
                 }else {
+                    //under unix, asyncronous is faster
                     $q.all([
                         api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
                         api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
@@ -105,25 +106,20 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
                             map_json: output_map_json
                         });
                     }, function (reason) {
-                        /**
-                         * TODO: set flash message based on environment
-                         *
-                         * for example: show reason.message only on dev
-                         */
-                        var error_message = 'Unable to open the file, creating map and table data failed.';
-                        Flash.create('danger', error_message);
-                        return $q.reject(reason);
+                        return $scope.errorReason(reason);
                     });
                 }
-                }
             }, function(reason) {
-                // TODO: set flash message based on environment
-                var error_message = 'Unable to open the file, file import failed!';
-                console.log(reason)
-                Flash.create('danger', error_message+"<br>\n"+reason);
-                return $q.reject(reason);
+                return $scope.errorReason(reason);
             });
         }
+    };
+
+    $scope.errorReason = function(reason) {
+        // TODO: set flash message based on environment
+        var error_message = 'Unable to open the file, file import failed!';
+        Flash.create('danger', error_message+"<br>\n"+reason);
+        return $q.reject(reason);
     };
 
     $scope.readFile = function(filename) {
