@@ -24,7 +24,7 @@
 var app = angular.module('acjim.filehandling',['flash']);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', function($scope, $q, fileDialog, api, Flash, winHandler) {
+app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', 'cfpLoadingBar', function($scope, $q, fileDialog, api, Flash, winHandler, cfpLoadingBar) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -62,6 +62,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
     };
 
     $scope.handleFileOpen = function(filename) {
+        cfpLoadingBar.start();
         if(false && !fs.existsSync(config.api.path)) //todo: remove the false
         {
             api.asyncTest().then(function(response) {
@@ -75,8 +76,10 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             var table_additional_params = {}; // check documentation on execute>get_table for additional params
             var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
             api.import_user_data(filename, additional_params).then(function(output){
+                cfpLoadingBar.set(0.3);
                 if(process.platform == "win32") { //vagrant can't handle 2 async calls
                     api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function(output1){
+                        cfpLoadingBar.set(0.6)
                         var output_table_json = output1;
                         api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function(output2){
                             var output_map_json = output2;
@@ -116,6 +119,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
     };
 
     $scope.errorReason = function(reason) {
+        cfpLoadingBar.complete();
         // TODO: set flash message based on environment
         var error_message = 'Unable to open the file, file import failed!';
         Flash.create('danger', error_message+"<br>\n"+reason);
@@ -149,8 +153,8 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
                 map: JSON.parse(mapJsonData),
                 table: JSON.parse(tableJsonData)
             });
-
         });
+        cfpLoadingBar.complete();
     };
 
 
