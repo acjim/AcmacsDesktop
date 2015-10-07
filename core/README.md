@@ -20,3 +20,11 @@ It will create a tree under ~/Desktop/AcmacsCore.bundle on OSX
 
 ## Build AcmacsCore.bundle on Ubuntu
 To Do
+
+## Running under Windows
+Install [Vagrant](https://www.vagrantup.com/) and call:
+* vagrant init
+* vagrant up
+* vagrant ssh
+* now download the Ubuntu core and extract it to /acjim/ (reason: no symlinks in /vagrant/)
+* ready to go
