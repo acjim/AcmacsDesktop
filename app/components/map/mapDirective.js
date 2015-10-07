@@ -474,6 +474,21 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     }
                 })
             }
+            /** Gets a new Map  Selected Elements With Their Respective Data
+             * @returns a Data Array with the new Map Data
+             */
+            // mapDataPoints should be assigned to scope.data before passing it to the function
+            function GetNewMapElementsAfterDisable(mapDataPoints){
+                var newMapData = mapDataPoints;
+                for (var c = 0; c < newMapData.length; c++){
+                    if (newMapData[c].style.fill_color == "#bebebe") {
+                        newMapData.splice(c, 1);
+                        c= c-1;
+                    }
+                }
+                console.log(newMapData);
+                return newMapData;
+            }
 
             /** Gets a new Map  Selected Elements With Their Respective Data
              * @returns a Data Array with the new Map Data
