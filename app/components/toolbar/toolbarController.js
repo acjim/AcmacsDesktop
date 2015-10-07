@@ -61,7 +61,7 @@ angular
                 togglable: true
             },
             {
-                id: 3,
+                id: 8,
                 caption: 'Disable Nodes Button',
                 icon: 'glyphicon glyphicon-option-vertical',
                 togglable: false,
@@ -70,10 +70,9 @@ angular
                 }
             },
             {
-                id: 4,
+                id: 9,
                 caption: 'Create New Map From Existing Map',
                 icon: 'glyphicon glyphicon-plus-sign',
-                togglable: false,
                 callback: function () {
                     $rootScope.$emit('newMap.create');
                 }
