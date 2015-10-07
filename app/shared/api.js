@@ -139,15 +139,6 @@ angular.module('acjim.api', [])
                         var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: projection}};
                     }
 
-                    input_parameter.data.number_of_dimensions = 2; //default
-                    if (additional_params.hasOwnProperty('number_of_dimensions')) {
-                        input_parameter.data.number_of_dimensions = additional_params.number_of_dimensions;
-                    }
-                    input_parameter.data.number_of_optimizations = 5; // default
-                    if (additional_params.hasOwnProperty('number_of_optimizations')) {
-                        input_parameter.data.number_of_optimizations = additional_params.number_of_optimizations;
-                    }
-
                     if (!additional_params.hasOwnProperty('coordinates')) {
                         throw new Error('Please pass coordinates');
                     }
