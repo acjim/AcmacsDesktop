@@ -437,6 +437,43 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 return d3.select(iElement[0])[0][0].offsetHeight;
             }
 
+            /** Gets All D3 Selected Elements
+             * @returns none
+             */
+            // This function should be called by the button responsible for Disabling nodes
+            function DisableSelectedElements(){
+                // Disable Button Functionality
+                d3.selectAll(".selected").each(function(d, i){
+                    if (d.style.fill_color != "#bebebe") {
+                        color=d.style.fill_color;
+                        d3.select(this).transition()
+                            .style("stroke", "green")
+                            .style("opacity", .4)
+                            .attr("style", "fill:#bebebe;");
+                        d.style.fill_color = "#bebebe";
+                    }
+                    else{
+                        d3.select(this).transition()
+                            .attr("style", "fill:"+color);
+                        d.style.fill_color = color;
+                    }
+                })
+            }
+
+            /** Delete  Disabled Map nodes
+             * @returns none
+             */
+            // This function should be called after DisableSelectedElements(), when disabled nodes are aimed to be removed
+
+            function DeleteDisabledNodes(){
+                // loop through all d3 points and remove the ones
+                d3.selectAll(".point").each(function(d, i){
+                    if (d.style.fill_color == "#bebebe"){
+                        d3.select(this).remove();
+                    }
+                })
+            }
+
 
             /////////////////////// LISTENERS ///////////////////////
 
