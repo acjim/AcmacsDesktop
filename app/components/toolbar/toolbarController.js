@@ -59,6 +59,24 @@ angular
                 caption: 'Sample Button',
                 icon: 'glyphicon glyphicon-heart',
                 togglable: true
+            },
+            {
+                id: 3,
+                caption: 'Disable Nodes Button',
+                icon: 'glyphicon glyphicon-option-vertical',
+                togglable: false,
+                callback: function () {
+                    $rootScope.$emit('node.disable');
+                }
+            },
+            {
+                id: 4,
+                caption: 'Create New Map From Existing Map',
+                icon: 'glyphicon glyphicon-plus-sign',
+                togglable: false,
+                callback: function () {
+                    $rootScope.$emit('newMap.create');
+                }
             }
         ]);
 

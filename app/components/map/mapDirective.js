@@ -443,9 +443,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             // This function should be called by the button responsible for Disabling nodes
             function DisableSelectedElements(){
+                var flag=0
                 // Disable Button Functionality
                 d3.selectAll(".selected").each(function(d, i){
                     if (d.style.fill_color != "#bebebe") {
+                        flag=1;
                         color=d.style.fill_color;
                         d3.select(this).transition()
                             .style("stroke", "green")
@@ -457,8 +459,12 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         d3.select(this).transition()
                             .attr("style", "fill:"+color);
                         d.style.fill_color = color;
+                        flag=1;
                     }
                 })
+                if (flag==0){
+                    alert("Please Select at least One Node Before Clicking on Disable");
+                }
             }
 
             /** Delete  Disabled Map nodes
@@ -509,12 +515,26 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     }
                     flag=0;
                 }
+
                 return newMapData;
             }
 
 
             /////////////////////// LISTENERS ///////////////////////
 
+            /**
+             * Watches for a node disable
+             */
+            $rootScope.$on('node.disable', function() {
+                DisableSelectedElements();
+            });
+
+            /**
+             * Watches to Create  a new Map from Already Existing Map
+             */
+            $rootScope.$on('newMap.create', function() {
+                GetNewDataFromCurrentMap(scope.data);
+            });
             /**
              * Watches for a tool change
              */
