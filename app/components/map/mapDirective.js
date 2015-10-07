@@ -70,7 +70,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 padding= 20,
                 boxSize = 0,
                 centerMap = true,
-                color="";
+                color="",
                 shiftKey;
 
             // d3 groups
