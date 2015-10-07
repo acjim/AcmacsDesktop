@@ -486,7 +486,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         c= c-1;
                     }
                 }
-                console.log(newMapData);
                 return newMapData;
             }
 
