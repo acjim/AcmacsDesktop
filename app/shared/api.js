@@ -136,7 +136,7 @@ angular.module('acjim.api', [])
                     var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: 0}};
                     if (additional_params.hasOwnProperty('projection')) {
                         var projection = additional_params.projection;
-                        var input_parameter = {command: 'relax', data: {projection: projection}};
+                        var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: projection}};
                     }
 
                     if (!additional_params.hasOwnProperty('coordinates')) {
