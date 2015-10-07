@@ -70,6 +70,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 padding= 20,
                 boxSize = 0,
                 centerMap = true,
+                color="";
                 shiftKey;
 
             // d3 groups
@@ -472,6 +473,29 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         d3.select(this).remove();
                     }
                 })
+            }
+
+            /** Gets a new Map  Selected Elements With Their Respective Data
+             * @returns a Data Array with the new Map Data
+             */
+            // mapDataPoints should be assigned to scope.data before passing it to the function
+            function GetNewDataFromCurrentMap(mapDataPoints) {
+                var flag=0;
+                var newMapData = mapDataPoints;
+                for (var c = 0; c < newMapData.length; c++){
+                    d3.selectAll(".selected").each(function(d, i){
+                        if(newMapData[c].name.name == d.name.name){
+                            flag=1;
+                        }
+                    })
+                    //  check the flag, reset , delete.
+                    if (flag!=1){
+                        newMapData.splice(c, 1);
+                        c= c-1;
+                    }
+                    flag=0;
+                }
+                return newMapData;
             }
 
 
