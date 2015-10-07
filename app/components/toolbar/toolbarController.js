@@ -59,6 +59,14 @@ angular
                 caption: 'Sample Button',
                 icon: 'glyphicon glyphicon-heart',
                 togglable: true
+            },
+            {
+                id: 6,
+                caption: 'Reoptimize',
+                icon: 'glyphicon glyphicon-refresh',
+                callback: function () {
+                    $rootScope.$emit('api.reoptimize');
+                }
             }
         ]);
 

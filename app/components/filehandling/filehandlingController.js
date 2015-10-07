@@ -24,7 +24,7 @@
 var app = angular.module('acjim.filehandling',['flash']);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', 'cfpLoadingBar', function($scope, $q, fileDialog, api, Flash, winHandler, cfpLoadingBar) {
+app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', 'cfpLoadingBar', function($rootScope, $scope, $q, fileDialog, api, Flash, winHandler, cfpLoadingBar) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -76,11 +76,13 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             var table_additional_params = {}; // check documentation on execute>get_table for additional params
             var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
             api.import_user_data(filename, additional_params).then(function(output){
+                $scope.justAHackVarFor_output_acd1 = output.output_acd1;
                 cfpLoadingBar.set(0.3);
                 if(process.platform == "win32") { //vagrant can't handle 2 async calls
                     api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function(output1){
                         cfpLoadingBar.set(0.6)
                         var output_table_json = output1;
+                        $scope.justAHackVarFor_output_table_json = output_table_json;
                         api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function(output2){
                             var output_map_json = output2;
                             $scope.handleOpenComplete({
@@ -171,4 +173,25 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             if (err) return console.log(err);
         });
     };
+
+
+    /**
+     * Watches for a the reoptimize button
+     */
+    $rootScope.$on('api.reoptimize', function() {
+        cfpLoadingBar.start();
+        console.log('reoptimize');
+        var list = [];
+        var additional_params = {coordinates: list, projection: 1, number_of_dimensions: 1, number_of_optimizations: 1, map: true};
+        api.execute(api.get_commands().NEW_PROJECTION, additional_params, $scope.justAHackVarFor_output_acd1).then(function(output_map){
+            console.log(output_map);
+            $scope.handleOpenComplete({
+                output_acd1: $scope.justAHackVarFor_output_acd1,
+                table_json: $scope.justAHackVarFor_output_table_json,
+                map_json: output_map
+            });
+        }, function(reason) {
+            return $scope.errorReason(reason);
+        });
+    });
 }]);
