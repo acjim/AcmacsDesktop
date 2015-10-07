@@ -200,22 +200,22 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
                 errorlineGroup = errorlineGroup.data(data.d3Errorlines).enter();
                 errorlineGroup.append("line")
-                    //.attr("transform", function(d) { return "translate(" + xScale(d.start[0] = dataScale(d.start[0])) + "," + yScale(d.start[1] = dataScale(d.start[1])) + ")"; })
-                    .attr("x1",(function(d) { return d.start[0]; }))
-                    .attr("y1",(function(d) { return d.start[1]; }))
-                    .attr("x2",(function(d) { return d.end[0]; }))
-                    .attr("y2",(function(d) { return d.end[1]; }))
+                    .attr("x1",(function(d) { return xScale(d.start[0] = dataScale(d.start[0])); }))
+                    .attr("y1",(function(d) { return yScale(d.start[1] = dataScale(d.start[1])); }))
+                    .attr("x2",(function(d) { return xScale(d.end[0] = dataScale(d.end[0])); }))
+                    .attr("y2",(function(d) { return yScale(d.end[1] = dataScale(d.end[1])); }))
+                    .attr("transform", function(d) { return "translate(" + 0 + "," + 0 + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
 
                 connectionlineGroup = connectionlineGroup.data(data.d3Connectionlines).enter();
                 connectionlineGroup.append("line")
-                    .attr("transform", function(d) { return "translate(" + xScale(d.start[0] = dataScale(d.start[0])) + "," + yScale(d.start[1] = dataScale(d.start[1])) + ")"; })
-                    .attr("x1",(function(d) { return d.start[0]; }))
-                    .attr("y1",(function(d) { return d.start[1]; }))
-                    .attr("x2",(function(d) { return d.end[0]; }))
-                    .attr("y2",(function(d) { return d.end[1]; }))
+                    .attr("x1",(function(d) { return xScale(d.start[0] = dataScale(d.start[0])); }))
+                    .attr("y1",(function(d) { return yScale(d.start[1] = dataScale(d.start[1])); }))
+                    .attr("x2",(function(d) { return xScale(d.end[0] = dataScale(d.end[0])); }))
+                    .attr("y2",(function(d) { return yScale(d.end[1] = dataScale(d.end[1])); }))
+                    .attr("transform", function(d) { return "translate(" + 0 + "," + 0 + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
@@ -229,9 +229,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
 
             };
-
-
-
 
             /**
              * Adds the selected tool functionality to the d3 map
@@ -254,7 +251,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
             }
 
-
             /**
              * Enables the selection tool (brush) on the SVG
              */
@@ -267,7 +263,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 brushGroup.selectAll(".extent").style('cursor', 'crosshair');
                 brushGroup.call(brush);
             }
-
 
             /**
              * Enables the movement tool (zoom) on the SVG
@@ -370,7 +365,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
             }
 
-
             /**
              * Moves each selected point the distance provided by the parameters
              * @param dx The delta x value
@@ -428,11 +422,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 translate = zoom.translate();
                 scale = zoom.scale();
+
                 // Move the graph
                 nodeGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
-
                 });
+
+                errorlineGroup.attr("transform", function(d) { return "translate(" + 0 + "," + 0 + ")"; });
 
             }
 

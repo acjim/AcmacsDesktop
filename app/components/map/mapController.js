@@ -343,8 +343,8 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                     }
 
                     $scope.d3Data.d3Connectionlines.push({
-                        start: from,
-                        end: to,
+                        start: [from[0], from[1]],
+                        end: [to[0], to[1]],
                         stroke: 'grey',
                         width: 0.4,
                         opacity: 1.0
@@ -360,8 +360,8 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                      }*/
 
                     $scope.d3Data.d3Errorlines.push({
-                        start: from,
-                        end: errorLineEnd[d],
+                        start: [from[0], from[1]],
+                        end: [errorLineEnd[d][0], errorLineEnd[d][1]],
                         stroke: colour,
                         width: 0.6,
                         opacity: 1.0
@@ -418,8 +418,8 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                         }
 
                         $scope.d3Data.d3Errorlines.push({
-                            start: to,
-                            end: errorLineEnd[o],
+                            start: [to[0], to[1]],
+                            end: [errorLineEnd[o][0], errorLineEnd[o][1]],
                             stroke: colour,
                             width: 0.6,
                             opacity: 1.0
