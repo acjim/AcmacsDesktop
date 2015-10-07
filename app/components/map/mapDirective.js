@@ -440,6 +440,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /** Gets All D3 Selected Elements
              * @returns none
              */
+            // This function should be called by the button responsible for Disabling nodes
             function DisableSelectedElements(){
                 // Disable Button Functionality
                 d3.selectAll(".selected").each(function(d, i){
@@ -462,6 +463,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /** Delete  Disabled Map nodes
              * @returns none
              */
+            // This function should be called after DisableSelectedElements(), when disabled nodes are aimed to be removed
+
             function DeleteDisabledNodes(){
                 // loop through all d3 points and remove the ones
                 d3.selectAll(".point").each(function(d, i){
