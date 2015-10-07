@@ -67,7 +67,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
-                padding= 20,
+                padding= 0,
                 boxSize = 0,
                 centerMap = true,
                 shiftKey;
@@ -169,53 +169,28 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         })
                     );
 
-               /* var lineData = [
-                    {
-                        start: [1, 5],
-                        end: [20, 20],
-                        stroke: 'red',
-                        width: 0.6,
-                        opacity: 1.0
-                    },
-                    {
-                        start: [80, 6],
-                        end: [100, 60],
-                        stroke: 'blue',
-                        width: 0.6,
-                        opacity: 1.0
-                    }
-                ];
-
-                var connlineData = [
-                    {
-                        start: [40, 10],
-                        end: [60, 40],
-                        stroke: 'grey',
-                        width: 0.4,
-                        opacity: 1.0
-                    }
-                ]*/
-
 
                 // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
-                errorlineGroup = errorlineGroup.data(data.d3Errorlines).enter();
-                errorlineGroup.append("line")
-                    .attr("x1",(function(d) { return xScale(d.start[0] = dataScale(d.start[0])); }))
-                    .attr("y1",(function(d) { return yScale(d.start[1] = dataScale(d.start[1])); }))
-                    .attr("x2",(function(d) { return xScale(d.end[0] = dataScale(d.end[0])); }))
-                    .attr("y2",(function(d) { return yScale(d.end[1] = dataScale(d.end[1])); }))
-                    .attr("transform", function(d) { return "translate(" + 0 + "," + 0 + ")"; })
+                errorlineGroup = errorlineGroup.data(data.d3Errorlines).enter().append("line");
+                errorlineGroup
+                    .attr("class", "errorline")
+                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
+                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
+                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
+                    .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }))
+                    //.attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
 
-                connectionlineGroup = connectionlineGroup.data(data.d3Connectionlines).enter();
-                connectionlineGroup.append("line")
-                    .attr("x1",(function(d) { return xScale(d.start[0] = dataScale(d.start[0])); }))
-                    .attr("y1",(function(d) { return yScale(d.start[1] = dataScale(d.start[1])); }))
-                    .attr("x2",(function(d) { return xScale(d.end[0] = dataScale(d.end[0])); }))
-                    .attr("y2",(function(d) { return yScale(d.end[1] = dataScale(d.end[1])); }))
-                    .attr("transform", function(d) { return "translate(" + 0 + "," + 0 + ")"; })
+                connectionlineGroup = connectionlineGroup.data(data.d3Connectionlines).enter().append("line");
+                connectionlineGroup
+                    .attr("class", "connectionline")
+                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
+                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
+                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
+                    .attr("y2",(function(d) { return yScale( dataScale(d.y2)); }))
+                   // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
@@ -427,9 +402,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
                 });
-
-                errorlineGroup.attr("transform", function(d) { return "translate(" + 0 + "," + 0 + ")"; });
-
+                errorlineGroup
+                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
+                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
+                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
+                    .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }));
+                connectionlineGroup
+                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
+                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
+                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
+                    .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }));
             }
 
 
