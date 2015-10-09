@@ -23,6 +23,7 @@
 'use strict';
 
 var app = angular.module('acjim.map',[]);
+var stress="";
 
 app.controller('mapCtrl', ['$scope', function($scope) {
 
@@ -92,6 +93,19 @@ app.controller('mapCtrl', ['$scope', function($scope) {
                 // keep ordering in default, meaning we don't do anything
             }
         }
+        // Checking if the stress value is defined or not
+        // Assigning the value and displaying it in case it exists, otherwise not.
+        // The stress value is positioned in the same way it is in Derek's Lisp App.
+        var temp = document.getElementById("stressValue");
+        if ($scope.mapData.map.stress){
+            stress=$scope.mapData.map.stress;
+            temp.innerHTML+=" <b>"+stress+"</b>";
+        }
+        else {
+            stress="Undefined Value";
+            temp.innerHTML+=" <b>"+stress+"</b>";
+        }
+
 
         // Setting the color using the Hue Saturation Value Scheme
         if (!_.isUndefined($scope.table)) {
