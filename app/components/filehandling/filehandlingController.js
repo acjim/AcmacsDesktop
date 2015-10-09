@@ -24,7 +24,7 @@
 var app = angular.module('acjim.filehandling',['flash']);
 var config = require('./config.js');
 
-app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', 'cfpLoadingBar', function($scope, $q, fileDialog, api, Flash, winHandler, cfpLoadingBar) {
+app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 'api', 'Flash', 'winHandler', 'cfpLoadingBar', function($rootScope, $scope, $q, fileDialog, api, Flash, winHandler, cfpLoadingBar) {
     $scope.fileContent = "";
 
     $scope.showTable = true;
@@ -76,6 +76,7 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             var table_additional_params = {}; // check documentation on execute>get_table for additional params
             var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
             api.import_user_data(filename, additional_params).then(function(output){
+                $scope.justAHackVarFor_output_acd1 = output.output_acd1;
                 cfpLoadingBar.set(0.3);
                 if(process.platform == "win32") { //vagrant can't handle 2 async calls
                     api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function(output1){
@@ -146,12 +147,13 @@ app.controller('filehandlingCtrl', ['$scope', '$q', 'fileDialog', 'api', 'Flash'
             $scope.readFile(table_filename),
             $scope.readFile(map_filename)
         ]).then(function(data) {
-            var tableJsonData = data[0];
-            var mapJsonData = data[1];
+            var tableJsonData = JSON.parse(data[0]);
+            var mapJsonData = JSON.parse(data[1]);
 
             winHandler.addWindow({
-                map: JSON.parse(mapJsonData),
-                table: JSON.parse(tableJsonData)
+                map: mapJsonData,
+                table: tableJsonData,
+                acd1: output_acd1
             });
         });
         cfpLoadingBar.complete();
