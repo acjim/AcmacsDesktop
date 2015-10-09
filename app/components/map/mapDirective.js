@@ -132,7 +132,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 renderWithoutData();
 
                 // Enter
-                nodeGroup = nodeGroup.data(data).enter().append("path");
+                nodeGroup = nodeGroup.data(data);
+
+
+                nodeGroup.enter().append("path");
 
 
                 // Update
@@ -145,6 +148,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         })
                     )
                     .attr("fill", function(d){ return d.style.fill_color });
+
+
 
 
                 // mouse event handlers
@@ -165,6 +170,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                             nudge(d3.event.dx, d3.event.dy);
                         })
                     );
+
+                nodeGroup.exit().remove();
 
             }
 
@@ -554,7 +561,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             scope.$watch('data', function(newVals) {
                 renderWithData(newVals);
-            }, true); //FIXME: Scaling the data triggers this twice. Maybe use notification + listener for new data instead
+            }, true);
 
         }
     };
