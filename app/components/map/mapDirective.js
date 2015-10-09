@@ -134,12 +134,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // Enter
                 nodeGroup = nodeGroup.data(data);
 
-
-                nodeGroup.enter().append("path");
-
-
-                // Update
-                nodeGroup.attr("class", "point")
+                nodeGroup.enter().append("path")
+                    .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
@@ -148,8 +144,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         })
                     )
                     .attr("fill", function(d){ return d.style.fill_color });
-
-
 
 
                 // mouse event handlers
@@ -560,6 +554,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              *  Watch for data changes and re-render
              */
             scope.$watch('data', function(newVals) {
+                console.log("newData");
                 renderWithData(newVals);
             }, true);
 
