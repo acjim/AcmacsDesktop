@@ -34,7 +34,7 @@
                     </bg-pane>
                     <bg-pane min-size="150">
                         <div class="pane-container">
-                            <div id="stressValue" style=" height:20px; color: rgb(0,0,128);display: block; position: static;float: left;"> <b> Stress: </b></div>
+                            <p class="stressLabel">Stress: {{openFile.map.stress || "Undefined Value"}}</p>
                             <div ac-map map="openFile.map"></div>
                         </div>
                     </bg-pane>
