@@ -59,8 +59,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 height = 0,
                 xScale = null,
                 yScale = null,
-                dataScale = null,
                 zoom = null,
+                minimalScaleValue = null,
                 translate = [0, 0],
                 scale = 1,
                 gridTranslate = [0,0],
@@ -68,9 +68,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
-                padding= 20,
-                boxSize = 0,
-                centerMap = true,
+                boxSize = 1,
                 color="",
                 shiftKey;
 
@@ -99,7 +97,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // Zoom
                 zoom = d3.behavior.zoom()
-                    .scaleExtent([1, 10])
+                    .scaleExtent([minimalScaleValue, 300])
                     .x(xScale)
                     .y(yScale)
                     .translate(translate)
@@ -113,7 +111,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 brush = createBrush();
 
                 // Create background grid
-                boxGroup = redrawGrid(boxGroup, boxSize, width, height);
+                boxGroup = redrawGrid(boxGroup, boxSize, width / zoom.scale(), height / zoom.scale());
 
                 manageMapTools();
 
@@ -133,14 +131,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 renderWithoutData();
 
-
                 // Enter
                 nodeGroup = nodeGroup.data(data).enter().append("path");
 
 
                 // Update
                 nodeGroup.attr("class", "point")
-                    .attr("transform", function(d) { return "translate(" + xScale(d.x = dataScale(d.x)) + "," + yScale(d.y = dataScale(d.y)) + ")"; })
+                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
                             if (d.style.shape == "circle") { return "circle"; }
@@ -169,16 +166,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         })
                     );
 
-
-                manageMapTools();
-
-                if (centerMap) {
-                    centerMap = !centerMap;
-                    centerNodes();
-                }
-
-
-            };
+            }
 
 
 
@@ -250,6 +238,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("width", "100%")
                     .attr("height", "100%");
 
+                width = getContainerWidth();
+                height = getContainerHeight();
+
+                dataExtentX = d3.extent(scope.data, function(d) { return d.x;});
+                dataExtentY = d3.extent(scope.data, function(d) { return d.y;});
+
+                centerNodes();
+
                 // Add groups in the right order to the svg
                 boxGroup = svg.append("g")
                     .attr("transform", "translate(" + gridTranslate + ")scale(" + gridScale + ")");
@@ -263,17 +259,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup = elementGroup.append("g")
                     .attr("class", "node")
                     .selectAll(".node");
-
-
-                width = getContainerWidth();
-                height = getContainerHeight();
-
-                dataExtentX = d3.extent(scope.data, function(d) { return d.x;});
-                dataExtentY = d3.extent(scope.data, function(d) { return d.y;});
-
-                // Calculate box size of the grid and data scale. Those depend on the initial width of the svg
-                boxSize = width / (Math.abs(dataExtentX[1] - dataExtentX[0]));
-                dataScale = d3.scale.linear().domain(d3.extent(scope.data, function(d) { return d.x;})).range([padding, width-padding]);
 
             }
 
@@ -335,21 +320,22 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             function centerNodes () {
 
-                var dx= dataExtentX;
-                var dy= dataExtentY;
+                var dataWidthX = Math.abs(dataExtentX[1]-dataExtentX[0]),
+                    dataWidthY = Math.abs(dataExtentY[1]-dataExtentY[0]);
 
-                var xDistance =Math.abs(dataScale(dx[0]) - dataScale(dx[1]));
-                xDistance =(width-xDistance)/2;
-                xDistance= xDistance-(dataScale(dx[0]));
+                // how much larger the drawing area is than the width and the height
+                var width_ratio = width / dataWidthX;
+                var height_ratio = height / dataWidthY;
 
-                var yDistance =Math.abs(dataScale(dy[0]) - dataScale(dy[1]));
-                yDistance =(height-yDistance)/2;
-                yDistance= yDistance-dataScale(dy[0]);
+                // we need to fit it in both directions, so we scale according to
+                // the direction in which we need to shrink the most
+                minimalScaleValue = scale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
 
-                zoom.translate([xDistance, yDistance]);
-                applyZoom();
+                // translate so that it's in the center of the window
+                translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
+                translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
 
-            };
+            }
 
 
             /**
@@ -419,7 +405,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 return parentContainer;
 
-            };
+            }
 
 
             /**
@@ -428,7 +414,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             function getContainerWidth() {
                 return d3.select(iElement[0])[0][0].offsetWidth;
-            };
+            }
 
 
             /**
@@ -439,14 +425,17 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 return d3.select(iElement[0])[0][0].offsetHeight;
             }
 
+
             /** Gets All D3 Selected Elements
              * @returns none
              */
             // This function should be called by the button responsible for Disabling nodes
             function DisableSelectedElements(){
+                var flag=0;
                 // Disable Button Functionality
                 d3.selectAll(".selected").each(function(d, i){
                     if (d.style.fill_color != "#bebebe") {
+                        flag=1;
                         color=d.style.fill_color;
                         d3.select(this).transition()
                             .style("stroke", "green")
@@ -458,15 +447,20 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         d3.select(this).transition()
                             .attr("style", "fill:"+color);
                         d.style.fill_color = color;
+                        flag=1;
                     }
-                })
+                });
+                if (flag==0){
+                    alert("Please Select at least One Node Before Clicking on Disable");
+                }
             }
 
-            /** Delete  Disabled Map nodes
+
+            /**
+             * Delete Disabled Map nodes. This function should be called after DisableSelectedElements(), when disabled
+             * nodes are aimed to be removed
              * @returns none
              */
-            // This function should be called after DisableSelectedElements(), when disabled nodes are aimed to be removed
-
             function DeleteDisabledNodes(){
                 // loop through all d3 points and remove the ones
                 d3.selectAll(".point").each(function(d, i){
@@ -475,10 +469,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     }
                 })
             }
-            /** Gets a new Map  Selected Elements With Their Respective Data
+
+
+            /**
+             * Gets a new Map.  Selected Elements With Their Respective Data
+             * mapDataPoints should be assigned to scope.data before passing it to the function
              * @returns a Data Array with the new Map Data
              */
-            // mapDataPoints should be assigned to scope.data before passing it to the function
             function GetNewMapElementsAfterDisable(mapDataPoints){
                 var newMapData = mapDataPoints;
                 for (var c = 0; c < newMapData.length; c++){
@@ -490,10 +487,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 return newMapData;
             }
 
-            /** Gets a new Map  Selected Elements With Their Respective Data
+            /**
+             * Gets a new Map  Selected Elements With Their Respective Data.
+             * mapDataPoints should be assigned to scope.data before passing it to the function
              * @returns a Data Array with the new Map Data
              */
-            // mapDataPoints should be assigned to scope.data before passing it to the function
             function GetNewDataFromCurrentMap(mapDataPoints) {
                 var flag=0;
                 var newMapData = mapDataPoints;
@@ -502,7 +500,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         if(newMapData[c].name.name == d.name.name){
                             flag=1;
                         }
-                    })
+                    });
                     //  check the flag, reset , delete.
                     if (flag!=1){
                         newMapData.splice(c, 1);
@@ -510,6 +508,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     }
                     flag=0;
                 }
+
                 return newMapData;
             }
 
@@ -517,11 +516,25 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /////////////////////// LISTENERS ///////////////////////
 
             /**
+             * Watches for a node disable
+             */
+            $rootScope.$on('node.disable', function() {
+                DisableSelectedElements();
+            });
+
+
+            /**
+             * Watches to Create  a new Map from Already Existing Map
+             */
+            $rootScope.$on('newMap.create', function() {
+                GetNewDataFromCurrentMap(scope.data);
+            });
+
+
+            /**
              * Watches for a tool change
              */
-            $rootScope.$on('tool.selected', function() {
-                manageMapTools();
-            });
+            $rootScope.$on('tool.selected', manageMapTools);
 
 
             /**

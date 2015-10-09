@@ -24,7 +24,7 @@
 
         <!-- workspace -->
         <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 col-xs-10 cols-xs-offset-2 fullWindowZone">
-            <div flash-message="5000" style="z-index: 100; position: absolute;"></div>
+            <div flash-message="5000" class="flash-msg"></div>
             <ng-html-window ng-repeat="openFile in openMaps" options="openFile.options">
                 <bg-splitter orientation="horizontal">
                     <bg-pane min-size="10" style="overflow-y: scroll">
