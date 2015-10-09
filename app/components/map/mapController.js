@@ -24,7 +24,38 @@
 
 var app = angular.module('acjim.map',[]);
 
-app.controller('mapCtrl', ['$scope', function($scope) {
+app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', function($rootScope, $scope, cfpLoadingBar, api) {
+
+    /**
+     * Watches for a the reoptimize button
+     */
+    $rootScope.$on('api.reoptimize', function() {
+        cfpLoadingBar.start();
+        console.log('reoptimize');
+
+        var list = [];
+        $scope.d3Data.forEach(function (layout, i) {
+            list[i] = [
+                layout.x,
+                layout.y
+            ];
+        });
+        var additional_params = {coordinates: list, projection: 1, map: true};
+        api.execute(api.get_commands().NEW_PROJECTION, additional_params, $scope.mapData.acd1).then(function(filename){
+            console.log(filename);
+            var fs = require('fs');
+            fs.readFile(filename, 'utf8', function (err,data) {
+                var mapJsonData = JSON.parse(data);
+                mapJsonData.map.layout.forEach(function (layout, i) {
+                    $scope.d3Data[i] = {
+                        "x": layout[0],
+                        "y": layout[1]
+                    };
+                });
+                cfpLoadingBar.complete();
+            });
+        });
+    });
 
     $scope.d3Data = [];
 

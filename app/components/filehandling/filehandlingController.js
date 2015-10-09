@@ -82,7 +82,6 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
                     api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function(output1){
                         cfpLoadingBar.set(0.6)
                         var output_table_json = output1;
-                        $scope.justAHackVarFor_output_table_json = output_table_json;
                         api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function(output2){
                             var output_map_json = output2;
                             $scope.handleOpenComplete({
@@ -148,12 +147,13 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
             $scope.readFile(table_filename),
             $scope.readFile(map_filename)
         ]).then(function(data) {
-            var tableJsonData = data[0];
-            var mapJsonData = data[1];
+            var tableJsonData = JSON.parse(data[0]);
+            var mapJsonData = JSON.parse(data[1]);
 
             winHandler.addWindow({
-                map: JSON.parse(mapJsonData),
-                table: JSON.parse(tableJsonData)
+                map: mapJsonData,
+                table: tableJsonData,
+                acd1: output_acd1
             });
         });
         cfpLoadingBar.complete();
@@ -173,25 +173,4 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
             if (err) return console.log(err);
         });
     };
-
-
-    /**
-     * Watches for a the reoptimize button
-     */
-    $rootScope.$on('api.reoptimize', function() {
-        cfpLoadingBar.start();
-        console.log('reoptimize');
-        var list = [];
-        var additional_params = {coordinates: list, projection: 1, number_of_dimensions: 1, number_of_optimizations: 1, map: true};
-        api.execute(api.get_commands().NEW_PROJECTION, additional_params, $scope.justAHackVarFor_output_acd1).then(function(output_map){
-            console.log(output_map);
-            $scope.handleOpenComplete({
-                output_acd1: $scope.justAHackVarFor_output_acd1,
-                table_json: $scope.justAHackVarFor_output_table_json,
-                map_json: output_map
-            });
-        }, function(reason) {
-            return $scope.errorReason(reason);
-        });
-    });
 }]);

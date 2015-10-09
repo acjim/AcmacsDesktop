@@ -33,7 +33,8 @@ app.directive('acMap', function() {
         transclude: true,
         scope: {},
         bindToController: {
-            map: '='
+            map: '=',
+            acd1: '='
         },
         controller: 'mapCtrl',
         controllerAs: 'mapData',
