@@ -82,7 +82,7 @@ angular
                 caption: 'Reoptimize',
                 icon: 'glyphicon glyphicon-refresh',
                 callback: function () {
-                    $rootScope.$emit('api.reoptimize');
+                    $rootScope.$broadcast('api.reoptimize');
                 }
             }
         ]);

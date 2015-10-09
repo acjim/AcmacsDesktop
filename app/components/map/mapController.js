@@ -26,10 +26,11 @@ var app = angular.module('acjim.map',[]);
 
 app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', function($rootScope, $scope, cfpLoadingBar, api) {
 
+
     /**
      * Watches for a the reoptimize button
      */
-    $rootScope.$on('api.reoptimize', function() {
+    $scope.$on('api.reoptimize', function() {
         cfpLoadingBar.start();
         console.log('reoptimize');
 
