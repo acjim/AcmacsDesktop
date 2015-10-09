@@ -40,17 +40,15 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
                 layout.y
             ];
         });
-        var additional_params = {coordinates: list, projection: 1, map: true};
+        var additional_params = {coordinates: list, projection: 0, map: true};
         api.execute(api.get_commands().NEW_PROJECTION, additional_params, $scope.mapData.acd1).then(function(filename){
             console.log(filename);
             var fs = require('fs');
             fs.readFile(filename, 'utf8', function (err,data) {
                 var mapJsonData = JSON.parse(data);
                 mapJsonData.map.layout.forEach(function (layout, i) {
-                    $scope.d3Data[i] = {
-                        "x": layout[0],
-                        "y": layout[1]
-                    };
+                    $scope.d3Data[i].x = layout[0];
+                    $scope.d3Data[i].y = layout[1];
                 });
                 cfpLoadingBar.complete();
             });

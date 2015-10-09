@@ -554,7 +554,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             scope.$watch('data', function(newVals) {
                 renderWithData(newVals);
-            }); //, true); //FIXME: Scaling the data triggers this twice. Maybe use notification + listener for new data instead
+            }, true); //FIXME: Scaling the data triggers this twice. Maybe use notification + listener for new data instead
 
         }
     };
