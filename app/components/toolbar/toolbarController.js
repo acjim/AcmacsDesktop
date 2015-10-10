@@ -76,6 +76,14 @@ angular
                 callback: function () {
                     $rootScope.$emit('newMap.create');
                 }
+            },
+            {
+                id: 6,
+                caption: 'Reoptimize',
+                icon: 'glyphicon glyphicon-refresh',
+                callback: function () {
+                    $rootScope.$broadcast('api.reoptimize');
+                }
             }
         ]);
 

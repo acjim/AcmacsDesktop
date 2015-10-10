@@ -33,7 +33,8 @@ app.directive('acMap', function() {
         transclude: true,
         scope: {},
         bindToController: {
-            map: '='
+            map: '=',
+            acd1: '='
         },
         controller: 'mapCtrl',
         controllerAs: 'mapData',
@@ -131,11 +132,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 renderWithoutData();
 
                 // Enter
-                nodeGroup = nodeGroup.data(data).enter().append("path");
+                nodeGroup = nodeGroup.data(data);
 
-
-                // Update
-                nodeGroup.attr("class", "point")
+                nodeGroup.enter().append("path")
+                    .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
@@ -164,6 +164,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                             nudge(d3.event.dx, d3.event.dy);
                         })
                     );
+
+                nodeGroup.exit().remove();
 
             }
 
@@ -552,8 +554,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              *  Watch for data changes and re-render
              */
             scope.$watch('data', function(newVals) {
+                console.log("newData");
                 renderWithData(newVals);
-            }); //, true); //FIXME: Scaling the data triggers this twice. Maybe use notification + listener for new data instead
+            }, true);
 
         }
     };
