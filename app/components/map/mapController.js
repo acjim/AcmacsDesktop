@@ -33,19 +33,13 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
     $scope.$on('api.reoptimize', function() {
         cfpLoadingBar.start();
 
-        var list = [];
-        $scope.d3Data.forEach(function (layout, i) {
-            list[i] = [
-                layout.x,
-                layout.y
-            ];
-        });
-        var additional_params = {coordinates: list, projection: 0, map: true};
-        api.execute(api.get_commands().NEW_PROJECTION, additional_params, $scope.mapData.acd1).then(function(filename){
+        var additional_params = {number_of_dimensions: 2, number_of_optimizations: 7, best_map: true};
+        api.execute(api.get_commands().RELAX, additional_params, $scope.mapData.acd1).then(function(filename){
             var fs = require('fs');
             fs.readFile(filename, 'utf8', function (err,data) {
                 var mapJsonData = JSON.parse(data);
-                mapJsonData.map.layout.forEach(function (layout, i) {
+                // relax returns list of stresses for number of optimizations performed.
+                mapJsonData.best_map.layout.forEach(function (layout, i) {
                     $scope.d3Data[i].x = layout[0];
                     $scope.d3Data[i].y = layout[1];
                 });
