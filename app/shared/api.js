@@ -25,7 +25,7 @@ var config = require('./config.js');
 var execFile = require('child_process').execFile;
 var fs = require('fs');
 var DATE_NOW = Date.now();
-var COMMANDS = {IMPORT: 'import', GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax', UPDATE_TABLE: 'update_table'};
+var COMMANDS = {IMPORT: 'import', GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection', UPDATE_TABLE: 'update_table'};
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
@@ -143,9 +143,7 @@ angular.module('acjim.api', [])
                         throw new Error('Please pass coordinates');
                     }
                     input_parameter.data.coordinates = additional_params.coordinates;
-                    if (additional_params.hasOwnProperty('map')) {
-                        input_parameter.data.map = additional_params.map;
-                    }
+
                     if (additional_params.hasOwnProperty('rough_optimization')) {
                         input_parameter.data.rough_optimization = additional_params.rough_optimization;
                     }
@@ -291,7 +289,7 @@ angular.module('acjim.api', [])
          *                      };
          *
          * ----------------
-         * command = make_new_projection_and_relax
+         * command = make_new_projection
          * additional_params = {
          *                      coordinates: list //mandatory
          *                      projection: int //mandatory
