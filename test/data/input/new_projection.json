@@ -1,0 +1,8 @@
+{
+    "command": "relax",
+    "data": {
+        "number_of_dimensions": 2,
+        "number_of_optimizations": 10,
+        "best_map": true
+    }
+}
