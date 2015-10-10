@@ -39,6 +39,8 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
             fs.readFile(filename, 'utf8', function (err,data) {
                 var mapJsonData = JSON.parse(data);
                 // relax returns list of stresses for number of optimizations performed.
+                var stress = mapJsonData.stresses[0];
+                $scope.mapData.map.stress = stress;
                 mapJsonData.best_map.layout.forEach(function (layout, i) {
                     $scope.d3Data[i].x = layout[0];
                     $scope.d3Data[i].y = layout[1];
