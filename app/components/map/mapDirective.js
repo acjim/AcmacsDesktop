@@ -554,7 +554,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              *  Watch for data changes and re-render
              */
             scope.$watch('data', function(newVals) {
-                console.log("newData");
                 renderWithData(newVals);
             }, true);
 
