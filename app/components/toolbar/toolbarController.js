@@ -63,6 +63,8 @@ angular
                         icon: 'glyphicon glyphicon-transfer',
                         togglable: true,
                         callback: function () {
+                            $rootScope.$emit('api.get_error_lines');
+                            console.log("here");
                             if ($('#errorlineLayer').css('visibility') == 'hidden'){
                                 $('#errorlineLayer').css({'visibility': 'visible'});
                             }else{
@@ -76,6 +78,7 @@ angular
                         icon: 'glyphicon glyphicon glyphicon-road',
                         togglable: true,
                         callback: function () {
+                            $rootScope.$emit('api.get_error_lines');
                             if ($('#connectionlineLayer').css('visibility') == 'hidden'){
                                 $('#connectionlineLayer').css({'visibility': 'visible'});
                             }else{

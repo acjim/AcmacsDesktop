@@ -136,6 +136,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // Enter
                 nodeGroup = nodeGroup.data(data.d3Nodes);
 
+                console.log(data.d3Nodes);
+
                 nodeGroup.enter().append("path")
                     .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
@@ -165,10 +167,31 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .on("drag", function(d) {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                    );
+                    )
+                    .attr("opacity", (function(d) { return d.opacity; }));
+
+
+                if(data.d3Errorlines && data.d3Connectionlines){
+                    renderErrorlines(data.d3Errorlines && data.d3Connectionlines);
+                }
+
+                nodeGroup.exit().remove();
+            }
+
+            /**
+             * Renders the additional layers for connection and error lines
+             * @param errorline_data, connectionline_data
+             */
+            function renderErrorlines(errorline_data, connectionline_data){
+
+                // checks if the map is drawn the for the first time, adds svg, groups and zoom if necessary
+                if (!svg) {
+                    initializeSVG();
+                    renderWithData(data);
+                }
 
                 // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
-                errorlineGroup = errorlineGroup.data(data.d3Errorlines);
+                errorlineGroup = errorlineGroup.data(errorline_data);
                 errorlineGroup.enter().append("line")
                     .attr("class", "errorline")
                     .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
@@ -180,22 +203,20 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
 
-                connectionlineGroup = connectionlineGroup.data(data.d3Connectionlines);
+                connectionlineGroup = connectionlineGroup.data(connectionline_data);
                 connectionlineGroup.enter().append("line")
                     .attr("class", "connectionline")
                     .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
                     .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
                     .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
                     .attr("y2",(function(d) { return yScale( dataScale(d.y2)); }))
-                   // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
+                    // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
-                    .attr("opacity", (function(d) { return d.opacity; }));
 
-
-                nodeGroup.exit().remove();
                 errorlineGroup.exit().remove();
                 connectionlineGroup.exit().remove();
+
             }
 
 
@@ -269,8 +290,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                dataExtentX = d3.extent(scope.data, function(d) { return d.x;});
-                dataExtentY = d3.extent(scope.data, function(d) { return d.y;});
+                dataExtentX = d3.extent(scope.data.d3Nodes, function(d) { return d.x;});
+                dataExtentY = d3.extent(scope.data.d3Nodes, function(d) { return d.y;});
 
                 centerNodes();
 

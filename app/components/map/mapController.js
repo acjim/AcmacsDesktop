@@ -27,6 +27,12 @@ var app = angular.module('acjim.map',[]);
 app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', function($rootScope, $scope, cfpLoadingBar, api) {
 
 
+    $scope.d3Data = {};
+    $scope.d3Data.d3Nodes = [];
+
+    var map = $scope.mapData.map.map;
+    var fs = require('fs');
+
     /**
      * Watches for a the reoptimize button
      */
@@ -35,28 +41,53 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
 
         var additional_params = {number_of_dimensions: 2, number_of_optimizations: 7, best_map: true};
         api.execute(api.get_commands().RELAX, additional_params, $scope.mapData.acd1).then(function(filename){
-            var fs = require('fs');
             fs.readFile(filename, 'utf8', function (err,data) {
                 var mapJsonData = JSON.parse(data);
                 // relax returns list of stresses for number of optimizations performed.
                 var stress = mapJsonData.stresses[0];
                 $scope.mapData.map.stress = stress;
                 mapJsonData.best_map.layout.forEach(function (layout, i) {
-                    $scope.d3Data[i].x = layout[0];
-                    $scope.d3Data[i].y = layout[1];
+                    $scope.d3Data.d3Nodes[i].x = layout[0];
+                    $scope.d3Data.d3Nodes[i].y = layout[1];
                 });
                 cfpLoadingBar.complete();
             });
         });
     });
 
-    $scope.d3Data = {};
-    $scope.d3Data.d3Nodes = [];
-    $scope.d3Data.d3Errorlines = [];
-    $scope.d3Data.d3Connectionlines = [];
+    /**
+     * Watches for a the errorlines and connectionlines buttons
+     */
+    $scope.$on('api.get_error_lines', function() {
+        console.log("klappt");
+        getErrorLines();
+    });
 
-    var map = $scope.mapData.map.map;
-    var errorlines = $scope.mapData.map.error_lines;
+
+
+    /**
+     * Calculates Error_Lines and reads file
+     */
+     function getErrorLines() {
+        $scope.d3Data.d3Errorlines = [];
+        $scope.d3Data.d3Connectionlines = [];
+        console.log("started to read stuff");
+
+        cfpLoadingBar.start();
+
+        var additional_params = {};//projection: 0
+        api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
+            fs.readFile(filename, 'utf8', function (err, data) {
+                var mapJsonData = JSON.parse(data);
+                // relax returns array of error_lines.
+                $scope.mapData.map.error_lines = mapJsonData;
+                calculateLines();
+
+                cfpLoadingBar.complete();
+            });
+        });
+    };
+
 
     if (map) {
 
@@ -206,10 +237,6 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
         }
     }
 
-    if(errorlines){
-        calculateLines();
-    }
-
     // computing the Saturation
     if(!isNumeric(isolate)){
         s=0.5;
@@ -270,10 +297,11 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
         };
     }
 
-
+    getErrorLines();
 
     //calculate error and connection lines
     function calculateLines() {
+        var errorlines = $scope.mapData.map.error_lines;
         var positive,
             connect,
             colour,
@@ -284,7 +312,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
         // Determine the sign of the error.
         positive = function (p1, p2, probe) {
             var arg;//, t, r, s1, s2, sProbe;
-
+y
 
             if (p1[0] === p2[0]) {
                 return Math.abs(probe[1] - p2[1]) >= Math.abs(probe[1] - p1[1]);
