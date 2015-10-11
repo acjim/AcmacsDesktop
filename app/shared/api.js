@@ -153,22 +153,6 @@ angular.module('acjim.api', [])
                     }
                     input_parameter.data.coordinates = additional_params.coordinates;
 
-                    if (additional_params.hasOwnProperty('rough_optimization')) {
-                        input_parameter.data.rough_optimization = additional_params.rough_optimization;
-                    }
-                    if (additional_params.hasOwnProperty('error_lines')) {
-                        input_parameter.data.error_lines = additional_params.error_lines;
-                    }
-                    if (additional_params.hasOwnProperty('blob_stress_diff')) {
-                        input_parameter.data.blob_stress_diff = additional_params.blob_stress_diff;
-                    }
-                    if (additional_params.hasOwnProperty('blob_number_of_directions')) {
-                        input_parameter.data.blob_number_of_directions = additional_params.blob_number_of_directions;
-                    }
-                    if (additional_params.hasOwnProperty('blobs')) {
-                        input_parameter.data.blobs = additional_params.blobs;
-                    }
-
                     var file_name = this.extract_name(input_file);
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
@@ -322,19 +306,6 @@ angular.module('acjim.api', [])
          *                      blobs: bool (default: False)
          *                      };
          *
-         * ----------------
-         * command = make_new_projection
-         * additional_params = {
-         *                      coordinates: list //mandatory
-         *                      projection: int //mandatory
-         *                      // Optional data fields:
-         *                      error_lines: bool (default: False)
-         *                      blob_stress_diff: float (default: 0.1)
-         *                      blobs: bool (default: False)
-         *                      rough_optimization: bool (default: False)
-         *                      map: bool (default: False)
-         *                      blob_number_of_directions: int (default: 36)
-         *                      };
          * -----------------
          *
          * get_error_lines - Obtains error lines data for a projection
@@ -401,7 +372,6 @@ angular.module('acjim.api', [])
          *      remove_existing_projections: bool (default: False) //Optional data field
          *   }
          *
-         * @param command
          * @param additional_params
          * @param output_acd1
          * @returns {*} Name of the files generated in general
@@ -427,9 +397,19 @@ angular.module('acjim.api', [])
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
-            var command = script + input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
+
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = new_output_acd1;
+            }
+
             try {
-                exec(command, puts);
+                execFile(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
@@ -473,6 +453,56 @@ angular.module('acjim.api', [])
                 params[params.length] = output_json;
             }
             // callback function for exec
+            try {
+                execFile(script, params, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+            return deferred.promise;
+        };
+
+        /**
+         * command = make_new_projection
+         * additional_params = {
+         *                      coordinates: list //mandatory
+         *                      projection: int //mandatory
+         *               };
+         *
+         * @param additional_params
+         * @param output_acd1
+         * @returns {*} object with Name of the files generated : output_json and new_outupt_acd1
+         */
+        api.new_projection = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.NEW_PROJECTION;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+            // callback function for exec
+            function puts(error, stdout, stderr) {
+                if (error) {
+                    // @todo handle error/exception properly
+                    //this.emit('error', error);
+                    console.log(error);
+                    deferred.reject(error);
+                }
+                deferred.resolve({output_json: output_json, output_acd1: new_output_acd1}); // return call
+            }
+
+            var script = config.api.script;
+            var data_path = config.store.path;
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = new_output_acd1;
+            }
             try {
                 execFile(script, params, puts);
             } catch (Error) {
@@ -541,7 +571,7 @@ angular.module('acjim.api', [])
          */
         api.stubOpen = function () {
             var output = {
-                "output_acd1": 'output_EU.acd1',
+                "output_acd1": 'output_concentric.acd1',
                 "table_json": './test/data/output/get_table_concentric.json',
                 "map_json": './test/data/output/get_map.json',
             }
