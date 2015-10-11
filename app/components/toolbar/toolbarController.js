@@ -63,12 +63,11 @@ angular
                         icon: 'glyphicon glyphicon-transfer',
                         togglable: true,
                         callback: function () {
-                            $rootScope.$emit('api.get_error_lines');
-                            console.log("here");
                             if ($('#errorlineLayer').css('visibility') == 'hidden'){
                                 $('#errorlineLayer').css({'visibility': 'visible'});
+                                $rootScope.$emit('api.geterrorlines');
                             }else{
-                                $('#errorlineLayer').css({'visibility':'hidden'});
+                                $('#errorlineLayer').css({'visibility':'hidden'})
                             }
                         }
                     },
@@ -78,11 +77,11 @@ angular
                         icon: 'glyphicon glyphicon glyphicon-road',
                         togglable: true,
                         callback: function () {
-                            $rootScope.$emit('api.get_error_lines');
                             if ($('#connectionlineLayer').css('visibility') == 'hidden'){
                                 $('#connectionlineLayer').css({'visibility': 'visible'});
+                                $rootScope.$emit('api.geterrorlines');
                             }else{
-                                $('#connectionlineLayer').css({'visibility':'hidden'});
+                                $('#connectionlineLayer').css({'visibility':'hidden'})
                             }
                         }
                     }

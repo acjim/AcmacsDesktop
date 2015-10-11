@@ -136,8 +136,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // Enter
                 nodeGroup = nodeGroup.data(data.d3Nodes);
 
-                console.log(data.d3Nodes);
-
                 nodeGroup.enter().append("path")
                     .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
@@ -145,9 +143,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .type(function(d) {
                             if (d.style.shape == "circle") { return "circle"; }
                             else if (d.style.shape == "box") { return "square"; }
-                        })
-                    )
-                    .attr("fill", function(d){ return d.style.fill_color });
+                        }))
+                    .attr("fill", function(d){ return d.style.fill_color })
+                    .attr("name", function(d){ return d.name });
 
 
                 // mouse event handlers
@@ -171,8 +169,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("opacity", (function(d) { return d.opacity; }));
 
 
-                if(data.d3Errorlines && data.d3Connectionlines){
-                    renderErrorlines(data.d3Errorlines && data.d3Connectionlines);
+                if(data.d3Errorlines && data.d3Connectionlines && data.d3Errorlines.length > 1 && data.d3Connectionlines.length > 1){
+                    renderErrorlines(data.d3Errorlines, data.d3Connectionlines);
                 }
 
                 nodeGroup.exit().remove();
@@ -194,10 +192,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 errorlineGroup = errorlineGroup.data(errorline_data);
                 errorlineGroup.enter().append("line")
                     .attr("class", "errorline")
-                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
-                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
-                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
-                    .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }))
+                    .attr("x1",(function(d) { return xScale(d.x1); }))
+                    .attr("y1",(function(d) { return yScale(d.y1); }))
+                    .attr("x2",(function(d) { return xScale(d.x2); }))
+                    .attr("y2",(function(d) { return yScale(d.y2); }))
                     //.attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
@@ -206,10 +204,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 connectionlineGroup = connectionlineGroup.data(connectionline_data);
                 connectionlineGroup.enter().append("line")
                     .attr("class", "connectionline")
-                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
-                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
-                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
-                    .attr("y2",(function(d) { return yScale( dataScale(d.y2)); }))
+                    .attr("x1",(function(d) { return xScale(d.x1); }))
+                    .attr("y1",(function(d) { return yScale(d.y1); }))
+                    .attr("x2",(function(d) { return xScale(d.x2); }))
+                    .attr("y2",(function(d) { return yScale(d.y2); }))
                     // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
@@ -318,7 +316,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("class", "connectionline")
                     .attr("id", "connectionlineLayer")
                     .selectAll(".connectionline");
-                
+
+                //better way to set this hidden upon start?
+                $('#errorlineLayer').css({'visibility': 'hidden'});
+                $('#connectionlineLayer').css({'visibility': 'hidden'});
             }
 
 
@@ -417,15 +418,15 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
                 });
-                errorlineGroup.attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
-                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
-                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
-                    .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }));
+                errorlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
+                    .attr("y1",(function(d) { return yScale(d.y1); }))
+                    .attr("x2",(function(d) { return xScale(d.x2); }))
+                    .attr("y2",(function(d) { return yScale(d.y2); }));
 
-                connectionlineGroup.attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
-                    .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
-                    .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
-                    .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }));
+                connectionlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
+                    .attr("y1",(function(d) { return yScale(d.y1); }))
+                    .attr("x2",(function(d) { return xScale(d.x2); }))
+                    .attr("y2",(function(d) { return yScale(d.y2); }));
             }
 
 

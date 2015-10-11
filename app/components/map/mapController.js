@@ -58,37 +58,25 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
     /**
      * Watches for a the errorlines and connectionlines buttons
      */
-    $scope.$on('api.get_error_lines', function() {
-        console.log("klappt");
-        getErrorLines();
-    });
-
-
-
-    /**
-     * Calculates Error_Lines and reads file
-     */
-     function getErrorLines() {
+    $rootScope.$on('api.geterrorlines', function() {
         $scope.d3Data.d3Errorlines = [];
         $scope.d3Data.d3Connectionlines = [];
-        console.log("started to read stuff");
 
         cfpLoadingBar.start();
-        //console.log($scope.mapData.acd1);
 
         var additional_params = {};
-        api.execute(api.get_commands().ERROR_LINES, additional_params, "./data/test_1444562740346.acd1");
-        //api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
-        //    fs.readFile(filename, 'utf8', function (err, data) {
-        //        var mapJsonData = JSON.parse(data);
-        //        // relax returns array of error_lines.
-        //        $scope.mapData.map.error_lines = mapJsonData;
-        //        calculateLines();
-        //
-        //        cfpLoadingBar.complete();
-        //    });
-        //});
-    };
+        api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
+            fs.readFile(filename, 'utf8', function (err, data) {
+                var mapJsonData = JSON.parse(data);
+                // relax returns array of error_lines.
+                $scope.mapData.map.error_lines = mapJsonData.error_lines;
+                calculateLines();
+
+                cfpLoadingBar.complete();
+            });
+        });
+    });
+
 
 
     if (map) {
@@ -299,9 +287,9 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
         };
     }
 
-    getErrorLines();
-
-    //calculate error and connection lines
+     /**
+     * Calculate error and connection lines
+     */
     function calculateLines() {
         var errorlines = $scope.mapData.map.error_lines;
         var positive,
@@ -312,24 +300,43 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
             pointsConnected = {};
 
         // Determine the sign of the error.
+        // Created different calculation because Eugene was using on matrices on SVG DOM elements. (I think..)
+        // Didn't want to touch DOM from here.
         positive = function (p1, p2, probe) {
-            var arg;//, t, r, s1, s2, sProbe;
-y
+            var dxa, dya, dxb, dyb, cross;
 
-            if (p1[0] === p2[0]) {
-                return Math.abs(probe[1] - p2[1]) >= Math.abs(probe[1] - p1[1]);
-            }
-            else {
-                //TODO: Figure out what this calculation actually does
-                arg = Math.atan((p2[1] - p1[1]) / (p2[0] - p1[0])) * 360 / (2 * Math.PI);
-                //t = this.canvasDOMNode.createSVGMatrix().rotate(-arg);
-                //s1 = this.svgPoint(p1[0], p1[1]).matrixTransform(t);
-                //s2 = this.svgPoint(p2[0], p2[1]).matrixTransform(t);
-                //sProbe = this.svgPoint(probe[0], probe[1]).matrixTransform(t);
-                //return (
-                //    (sProbe.x >= s1.x && s1.x >= s2.x) ||
-                //    (sProbe.x <= s1.x && s1.x <= s2.x)
-                //);
+            // Assumption:
+            // p1 and p2 are connected points
+            // probe is the end of Error_Line, from viewpoint of p1
+            // if probe lies on line inbetween points = red
+            // if probe lies outside and is further away from p2 than p1 = blue
+
+            // first check if probe is on line that runs through p1 and p2
+            dxa = probe[0] - p1[0];
+            dya = probe[1] - p1[1];
+
+            dxb = p2[0] - p1[0];
+            dyb = p2[1] - p1[1];
+
+            cross = dxa * dyb - dya * dxb;
+            //if cross equals zero, point is on line
+
+            // compare x and y coordinates, whether probe lies between p1 and p2
+            if (Math.abs(dxb) >= Math.abs(dyb)){
+                if(dxb > 0){
+                    return(
+                        (p1[0] <= probe[0] && probe[0] <= p2[0]) ||
+                        (p2[0] <= probe[0] && probe[0] <= pq[0])
+                    );
+                }
+
+            }else {
+                if(dyb > 0) {
+                    return(
+                        (p1[1] <= probe[1] && probe[1] <= p2[1]) ||
+                        (p2[1] <= probe[1] && probe[1] <= p1[1])
+                    );
+                }
             }
         }
 
@@ -405,15 +412,6 @@ y
                         width: 0.4,
                         opacity: 1.0
                     });
-                    /*if (this.get('renderConnectionLines')) {
-                     this.addLine({
-                     start: from,
-                     end: to,
-                     stroke: 'grey',
-                     width: 0.4,
-                     opacity: this.attributeOrProfileSetting('connectionLineOpacity')
-                     });
-                     }*/
 
                     $scope.d3Data.d3Errorlines.push({
                         //start: [from[0], from[1]],
@@ -426,16 +424,6 @@ y
                         width: 0.6,
                         opacity: 1.0
                     });
-
-                    /*if (this.get('renderErrorLines')) {
-                     this.addLine({
-                     start: from,
-                     end: errorLineEnd[d],
-                     stroke: colour,
-                     width: 0.6,
-                     opacity: this.attributeOrProfileSetting('errorLineOpacity')
-                     });
-                     }*/
 
                     // Mark this connection to allow testing for duplicates.
                     connection[originIndex + ':' + destIndex] = true;
@@ -488,14 +476,6 @@ y
                             width: 0.6,
                             opacity: 1.0
                         });
-
-                        /*this.addLine({
-                         start: to,
-                         end: errorLineEnd[o],
-                         stroke: colour,
-                         width: 0.6,
-                         opacity: this.attributeOrProfileSetting('errorLineOpacity')
-                         });*/
                     }
                 }
             } // renderErrorLines (at the opposite end)
