@@ -55,6 +55,11 @@ html {
   bottom: 0;
   right: 0;
 }
+
+.flash-msg {
+  z-index: 3000;
+  position: absolute;
+}
 /*********** Map styles **************/
 .node {
   stroke: #fff;
@@ -76,4 +81,16 @@ html {
   stroke: #ddd;
   shape-rendering: crispEdges;
   vector-effect: non-scaling-stroke;
+}
+
+.fullsize {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.stressLabel{
+  height:20px;
+  color: rgb(0,0,128);
+  font-weight: bold;
+  position: fixed;
 }

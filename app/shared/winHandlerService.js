@@ -29,6 +29,7 @@
             var windowTitle = options.table ? options.table.info.name : 'New Table ' + newMapCounter++;
 
             openWindows.push({
+                acd1: options.acd1 || null,
                 table: options.table || null,
                 map: options.map || { map: null },
                 options: {

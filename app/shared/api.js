@@ -22,10 +22,19 @@
 'use strict';
 
 var config = require('./config.js');
-var exec = require('child_process').exec;
+var execFile = require('child_process').execFile;
 var fs = require('fs');
 var DATE_NOW = Date.now();
-var COMMANDS = {GET_MAP: 'get_map', GET_TABLE: 'get_table', RELAX: 'relax', NEW_PROJECTION: 'make_new_projection_and_relax'};
+var COMMANDS = {
+    IMPORT: 'import',
+    GET_MAP: 'get_map',
+    GET_TABLE: 'get_table',
+    RELAX: 'relax',
+    NEW_PROJECTION: 'make_new_projection',
+    UPDATE_TABLE: 'update_table',
+    ERROR_LINES: 'get_error_lines',
+    EXPORT: 'export',
+};
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
@@ -43,10 +52,10 @@ angular.module('acjim.api', [])
         api.create_input_parameter = function (command, additional_params, input_file) {
             var store_path = config.store.temp;
             switch (command) {
-                case 'import':
+                case COMMANDS.IMPORT:
                     var file_name = 'input';
                     var input_parameter = {};
-                    input_parameter.command = 'import';
+                    input_parameter.command = COMMANDS.IMPORT;
                     input_parameter.data = {};
                     // check if additional_params has name property else file_name= input_TIMESTAMP().json
                     if ('name' in additional_params) {
@@ -64,13 +73,13 @@ angular.module('acjim.api', [])
                         input_parameter.data.parse_antigen_names = false;
                     }
                     break;
-                case 'get_table':
-                    var input_parameter = {command: 'get_table', data: {}};
+                case COMMANDS.GET_TABLE:
+                    var input_parameter = {command: COMMANDS.GET_TABLE, data: {}};
                     var file_name = this.extract_name(input_file);
                     file_name = file_name + '_' + DATE_NOW + ".json";
                     break;
-                case 'get_map':
-                    var input_parameter = {command: 'get_map', data: {projection: 0}};
+                case COMMANDS.GET_MAP:
+                    var input_parameter = {command: COMMANDS.GET_MAP, data: {projection: 0}};
                     if (additional_params.hasOwnProperty('projection')) {
                         var projection = additional_params.projection;
                         var input_parameter = {command: 'get_map', data: {projection: projection}};
@@ -93,8 +102,8 @@ angular.module('acjim.api', [])
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
-                case 'relax':
-                    var input_parameter = {command: 'relax', data: {number_of_dimensions: 2}};
+                case COMMANDS.RELAX:
+                    var input_parameter = {command: COMMANDS.RELAX, data: {number_of_dimensions: 2}};
                     if (additional_params.hasOwnProperty('number_of_dimensions')) {
                         var number_of_dimensions = additional_params.number_of_dimensions;
                         var input_parameter = {command: 'relax', data: {number_of_dimensions: number_of_dimensions}};
@@ -132,20 +141,18 @@ angular.module('acjim.api', [])
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
-                case 'make_new_projection_and_relax':
-                    var input_parameter = {command: 'make_new_projection_and_relax', data: {projection: 0}};
+                case COMMANDS.NEW_PROJECTION:
+                    var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: 0}};
                     if (additional_params.hasOwnProperty('projection')) {
                         var projection = additional_params.projection;
-                        var input_parameter = {command: 'relax', data: {projection: projection}};
+                        var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: projection}};
                     }
 
                     if (!additional_params.hasOwnProperty('coordinates')) {
                         throw new Error('Please pass coordinates');
                     }
                     input_parameter.data.coordinates = additional_params.coordinates;
-                    if (additional_params.hasOwnProperty('map')) {
-                        input_parameter.data.map = additional_params.map;
-                    }
+
                     if (additional_params.hasOwnProperty('rough_optimization')) {
                         input_parameter.data.rough_optimization = additional_params.rough_optimization;
                     }
@@ -161,6 +168,45 @@ angular.module('acjim.api', [])
                     if (additional_params.hasOwnProperty('blobs')) {
                         input_parameter.data.blobs = additional_params.blobs;
                     }
+
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
+                case COMMANDS.UPDATE_TABLE:
+                    var input_parameter = {command: COMMANDS.UPDATE_TABLE, data: {}};
+
+                    if (!additional_params.hasOwnProperty('table') || !additional_params.hasOwnProperty('info') || additional_params.hasOwnProperty('version'))
+                    {
+                        throw new Error('Missing mandatory datas, please make sure your data has: table, info and version');
+                    }
+                    if (additional_params.hasOwnProperty('remove_existing_projections')) {
+                        input_parameter.data.remove_existing_projections = additional_params.remove_existing_projections; // boolean
+                    }
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
+                case COMMANDS.ERROR_LINES:
+                    var input_parameter = {command: COMMANDS.ERROR_LINES, data: {}};
+
+                    if (additional_params.hasOwnProperty('projection')) {
+                        input_parameter.data.projection = additional_params.projection; // int
+                    }
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
+                case COMMANDS.EXPORT:
+                    var input_parameter = {command: COMMANDS.EXPORT, data: {filname: 'export_output', format: "acd1_v2.bz2"}};
+
+                    if (!additional_params.hasOwnProperty('format') || !additional_params.hasOwnProperty('filename'))
+                    {
+                        throw new Error('Missing mandatory datas, please make sure your data has: format, and filename');
+                    }
+                    // TODO get path as input or parameter?
+                    input_parameter.data.filename = config.store.path + aadditional_params.filename + "." + additional_params.format;
+                    input_parameter.data.format = additional_params.format;
 
                     var file_name = this.extract_name(input_file);
                     var random_number = Math.random() * 89;
@@ -192,6 +238,12 @@ angular.module('acjim.api', [])
          */
         api.import_user_data = function (input_file, additional_params) {
 
+            if(process.platform == "win32") {
+                //hack: Windows files outside the vagrant shared project folder would need to be copied to it first...
+                input_file = input_file.replace(config.store.projectRoot, '');
+                input_file = input_file.replace(/\\/g, '/');
+            }
+
             var deferred = $q.defer();
             var command = "import";
             // create and fetch input_parameter file
@@ -210,12 +262,20 @@ angular.module('acjim.api', [])
 
             var script = config.api.script;
             var data_path = config.store.path;
-            var output_json = this.create_file_path(data_path, input_file, '.json', '');
-            var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', '');
-            var command = script + input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
+            var output_json = this.create_file_path(data_path, input_file, '.json', COMMANDS.IMPORT);
+            var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', COMMANDS.IMPORT);
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length - 1] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = input_file;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1;
+            }
             // callback function for exec
             try {
-                exec(command, puts);
+                execFile(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
@@ -263,7 +323,7 @@ angular.module('acjim.api', [])
          *                      };
          *
          * ----------------
-         * command = make_new_projection_and_relax
+         * command = make_new_projection
          * additional_params = {
          *                      coordinates: list //mandatory
          *                      projection: int //mandatory
@@ -276,6 +336,13 @@ angular.module('acjim.api', [])
          *                      blob_number_of_directions: int (default: 36)
          *                      };
          * -----------------
+         *
+         * get_error_lines - Obtains error lines data for a projection
+         * additional_params = {projection: int (default: 0) }
+         * Result object:
+         *      'error_lines' - for each antigen and serum list of opposite coordinates for each error line
+         *
+         * ------------------
          *
          * @param command
          * @param output_acd1
@@ -301,9 +368,113 @@ angular.module('acjim.api', [])
             var script = config.api.script;
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var command = script + input_param_file + " " + output_acd1 + " " + output_json;
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1;
+            }
+            // callback function for exec
+            try {
+                execFile(script, params, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+            return deferred.promise;
+        };
+
+        /**
+         * Updates table with changes supplied by the user.
+         * Supplied data corresponds to the data obtained via get_table command.
+         * Antigens/sera can be removed and new antigens/sera can be added.
+         * Modifying titers, removing/adding antigens/sera is forbidden if chart has
+         * projections and remove_existing_projections optional argument is false (default).
+         *
+         *   additional_params = {
+         *      table: dict,
+         *      version: int,
+         *      info: dict,
+         *      remove_existing_projections: bool (default: False) //Optional data field
+         *   }
+         *
+         * @param command
+         * @param additional_params
+         * @param output_acd1
+         * @returns {*} Name of the files generated in general
+         */
+        api.update_table = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.UPDATE_TABLE;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+            // callback function for exec
+            function puts(error, stdout, stderr) {
+                if (error) {
+                    // @todo handle error/exception properly
+                    //this.emit('error', error);
+                    console.log(error);
+                    deferred.reject(error);
+                }
+                deferred.resolve(new_output_acd1); // return call
+            }
+
+            var script = config.api.script;
+            var data_path = config.store.path;
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
+            var command = script + input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
             try {
                 exec(command, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+            return deferred.promise;
+        };
+
+        /**
+         * export - Exports chart into one of the external formats.
+         *
+         * additional_params = { format: str,
+         *                      file_name: str
+         *                      };
+         * @param output_acd1 acd1 file retrieved from import
+         * @param additional_params Object
+         * @returns {*}
+         */
+        api.export = function (output_acd1, additional_params) {
+
+            var deferred = $q.defer();
+            var command = COMMANDS.EXPORT;
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+            // callback function for exec
+            function puts(error, stdout, stderr) {
+                if (error) {
+                    console.log(error);
+                    deferred.reject(error);
+                }
+            }
+
+            var script = config.api.script;
+            var data_path = config.store.path;
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+            }
+            // callback function for exec
+            try {
+                execFile(script, params, puts);
             } catch (Error) {
                 console.log(Error.message);
                 deferred.reject(Error.message);
@@ -323,17 +494,14 @@ angular.module('acjim.api', [])
         api.create_file_path = function (path, file_name, extension, command) {
             var file = file_name.split('/').pop();
             var date_now = DATE_NOW;
-            if (command.length <= 0) {
+            // remove import param from generated file
+            if(command == COMMANDS.IMPORT)
+            {
                 var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + date_now + extension;
-            } else if(command === this.get_commands().GET_MAP) {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_map_' + date_now + extension;
-            } else if(command === this.get_commands().GET_TABLE) {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_table_' + date_now + extension;
-            } else if(command === this.get_commands().RELAX) {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_relax_' + date_now + extension;
-            } else if(command === this.get_commands().NEW_PROJECTION) {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_new_projection_' + date_now + extension;
+            } else {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + command + '_' + date_now + extension;
             }
+
             return output;
         };
 
@@ -371,11 +539,11 @@ angular.module('acjim.api', [])
          *
          * @returns {{output_acd1: string, table_json: string, map_json: string}}
          */
-        api.stub = function () {
+        api.stubOpen = function () {
             var output = {
                 "output_acd1": 'output_EU.acd1',
-                "table_json": './test/data/get_table_concentric.json',
-                "map_json": './test/data/get_map.json',
+                "table_json": './test/data/output/get_table_concentric.json',
+                "map_json": './test/data/output/get_map.json',
             }
             return output;
         };

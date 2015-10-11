@@ -37,7 +37,10 @@
             RE_OPTIMIZE: 6,
             //// GROUPS ////
             MAP_TOOLS: 7,
-            SHOW_CONNECTION_LINES: 8,
+            DISABLE_MAP: 8,
+            NEW_MAP: 9,
+            //// Another Button... ////
+            SHOW_CONNECTION_LINES: 10,
         };
 
         return tools;

@@ -29,6 +29,19 @@ app.controller('tableCtrl', ['$scope', function($scope) {
 
 .directive('acTable', function() {
     return {
+        link: function(scope, iElement) {
+            scope.editItem = function (obj) {
+                obj.target.setAttribute("contenteditable", true);
+                obj.target.focus();
+                var element  = angular.element(event.currentTarget);
+                element.bind("keydown keypress", function (event) {
+                    if(event.which === 13 || event.which === 27) {
+                        obj.target.setAttribute("contenteditable", false);
+                        event.preventDefault();
+                    }
+                });
+            }
+        },
         restrict: 'E',
         transclude: true,
         scope: {},
