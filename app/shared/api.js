@@ -494,7 +494,14 @@ angular.module('acjim.api', [])
         api.create_file_path = function (path, file_name, extension, command) {
             var file = file_name.split('/').pop();
             var date_now = DATE_NOW;
-            var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + command + '_' + date_now + extension;
+            // remove import param from generated file
+            if(command == COMMANDS.IMPORT)
+            {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + date_now + extension;
+            } else {
+                var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + command + '_' + date_now + extension;
+            }
+
             return output;
         };
 
