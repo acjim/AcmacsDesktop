@@ -74,18 +74,20 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
         console.log("started to read stuff");
 
         cfpLoadingBar.start();
+        //console.log($scope.mapData.acd1);
 
-        var additional_params = {};//projection: 0
-        api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
-            fs.readFile(filename, 'utf8', function (err, data) {
-                var mapJsonData = JSON.parse(data);
-                // relax returns array of error_lines.
-                $scope.mapData.map.error_lines = mapJsonData;
-                calculateLines();
-
-                cfpLoadingBar.complete();
-            });
-        });
+        var additional_params = {};
+        api.execute(api.get_commands().ERROR_LINES, additional_params, "./data/test_1444562740346.acd1");
+        //api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
+        //    fs.readFile(filename, 'utf8', function (err, data) {
+        //        var mapJsonData = JSON.parse(data);
+        //        // relax returns array of error_lines.
+        //        $scope.mapData.map.error_lines = mapJsonData;
+        //        calculateLines();
+        //
+        //        cfpLoadingBar.complete();
+        //    });
+        //});
     };
 
 
