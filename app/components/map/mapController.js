@@ -34,8 +34,6 @@ app.controller('mapCtrl', ['$scope', function($scope) {
     var map = $scope.mapData.map.map;
     var errorlines = $scope.mapData.map.error_lines;
 
-    console.log($scope.mapData);
-
     if (map) {
 
         if (_.isUndefined($scope.mapData.map)) return;
@@ -460,8 +458,6 @@ app.controller('mapCtrl', ['$scope', function($scope) {
         // First, draw the error lines for antigens
         connect({from: 'antigens', to: 'sera'});
         connect({from: 'sera', to: 'antigens'});
-
-        console.log($scope.d3Data.d3Errorlines);
     }
 
 }]);

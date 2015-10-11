@@ -67,7 +67,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
-                padding= 0,
+                padding= 20,
                 boxSize = 0,
                 centerMap = true,
                 shiftKey;
@@ -402,13 +402,12 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
                 });
-                errorlineGroup
-                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
+                errorlineGroup.attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
                     .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
                     .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
                     .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }));
-                connectionlineGroup
-                    .attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
+
+                connectionlineGroup.attr("x1",(function(d) { return xScale(dataScale(d.x1)); }))
                     .attr("y1",(function(d) { return yScale(dataScale(d.y1)); }))
                     .attr("x2",(function(d) { return xScale(dataScale(d.x2)); }))
                     .attr("y2",(function(d) { return yScale(dataScale(d.y2)); }));
