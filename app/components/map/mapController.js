@@ -51,12 +51,12 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
                 var mapJsonData = JSON.parse(data);
                 var projection = mapJsonData.projection;
                 var stress = mapJsonData.projection;
-                $scope.mapData.map.stress = stress;
+                //$scope.mapData.map.stress = stress;
                 //TODO set projection for all new_projection call
             });
 
             //TODO projection number should be passed further into relax function which is missing projection parameter
-            var relax_additional_params = {number_of_dimensions: 2, number_of_optimizations: 5, best_map: true};
+            var relax_additional_params = {number_of_dimensions: 2, number_of_optimizations: 3, best_map: true};
             api.execute(api.get_commands().RELAX, relax_additional_params, output_acd1).then(function (filename) {
                 var fs = require('fs');
                 fs.readFile(filename, 'utf8', function (err, data) {
