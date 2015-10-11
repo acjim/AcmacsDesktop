@@ -22,33 +22,71 @@
 
 'use strict';
 
-var app = angular.module('acjim.map',[]);
+var app = angular.module('acjim.map',['flash']);
 
-app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', function($rootScope, $scope, cfpLoadingBar, api) {
+app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flash', function($rootScope, $scope, cfpLoadingBar, api, Flash) {
 
 
     /**
      * Watches for a the reoptimize button
      */
-    $scope.$on('api.reoptimize', function() {
+    $scope.$on('api.reoptimize', function () {
         cfpLoadingBar.start();
 
-        var additional_params = {number_of_dimensions: 2, number_of_optimizations: 7, best_map: true};
-        api.execute(api.get_commands().RELAX, additional_params, $scope.mapData.acd1).then(function(filename){
+        var list = [];
+        $scope.d3Data.forEach(function (layout, i) {
+            list[i] = [
+                layout.x,
+                layout.y
+            ];
+        });
+
+        //TODO get projection from scope
+        var additional_params = {coordinates: list, projection: 0};
+        api.new_projection(additional_params, $scope.mapData.acd1).then(function (output) {
+            var output_json = output.output_json;
+            var output_acd1 = output.output_acd1;
             var fs = require('fs');
-            fs.readFile(filename, 'utf8', function (err,data) {
+            fs.readFile(output_json, 'utf8', function (err, data) {
                 var mapJsonData = JSON.parse(data);
-                // relax returns list of stresses for number of optimizations performed.
-                var stress = mapJsonData.stresses[0];
+                var projection = mapJsonData.projection;
+                var stress = mapJsonData.projection;
                 $scope.mapData.map.stress = stress;
-                mapJsonData.best_map.layout.forEach(function (layout, i) {
-                    $scope.d3Data[i].x = layout[0];
-                    $scope.d3Data[i].y = layout[1];
-                });
-                cfpLoadingBar.complete();
+                //TODO set projection for all new_projection call
             });
+
+            //TODO projection number should be passed further into relax function which is missing projection parameter
+            var relax_additional_params = {number_of_dimensions: 2, number_of_optimizations: 5, best_map: true};
+            api.execute(api.get_commands().RELAX, relax_additional_params, output_acd1).then(function (filename) {
+                var fs = require('fs');
+                fs.readFile(filename, 'utf8', function (err, data) {
+                    var mapJsonData = JSON.parse(data);
+                    // relax returns list of stresses for number of optimizations performed.
+                    var stress = mapJsonData.stresses[0];
+                    $scope.mapData.map.stress = stress;
+                    mapJsonData.best_map.layout.forEach(function (layout, i) {
+                        $scope.d3Data[i].x = layout[0];
+                        $scope.d3Data[i].y = layout[1];
+                    });
+                    cfpLoadingBar.complete();
+                });
+            }, function (reason) {
+                return $scope.errorReason(reason);
+            });
+
+        }, function (reason) {
+            return $scope.errorReason(reason);
         });
     });
+
+    // TODO: temporariliy located here error needs to be handled globally
+    $scope.errorReason = function (reason) {
+        cfpLoadingBar.complete();
+        // TODO: set flash message based on environment
+        var error_message = 'Unable to open the file, file import failed!';
+        Flash.create('danger', error_message + "<br>\n" + reason);
+        return $q.reject(reason);
+    };
 
     $scope.d3Data = [];
 
