@@ -7,27 +7,11 @@
         "url": "git://github.com/acjim/AcmacsDesktop.git"
     },
     "license": "MIT",
-    "main": "index.html",
-    "window": {
-        "title": "Acmacs Desktop",
-        "toolbar": false,
-        "frame": true,
-        "width": 1024,
-        "height": 600,
-        "resizable": true,
-        "show": false
+    "scripts": {
+        "postinstall": "(cd src && npm install)",
+        "test": ""
     },
-    "dependencies": {
-        "angular": "^1.4.1",
-        "angular-route": "^1.4.1",
-        "underscore": "^1.8.3",
-        "d3": "^3.5.6",
-        "angular-bootstrap": "^0.12.0",
-        "bootstrap": "^3.3.5",
-        "jquery": "^2.1.4",
-        "angular-flash-alert": "^1.1.1",
-        "angular-html-window": "^1.0.0",
-        "angular-loading-bar": "^0.8.0",
-        "angular-animate": "^1.0.0"
+    "devDependencies": {
+        "gulp": "^3.8.11"
     }
 }
