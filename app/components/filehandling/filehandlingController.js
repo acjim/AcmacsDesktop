@@ -43,14 +43,18 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
         var filename = 'new.save';
 
         $scope.openMaps.forEach(function(map, index){
-            if(map.active) filename = map.title;
+            if(map.active) {
+                filename = map.title;
+            }
         });
         fileDialog.saveAs($scope.handleFileSave, filename, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     });
 
     $scope.$on('close-file', function(e, menu, item) {
         $scope.openMaps.forEach(function(map, index){
-           if(map.active) $scope.openMaps.splice(index, 1);
+           if(map.active) {
+               $scope.openMaps.splice(index, 1);
+           }
         });
         $scope.$apply();
     });

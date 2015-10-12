@@ -1,9 +1,9 @@
 .split-panes 
 {
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   position: absolute;
 }
 
@@ -19,9 +19,9 @@
 .split-panes.horizontal > .split-handler
 {
   width: 4px;
-  top: 0px; 
+  top: 0; 
   left: 50%;
-  bottom: 0px;
+  bottom: 0;
   cursor: ew-resize;
 }
 
@@ -40,7 +40,7 @@
 .split-panes.horizontal > .split-pane2
 {
   left: 50%;
-  right: 0px;
+  right: 0;
   border-left: 1px solid #aaa;
 }
 
@@ -51,8 +51,8 @@
 {
   height: 4px;
   top: 50%; 
-  left: 0px;
-  right: 0px;
+  left: 0;
+  right: 0;
   cursor: ns-resize;
 }
 
@@ -71,6 +71,6 @@
 .split-panes.vertical > .split-pane2
 {
   top: 50%;
-  bottom: 0px;
+  bottom: 0;
   border-top: 1px solid #aaa;
 }
