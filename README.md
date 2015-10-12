@@ -24,6 +24,9 @@ Now you can type ``nw <PathToApp>`` to start any of your projects. Keep in mind 
 ## Build
 Not yet implemented
 
+## Codacy
+[![Codacy Badge](https://api.codacy.com/project/badge/a6df559aeb744d68b598d11a63e9e5e0)](https://www.codacy.com/app/dgora88/AcmacsDesktop)
+
 # License
 GNU GENERAL PUBLIC LICENSE  
 Version 3, 29 June 2007  
