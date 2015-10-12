@@ -12,6 +12,7 @@
         "test": ""
     },
     "devDependencies": {
-        "gulp": "^3.8.11"
+        "gulp": "^3.8.11",
+        "karma": "^0.13.10"
     }
 }
