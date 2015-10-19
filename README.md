@@ -22,7 +22,18 @@ npm install -g nw
 Now you can type ``nw <PathToApp>`` to start any of your projects. Keep in mind that now you will only have one nw version for all your projects.
 
 ## Build
-Not yet implemented
+
+### Install dependencies
+```
+npm install
+```
+### Run Grunt
+The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
+```
+grunt
+```
+
+
 
 ## Codacy
 [![Codacy Badge](https://api.codacy.com/project/badge/a6df559aeb744d68b598d11a63e9e5e0)](https://www.codacy.com/app/dgora88/AcmacsDesktop)

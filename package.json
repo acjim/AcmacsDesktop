@@ -9,10 +9,12 @@
     "license": "MIT",
     "scripts": {
         "postinstall": "(cd src && npm install)",
+        "start": "nw src",
         "test": ""
     },
     "devDependencies": {
-        "gulp": "^3.8.11",
-        "karma": "^0.13.10"
+        "grunt": "~0.4.1",
+        "grunt-nw-builder": "^2.0.0",
+        "nw": "~0.12"
     }
 }
