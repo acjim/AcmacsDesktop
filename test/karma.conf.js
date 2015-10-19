@@ -2,7 +2,7 @@
 // Generated on Mon Oct 19 2015 21:13:04 GMT+1000 (AEST)
 
 module.exports = function (config) {
-    var configuration = {
+    config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -15,20 +15,10 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            '../src/*/**',
-            './unit/**/*.spec.*'
+            '../src/node_modules/angular/angular.js',
+            '../node_modules/angular-mocks/angular-mocks.js',
+            'unit/**/*.spec.js'
         ],
-
-
-        // list of files to exclude
-        exclude: [
-            '**/*.bundle'
-        ],
-
-
-        // preprocess matching files before serving them to the browser
-        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {},
 
 
         // test results reporter to use
@@ -47,7 +37,7 @@ module.exports = function (config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.INFO,
 
 
         // enable / disable watching file and executing tests whenever any file changes
@@ -59,24 +49,21 @@ module.exports = function (config) {
         browsers: ['Chrome'],
 
 
-        plugin: ['karma-chrome-launcher'],
+        plugins : [
+            'karma-junit-reporter',
+            'karma-chrome-launcher',
+            'karma-phantomjs-launcher',
+            'karma-jasmine'
+        ],
 
-        customLaunchers: {
-            Chrome_travis_ci: {
-                base: 'Chrome',
-                flags: ['--no-sandbox']
-            }
+        junitReporter : {
+            outputFile: 'test_out/unit.xml',
+            suite: 'unit'
         },
+
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false
-    };
-
-    if (process.env.TRAVIS) {
-        configuration.browsers = ['Chrome_travis_ci'];
-    }
-
-    config.set(configuration);
+    })
 };
-

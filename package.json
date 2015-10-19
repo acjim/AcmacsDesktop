@@ -10,14 +10,19 @@
     "scripts": {
         "postinstall": "(cd src && npm install)",
         "start": "./node_modules/.bin/nw src",
-        "test": "./node_modules/.bin/karma start test/karma.conf.js"
+        "test": "grunt test"
     },
     "devDependencies": {
-        "grunt": "~0.4.1",
+        "nw": "~0.12",
+        "grunt": "~0.4",
+        "grunt-karma": "~0.12",
+        "grunt-contrib-watch": "~0.6",
         "grunt-nw-builder": "^2.0.0",
         "karma": "~0.13",
-        "karma-chrome-launcher": "^0.2.1",
         "karma-jasmine": "~0.3",
-        "nw": "~0.12"
+        "karma-chrome-launcher": "^0.2.1",
+        "karma-junit-reporter": "~0.3",
+        "karma-phantomjs-launcher": "~0.2",
+        "angular-mocks": "~1.4"
     }
 }
