@@ -1,7 +1,8 @@
 .idea
 
 # Node modules
-node_modules/
+node_modules
+src/node_modules/
 
 # Build folders
 /build/
@@ -9,11 +10,11 @@ node_modules/
 /cache/
 
 #temporary files
-data/tmp/*.json
-data/*.json
-data/*.acd1
+src/data/tmp/*.json
+src/data/*.json
+src/data/*.acd1
 *.json.~*
 
 
 # core bundle
-core/AcmacsCore.bundle/
+src/core/AcmacsCore.bundle/

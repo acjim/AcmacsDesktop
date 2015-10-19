@@ -169,7 +169,7 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
         $scope.openMaps = winHandler.getOpenWindows();
     });
 
-    $scope.handleFileOpen("./test/data/test.save"); //TODO: Remove me, for developmental purposes
+    $scope.handleFileOpen("../test/data/test.save"); //TODO: Remove me, for developmental purposes
 
     $scope.handleFileSave = function(filename) {
         var fs = require('fs');
