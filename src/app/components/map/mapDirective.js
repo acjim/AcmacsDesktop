@@ -38,7 +38,7 @@ app.directive('acMap', function() {
         },
         controller: 'mapCtrl',
         controllerAs: 'mapData',
-        template: '<p class="stressLabel">Stress: {{mapData.map.stress || "Undefined Value"}}</p><div d3-map data="d3Data" lable="title"></div>'
+        template: '<p class="stressLabel">Stress: {{(mapData.map.stress || "Undefined Value") | number: 3}}</p><div d3-map data="d3Data" lable="title"></div>'
     }
 });
 

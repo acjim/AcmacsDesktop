@@ -36,7 +36,7 @@ grunt
 
 
 ## Codacy
-[![Codacy Badge](https://api.codacy.com/project/badge/a6df559aeb744d68b598d11a63e9e5e0)](https://www.codacy.com/app/dgora88/AcmacsDesktop)
+[![Codacy Badge](https://api.codacy.com/project/badge/e45c7f2631ad4267b4b91b5c30fefe87)](https://www.codacy.com/app/acjim/AcmacsDesktop)
 
 # License
 GNU GENERAL PUBLIC LICENSE  
