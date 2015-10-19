@@ -9,12 +9,15 @@
     "license": "MIT",
     "scripts": {
         "postinstall": "(cd src && npm install)",
-        "start": "nw src",
-        "test": ""
+        "start": "./node_modules/.bin/nw src",
+        "test": "./node_modules/.bin/karma start test/karma.conf.js"
     },
     "devDependencies": {
         "grunt": "~0.4.1",
         "grunt-nw-builder": "^2.0.0",
+        "karma": "~0.13",
+        "karma-chrome-launcher": "^0.2.1",
+        "karma-jasmine": "~0.3",
         "nw": "~0.12"
     }
 }

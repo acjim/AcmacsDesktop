@@ -7,7 +7,8 @@ module.exports = function(grunt) {
                 version: "0.12.3",
                 // specifiy what to build
                 platforms: ['osx32'],
-                buildDir: './build' // Where the build version of my NW.js app is save
+                buildDir: './build', // Where the build version of my NW.js app is save
+                macZip: true
 
             },
             src: './src/**/*'
