@@ -313,6 +313,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 if(d3.event.preventDefault) d3.event.preventDefault();
 
+                scope.pointsMoved = true;
+
             }
 
 
