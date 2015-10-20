@@ -23,7 +23,7 @@
 (function() {
     'use strict';
 
-    angular.module('acjim')
+    angular.module('acjim.toolbar')
         .factory('toolbar', [toolbar]);
 
     function toolbar () {
