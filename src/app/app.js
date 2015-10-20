@@ -30,6 +30,7 @@ var app = angular.module('acjim', [
     'acjim.filehandling',
     'acjim.map',
     'acjim.table',
+    'acjim.toolbar',
     'bgDirectives',
     'acjim.api',
     'ngHtmlWindow',
@@ -37,7 +38,7 @@ var app = angular.module('acjim', [
     'ngAnimate'
 ]);
 
-app.filter('nl2br', require('./app/shared/nl2br.js'));
+angular.module('acjim.toolbar', []);
 
 app.run(function(nwService, $rootScope) {
 
@@ -69,6 +70,9 @@ app.run(function(nwService, $rootScope) {
                     {type:'separator'},
                     {label:'Find', click:'find', modifiers: osModifier, key: 'f'},
                     {label:'Replace', click:'find-replace', modifiers: osModifier + 'alt', key: 'z'}
+                ]},
+                {label:'Operations', items:[
+                    {label:'re-optimization', click:'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'}
                 ]},
                 {label:'Debug', items:[
                     {label:'Show Developer Tools', click:'open-debug', modifiers: osModifier + 'alt', key: 'i'},

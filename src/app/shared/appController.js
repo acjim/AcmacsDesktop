@@ -30,8 +30,9 @@ angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', 'winHandle
 
     // Reload
     $scope.$on('reload-app', function(e, menu, item) {
-        if (location)
+        if (location) {
             location.reload();
+        }
     });
 
     //Close app

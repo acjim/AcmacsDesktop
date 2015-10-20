@@ -92,5 +92,5 @@ html {
   height:20px;
   color: rgb(0,0,128);
   font-weight: bold;
-  position: fixed;
+  position: absolute;
 }

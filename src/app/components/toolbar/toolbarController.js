@@ -24,7 +24,7 @@
     'use strict';
 
 angular
-    .module('acjim')
+    .module('acjim.toolbar')
     .controller('toolbarCtrl', ['$scope', '$rootScope', 'toolbar', 'toolbarItems', toolbarCtrl]);
 
     function toolbarCtrl($scope, $rootScope, toolbar, toolbarItems) {

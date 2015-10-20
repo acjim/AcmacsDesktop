@@ -223,8 +223,9 @@ angular.module('acjim.api', [])
         api.import_user_data = function (input_file, additional_params) {
 
             if(process.platform == "win32") {
+                var path = require('path');
+                var relative = path.relative('.', input_file);
                 //hack: Windows files outside the vagrant shared project folder would need to be copied to it first...
-                input_file = input_file.replace(config.store.projectRoot, '');
                 input_file = input_file.replace(/\\/g, '/');
             }
 
@@ -572,8 +573,8 @@ angular.module('acjim.api', [])
         api.stubOpen = function () {
             var output = {
                 "output_acd1": 'output_concentric.acd1',
-                "table_json": './test/data/output/get_table_concentric.json',
-                "map_json": './test/data/output/get_map.json',
+                "table_json": '../test/data/output/get_table_concentric.json',
+                "map_json": '../test/data/output/get_map.json',
             }
             return output;
         };

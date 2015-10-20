@@ -43,14 +43,18 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
         var filename = 'new.save';
 
         $scope.openMaps.forEach(function(map, index){
-            if(map.active) filename = map.title;
+            if(map.active) {
+                filename = map.title;
+            }
         });
         fileDialog.saveAs($scope.handleFileSave, filename, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     });
 
     $scope.$on('close-file', function(e, menu, item) {
         $scope.openMaps.forEach(function(map, index){
-           if(map.active) $scope.openMaps.splice(index, 1);
+           if(map.active) {
+               $scope.openMaps.splice(index, 1);
+           }
         });
         $scope.$apply();
     });
@@ -62,8 +66,13 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
     };
 
     $scope.handleFileOpen = function(filename) {
+        //open new map in new windows
+        if ($scope.openMaps.length > 0) {
+            window.open('index.html?fileToOpenOnStart='+encodeURIComponent(filename));
+            return;
+        }
         cfpLoadingBar.start();
-        if(!fs.existsSync(config.api.path)) //todo: remove the false
+        if(!fs.existsSync(config.api.path))
         {
             api.asyncTest().then(function(response) {
                 var output = api.stubOpen();
@@ -166,7 +175,26 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
         $scope.openMaps = winHandler.getOpenWindows();
     });
 
-    $scope.handleFileOpen("./test/data/test.save"); //TODO: Remove me, for developmental purposes
+
+    if (config.devMode) {
+        var toOpen = "../test/data/test.save";
+    }
+
+    var Url = {
+        get get(){
+            var vars= {};
+            if(window.location.search.length!==0)
+                window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value){
+                    key=decodeURIComponent(key);
+                    if(typeof vars[key]==="undefined") {vars[key]= decodeURIComponent(value);}
+                    else {vars[key]= [].concat(vars[key], decodeURIComponent(value));}
+                });
+            return vars;
+        }
+    };
+
+    if(!_.isUndefined(Url.get.fileToOpenOnStart)) toOpen = Url.get.fileToOpenOnStart;
+    if(!_.isUndefined(toOpen)) $scope.handleFileOpen(toOpen);
 
     $scope.handleFileSave = function(filename) {
         var fs = require('fs');

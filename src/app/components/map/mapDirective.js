@@ -38,7 +38,7 @@ app.directive('acMap', function() {
         },
         controller: 'mapCtrl',
         controllerAs: 'mapData',
-        template: '<p class="stressLabel">Stress: {{mapData.map.stress || "Undefined Value"}}</p><div d3-map data="d3Data" lable="title"></div>'
+        template: '<p class="stressLabel">Stress: {{(mapData.map.map.stress || "Undefined Value") | number: 3}}</p><div d3-map data="d3Data" lable="title"></div>'
     }
 });
 
@@ -159,10 +159,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         if (d.selected && shiftKey) d3.select(this).classed("selected", d.selected = false);
                     })
                     .call(d3.behavior.drag()
-                        .on("dragstart", function(d) {
+                        .on("dragstart", function() {
                             d3.event.sourceEvent.stopPropagation();
                         })
-                        .on("drag", function(d) {
+                        .on("drag", function() {
                             nudge(d3.event.dx, d3.event.dy);
                         })
                     )
@@ -371,6 +371,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 if(d3.event.preventDefault) d3.event.preventDefault();
 
+                scope.pointsMoved = true;
+
                 if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
                     $rootScope.$emit('api.nudgeTriggeredErrorlines');
                 }
@@ -504,7 +506,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             function DisableSelectedElements(){
                 var flag=0;
                 // Disable Button Functionality
-                d3.selectAll(".selected").each(function(d, i){
+                d3.selectAll(".selected").each(function(d){
                     if (d.style.fill_color != "#bebebe") {
                         flag=1;
                         color=d.style.fill_color;
@@ -534,7 +536,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             function DeleteDisabledNodes(){
                 // loop through all d3 points and remove the ones
-                d3.selectAll(".point").each(function(d, i){
+                d3.selectAll(".point").each(function(d){
                     if (d.style.fill_color == "#bebebe"){
                         d3.select(this).remove();
                     }
@@ -567,7 +569,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 var flag=0;
                 var newMapData = mapDataPoints;
                 for (var c = 0; c < newMapData.length; c++){
-                    d3.selectAll(".selected").each(function(d, i){
+                    d3.selectAll(".selected").each(function(d){
                         if(newMapData[c].name.name == d.name.name){
                             flag=1;
                         }
