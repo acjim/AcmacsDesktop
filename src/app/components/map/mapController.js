@@ -103,7 +103,6 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         // No possibility to draw colors
         colorFlag=0;
     }
-    console.log(map);
 
     if (map) {
 
@@ -131,7 +130,6 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
 
             var node_shape = "circle";
             var node_fill = "#000000";
-            console.log();
             if (colorFlag==1) {
                 node_fill =  colorNodes($scope.d3Data[i].name,year);
             }
