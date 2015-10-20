@@ -103,6 +103,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         alert("not defined");
     }
 
+
     if (map) {
 
         if (_.isUndefined($scope.mapData.map)) return;
