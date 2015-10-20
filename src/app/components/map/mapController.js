@@ -100,7 +100,8 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         colorFlag= 1;
     }
     else {
-        alert("not defined");
+        // No possibility to draw colors
+        colorFlag=0;
     }
 
 
