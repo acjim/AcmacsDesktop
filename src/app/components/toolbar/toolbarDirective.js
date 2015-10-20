@@ -27,7 +27,7 @@
      * @desc Provides the application toolbar
      * @example <div acjim-toolbar options="{...}"></div>
      */
-    angular.module('acjim')
+    angular.module('acjim.toolbar')
         .directive('acjimToolbar', ['toolbar', toolbar]);
 
     function toolbar(toolbar) {

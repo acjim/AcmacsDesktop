@@ -66,8 +66,13 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
     };
 
     $scope.handleFileOpen = function(filename) {
+        //open new map in new windows
+        if ($scope.openMaps.length > 0) {
+            window.open('index.html?fileToOpenOnStart='+encodeURIComponent(filename));
+            return;
+        }
         cfpLoadingBar.start();
-        if(!fs.existsSync(config.api.path)) //todo: remove the false
+        if(!fs.existsSync(config.api.path))
         {
             api.asyncTest().then(function(response) {
                 var output = api.stubOpen();
@@ -171,8 +176,24 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
 
 
     if (config.devMode) {
-        $scope.handleFileOpen("../test/data/test.save");
+        var toOpen = "../test/data/test.save";
     }
+
+    var Url = {
+        get get(){
+            var vars= {};
+            if(window.location.search.length!==0)
+                window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value){
+                    key=decodeURIComponent(key);
+                    if(typeof vars[key]==="undefined") {vars[key]= decodeURIComponent(value);}
+                    else {vars[key]= [].concat(vars[key], decodeURIComponent(value));}
+                });
+            return vars;
+        }
+    };
+
+    if(!_.isUndefined(Url.get.fileToOpenOnStart)) toOpen = Url.get.fileToOpenOnStart;
+    if(!_.isUndefined(toOpen)) $scope.handleFileOpen(toOpen);
 
     $scope.handleFileSave = function(filename) {
         var fs = require('fs');

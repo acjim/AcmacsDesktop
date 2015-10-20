@@ -22,14 +22,14 @@ config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
 if(process.platform == "win32") {
-    config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\";
+    config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\src\\";
     config.api.script = 'vagrant';
     // if this file_path doesn't exist, and environment is development
-    config.api.path = '/vagrant/core/';
+    config.api.path = '/vagrant/src/core/';
     config.api.params = [];
     config.api.params[0] = "ssh";
     config.api.params[1] = "-c";
-    config.api.params[2] = "cd /vagrant/ && /acjim/AcmacsCore.bundle/bin/c2env api-acjim.py ";
+    config.api.params[2] = "cd /vagrant/src/ && /acjim/AcmacsCore.bundle/bin/c2env api-acjim.py ";
 }else{
     config.api.script = './core/AcmacsCore.bundle/bin/c2env';
     // if this file_path doesn't exist, and environment is development
