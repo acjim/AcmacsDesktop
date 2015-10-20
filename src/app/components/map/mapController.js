@@ -103,7 +103,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         // No possibility to draw colors
         colorFlag=0;
     }
-
+    console.log(map);
 
     if (map) {
 
@@ -131,9 +131,9 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
 
             var node_shape = "circle";
             var node_fill = "#000000";
-
+            console.log();
             if (colorFlag==1) {
-                node_fill =  colorNodes(lab,year);
+                node_fill =  colorNodes($scope.d3Data[i].name,year);
             }
             if (!_.isUndefined(map.styles.styles[point].shape)) {
                 node_shape = map.styles.styles[point].shape;
@@ -265,7 +265,6 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         return "rgb("+rgbValueArray.r+","+rgbValueArray.g+","+rgbValueArray.b+")";
 
 }
-    // computing the total if all flags are 1
 
 
     function log20(val) {
