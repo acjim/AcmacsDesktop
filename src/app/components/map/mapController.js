@@ -85,7 +85,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         // TODO: set flash message based on environment
         var error_message = 'Unable to open the file, file import failed!';
         Flash.create('danger', error_message + "<br>\n" + reason);
-        return $q.reject(reason);
+        return (reason);
     };
 
     $scope.d3Data = [];
