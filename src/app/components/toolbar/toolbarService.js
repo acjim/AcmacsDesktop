@@ -84,6 +84,7 @@
                 active: options.active || false,
                 togglable: options.togglable || false,
                 groupID: options.groupID || null,
+                callback: options.callback || null,
                 click: itemClick,
                 select: function(selected) {
                     this.active = selected;
@@ -118,8 +119,8 @@
                 this.toggle();
             }
 
-            if (options.callback != null) {
-                options.callback();
+            if (this.callback != null) {
+                this.callback();
             }
 
         }
