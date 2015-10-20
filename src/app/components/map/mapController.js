@@ -174,70 +174,76 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
     function colorNodes(name,year){
             var h, s, v;
             var firstChar = name.charAt(0);
-
+            var secondChar= name.charAt(1);
+            var initials =  firstChar+secondChar;
             // Computing the Hue Value
             if (isNumeric(firstChar)) {
                 h = firstChar / 10;
             }
             else if (isLetter(firstChar)) {
                 // Case Derek Trolling Dutch People
-                if (name.toUpperCase == "NL" || name.toUpperCase == "BI" || name.toUpperCase == "RD" || name.toUpperCase == "UT" || name.toUpperCase == "AM") {
+
+
+                if (initials.toUpperCase() == "NL" || initials.toUpperCase() == "BI" || initials.toUpperCase() == "RD" || initials.toUpperCase() == "UT" || initials.toUpperCase() == "AM") {
                     h = 0.1;
-                } else if (firstChar.toUpperCase() == "A" ) {
-                    h = 0 / 25;
-                } else if (firstChar.toUpperCase() == "B" ) {
-                    h = 1 / 25;
-                } else if (firstChar.toUpperCase() == "C" ) {
-                    h = 2 / 25;
-                } else if (firstChar.toUpperCase() == "D" ) {
-                    h = 3 / 25;
-                } else if (firstChar.toUpperCase() == "E" ) {
-                    h = 4 / 25;
-                } else if (firstChar.toUpperCase() == "F" ) {
-                    h = 5 / 25;
-                } else if (firstChar.toUpperCase() == "G" ) {
-                    h = 6 / 25;
-                } else if (firstChar.toUpperCase() == "H" ) {
-                    h = 7 / 25;
-                } else if (firstChar.toUpperCase() == "I" ) {
-                    h = 8 / 25;
-                } else if (firstChar.toUpperCase() == "J") {
-                    h = 9 / 25;
-                } else if (firstChar.toUpperCase() == "K") {
-                    h = 10 / 25;
-                } else if (firstChar.toUpperCase() == "L") {
-                    h = 11 / 25;
-                } else if (firstChar.toUpperCase() == "M") {
-                    h = 12 / 25;
-                } else if (firstChar.toUpperCase() == "N") {
-                    h = 13 / 25;
-                } else if (firstChar.toUpperCase() == "O") {
-                    h = 14 / 25;
-                } else if (firstChar.toUpperCase() == "P") {
-                    h = 15 / 25;
-                } else if (firstChar.toUpperCase() == "Q") {
-                    h = 16 / 25;
-                } else if (firstChar.toUpperCase() == "R") {
-                    h = 17 / 25;
-                } else if (firstChar.toUpperCase() == "S") {
-                    h = 18 / 25;
-                } else if (firstChar.toUpperCase() == "T") {
-                    h = 19 / 25;
-                } else if (firstChar.toUpperCase() == "U") {
-                    h = 20 / 25;
-                } else if (firstChar.toUpperCase() == "V") {
-                    h = 21 / 25;
-                } else if (firstChar.toUpperCase() == "W") {
-                    h = 22 / 25;
-                } else if (firstChar.toUpperCase() == "X") {
-                    h = 23 / 25;
-                } else if (firstChar.toUpperCase() == "Y") {
-                    h = 24 / 25;
-                } else if (firstChar.toUpperCase() == "Z") {
-                    h = 25 / 25;
-                }
-                else {
-                    // we don't have a way to compute the H value, meaning we can't compute the color
+
+                }else{
+                     if (firstChar.toUpperCase() == "A" ) {
+                        h = 0 / 25;
+                    } else if (firstChar.toUpperCase() == "B" ) {
+                        h = 1 / 25;
+                    } else if (firstChar.toUpperCase() == "C" ) {
+                        h = 2 / 25;
+                    } else if (firstChar.toUpperCase() == "D" ) {
+                        h = 3 / 25;
+                    } else if (firstChar.toUpperCase() == "E" ) {
+                        h = 4 / 25;
+                    } else if (firstChar.toUpperCase() == "F" ) {
+                        h = 5 / 25;
+                    } else if (firstChar.toUpperCase() == "G" ) {
+                        h = 6 / 25;
+                    } else if (firstChar.toUpperCase() == "H" ) {
+                        h = 7 / 25;
+                    } else if (firstChar.toUpperCase() == "I" ) {
+                        h = 8 / 25;
+                    } else if (firstChar.toUpperCase() == "J") {
+                        h = 9 / 25;
+                    } else if (firstChar.toUpperCase() == "K") {
+                        h = 10 / 25;
+                    } else if (firstChar.toUpperCase() == "L") {
+                        h = 11 / 25;
+                    } else if (firstChar.toUpperCase() == "M") {
+                        h = 12 / 25;
+                    } else if (firstChar.toUpperCase() == "N") {
+                        h = 13 / 25;
+                    } else if (firstChar.toUpperCase() == "O") {
+                        h = 14 / 25;
+                    } else if (firstChar.toUpperCase() == "P") {
+                        h = 15 / 25;
+                    } else if (firstChar.toUpperCase() == "Q") {
+                        h = 16 / 25;
+                    } else if (firstChar.toUpperCase() == "R") {
+                        h = 17 / 25;
+                    } else if (firstChar.toUpperCase() == "S") {
+                        h = 18 / 25;
+                    } else if (firstChar.toUpperCase() == "T") {
+                        h = 19 / 25;
+                    } else if (firstChar.toUpperCase() == "U") {
+                        h = 20 / 25;
+                    } else if (firstChar.toUpperCase() == "V") {
+                        h = 21 / 25;
+                    } else if (firstChar.toUpperCase() == "W") {
+                        h = 22 / 25;
+                    } else if (firstChar.toUpperCase() == "X") {
+                        h = 23 / 25;
+                    } else if (firstChar.toUpperCase() == "Y") {
+                        h = 24 / 25;
+                    } else if (firstChar.toUpperCase() == "Z") {
+                        h = 25 / 25;
+                    }
+                    else {
+                        // we don't have a way to compute the H value, meaning we can't compute the color
+                    }
                 }
             } else {
                 // Not Numeric and not Alphabet, meaning it is special charachters. Not taken into consideration
