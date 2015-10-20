@@ -37,6 +37,13 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
      * Watches for a the reoptimize button
      */
     $scope.$on('api.reoptimize', function() {
+        reoptimize();
+    });
+
+    /**
+     * Calls api to reoptimize (relax)
+     */
+    function reoptimize(){
         cfpLoadingBar.start();
 
         var additional_params = {number_of_dimensions: 2, number_of_optimizations: 7, best_map: true};
@@ -53,16 +60,44 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
                 cfpLoadingBar.complete();
             });
         });
+    }
+
+    /**
+     * Watches for a the errorlines button
+     */
+    $rootScope.$on('api.geterrorlines', function() {
+        if($rootScope.errorlinesShown != true) {
+            getErrorConnectionlines();
+        }
     });
 
     /**
-     * Watches for a the errorlines and connectionlines buttons
+     * Watches for a the connectionlines button
      */
-    $rootScope.$on('api.geterrorlines', function() {
+    $rootScope.$on('api.getconnectionlines', function() {
+        if($rootScope.connectionlinesShown != true) {
+            getErrorConnectionlines();
+        }
+    });
+
+    /**
+     * Watches for moved nodes while lines are displayed
+     */
+    $rootScope.$on('api.nudgeTriggeredErrorlines', function() {
+        reoptimize();
+        getErrorConnectionlines();
+    });
+
+    /**
+     * Calls api to get data for error and connection lines
+     */
+    function getErrorConnectionlines(){
         $scope.d3Data.d3Errorlines = [];
         $scope.d3Data.d3Connectionlines = [];
 
         cfpLoadingBar.start();
+
+        // get projection number?
 
         var additional_params = {};
         api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
@@ -75,7 +110,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', funct
                 cfpLoadingBar.complete();
             });
         });
-    });
+    }
 
 
 

@@ -303,19 +303,19 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 elementGroup = svg.append("g");
 
-                nodeGroup = elementGroup.append("g")
-                    .attr("class", "node")
-                    .selectAll(".node");
+                connectionlineGroup = elementGroup.append("g")
+                    .attr("class", "connectionline")
+                    .attr("id", "connectionlineLayer")
+                    .selectAll(".connectionline");
 
                 errorlineGroup = elementGroup.append("g")
                     .attr("class", "errorline")
                     .attr("id", "errorlineLayer")
                     .selectAll(".errorline");
 
-                connectionlineGroup = elementGroup.append("g")
-                    .attr("class", "connectionline")
-                    .attr("id", "connectionlineLayer")
-                    .selectAll(".connectionline");
+                nodeGroup = elementGroup.append("g")
+                    .attr("class", "node")
+                    .selectAll(".node");
 
                 //better way to set this hidden upon start?
                 $('#errorlineLayer').css({'visibility': 'hidden'});
@@ -370,6 +370,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     });
 
                 if(d3.event.preventDefault) d3.event.preventDefault();
+
+                if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
+                    $rootScope.$emit('api.nudgeTriggeredErrorlines');
+                }
 
             }
 
@@ -597,6 +601,31 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 GetNewDataFromCurrentMap(scope.data);
             });
 
+            /**
+             * Watches for errorline button to show/hide layer and set flag
+             */
+            $rootScope.$on('api.geterrorlines', function(){
+                if ($('#errorlineLayer').css('visibility') == 'hidden'){
+                    $('#errorlineLayer').css({'visibility': 'visible'});
+                    $rootScope.errorlinesShown = true;
+                }else{
+                    $('#errorlineLayer').css({'visibility':'hidden'});
+                    $rootScope.errorlinesShown = false;
+                }
+            });
+
+            /**
+             * Watches for connectionline button to show/hide layer and set flag
+             */
+            $rootScope.$on('api.getconnectionlines', function(){
+                if ($('#connectionlineLayer').css('visibility') == 'hidden'){
+                    $('#connectionlineLayer').css({'visibility': 'visible'});
+                    $rootScope.connectionlinesShown = true;
+                }else{
+                    $('#connectionlineLayer').css({'visibility':'hidden'});
+                    $rootScope.connectionlinesShown = false;
+                }
+            });
 
             /**
              * Watches for a tool change

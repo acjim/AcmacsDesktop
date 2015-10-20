@@ -63,12 +63,7 @@ angular
                         icon: 'glyphicon glyphicon-transfer',
                         togglable: true,
                         callback: function () {
-                            if ($('#errorlineLayer').css('visibility') == 'hidden'){
-                                $('#errorlineLayer').css({'visibility': 'visible'});
-                                $rootScope.$emit('api.geterrorlines');
-                            }else{
-                                $('#errorlineLayer').css({'visibility':'hidden'})
-                            }
+                            $rootScope.$emit('api.geterrorlines');
                         }
                     },
                     {
@@ -77,12 +72,7 @@ angular
                         icon: 'glyphicon glyphicon glyphicon-road',
                         togglable: true,
                         callback: function () {
-                            if ($('#connectionlineLayer').css('visibility') == 'hidden'){
-                                $('#connectionlineLayer').css({'visibility': 'visible'});
-                                $rootScope.$emit('api.geterrorlines');
-                            }else{
-                                $('#connectionlineLayer').css({'visibility':'hidden'})
-                            }
+                            $rootScope.$emit('api.getconnectionlines');
                         }
                     }
                 ]
