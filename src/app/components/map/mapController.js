@@ -182,11 +182,8 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
             }
             else if (isLetter(firstChar)) {
                 // Case Derek Trolling Dutch People
-
-
                 if (initials.toUpperCase() == "NL" || initials.toUpperCase() == "BI" || initials.toUpperCase() == "RD" || initials.toUpperCase() == "UT" || initials.toUpperCase() == "AM") {
                     h = 0.1;
-
                 }else{
                      if (firstChar.toUpperCase() == "A" ) {
                         h = 0 / 25;
