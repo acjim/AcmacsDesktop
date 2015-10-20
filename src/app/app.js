@@ -30,6 +30,7 @@ var app = angular.module('acjim', [
     'acjim.filehandling',
     'acjim.map',
     'acjim.table',
+    'acjim.toolbar',
     'bgDirectives',
     'acjim.api',
     'ngHtmlWindow',
@@ -37,7 +38,7 @@ var app = angular.module('acjim', [
     'ngAnimate'
 ]);
 
-app.filter('nl2br', require('./app/shared/nl2br.js'));
+angular.module('acjim.toolbar', []);
 
 app.run(function(nwService, $rootScope) {
 
