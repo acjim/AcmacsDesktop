@@ -170,7 +170,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
 
         // Setting the color using the Hue Saturation Value Scheme
     }
-
+        // function to color the nodess
     function colorNodes(name,year){
             var h, s, v;
             var firstChar = name.charAt(0);
