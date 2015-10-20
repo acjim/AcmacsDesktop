@@ -84,26 +84,12 @@
                 active: options.active || false,
                 togglable: options.togglable || false,
                 groupID: options.groupID || null,
-                click: function() {
-
-                    if (this.groupID != null && groups[this.groupID]) {
-                        groupSelectItem(this.groupID, this);
-                    };
-
-                    if (this.togglable) {
-                        this.toggle();
-                    }
-
-                    if (options.callback != null) {
-                        options.callback();
-                    }
-
-                },
+                click: itemClick,
                 select: function(selected) {
                     this.active = selected;
                 },
                 isButtonGroup: function() {
-                    return this.type == 'buttonGroup'
+                    return this.type === 'buttonGroup'
                 },
                 toggle: function() {
                     this.select(!this.active);
@@ -116,6 +102,25 @@
             }
 
             return toolbarItem;
+
+        }
+
+        /**
+         * Function that is called when an item is clicked
+         */
+        function itemClick() {
+
+            if (this.groupID != null && groups[this.groupID]) {
+                groupSelectItem(this.groupID, this);
+            }
+
+            if (this.togglable) {
+                this.toggle();
+            }
+
+            if (options.callback != null) {
+                options.callback();
+            }
 
         }
 
@@ -173,7 +178,7 @@
          */
         function getActiveItemFromGroup(groupID) {
 
-            var activeItem = _.find(groups[groupID], function(item) { return item.active == true; });
+            var activeItem = _.find(groups[groupID], function(item) { return item.active === true; });
 
             if (!activeItem) {
                 return { id: -1 };
@@ -183,15 +188,6 @@
 
         }
 
-
-        /**
-         * Gets the item with the specified ID from the items array
-         * @param itemID
-         * @returns {*} item object if found or undefined, if not found
-         */
-        function getItem(itemID) {
-            return _.find(items, function(item) { return item.id == itemID; });
-        }
 
     }
 

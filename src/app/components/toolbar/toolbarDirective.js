@@ -39,7 +39,7 @@
         };
         return directive;
 
-        function link(scope, element) {
+        function link(scope) {
 
             scope.$watch(toolbar.getAllItems(), function() {
                 scope.items = toolbar.getAllItems();
