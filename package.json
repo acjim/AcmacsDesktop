@@ -1,20 +1,30 @@
 {
-    "name": "AcmacsDesktop",
-    "description": "A desktop app for antigenic cartography",
-    "version": "0.3.0",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/acjim/AcmacsDesktop.git"
-    },
-    "license": "MIT",
-    "scripts": {
-        "postinstall": "(cd src && npm install)",
-        "start": "nw src",
-        "test": ""
-    },
-    "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-nw-builder": "^2.0.0",
-        "nw": "~0.12"
-    }
+  "name": "AcmacsDesktop",
+  "description": "A desktop app for antigenic cartography",
+  "version": "0.3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/acjim/AcmacsDesktop.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "(cd src && npm install)",
+    "start": "./node_modules/.bin/nw src",
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4",
+    "grunt": "~0.4",
+    "grunt-contrib-watch": "~0.6",
+    "grunt-karma": "~0.12",
+    "grunt-nw-builder": "^2.0.0",
+    "karma": "~0.13",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-jasmine": "~0.3",
+    "karma-junit-reporter": "~0.3",
+    "karma-phantomjs-launcher": "~0.2",
+    "karma-requirejs": "^0.2.2",
+    "nw": "~0.12",
+    "requirejs": "^2.1.20"
+  }
 }
