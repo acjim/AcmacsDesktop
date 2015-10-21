@@ -37,7 +37,7 @@ npm install
 ### Run Grunt
 The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
 ```
-grunt
+grunt build
 ```
 
 # License
