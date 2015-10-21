@@ -12,7 +12,7 @@
 var config = {};
 
 config.store = {};
-config.devMode = 'true';
+config.devMode = process.env.DEV_MODE === 'true';
 config.debug = {};
 config.api = {};
 

@@ -61,12 +61,11 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         api.new_projection(additional_params, $scope.mapData.acd1).then(function (output) {
             var output_json = output.output_json;
             var output_acd1 = output.output_acd1;
+            $scope.mapData.acd1 = output_acd1;
             var fs = require('fs');
             fs.readFile(output_json, 'utf8', function (err, data) {
                 var mapJsonData = JSON.parse(data);
-                var projection = mapJsonData.projection;
-                var stress = mapJsonData.projection;
-                //$scope.mapData.map.stress = stress;
+                $scope.projection = mapJsonData.projection;
                 //TODO set projection for all new_projection call
             });
 
@@ -78,7 +77,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
                     var mapJsonData = JSON.parse(data);
                     // relax returns list of stresses for number of optimizations performed.
                     var stress = mapJsonData.stresses[0];
-                    $scope.mapData.map.map.map.stress = stress;
+                    $scope.mapData.map.map.stress = stress;
                     mapJsonData.best_map.layout.forEach(function (layout, i) {
                         $scope.d3Data.d3Nodes[i].x = layout[0];
                         $scope.d3Data.d3Nodes[i].y = layout[1];
@@ -126,6 +125,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
      */
     $rootScope.$on('api.nudgeTriggeredErrorlines', function() {
         reoptimize();
+        console.log($scope.projection);
         getErrorConnectionlines();
     });
 
