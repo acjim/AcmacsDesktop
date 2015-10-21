@@ -72,7 +72,7 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
             return;
         }
         cfpLoadingBar.start();
-        if(!fs.existsSync(config.api.path))
+        if(false && !fs.existsSync(config.api.path))
         {
             api.asyncTest().then(function(response) {
                 var output = api.stubOpen();
