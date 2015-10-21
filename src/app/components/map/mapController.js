@@ -110,7 +110,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         if($rootScope.errorlinesShown != true) {
             getErrorConnectionlines();
         }
-    }
+    });
 
     /**
      * Watches for a the connectionlines button
@@ -138,8 +138,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
 
         cfpLoadingBar.start();
 
-        // get projection number?
-
+        //TODO set projection number from scope
         var additional_params = {};
         api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
             fs.readFile(filename, 'utf8', function (err, data) {
