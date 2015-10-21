@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('acjim').service('nwService', ['$rootScope', '$q', function($rootScope, $q)  {
+angular.module('acjim').service('nwService', ['$rootScope', function($rootScope)  {
 
     // Expose gui and main window
     var gui = this.gui = require("nw.gui");

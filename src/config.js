@@ -12,7 +12,7 @@
 var config = {};
 
 config.store = {};
-config.devMode = 'true';
+config.devMode = process.env.DEV_MODE === 'true';
 config.debug = {};
 config.api = {};
 
@@ -22,7 +22,7 @@ config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
 if(process.platform == "win32") {
-    config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\src\\";
+    config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\";
     config.api.script = 'vagrant';
     // if this file_path doesn't exist, and environment is development
     config.api.path = '/vagrant/src/core/';

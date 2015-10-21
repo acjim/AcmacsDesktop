@@ -27,7 +27,7 @@ var app = angular.module('acjim', [
     'ngRoute',
     'ui.bootstrap',
     'DWand.nw-fileDialog',
-    'acjim.filehandling',
+    'acjim.fileHandling',
     'acjim.map',
     'acjim.table',
     'acjim.toolbar',
@@ -71,8 +71,10 @@ app.run(function(nwService, $rootScope) {
                     {label:'Find', click:'find', modifiers: osModifier, key: 'f'},
                     {label:'Replace', click:'find-replace', modifiers: osModifier + 'alt', key: 'z'}
                 ]},
-                {label:'Operations', items:[
-                    {label:'re-optimization', click:'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'}
+                {label:'Backend', items:[
+                    {label:'Reoptimization Map', click:'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'},
+                    {label:'Show Error Lines', click:'api.geterrorlines'},
+                    {label:'Show Connection Lines', click:'api.getconnectionlines'}
                 ]},
                 {label:'Debug', items:[
                     {label:'Show Developer Tools', click:'open-debug', modifiers: osModifier + 'alt', key: 'i'},
