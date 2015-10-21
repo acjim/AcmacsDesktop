@@ -108,8 +108,7 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
                     //under unix, asyncronous is faster
                     $q.all([
                         api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
-                        api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1),
-                        api.execute(api.get_commands().ERROR_LINES, map_additional_params, output.output_acd1)
+                        api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
                     ]).then(function (data) {
                         var output_table_json = data[0];
                         var output_map_json = data[1];
