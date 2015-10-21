@@ -27,10 +27,25 @@ var app = angular.module('acjim.map',['flash']);
 app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flash', function($rootScope, $scope, cfpLoadingBar, api, Flash) {
 
 
+    $scope.d3Data = {};
+    $scope.d3Data.d3Nodes = [];
+
+    var fs = require('fs');
+    var colorFlag=0;
+    var lab,year;
+    var map = $scope.mapData.map.map.map;
+
     /**
      * Watches for a the reoptimize button
      */
-    $scope.$on('api.reoptimize', function () {
+    $scope.$on('api.reoptimize', function() {
+        reoptimize();
+    });
+
+    /**
+     * Calls api to reoptimize (relax)
+     */
+    function reoptimize(){
         cfpLoadingBar.start();
 
         var list = [];
@@ -65,8 +80,8 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
                     var stress = mapJsonData.stresses[0];
                     $scope.mapData.map.map.map.stress = stress;
                     mapJsonData.best_map.layout.forEach(function (layout, i) {
-                        $scope.d3Data[i].x = layout[0];
-                        $scope.d3Data[i].y = layout[1];
+                        $scope.d3Data.d3Nodes[i].x = layout[0];
+                        $scope.d3Data.d3Nodes[i].y = layout[1];
                     });
                     cfpLoadingBar.complete();
                 });
@@ -77,7 +92,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         }, function (reason) {
             return $scope.errorReason(reason);
         });
-    });
+    }
 
     // TODO: temporariliy located here error needs to be handled globally
     $scope.errorReason = function (reason) {
@@ -88,11 +103,56 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         return (reason);
     };
 
-    $scope.d3Data = [];
+    /**
+     * Watches for a the errorlines button
+     */
+    $rootScope.$on('api.geterrorlines', function() {
+        if($rootScope.errorlinesShown != true) {
+            getErrorConnectionlines();
+        }
+    });
 
-    var colorFlag=0;
-    var lab,year;
-    var map = $scope.mapData.map.map.map;
+    /**
+     * Watches for a the connectionlines button
+     */
+    $rootScope.$on('api.getconnectionlines', function() {
+        if($rootScope.connectionlinesShown != true) {
+            getErrorConnectionlines();
+        }
+    });
+
+    /**
+     * Watches for moved nodes while lines are displayed
+     */
+    $rootScope.$on('api.nudgeTriggeredErrorlines', function() {
+        reoptimize();
+        getErrorConnectionlines();
+    });
+
+    /**
+     * Calls api to get data for error and connection lines
+     */
+    function getErrorConnectionlines(){
+        $scope.d3Data.d3Errorlines = [];
+        $scope.d3Data.d3Connectionlines = [];
+
+        cfpLoadingBar.start();
+
+        //TODO set projection number from scope
+        var additional_params = {};
+        api.execute(api.get_commands().ERROR_LINES, additional_params, $scope.mapData.acd1).then(function (filename) {
+            fs.readFile(filename, 'utf8', function (err, data) {
+                var mapJsonData = JSON.parse(data);
+                // relax returns array of error_lines.
+                $scope.mapData.map.error_lines = mapJsonData.error_lines;
+                calculateLines();
+
+                cfpLoadingBar.complete();
+            });
+        });
+    }
+
+
 
     if ($scope.mapData.map.table.info.lab && $scope.mapData.map.table.info.date){
          lab = $scope.mapData.map.table.info.lab;
@@ -109,7 +169,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         if (_.isUndefined($scope.mapData.map)) return;
 
         map.layout.forEach(function (layout, i) {
-            $scope.d3Data[i] = {
+            $scope.d3Data.d3Nodes[i] = {
                 "x": layout[0],
                 "y": layout[1]
             };
@@ -123,7 +183,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
                 node_name = point_info.name;
             }
 
-            $scope.d3Data[i].name = node_name;
+            $scope.d3Data.d3Nodes[i].name = node_name;
         });
 
         map.styles.points.forEach(function (point, i) {
@@ -131,20 +191,21 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
             var node_shape = "circle";
             var node_fill = "#000000";
             if (colorFlag==1) {
-                node_fill =  colorNodes($scope.d3Data[i].name,year);
+                node_fill =  colorNodes($scope.d3Data.d3Nodes[i].name,year);
             }
             if (!_.isUndefined(map.styles.styles[point].shape)) {
                 node_shape = map.styles.styles[point].shape;
             }
 
-            $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
+            $scope.d3Data.d3Nodes[i].style = {shape: node_shape, fill_color: node_fill};
         });
+
         // checking if the drawing order is available
         if (!_.isUndefined(map.styles.drawing_order)) {
             // In case the drawing_order is defined, we order the nodes based on their drawing order.
             var order_list = map.styles.drawing_order[0].concat(map.styles.drawing_order[1]);
             var length = order_list.length;
-            if ($scope.d3Data.length == length) {
+            if ($scope.d3Data.d3Nodes.length == length) {
                 // start a bubble sort.
                 // The start of the sorting of drawing order following Bubble sort algorithm
                 for (var i = 0; i < length; i++) {
@@ -155,9 +216,9 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
                             order_list[j - 1] = order_list[j];
                             order_list[j] = temp;
                             // swapping the data
-                            temp = $scope.d3Data[j - 1];
-                            $scope.d3Data[j - 1] = $scope.d3Data[j];
-                            $scope.d3Data[j] = temp;
+                            temp = $scope.d3Data.d3Nodes[j - 1];
+                            $scope.d3Data.d3Nodes[j - 1] = $scope.d3Data.d3Nodes[j];
+                            $scope.d3Data.d3Nodes[j] = temp;
                         }
                     }
                 }
@@ -310,5 +371,211 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
         };
     }
 
+     /**
+     * Calculate error and connection lines
+     */
+    function calculateLines() {
+        var errorlines = $scope.mapData.map.error_lines;
+        var positive,
+            connect,
+            colour,
+            selected = {},
+            connection = {},
+            pointsConnected = {};
+
+        // Determine the sign of the error.
+        // Created different calculation because Eugene was using on matrices on SVG DOM elements. (I think..)
+        // Didn't want to touch DOM from here.
+        positive = function (p1, p2, probe) {
+            var dxa, dya, dxb, dyb, cross;
+
+            // Assumption:
+            // p1 and p2 are connected points
+            // probe is the end of Error_Line, from viewpoint of p1
+            // if probe lies on line inbetween points = red
+            // if probe lies outside and is further away from p2 than p1 = blue
+
+            // first check if probe is on line that runs through p1 and p2
+            dxa = probe[0] - p1[0];
+            dya = probe[1] - p1[1];
+
+            dxb = p2[0] - p1[0];
+            dyb = p2[1] - p1[1];
+
+            cross = dxa * dyb - dya * dxb;
+            //if cross equals zero, point is on line
+
+            // compare x and y coordinates, whether probe lies between p1 and p2
+            if (Math.abs(dxb) >= Math.abs(dyb)){
+                if(dxb > 0){
+                    return(
+                        (p1[0] <= probe[0] && probe[0] <= p2[0]) ||
+                        (p2[0] <= probe[0] && probe[0] <= pq[0])
+                    );
+                }
+
+            }else {
+                if(dyb > 0) {
+                    return(
+                        (p1[1] <= probe[1] && probe[1] <= p2[1]) ||
+                        (p2[1] <= probe[1] && probe[1] <= p1[1])
+                    );
+                }
+            }
+        }
+
+        //Connect lines (error/connection) in one direction
+        connect = function(arg){
+            var
+            // The set of pre-calculated error line endpoints pointing to the
+            // opposite end of each of the the current point's connections
+                errorLineEnd,
+
+            // The co-ordinates of the current line's origin
+                from,
+
+            // The co-ordinates of the current line's destination
+                to,
+
+                nAntigens = errorlines.antigens.length,
+                nSera = errorlines.sera.length,
+
+                originIndex,
+                destIndex,
+                o, d;
+
+            for (o = 0; o < errorlines[arg.from].length; o += 1) {
+                if (arg.from === 'antigens') {
+                    originIndex = o;
+                }
+                else {
+                    originIndex = nAntigens + o;
+                }
+
+                from = map.layout[originIndex];
+                pointsConnected[from] = true;
+
+                // Cache this point's selection status to reduce complex property
+                // look-ups.
+                selected[originIndex] = true;
+
+                errorLineEnd = errorlines[arg.from][o];
+                for (d = 0; d < errorLineEnd.length; d += 1) {
+                    if (arg.from === 'antigens') {
+                        destIndex = nAntigens + d;
+                    }
+                    else {
+                        destIndex = d;
+                    }
+
+                    if (
+                        connection[originIndex + ':' + destIndex] ||
+                        connection[destIndex + ':' + originIndex]
+                    ) {
+                        // This connection has already been plotted.
+                        continue;
+                    }
+
+                    to = map.layout[destIndex];
+
+                    if (positive(from, to, errorLineEnd[d])) {
+                        colour = 'red';
+                    }
+                    else {
+                        colour = 'blue';
+                    }
+
+                    $scope.d3Data.d3Connectionlines.push({
+                        //start: [from[0], from[1]],
+                        //end: to,
+                        x1: from[0],
+                        y1: from[1],
+                        x2: to[0],
+                        y2: to[1],
+                        stroke: 'grey',
+                        width: 0.4,
+                        opacity: 1.0
+                    });
+
+                    $scope.d3Data.d3Errorlines.push({
+                        //start: [from[0], from[1]],
+                        //end: errorLineEnd[d],
+                        x1: from[0],
+                        y1: from[1],
+                        x2: errorLineEnd[d][0],
+                        y2: errorLineEnd[d][1],
+                        stroke: colour,
+                        width: 0.6,
+                        opacity: 1.0
+                    });
+
+                    // Mark this connection to allow testing for duplicates.
+                    connection[originIndex + ':' + destIndex] = true;
+                }
+            } // for each origin: connection lines or the near-end error lines
+
+            // Render the error lines at the opposite end of each connection
+            for (d = 0; d < errorlines[arg.to].length; d += 1) {
+                if (arg.from === 'antigens') {
+                    destIndex = nAntigens + d;
+                }
+                else {
+                    destIndex = d;
+                }
+                to = map.layout[destIndex];
+
+                errorLineEnd = errorlines[arg.to][d];
+                for (o = 0; o < errorLineEnd.length; o += 1) {
+                    if (arg.from === 'antigens') {
+                        originIndex = o;
+                    }
+                    else {
+                        originIndex = nAntigens + o;
+                    }
+                    from = map.layout[originIndex];
+
+                    if (connection[destIndex + ':' + originIndex]) {
+                        // This connection has already been plotted.
+                        continue;
+                    }
+
+                    // This filter selects only the error lines corresponding to selected points
+                    if (selected[originIndex]) {
+                        // Note the reversal of `to` and `from` in this case.
+                        if (positive(to, from, errorLineEnd[o])) {
+                            colour = 'red';
+                        }
+                        else {
+                            colour = 'blue';
+                        }
+
+                        $scope.d3Data.d3Errorlines.push({
+                            //start: [to[0], to[1]],
+                            //end: errorLineEnd[o],
+                            x1: to[0],
+                            y1: to[1],
+                            x2: errorLineEnd[o][0],
+                            y2: errorLineEnd[o][1],
+                            stroke: colour,
+                            width: 0.6,
+                            opacity: 1.0
+                        });
+                    }
+                }
+            } // renderErrorLines (at the opposite end)
+
+        } //connet lines
+
+        //probs leaving this out or moving it to different point
+        if (!map || !errorlines) {
+            console.log(map);
+            console.log('ConnectionsLayer: bailing out because there is no data to plot');
+            return false;
+        }
+
+        // First, draw the error lines for antigens
+        connect({from: 'antigens', to: 'sera'});
+        connect({from: 'sera', to: 'antigens'});
+    }
 
 }]);

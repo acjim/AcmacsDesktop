@@ -55,6 +55,29 @@ angular
                 ]
             },
             {
+                type: "buttonGroup",
+                buttons: [
+                    {
+                        id: toolbarItems.SHOW_ERROR_LINES,
+                        caption: 'Show Error Lines',
+                        icon: 'glyphicon glyphicon-transfer',
+                        togglable: true,
+                        callback: function () {
+                            $rootScope.$emit('api.geterrorlines');
+                        }
+                    },
+                    {
+                        id: toolbarItems.SHOW_CONNECTION_LINES,
+                        caption: 'Show Connection Lines',
+                        icon: 'glyphicon glyphicon glyphicon-road',
+                        togglable: true,
+                        callback: function () {
+                            $rootScope.$emit('api.getconnectionlines');
+                        }
+                    }
+                ]
+            },
+            {
                 id: 2,
                 caption: 'Sample Button',
                 icon: 'glyphicon glyphicon-heart',

@@ -38,7 +38,9 @@
             //// GROUPS ////
             MAP_TOOLS: 7,
             DISABLE_MAP: 8,
-            NEW_MAP: 9
+            NEW_MAP: 9,
+            //// Another Button... ////
+            SHOW_CONNECTION_LINES: 10,
         };
 
         return tools;
