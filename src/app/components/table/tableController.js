@@ -31,20 +31,6 @@ app.controller('tableCtrl', ['$scope', function($scope) {
 
 .directive('acTable', function() {
     return {
-        link: function(scope, iElement) {
-
-            scope.editItem = function (obj) {
-                obj.target.setAttribute("contenteditable", true);
-                obj.target.focus();
-                var element  = angular.element(event.currentTarget);
-                element.bind("keydown keypress", function (event) {
-                    if(event.which === 13 || event.which === 27) {
-                        obj.target.setAttribute("contenteditable", false);
-                        event.preventDefault();
-                    }
-                });
-            }
-        },
         restrict: 'E',
         transclude: true,
         scope: {},
@@ -53,6 +39,27 @@ app.controller('tableCtrl', ['$scope', function($scope) {
         },
         controller: 'tableCtrl',
         controllerAs: 'tableData',
-        templateUrl: './app/components/table/tableView.html'
+        templateUrl: './app/components/table/tableView.html',
+        link: function(scope, iElement) {
+            scope.editItem = function (obj, parent_index, index) {
+                obj.target.setAttribute("contenteditable", true);
+                obj.target.focus();
+                var element  = angular.element(event.currentTarget);
+                element.bind("keydown keypress", function (event) {
+                    if(event.which === 13 || event.which === 27) {
+                        obj.target.setAttribute("contenteditable", false);
+                        event.preventDefault();
+                        if(scope.tableData.table.titers.titers_list_of_list)
+                        {
+                            scope.tableData.table.titers.titers_list_of_list[parent_index][index]= element.text();
+                        } else if(scope.tableData.table.titers.titers_list_of_dict)
+                        {
+                            scope.tableData.table.titers.titers_list_of_dict[parent_index][index]= element.text();
+                        }
+                        scope.$apply();
+                    }
+                });
+            }
+        }
     }
 });
