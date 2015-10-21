@@ -1,0 +1,21 @@
+<div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Antigens/Sera</th>
+            <th ng-repeat="sera in tableData.table.sera"><span class="fullsize" tooltip-placement="bottom" tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="antigen in tableData.table.antigens">
+            <td width="10%"><span class="fullsize" tooltip-placement="right" tooltip="{{antigen.name || antigen.raw_name}}">{{antigen.name || antigen.raw_name  | limitTo: 10}}</span></td>
+            <td width="10%" ng-if="tableData.table.titers.titers_list_of_list" ng-repeat="titer in tableData.table.titers.titers_list_of_list[$index] track by $index">
+                <span ng-dblclick="editItem($event)">{{titer}}</span>
+            </td>
+            <td width="10%" ng-if="tableData.table.titers.titers_list_of_dict" ng-repeat="titer in tableData.table.titers.titers_list_of_dict[$index] track by $index">
+                <span ng-dblclick="editItem($event)">{{titer}}</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

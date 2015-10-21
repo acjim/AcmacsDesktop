@@ -1,0 +1,4 @@
+{
+  "command": "export",
+  "data" :{"filename": "data/export_test.sav", "format": "lispmds"}
+}
