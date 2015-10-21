@@ -139,13 +139,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup.enter().append("path")
                     .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("fill", function(d){ return d.style.fill_color })
+                    .attr("stroke", "#474747")
+                    .attr("name", function(d){ return d.name })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
                             if (d.style.shape == "circle") { return "circle"; }
                             else if (d.style.shape == "box") { return "square"; }
-                        }))
-                    .attr("fill", function(d){ return d.style.fill_color })
-                    .attr("name", function(d){ return d.name });
+                        }));
 
 
                 // mouse event handlers
