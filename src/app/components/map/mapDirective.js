@@ -144,16 +144,19 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("name", function(d){ return d.name })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
-                            if (d.style.shape == "circle") { return "circle"; }
-                            else if (d.style.shape == "box") { return "square"; }
+                            if (d.style.shape === "circle") { return "circle"; }
+                            else if (d.style.shape === "box") { return "square"; }
                         }));
 
 
                 // mouse event handlers
                 nodeGroup.on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
-                            if (!shiftKey) nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
-                            else d3.select(this).classed("selected", d.selected = true);
+                            if (!shiftKey) {
+                                nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
+                            } else {
+                                d3.select(this).classed("selected", d.selected = true);
+                            }
                         }
                     })
                     .on("mouseup", function(d) {
@@ -524,7 +527,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         flag=1;
                     }
                 });
-                if (flag==0){
+                if (flag===0){
                     alert("Please Select at least One Node Before Clicking on Disable");
                 }
             }
@@ -538,7 +541,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             function DeleteDisabledNodes(){
                 // loop through all d3 points and remove the ones
                 d3.selectAll(".point").each(function(d){
-                    if (d.style.fill_color == "#bebebe"){
+                    if (d.style.fill_color === "#bebebe"){
                         d3.select(this).remove();
                     }
                 })
@@ -553,7 +556,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             function GetNewMapElementsAfterDisable(mapDataPoints){
                 var newMapData = mapDataPoints;
                 for (var c = 0; c < newMapData.length; c++){
-                    if (newMapData[c].style.fill_color == "#bebebe") {
+                    if (newMapData[c].style.fill_color === "#bebebe") {
                         newMapData.splice(c, 1);
                         c= c-1;
                     }
@@ -571,7 +574,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 var newMapData = mapDataPoints;
                 for (var c = 0; c < newMapData.length; c++){
                     d3.selectAll(".selected").each(function(d){
-                        if(newMapData[c].name.name == d.name.name){
+                        if(newMapData[c].name.name === d.name.name){
                             flag=1;
                         }
                     });
@@ -608,7 +611,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * Watches for errorline button to show/hide layer and set flag
              */
             $rootScope.$on('api.geterrorlines', function(){
-                if ($('#errorlineLayer').css('visibility') == 'hidden'){
+                if ($('#errorlineLayer').css('visibility') === 'hidden'){
                     $('#errorlineLayer').css({'visibility': 'visible'});
                     $rootScope.errorlinesShown = true;
                 }else{
@@ -621,7 +624,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * Watches for connectionline button to show/hide layer and set flag
              */
             $rootScope.$on('api.getconnectionlines', function(){
-                if ($('#connectionlineLayer').css('visibility') == 'hidden'){
+                if ($('#connectionlineLayer').css('visibility') === 'hidden'){
                     $('#connectionlineLayer').css({'visibility': 'visible'});
                     $rootScope.connectionlinesShown = true;
                 }else{
