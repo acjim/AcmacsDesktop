@@ -223,9 +223,10 @@ angular.module('acjim.api', [])
         api.import_user_data = function (input_file, additional_params) {
 
             if(process.platform == "win32") {
+                var path = require('path');
+                var relative = path.relative('.', input_file);
                 //hack: Windows files outside the vagrant shared project folder would need to be copied to it first...
-                input_file = input_file.replace(config.store.projectRoot, '');
-                input_file = input_file.replace(/\\/g, '/');
+                input_file = relative.replace(/\\/g, '/');
             }
 
             var deferred = $q.defer();
@@ -234,7 +235,7 @@ angular.module('acjim.api', [])
             var input_param_file = this.create_input_parameter(command, additional_params, input_file);
 
             // callback function for exec
-            function puts(error, stdout, stderr) {
+            function puts(error) {
                 if (error) {
                     // @todo handle error/exception properly
                     //this.emit('error', error);
@@ -326,7 +327,7 @@ angular.module('acjim.api', [])
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
             // callback function for exec
-            function puts(error, stdout, stderr) {
+            function puts(error) {
                 if (error) {
                     // @todo handle error/exception properly
                     //this.emit('error', error);
@@ -493,7 +494,9 @@ angular.module('acjim.api', [])
             var script = config.api.script;
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
+            var file = output_acd1.split('/').pop();
+            file = file.substr(0, file.lastIndexOf("_"));
+            var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "up");
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
@@ -523,13 +526,17 @@ angular.module('acjim.api', [])
          */
         api.create_file_path = function (path, file_name, extension, command) {
             var file = file_name.split('/').pop();
+            if(file.substr(0, file.lastIndexOf(".")).length > 0)
+            {
+                file = file.substr(0, file.lastIndexOf("."));
+            }
             var date_now = DATE_NOW;
             // remove import param from generated file
             if(command == COMMANDS.IMPORT)
             {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + date_now + extension;
+                var output = path + file + '_' + date_now + extension;
             } else {
-                var output = path + file.substr(0, file.lastIndexOf(".")) + '_' + command + '_' + date_now + extension;
+                var output = path + file + '_' + command + '_' + date_now + extension;
             }
 
             return output;

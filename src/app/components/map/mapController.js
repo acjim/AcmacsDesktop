@@ -20,284 +20,302 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-'use strict';
+(function() {
+    'use strict';
 
-var app = angular.module('acjim.map',['flash']);
+    angular.module('acjim.map',[])
+        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', mapCtrl]);
 
-app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flash', function($rootScope, $scope, cfpLoadingBar, api, Flash) {
+    function mapCtrl ($rootScope, $scope, fileHandling) {
 
 
-    /**
-     * Watches for a the reoptimize button
-     */
-    $scope.$on('api.reoptimize', function () {
-        cfpLoadingBar.start();
+        $scope.d3Data = {};
+        $scope.d3Data.d3Nodes = [];
 
-        var list = [];
-        $scope.d3Data.forEach(function (layout, i) {
-            list[i] = [
-                layout.x,
-                layout.y
-            ];
+        var colorFlag = 0;
+        var lab, year;
+        var map = $scope.mapData.map.map;
+
+        /**
+         * Watches for a the reoptimize button
+         */
+        $scope.$on('api.reoptimize', function () {
+            fileHandling.reOptimize($scope.d3Data);
         });
 
-        //TODO get projection from scope
-        var additional_params = {coordinates: list, projection: 0};
-        api.new_projection(additional_params, $scope.mapData.acd1).then(function (output) {
-            var output_json = output.output_json;
-            var output_acd1 = output.output_acd1;
-            var fs = require('fs');
-            fs.readFile(output_json, 'utf8', function (err, data) {
-                var mapJsonData = JSON.parse(data);
-                var projection = mapJsonData.projection;
-                var stress = mapJsonData.projection;
-                //$scope.mapData.map.stress = stress;
-                //TODO set projection for all new_projection call
+
+        /**
+         * Watches for a the errorlines button
+         */
+        $rootScope.$on('api.geterrorlines', function () {
+            if ($rootScope.errorlinesShown != true) {
+                $scope.d3Data.d3Errorlines = [];
+                $scope.d3Data.d3Connectionlines = [];
+
+                getErrorConnectionLines();
+            }
+        });
+
+        /**
+         * Watches for a the connectionlines button
+         */
+        $rootScope.$on('api.getconnectionlines', function () {
+            if ($rootScope.connectionlinesShown != true) {
+                getErrorConnectionLines();
+            }
+        });
+
+        /**
+         * Watches for moved nodes while lines are displayed
+         */
+        $rootScope.$on('api.nudgeTriggeredErrorlines', function () {
+            fileHandling.reOptimize($scope.d3Data);
+            console.log($scope.projection);
+            getErrorConnectionLines();
+        });
+
+
+        function getErrorConnectionLines() {
+            fileHandling.getErrorConnectionlines($scope.mapData.map).then(function (result) {
+                $scope.d3Data.d3Errorlines = result.d3ErrorLines;
+                $scope.d3Data.d3Connectionlines = result.d3ConnectionLines;
+            });
+        }
+
+
+        //if ($scope.mapData.map.table.info.lab && $scope.mapData.map.table.info.date){
+        //     lab = $scope.mapData.map.table.info.lab;
+        //     year = $scope.mapData.map.table.info.date;
+        //    colorFlag= 1;
+        //}
+        //else {
+        //    // No possibility to draw colors
+        //    colorFlag=0;
+        //}
+
+        if (map) {
+
+            if (_.isUndefined($scope.mapData.map)) {
+                return;
+            }
+
+            $scope.d3Data.stress = $scope.mapData.map.stress;
+
+            map.layout.forEach(function (layout, i) {
+                $scope.d3Data.d3Nodes[i] = {
+                    "x": layout[0],
+                    "y": layout[1]
+                };
             });
 
-            //TODO projection number should be passed further into relax function which is missing projection parameter
-            var relax_additional_params = {number_of_dimensions: 2, number_of_optimizations: 3, best_map: true};
-            api.execute(api.get_commands().RELAX, relax_additional_params, output_acd1).then(function (filename) {
-                var fs = require('fs');
-                fs.readFile(filename, 'utf8', function (err, data) {
-                    var mapJsonData = JSON.parse(data);
-                    // relax returns list of stresses for number of optimizations performed.
-                    var stress = mapJsonData.stresses[0];
-                    $scope.mapData.map.stress = stress;
-                    mapJsonData.best_map.layout.forEach(function (layout, i) {
-                        $scope.d3Data[i].x = layout[0];
-                        $scope.d3Data[i].y = layout[1];
-                    });
-                    cfpLoadingBar.complete();
-                });
-            }, function (reason) {
-                return $scope.errorReason(reason);
+            map.point_info.forEach(function (point_info, i) {
+
+                var node_name = "undefined";
+
+                if (!_.isUndefined(point_info.name)) {
+                    node_name = point_info.name;
+                }
+
+                $scope.d3Data.d3Nodes[i].name = node_name;
             });
 
-        }, function (reason) {
-            return $scope.errorReason(reason);
-        });
-    });
+            map.styles.points.forEach(function (point, i) {
 
-    // TODO: temporariliy located here error needs to be handled globally
-    $scope.errorReason = function (reason) {
-        cfpLoadingBar.complete();
-        // TODO: set flash message based on environment
-        var error_message = 'Unable to open the file, file import failed!';
-        Flash.create('danger', error_message + "<br>\n" + reason);
-        return $q.reject(reason);
-    };
+                var node_shape = "circle";
+                var node_fill = "#000000";
+                if (colorFlag == 1) {
+                    node_fill = colorNodes($scope.d3Data.d3Nodes[i].name, year);
+                }
+                if (!_.isUndefined(map.styles.styles[point].shape)) {
+                    node_shape = map.styles.styles[point].shape;
+                }
 
-    $scope.d3Data = [];
+                $scope.d3Data.d3Nodes[i].style = {shape: node_shape, fill_color: node_fill};
+            });
 
-    var map = $scope.mapData.map.map;
-
-    if (map) {
-
-        if (_.isUndefined($scope.mapData.map)) return;
-
-        map.layout.forEach(function (layout, i) {
-            $scope.d3Data[i] = {
-                "x": layout[0],
-                "y": layout[1]
-            };
-        });
-
-        map.point_info.forEach(function (point_info, i) {
-
-            var node_name = "undefined";
-
-            if (!_.isUndefined(point_info.name)) {
-                node_name = point_info.name;
-            }
-
-            $scope.d3Data[i].name = node_name;
-        });
-
-        map.styles.points.forEach(function (point, i) {
-
-            var node_shape = "circle";
-            var node_fill = "#000000";
-
-            if (!_.isUndefined(map.styles.styles[point].fill_color)) {
-                node_fill = map.styles.styles[point].fill_color[0];
-            }
-            if (!_.isUndefined(map.styles.styles[point].shape)) {
-                node_shape = map.styles.styles[point].shape;
-            }
-
-            $scope.d3Data[i].style = {shape: node_shape, fill_color: node_fill};
-        });
-        // checking if the drawing order is available
-        if (!_.isUndefined(map.styles.drawing_order)) {
-            // In case the drawing_order is defined, we order the nodes based on their drawing order.
-            var order_list = map.styles.drawing_order[0].concat(map.styles.drawing_order[1]);
-            var length = order_list.length;
-            if ($scope.d3Data.length == length) {
-                // start a bubble sort.
-                // The start of the sorting of drawing order following Bubble sort algorithm
-                for (var i = 0; i < length; i++) {
-                    for (var j = (length - 1); j > 0; j--) {
-                        if (order_list[j] < order_list[j - 1]) {
-                            // swapping the order_list  to keep the reference
-                            var temp = order_list[j - 1];
-                            order_list[j - 1] = order_list[j];
-                            order_list[j] = temp;
-                            // swapping the data
-                            temp = $scope.d3Data[j - 1];
-                            $scope.d3Data[j - 1] = $scope.d3Data[j];
-                            $scope.d3Data[j] = temp;
+            // checking if the drawing order is available
+            if (!_.isUndefined(map.styles.drawing_order)) {
+                // In case the drawing_order is defined, we order the nodes based on their drawing order.
+                var order_list = map.styles.drawing_order[0].concat(map.styles.drawing_order[1]);
+                var length = order_list.length;
+                if ($scope.d3Data.d3Nodes.length == length) {
+                    // start a bubble sort.
+                    // The start of the sorting of drawing order following Bubble sort algorithm
+                    for (var i = 0; i < length; i++) {
+                        for (var j = (length - 1); j > 0; j--) {
+                            if (order_list[j] < order_list[j - 1]) {
+                                // swapping the order_list  to keep the reference
+                                var temp = order_list[j - 1];
+                                order_list[j - 1] = order_list[j];
+                                order_list[j] = temp;
+                                // swapping the data
+                                temp = $scope.d3Data.d3Nodes[j - 1];
+                                $scope.d3Data.d3Nodes[j - 1] = $scope.d3Data.d3Nodes[j];
+                                $scope.d3Data.d3Nodes[j] = temp;
+                            }
                         }
                     }
                 }
-            } else {
-                // keep ordering in default, meaning we don't do anything
             }
+
         }
 
-        // Setting the color using the Hue Saturation Value Scheme
-        if (!_.isUndefined($scope.table)) {
-            // Missing Isolate
-            // $scope.info.assay;
-            var name = $scope.table.info.assay;
-            var isolate = $scope.table.info.assay;
-            var year = $scope.table.info.date;
+
+        // function to color the nodes
+        function colorNodes(name, year) {
             var h, s, v;
             var firstChar = name.charAt(0);
-
+            var secondChar = name.charAt(1);
+            var initials = firstChar + secondChar;
             // Computing the Hue Value
             if (isNumeric(firstChar)) {
                 h = firstChar / 10;
             }
             else if (isLetter(firstChar)) {
                 // Case Derek Trolling Dutch People
-                if (name.toUpperCase == "NL" || name.toUpperCase == "BI" || name.toUpperCase == "RD" || name.toUpperCase == "UT" || name.toUpperCase == "AM") {
+                if (initials.toUpperCase() == "NL" || initials.toUpperCase() == "BI" || initials.toUpperCase() == "RD" || initials.toUpperCase() == "UT" || initials.toUpperCase() == "AM") {
                     h = 0.1;
-                } else if (firstChar.toUpperCase() == "A" || firstChar == "A") {
-                    h = 0 / 25;
-                } else if (firstChar.toUpperCase() == "B" || firstChar == "B") {
-                    h = 2 / 25;
-                } else if (firstChar.toUpperCase() == "C" || firstChar == "C") {
-                    h = 3 / 25;
-                } else if (firstChar.toUpperCase() == "D" || firstChar == "D") {
-                    h = 4 / 25;
-                } else if (firstChar.toUpperCase() == "E" || firstChar == "E") {
-                    h = 5 / 25;
-                } else if (firstChar.toUpperCase() == "F" || firstChar == "F") {
-                    h = 6 / 25;
-                } else if (firstChar.toUpperCase() == "G" || firstChar == "G") {
-                    h = 7 / 25;
-                } else if (firstChar.toUpperCase() == "H" || firstChar == "H") {
-                    h = 8 / 25;
-                } else if (firstChar.toUpperCase() == "I" || firstChar == "I") {
-                    h = 9 / 25;
-                } else if (firstChar.toUpperCase() == "J" || firstChar == "J") {
-                    h = 10 / 25;
-                } else if (firstChar.toUpperCase() == "K" || firstChar == "K") {
-                    h = 11 / 25;
-                } else if (firstChar.toUpperCase() == "L" || firstChar == "L") {
-                    h = 12 / 25;
-                } else if (firstChar.toUpperCase() == "M" || firstChar == "M") {
-                    h = 13 / 25;
-                } else if (firstChar.toUpperCase() == "N" || firstChar == "N") {
-                    h = 1 / 25;
-                } else if (firstChar.toUpperCase() == "O" || firstChar == "O") {
-                    h = 14 / 25;
-                } else if (firstChar.toUpperCase() == "P" || firstChar == "P") {
-                    h = 15 / 25;
-                } else if (firstChar.toUpperCase() == "Q" || firstChar == "Q") {
-                    h = 16 / 25;
-                } else if (firstChar.toUpperCase() == "R" || firstChar == "R") {
-                    h = 17 / 25;
-                } else if (firstChar.toUpperCase() == "S" || firstChar == "S") {
-                    h = 18 / 25;
-                } else if (firstChar.toUpperCase() == "T" || firstChar == "T") {
-                    h = 19 / 25;
-                } else if (firstChar.toUpperCase() == "U" || firstChar == "U") {
-                    h = 20 / 25;
-                } else if (firstChar.toUpperCase() == "V" || firstChar == "V") {
-                    h = 21 / 25;
-                } else if (firstChar.toUpperCase() == "W" || firstChar == "W") {
-                    h = 22 / 25;
-                } else if (firstChar.toUpperCase() == "X" || firstChar == "X") {
-                    h = 23 / 25;
-                } else if (firstChar.toUpperCase() == "Y" || firstChar == "Y") {
-                    h = 24 / 25;
-                } else if (firstChar.toUpperCase() == "Z" || firstChar == "Z") {
-                    h = 25 / 25;
-                }
-                else {
-                    // we don't have a way to compute the H value, meaning we can't compute the color
+                } else {
+                    if (firstChar.toUpperCase() == "A") {
+                        h = 0 / 25;
+                    } else if (firstChar.toUpperCase() == "B") {
+                        h = 1 / 25;
+                    } else if (firstChar.toUpperCase() == "C") {
+                        h = 2 / 25;
+                    } else if (firstChar.toUpperCase() == "D") {
+                        h = 3 / 25;
+                    } else if (firstChar.toUpperCase() == "E") {
+                        h = 4 / 25;
+                    } else if (firstChar.toUpperCase() == "F") {
+                        h = 5 / 25;
+                    } else if (firstChar.toUpperCase() == "G") {
+                        h = 6 / 25;
+                    } else if (firstChar.toUpperCase() == "H") {
+                        h = 7 / 25;
+                    } else if (firstChar.toUpperCase() == "I") {
+                        h = 8 / 25;
+                    } else if (firstChar.toUpperCase() == "J") {
+                        h = 9 / 25;
+                    } else if (firstChar.toUpperCase() == "K") {
+                        h = 10 / 25;
+                    } else if (firstChar.toUpperCase() == "L") {
+                        h = 11 / 25;
+                    } else if (firstChar.toUpperCase() == "M") {
+                        h = 12 / 25;
+                    } else if (firstChar.toUpperCase() == "N") {
+                        h = 13 / 25;
+                    } else if (firstChar.toUpperCase() == "O") {
+                        h = 14 / 25;
+                    } else if (firstChar.toUpperCase() == "P") {
+                        h = 15 / 25;
+                    } else if (firstChar.toUpperCase() == "Q") {
+                        h = 16 / 25;
+                    } else if (firstChar.toUpperCase() == "R") {
+                        h = 17 / 25;
+                    } else if (firstChar.toUpperCase() == "S") {
+                        h = 18 / 25;
+                    } else if (firstChar.toUpperCase() == "T") {
+                        h = 19 / 25;
+                    } else if (firstChar.toUpperCase() == "U") {
+                        h = 20 / 25;
+                    } else if (firstChar.toUpperCase() == "V") {
+                        h = 21 / 25;
+                    } else if (firstChar.toUpperCase() == "W") {
+                        h = 22 / 25;
+                    } else if (firstChar.toUpperCase() == "X") {
+                        h = 23 / 25;
+                    } else if (firstChar.toUpperCase() == "Y") {
+                        h = 24 / 25;
+                    } else if (firstChar.toUpperCase() == "Z") {
+                        h = 25 / 25;
+                    }
+                    else {
+                        // we don't have a way to compute the H value, meaning we can't compute the color
+                    }
                 }
             } else {
                 // Not Numeric and not Alphabet, meaning it is special charachters. Not taken into consideration
             }
 
 
-        } else {
-            // we can't compute the color.
+            /* Saturation Temporary not being Taken into consideration. Refer to Pr. Moore
+             // computing the Saturation
+             if(!isNumeric(isolate)){
+             s=0.5;
+             } else{
+             s=(log20(isolate)/5);
+             }*/
+            // saturation being given the maximum value now as suggested by Pr.Moore
+            s = 1;
+            // Computing the Value
+            var splitedYear = year.split("-");
+            v = 1;
+            for (var i = 0; i < splitedYear.length; i++) {
+                if (!isNumeric(splitedYear[i])) {
+                    v = 0;
+                }
+            }
+            var rgbValueArray = HSVtoRGB(h, s, v);
+            return "rgb(" + rgbValueArray.r + "," + rgbValueArray.g + "," + rgbValueArray.b + ")";
+
         }
-    }
-
-    // computing the Saturation
-    if(!isNumeric(isolate)){
-        s=0.5;
-    } else{
-        s=(log20(isolate)/5);
-    }
-
-    // Computing the Value
-    if (isNumeric(year)){
-        v=1;
-    }
-    else{
-        v=0;
-    }
-
-    // computing the total if all flags are 1
 
 
-    function log20(val) {
-        return (Math.log(n)) / (Math.log(20));
-    }
-
-    function isNumeric(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
-
-    function isLetter(letter) {
-        if (letter.toLowerCase() != letter) {
-            return true;
+        function log20(val) {
+            return (Math.log(n)) / (Math.log(20));
         }
-        else {
-            return false;
+
+        function isNumeric(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
         }
-    }
-    // HSVtoRGB
-    function HSVtoRGB(h, s, v) {
-        var r, g, b, i, f, p, q, t;
-        if (arguments.length === 1) {
-            s = h.s, v = h.v, h = h.h;
+
+        function isLetter(letter) {
+            if (letter.toLowerCase() != letter) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-        switch (i % 6) {
-            case 0: r = v, g = t, b = p; break;
-            case 1: r = q, g = v, b = p; break;
-            case 2: r = p, g = v, b = t; break;
-            case 3: r = p, g = q, b = v; break;
-            case 4: r = t, g = p, b = v; break;
-            case 5: r = v, g = p, b = q; break;
+
+        // HSVtoRGB
+        function HSVtoRGB(h, s, v) {
+            var r, g, b, i, f, p, q, t;
+            if (arguments.length === 1) {
+                s = h.s, v = h.v, h = h.h;
+            }
+            i = Math.floor(h * 6);
+            f = h * 6 - i;
+            p = v * (1 - s);
+            q = v * (1 - f * s);
+            t = v * (1 - (1 - f) * s);
+            switch (i % 6) {
+                case 0:
+                    r = v, g = t, b = p;
+                    break;
+                case 1:
+                    r = q, g = v, b = p;
+                    break;
+                case 2:
+                    r = p, g = v, b = t;
+                    break;
+                case 3:
+                    r = p, g = q, b = v;
+                    break;
+                case 4:
+                    r = t, g = p, b = v;
+                    break;
+                case 5:
+                    r = v, g = p, b = q;
+                    break;
+            }
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
         }
-        return {
-            r: Math.round(r * 255),
-            g: Math.round(g * 255),
-            b: Math.round(b * 255)
-        };
+
     }
 
-
-}]);
+})();

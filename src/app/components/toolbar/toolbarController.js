@@ -24,7 +24,7 @@
     'use strict';
 
 angular
-    .module('acjim')
+    .module('acjim.toolbar')
     .controller('toolbarCtrl', ['$scope', '$rootScope', 'toolbar', 'toolbarItems', toolbarCtrl]);
 
     function toolbarCtrl($scope, $rootScope, toolbar, toolbarItems) {
@@ -35,7 +35,7 @@ angular
                 buttons: [
                     {
                         id: toolbarItems.SELECTION,
-                        caption: 'Selection Tool',
+                        caption: 'Selection',
                         active: true,
                         groupID: toolbarItems.MAP_TOOLS,
                         icon: 'glyphicon glyphicon-unchecked',
@@ -45,7 +45,7 @@ angular
                     },
                     {
                         id: toolbarItems.MOVEMENT,
-                        caption: 'Movement Tool',
+                        caption: 'Movement',
                         groupID: toolbarItems.MAP_TOOLS,
                         icon: 'glyphicon glyphicon-move',
                         callback: function () {
@@ -55,14 +55,31 @@ angular
                 ]
             },
             {
-                id: 2,
-                caption: 'Sample Button',
-                icon: 'glyphicon glyphicon-heart',
-                togglable: true
+                type: "buttonGroup",
+                buttons: [
+                    {
+                        id: toolbarItems.SHOW_ERROR_LINES,
+                        caption: 'Show Error Lines',
+                        icon: 'glyphicon glyphicon-transfer',
+                        togglable: true,
+                        callback: function () {
+                            $rootScope.$emit('api.geterrorlines');
+                        }
+                    },
+                    {
+                        id: toolbarItems.SHOW_CONNECTION_LINES,
+                        caption: 'Show Connection Lines',
+                        icon: 'glyphicon glyphicon glyphicon-road',
+                        togglable: true,
+                        callback: function () {
+                            $rootScope.$emit('api.getconnectionlines');
+                        }
+                    }
+                ]
             },
             {
                 id: 8,
-                caption: 'Disable Nodes Button',
+                caption: 'Disable Nodes',
                 icon: 'glyphicon glyphicon-option-vertical',
                 togglable: false,
                 callback: function () {

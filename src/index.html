@@ -16,7 +16,7 @@
 <body ng-controller="appCtrl">
 
 <div class="container-fluid">
-    <div class="row" ng-controller="filehandlingCtrl">
+    <div class="row">
         <!-- sidebar -->
         <div class="col-sm-2 col-md-2 col-xs-2 sidebar" ng-controller="toolbarCtrl">
             <div acjim-toolbar></div>
@@ -25,16 +25,16 @@
         <!-- workspace -->
         <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 col-xs-10 cols-xs-offset-2 fullWindowZone">
             <div flash-message="5000" class="flash-msg"></div>
-            <ng-html-window ng-repeat="openFile in openMaps" options="openFile.options">
+            <ng-html-window ng-repeat="map in openMaps" options="winOptions">
                 <bg-splitter orientation="horizontal">
                     <bg-pane min-size="10" style="overflow-y: scroll">
                         <div class="pane-container">
-                            <ac-table table="openFile.table.table"></ac-table>
+                            <ac-table table="tableData"></ac-table>
                         </div>
                     </bg-pane>
                     <bg-pane min-size="150">
                         <div class="pane-container">
-                            <div ac-map acd1="openFile.acd1" map="openFile.map"></div>
+                            <div ac-map map="map"></div>
                         </div>
                     </bg-pane>
                 </bg-splitter>
@@ -51,7 +51,7 @@
 <script src="node_modules/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="node_modules/d3/d3.js"></script>
 <script src="node_modules/jquery/dist/jquery.js"></script>
-<script src="./app/components/filehandling/fileDialog.js"></script>
+<script src="app/components/fileHandling/fileDialog.js"></script>
 <script src="node_modules/angular-flash-alert/dist/angular-flash.min.js"></script>
 <script src="node_modules/angular-html-window/src/ngHtmlWindow.js"></script>
 
@@ -70,10 +70,9 @@
 <script src="./app/shared/nwService.js"></script>
 <script src="./app/components/toolbar/toolbarItems.js"></script>
 <script src="./app/components/toolbar/toolbarService.js"></script>
-<script src="./app/shared/winHandlerService.js"></script>
+<script src="app/components/fileHandling/fileHandlingService.js"></script>
 
 <!-- controllers -->
-<script src="./app/components/filehandling/filehandlingController.js"></script>
 <script src="./app/components/toolbar/toolbarController.js"></script>
 <script src="./app/components/map/mapController.js"></script>
 <script src="./app/components/table/tableController.js"></script>

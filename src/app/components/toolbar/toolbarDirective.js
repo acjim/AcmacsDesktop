@@ -27,7 +27,7 @@
      * @desc Provides the application toolbar
      * @example <div acjim-toolbar options="{...}"></div>
      */
-    angular.module('acjim')
+    angular.module('acjim.toolbar')
         .directive('acjimToolbar', ['toolbar', toolbar]);
 
     function toolbar(toolbar) {
@@ -39,7 +39,7 @@
         };
         return directive;
 
-        function link(scope, element) {
+        function link(scope) {
 
             scope.$watch(toolbar.getAllItems(), function() {
                 scope.items = toolbar.getAllItems();
