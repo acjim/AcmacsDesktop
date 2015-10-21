@@ -29,20 +29,20 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
 
     $scope.showTable = true;
 
-    $scope.$on('new-file', function(e, menu, item) {
+    $scope.$on('new-file', function() {
 
         winHandler.addEmptyWindow();
         $scope.$apply();
     });
 
-    $scope.$on('open-file', function(e, menu, item) {
+    $scope.$on('open-file', function() {
         fileDialog.openFile($scope.handleFileOpen, false, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     });
 
-    $scope.$on('save-file', function(e, menu, item) {
+    $scope.$on('save-file', function() {
         var filename = 'new.save';
 
-        $scope.openMaps.forEach(function(map, index){
+        $scope.openMaps.forEach(function(map){
             if(map.active) {
                 filename = map.title;
             }
@@ -50,7 +50,7 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
         fileDialog.saveAs($scope.handleFileSave, filename, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
     });
 
-    $scope.$on('close-file', function(e, menu, item) {
+    $scope.$on('close-file', function() {
         $scope.openMaps.forEach(function(map, index){
            if(map.active) {
                $scope.openMaps.splice(index, 1);
@@ -138,6 +138,7 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
 
     $scope.readFile = function(filename) {
         var deferred = $q.defer();
+        var fs = require('fs');
         fs.readFile(filename, 'utf8', function (err,data) {
             deferred.resolve(data);
         });
@@ -145,7 +146,6 @@ app.controller('filehandlingCtrl', ['$rootScope', '$scope', '$q', 'fileDialog', 
     };
 
     $scope.handleOpenComplete = function(output) {
-        var fs = require('fs');
         var output_acd1 = output.output_acd1;
         // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
         var table_filename = output.table_json;

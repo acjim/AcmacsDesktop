@@ -18,7 +18,7 @@ angular.module('bgDirectives', [])
                     return $scope.panes.length;
                 };
       }],
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 var handler = angular.element('<div class="split-handler"></div>');
                 var pane1 = scope.panes[0];
                 var pane2 = scope.panes[1];
@@ -67,7 +67,7 @@ angular.module('bgDirectives', [])
                     drag = true;
                 });
 
-                angular.element(document).bind('mouseup', function (ev) {
+                angular.element(document).bind('mouseup', function () {
                     drag = false;
                 });
             }

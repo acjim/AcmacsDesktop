@@ -235,7 +235,7 @@ angular.module('acjim.api', [])
             var input_param_file = this.create_input_parameter(command, additional_params, input_file);
 
             // callback function for exec
-            function puts(error, stdout, stderr) {
+            function puts(error) {
                 if (error) {
                     // @todo handle error/exception properly
                     //this.emit('error', error);
@@ -327,7 +327,7 @@ angular.module('acjim.api', [])
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
             // callback function for exec
-            function puts(error, stdout, stderr) {
+            function puts(error) {
                 if (error) {
                     // @todo handle error/exception properly
                     //this.emit('error', error);

@@ -21,22 +21,22 @@
 */
 'use strict';
 
-angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', 'winHandler', function($scope, nwService, winHandler) {
+angular.module('acjim').controller('appCtrl', ['$scope', 'nwService', function($scope, nwService) {
 
     // Open Debug Window
-    $scope.$on('open-debug', function(e, menu, item) {
+    $scope.$on('open-debug', function() {
         nwService.gui.Window.get().showDevTools();
     });
 
     // Reload
-    $scope.$on('reload-app', function(e, menu, item) {
+    $scope.$on('reload-app', function() {
         if (location) {
             location.reload();
         }
     });
 
     //Close app
-    $scope.$on('exit-app', function(e, menu, item) {
+    $scope.$on('exit-app', function() {
         nwService.gui.Window.get().close();
     });
 
