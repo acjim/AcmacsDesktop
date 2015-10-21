@@ -56,8 +56,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
             ];
         });
 
-        //TODO get projection from scope
-        var additional_params = {coordinates: list, projection: 0};
+        var additional_params = {coordinates: list, projection: $scope.projection};
         api.new_projection(additional_params, $scope.mapData.acd1).then(function (output) {
             var output_json = output.output_json;
             var output_acd1 = output.output_acd1;
@@ -66,28 +65,32 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
             fs.readFile(output_json, 'utf8', function (err, data) {
                 var mapJsonData = JSON.parse(data);
                 $scope.projection = mapJsonData.projection;
-                //TODO set projection for all new_projection call
             });
 
-            //TODO projection number should be passed further into relax function which is missing projection parameter
-            var relax_additional_params = {number_of_dimensions: 2, number_of_optimizations: 3, best_map: true};
-            api.execute(api.get_commands().RELAX, relax_additional_params, output_acd1).then(function (filename) {
-                var fs = require('fs');
-                fs.readFile(filename, 'utf8', function (err, data) {
-                    var mapJsonData = JSON.parse(data);
-                    // relax returns list of stresses for number of optimizations performed.
-                    var stress = mapJsonData.stresses[0];
-                    $scope.mapData.map.map.stress = stress;
-                    mapJsonData.best_map.layout.forEach(function (layout, i) {
-                        $scope.d3Data.d3Nodes[i].x = layout[0];
-                        $scope.d3Data.d3Nodes[i].y = layout[1];
+            //if($scope.pointsMoved){
+            //    // relax based on current projection
+            //    //TODO projection number should be passed further into relax function which is missing projection parameter
+            //} else {
+                var relax_additional_params = {number_of_dimensions: 2, number_of_optimizations: 3, best_map: true};
+                api.execute(api.get_commands().RELAX, relax_additional_params, output_acd1).then(function (filename) {
+                    var fs = require('fs');
+                    fs.readFile(filename, 'utf8', function (err, data) {
+                        var mapJsonData = JSON.parse(data);
+                        // relax returns list of stresses for number of optimizations performed.
+                        var stress = mapJsonData.stresses[0];
+                        $scope.mapData.map.map.stress = stress;
+                        mapJsonData.best_map.layout.forEach(function (layout, i) {
+                            $scope.d3Data.d3Nodes[i].x = layout[0];
+                            $scope.d3Data.d3Nodes[i].y = layout[1];
+                        });
+                        cfpLoadingBar.complete();
                     });
-                    cfpLoadingBar.complete();
+                }, function (reason) {
+                    return $scope.errorReason(reason);
                 });
-            }, function (reason) {
-                return $scope.errorReason(reason);
-            });
-
+            //}
+            // set pointsmoved as false once the reoptimization is done.
+            $scope.pointsMoved = false;
         }, function (reason) {
             return $scope.errorReason(reason);
         });
