@@ -37,8 +37,6 @@ var app = angular.module('acjim', [
     'ngAnimate'
 ]);
 
-app.filter('nl2br', require('./app/shared/nl2br.js'));
-
 app.run(function(nwService, $rootScope) {
 
     var osModifier = process.platform == 'darwin' ? 'cmd' : 'ctrl';
