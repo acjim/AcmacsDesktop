@@ -78,7 +78,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
                     var mapJsonData = JSON.parse(data);
                     // relax returns list of stresses for number of optimizations performed.
                     var stress = mapJsonData.stresses[0];
-                    $scope.mapData.map.map.map.stress = stress;
+                    $scope.mapData.map.map.stress = stress;
                     mapJsonData.best_map.layout.forEach(function (layout, i) {
                         $scope.d3Data.d3Nodes[i].x = layout[0];
                         $scope.d3Data.d3Nodes[i].y = layout[1];
@@ -126,6 +126,7 @@ app.controller('mapCtrl', ['$rootScope', '$scope', 'cfpLoadingBar', 'api', 'Flas
      */
     $rootScope.$on('api.nudgeTriggeredErrorlines', function() {
         reoptimize();
+        console.log($scope.projection);
         getErrorConnectionlines();
     });
 
