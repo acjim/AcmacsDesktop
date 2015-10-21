@@ -226,7 +226,7 @@ angular.module('acjim.api', [])
                 var path = require('path');
                 var relative = path.relative('.', input_file);
                 //hack: Windows files outside the vagrant shared project folder would need to be copied to it first...
-                input_file = input_file.replace(/\\/g, '/');
+                input_file = relative.replace(/\\/g, '/');
             }
 
             var deferred = $q.defer();

@@ -35,7 +35,7 @@ angular
                 buttons: [
                     {
                         id: toolbarItems.SELECTION,
-                        caption: 'Selection Tool',
+                        caption: 'Selection',
                         active: true,
                         groupID: toolbarItems.MAP_TOOLS,
                         icon: 'glyphicon glyphicon-unchecked',
@@ -45,7 +45,7 @@ angular
                     },
                     {
                         id: toolbarItems.MOVEMENT,
-                        caption: 'Movement Tool',
+                        caption: 'Movement',
                         groupID: toolbarItems.MAP_TOOLS,
                         icon: 'glyphicon glyphicon-move',
                         callback: function () {
@@ -78,14 +78,8 @@ angular
                 ]
             },
             {
-                id: 2,
-                caption: 'Sample Button',
-                icon: 'glyphicon glyphicon-heart',
-                togglable: true
-            },
-            {
                 id: 8,
-                caption: 'Disable Nodes Button',
+                caption: 'Disable Nodes',
                 icon: 'glyphicon glyphicon-option-vertical',
                 togglable: false,
                 callback: function () {
