@@ -16,12 +16,12 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             '../src/node_modules/angular/angular.js',
-            '../node_modules/angular-mocks/angular-mocks.js'
+            '../node_modules/angular-mocks/angular-mocks.js',
             // Add your modules to test here:
             //'../src/app/componenteXY/*.js',
 
             //Add the spec files here:
-            //'unit/**/*.spec.js'
+            'unit/**/*.spec.js'
         ],
 
 
