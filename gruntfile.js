@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         clean: {
             options: { force: true },
             build: ["./build"],
-            package: ["./publish"]
+            package: ["./release"]
         },
         nwjs: {
             options: {
@@ -28,7 +28,8 @@ module.exports = function(grunt) {
                 platforms: platforms,
                 buildDir: './build', // Where the build version of my NW.js app is save
                 macZip: true,
-                macIcns: './assets/osx/icon.icns'
+                macIcns: './assets/osx/icon.icns',
+                credits: 'assets/osx/credits.html'
 
             },
             src: './src/**/*'
@@ -38,7 +39,6 @@ module.exports = function(grunt) {
                 basepath: __dirname,
                 title: '<%= pkg.name %>',
                 icon: 'assets/osx/icon.icns',
-                credits: 'assets/osx/credits.html',
                 background: 'assets/osx/background.png',
                 'icon-size': 80,
                 contents: [
@@ -47,7 +47,7 @@ module.exports = function(grunt) {
                 ]
             },
             target: {
-                dest: 'publish/<%= pkg.name %>.dmg'
+                dest: 'release/<%= pkg.name %>.dmg'
             }
         },
         karma: {
