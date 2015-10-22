@@ -3,32 +3,51 @@ module.exports = function(grunt) {
     var isWin = /^win/.test(process.platform);
     var isMac = /^darwin/.test(process.platform);
     var isLinux = /^linux/.test(process.platform);
-    var is32 = process.arch === 'ia32';
-    var is64 = process.arch === 'x64';
+    var arch = process.arch === 'x64' ? '64' : '32';
 
     var platforms = [];
 
     if (grunt.option('platform')) {
         platforms.push(grunt.option('platform'));
     } else {
-        if (isMac) platforms.push('osx');
-        if (isWin) platforms.push('win');
-        if (isLinux && is32) platforms.push('linux32');
-        if (isLinux && is64) platforms.push('linux64');
+        if (isMac) platforms.push('osx' + arch);
+        if (isWin) platforms.push('win' + arch);
+        if (isLinux) platforms.push('linux' + arch);
     }
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('src/package.json'),
+        clean: {
+            build: ["build"],
+            package: ["publish"]
+        },
         nwjs: {
             options: {
                 version: "0.12.3",
-                // specifiy what to build
                 platforms: platforms,
                 buildDir: './build', // Where the build version of my NW.js app is save
-                macZip: true
+                macZip: true,
+                icon: './assets/osx/icon.icns'
 
             },
             src: './src/**/*'
+        },
+        appdmg: {
+            options: {
+                basepath: __dirname,
+                title: '<%= pkg.name %>',
+                macIcns: 'assets/osx/icon.icns',
+                credits: 'assets/osx/credits.html',
+                background: 'assets/osx/background.png',
+                'icon-size': 80,
+                contents: [
+                    {x: 448, y: 344, type: 'link', path: '/Applications'},
+                    {x: 192, y: 344, type: 'file', path: 'build/AcmacsDesktop/osx' + arch + '/AcmacsDesktop.app'}
+                ]
+            },
+            target: {
+                dest: 'publish/<%= pkg.name %>.dmg'
+            }
         },
         karma: {
             unit: {
@@ -51,10 +70,17 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-nw-builder');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-appdmg');
 
     // Build the app for osx
     grunt.registerTask('build', ['nwjs']);
+
+    var packageFlow = ['build'];
+    if(isMac) packageFlow.push('appdmg');
+
+    grunt.registerTask('package', packageFlow);
 
     // Unit testint in development mode
     grunt.registerTask('devmode', ['karma:unit', 'watch']);
