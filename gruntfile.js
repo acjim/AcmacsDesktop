@@ -18,8 +18,9 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('src/package.json'),
         clean: {
-            build: ["build"],
-            package: ["publish"]
+            options: { force: true },
+            build: ["./build"],
+            package: ["./publish"]
         },
         nwjs: {
             options: {
@@ -27,7 +28,7 @@ module.exports = function(grunt) {
                 platforms: platforms,
                 buildDir: './build', // Where the build version of my NW.js app is save
                 macZip: true,
-                icon: './assets/osx/icon.icns'
+                macIcns: './assets/osx/icon.icns'
 
             },
             src: './src/**/*'
@@ -36,7 +37,7 @@ module.exports = function(grunt) {
             options: {
                 basepath: __dirname,
                 title: '<%= pkg.name %>',
-                macIcns: 'assets/osx/icon.icns',
+                icon: 'assets/osx/icon.icns',
                 credits: 'assets/osx/credits.html',
                 background: 'assets/osx/background.png',
                 'icon-size': 80,
@@ -75,9 +76,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-appdmg');
 
     // Build the app for osx
-    grunt.registerTask('build', ['nwjs']);
+    grunt.registerTask('build', ['clean:build', 'nwjs']);
 
-    var packageFlow = ['build'];
+    var packageFlow = ['build', 'clean:package'];
     if(isMac) packageFlow.push('appdmg');
 
     grunt.registerTask('package', packageFlow);
