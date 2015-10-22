@@ -39,6 +39,22 @@ The task runner grunt creates a folder `cache`, downloads the right nw.js versio
 ```
 grunt build
 ```
+By default, the app is only built for the platform you are on. However, you can provide your desired build targets as parameters:
+```javascript
+grunt build --target=<target>
+```
+with the following possible targets:
+```javascript
+//Build 32bit and 64bit ...
+osx
+linux
+win
+//... or provide the arch
+osx32
+linux64
+...
+```
+Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
 
 # License
 GNU GENERAL PUBLIC LICENSE  

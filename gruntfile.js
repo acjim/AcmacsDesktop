@@ -1,12 +1,29 @@
 module.exports = function(grunt) {
 
+    var isWin = /^win/.test(process.platform);
+    var isMac = /^darwin/.test(process.platform);
+    var isLinux = /^linux/.test(process.platform);
+    var is32 = process.arch === 'ia32';
+    var is64 = process.arch === 'x64';
+
+    var platforms = [];
+
+    if (grunt.option('platform')) {
+        platforms.push(grunt.option('platform'));
+    } else {
+        if (isMac) platforms.push('osx');
+        if (isWin) platforms.push('win');
+        if (isLinux && is32) platforms.push('linux32');
+        if (isLinux && is64) platforms.push('linux64');
+    }
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('src/package.json'),
         nwjs: {
             options: {
                 version: "0.12.3",
                 // specifiy what to build
-                platforms: ['osx32'],
+                platforms: platforms,
                 buildDir: './build', // Where the build version of my NW.js app is save
                 macZip: true
 
@@ -43,5 +60,6 @@ module.exports = function(grunt) {
     grunt.registerTask('devmode', ['karma:unit', 'watch']);
 
     // Task for travisCI
-    grunt.registerTask('test', ['karma:travis'])
+    grunt.registerTask('test', ['karma:travis']);
+
 };
