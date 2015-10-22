@@ -34,7 +34,7 @@ npm start
 ```
 npm install
 ```
-### Run Grunt
+### Build AcmacsDesktop application
 The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
 ```
 grunt build
@@ -45,7 +45,7 @@ grunt build --target=<target>
 ```
 with the following possible targets:
 ```javascript
-//Build 32bit and 64bit ...
+//Builds 32bit and 64bit ...
 osx
 linux
 win
@@ -55,6 +55,12 @@ linux64
 ...
 ```
 Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
+
+### Package
+Currently, only `DMG` packaging for OS X is supported.
+```
+grunt package
+```
 
 # License
 GNU GENERAL PUBLIC LICENSE  
