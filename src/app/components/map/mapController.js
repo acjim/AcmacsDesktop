@@ -77,7 +77,7 @@
                 // In case the drawing_order is defined, we order the nodes based on their drawing order.
                 var order_list = map.styles.drawing_order[0].concat(map.styles.drawing_order[1]);
                 var length = order_list.length;
-                if ($scope.d3Data.d3Nodes.length == length) {
+                if ($scope.d3Data.d3Nodes.length === length) {
                     // start a bubble sort.
                     // The start of the sorting of drawing order following Bubble sort algorithm
                     for (var i = 0; i < length; i++) {
@@ -113,7 +113,7 @@
          * Watches for a the errorlines button
          */
         $rootScope.$on('api.geterrorlines', function () {
-            if ($rootScope.errorlinesShown != true) {
+            if ($rootScope.errorlinesShown !== true) {
                 $scope.d3Data.d3Errorlines = [];
                 $scope.d3Data.d3Connectionlines = [];
 
@@ -125,7 +125,7 @@
          * Watches for a the connectionlines button
          */
         $rootScope.$on('api.getconnectionlines', function () {
-            if ($rootScope.connectionlinesShown != true) {
+            if ($rootScope.connectionlinesShown !== true) {
                 getErrorConnectionLines();
             }
         });

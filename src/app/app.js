@@ -42,7 +42,7 @@ angular.module('acjim.toolbar', []);
 
 app.run(function(nwService, $rootScope) {
 
-    var osModifier = process.platform == 'darwin' ? 'cmd' : 'ctrl';
+    var osModifier = process.platform === 'darwin' ? 'cmd' : 'ctrl';
 
     // Create the menubar
     $rootScope.menubar = nwService.createMenu({
