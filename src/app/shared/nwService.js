@@ -36,7 +36,7 @@ angular.module('acjim').service('nwService', ['$rootScope', function($rootScope)
         // Create the top menu
         var menu = new gui.Menu(menuStructure.root);
 
-        if(process.platform=='darwin') {
+        if(process.platform === 'darwin') {
             menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
                 hideEdit: true,
                 hideWindow: true

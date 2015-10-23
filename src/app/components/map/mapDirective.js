@@ -503,10 +503,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             }
 
 
-            /** Gets All D3 Selected Elements
+            /** Gets All D3 Selected Elements. This function should be called by the button responsible for Disabling nodes
              * @returns none
              */
-            // This function should be called by the button responsible for Disabling nodes
             function DisableSelectedElements(){
                 var flag=0;
                 // Disable Button Functionality
@@ -532,37 +531,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
             }
 
-
-            /**
-             * Delete Disabled Map nodes. This function should be called after DisableSelectedElements(), when disabled
-             * nodes are aimed to be removed
-             * @returns none
-             */
-            function DeleteDisabledNodes(){
-                // loop through all d3 points and remove the ones
-                d3.selectAll(".point").each(function(d){
-                    if (d.style.fill_color === "#bebebe"){
-                        d3.select(this).remove();
-                    }
-                })
-            }
-
-
-            /**
-             * Gets a new Map.  Selected Elements With Their Respective Data
-             * mapDataPoints should be assigned to scope.data before passing it to the function
-             * @returns a Data Array with the new Map Data
-             */
-            function GetNewMapElementsAfterDisable(mapDataPoints){
-                var newMapData = mapDataPoints;
-                for (var c = 0; c < newMapData.length; c++){
-                    if (newMapData[c].style.fill_color === "#bebebe") {
-                        newMapData.splice(c, 1);
-                        c= c-1;
-                    }
-                }
-                return newMapData;
-            }
 
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.

@@ -24,6 +24,7 @@
 var config = require('./config.js');
 var execFile = require('child_process').execFile;
 var fs = require('fs');
+
 var DATE_NOW = Date.now();
 var COMMANDS = {
     IMPORT: 'import',
@@ -222,7 +223,7 @@ angular.module('acjim.api', [])
          */
         api.import_user_data = function (input_file, additional_params) {
 
-            if(process.platform == "win32") {
+            if(process.platform === "win32") {
                 var path = require('path');
                 var relative = path.relative('.', input_file);
                 //hack: Windows files outside the vagrant shared project folder would need to be copied to it first...
@@ -250,7 +251,7 @@ angular.module('acjim.api', [])
             var output_json = this.create_file_path(data_path, input_file, '.json', COMMANDS.IMPORT);
             var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', COMMANDS.IMPORT);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length - 1] += input_param_file + " " + input_file + " " + output_json + " " + output_acd1;
             }else{
                 params[params.length] = input_param_file;
@@ -341,7 +342,7 @@ angular.module('acjim.api', [])
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
             }else{
                 params[params.length] = input_param_file;
@@ -400,7 +401,7 @@ angular.module('acjim.api', [])
             var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
 
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
             }else{
                 params[params.length] = input_param_file;
@@ -446,7 +447,7 @@ angular.module('acjim.api', [])
             var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json;
             }else{
                 params[params.length] = input_param_file;
@@ -498,7 +499,7 @@ angular.module('acjim.api', [])
             file = file.substr(0, file.lastIndexOf("_"));
             var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "up");
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + new_output_acd1;
             }else{
                 params[params.length] = input_param_file;
@@ -530,13 +531,14 @@ angular.module('acjim.api', [])
             {
                 file = file.substr(0, file.lastIndexOf("."));
             }
-            var date_now = DATE_NOW;
+            var date_now = DATE_NOW,
+                output = null;
             // remove import param from generated file
-            if(command == COMMANDS.IMPORT)
+            if(command === COMMANDS.IMPORT)
             {
-                var output = path + file + '_' + date_now + extension;
+                output = path + file + '_' + date_now + extension;
             } else {
-                var output = path + file + '_' + command + '_' + date_now + extension;
+                output = path + file + '_' + command + '_' + date_now + extension;
             }
 
             return output;

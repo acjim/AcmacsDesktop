@@ -21,7 +21,7 @@ config.api.location = '/vagrant/';
 config.api.file = '';
 config.store.path = './data/';
 config.store.temp = './data/tmp/';
-if(process.platform == "win32") {
+if(process.platform === "win32") {
     config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\";
     config.api.script = 'vagrant';
     // if this file_path doesn't exist, and environment is development
