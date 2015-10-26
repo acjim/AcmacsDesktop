@@ -56,9 +56,12 @@ angular.module('acjim')
 
         nwService.window.on('close', function () {
             this.hide(); // Pretend to be closed already
+            var win = nwService.gui.Window.get();
+            var win_id = win.id;
             var store_path = config.store.path;
+            var data_path = store_path + win_id + '/';
             console.log("Closing and removing generated files...");
-            $scope.rmDir(store_path);
+            $scope.rmDir(data_path);
             this.close(true);
         });
 
