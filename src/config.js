@@ -21,7 +21,7 @@ config.api = {};
 config.server_name =  'ACJIM';
 config.api.location = '/vagrant/';
 config.api.file = '';
-config.store.path = datapath+'/data/';
+config.store.path = datapath+'/Local_Data/';
 if(process.platform == "win32") {
     config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\";
     config.api.script = 'vagrant';
