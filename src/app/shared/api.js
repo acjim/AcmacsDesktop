@@ -35,6 +35,12 @@ var COMMANDS = {
     ERROR_LINES: 'get_error_lines',
     EXPORT: 'export',
 };
+var gui = window.require('nw.gui');
+var win = gui.Window.get();
+var win_id = win.id;
+var store_path = config.store.path;
+var data_path = store_path + win_id + '/';
+var tmp_path = data_path + 'tmp/';
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
@@ -50,7 +56,6 @@ angular.module('acjim.api', [])
          * @returns {string}
          */
         api.create_input_parameter = function (command, additional_params, input_file) {
-            var store_path = config.store.path;
             switch (command) {
                 case COMMANDS.IMPORT:
                     var file_name = 'input';
@@ -200,7 +205,7 @@ angular.module('acjim.api', [])
                     break;
             }
             var json_parameters = JSON.stringify(input_parameter, null, 4);
-            var file_path = store_path + file_name;
+            var file_path = tmp_path + file_name;
             fs.writeFile(file_path, json_parameters, function (err) {
                 if (err) {
                     throw err;
@@ -231,8 +236,11 @@ angular.module('acjim.api', [])
 
             var deferred = $q.defer();
             var command = "import";
+            var script = config.api.script;
+            this.make_dir();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, input_file);
+
 
             // callback function for exec
             function puts(error) {
@@ -240,13 +248,11 @@ angular.module('acjim.api', [])
                     // @todo handle error/exception properly
                     //this.emit('error', error);
                     console.log(error);
-                    deferred.reject(error);
+                    deferred.reject('Importing file failed!');
                 }
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
-            var script = config.api.script;
-            var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, input_file, '.json', COMMANDS.IMPORT);
             var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', COMMANDS.IMPORT);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
@@ -338,7 +344,6 @@ angular.module('acjim.api', [])
             }
 
             var script = config.api.script;
-            var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
@@ -395,7 +400,6 @@ angular.module('acjim.api', [])
             }
 
             var script = config.api.script;
-            var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
 
@@ -443,7 +447,6 @@ angular.module('acjim.api', [])
             }
 
             var script = config.api.script;
-            var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             if(process.platform == "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
@@ -492,7 +495,6 @@ angular.module('acjim.api', [])
             }
 
             var script = config.api.script;
-            var data_path = config.store.path;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var file = output_acd1.split('/').pop();
             file = file.substr(0, file.lastIndexOf("_"));
@@ -597,6 +599,18 @@ angular.module('acjim.api', [])
             }, 200);
 
             return deferred.promise;
+        };
+
+        api.make_dir = function() {
+            if(!fs.existsSync(store_path)){
+                fs.mkdirSync(store_path, '0777');
+            }
+            if(!fs.existsSync(data_path)){
+                fs.mkdirSync(data_path, '0777');
+            }
+            if(!fs.existsSync(tmp_path)){
+                fs.mkdirSync(tmp_path, '0777');
+            }
         };
 
         return api;
