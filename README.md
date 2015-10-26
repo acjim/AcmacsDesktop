@@ -1,5 +1,4 @@
-# Antigenic Cartography for Desktop
-[![Codacy Badge](https://api.codacy.com/project/badge/e45c7f2631ad4267b4b91b5c30fefe87)](https://www.codacy.com/app/acjim/AcmacsDesktop)
+# Antigenic Cartography for Desktop [![Build Status](https://travis-ci.org/acjim/AcmacsDesktop.svg?branch=testing)](https://travis-ci.org/acjim/AcmacsDesktop) [![Codacy Badge](https://api.codacy.com/project/badge/e45c7f2631ad4267b4b91b5c30fefe87)](https://www.codacy.com/app/acjim/AcmacsDesktop)
 
 [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
 
@@ -14,31 +13,53 @@ Unzip and put the binaries in the folder: `src/core`
 You need ``npm`` installed in order to get this working. The best way to install ``npm`` is to install [node.js](http://www.nodejs.org) using its installer.
 ### Install project dependencies
 In the root folder of your app, run the following command.
-```
+```sh
 npm install
 ```
 
 ### Update project dependencies
 If you already got the application running, but some dependencies changed, type:
-```
+```sh
 npm update
 ```
 
 ### Start your app
-```
+```sh
 npm start
 ```
 
 ## Build Instructions
 
 ### Install dependencies
-```
+```sh
 npm install
 ```
-### Run Grunt
+### Build AcmacsDesktop application
 The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
+```sh
+grunt build
 ```
-grunt
+By default, the app is only built for the platform you are on. However, you can provide your desired build targets as parameters:
+```sh
+grunt build --target=<target>
+```
+with the following possible targets:
+```sh
+//Builds 32bit and 64bit ...
+osx
+linux
+win
+//... or provide the arch
+osx32
+linux64
+...
+```
+Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
+
+### Package
+Currently, only `DMG` packaging for OS X is supported.
+```sh
+grunt package
 ```
 
 # License

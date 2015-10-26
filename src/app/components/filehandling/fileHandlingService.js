@@ -85,26 +85,6 @@
             );
         }
 
-        function saveFile () {
-            var filename = 'new.save';
-
-            maps.forEach(function(map){
-                if(map.active) {
-                    filename = map.title;
-                }
-            });
-            fileDialog.saveAs($scope.handleFileSave, filename, '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz');
-        }
-
-        function closeFile () {
-            maps.forEach(function(map, index){
-               if(map.active) {
-                   maps.splice(index, 1);
-               }
-            });
-            $scope.$apply();
-        }
-
 
         /**
          * Displays the error.
@@ -178,7 +158,7 @@
 
             if (false && !fs.existsSync(config.api.path)) {
 
-                api.asyncTest().then(function(response) {
+                api.asyncTest().then(function() {
                     var output = api.stubOpen();
                     var error_message = 'Core api is missing, please add core api';
 
@@ -197,7 +177,7 @@
 
                         cfpLoadingBar.set(0.3);
 
-                        if (process.platform == "win32") { //vagrant can't handle 2 async calls
+                        if (process.platform === "win32") { //vagrant can't handle 2 async calls
                             api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function (output1) {
                                 cfpLoadingBar.set(0.6)
                                 var output_table_json = output1;
@@ -288,8 +268,9 @@
                             fs.readFile(filename, 'utf8', function (err, data) {
 
                                 var mapJsonData = JSON.parse(data);
-                                var stress = mapJsonData.stresses[0]; // relax returns list of stresses for number of optimizations performed.
-                                mapData.stress = stress;
+
+                                // relax returns list of stresses for number of optimizations performed.
+                                mapData.stress = mapJsonData.stresses[0];
 
                                 mapJsonData.best_map.layout.forEach(function (layout, i) {
                                     mapData.d3Nodes[i].x = layout[0];
@@ -411,7 +392,6 @@
                     to,
 
                     nAntigens = errorlines.antigens.length,
-                    nSera = errorlines.sera.length,
 
                     originIndex,
                     destIndex,
@@ -551,16 +531,6 @@
 
         }
 
-
-        /**
-         * Handles file saving
-         * @param filename
-         */
-        function handleFileSave (filename) {
-            fs.writeFile(filename, $scope.fileContent, function (err) {
-                if (err) return console.log(err);
-            });
-        }
     }
 
 })();

@@ -6,7 +6,7 @@ src/node_modules/
 
 # Build folders
 /build/
-/dist/
+/publish/
 /cache/
 
 #temporary files
