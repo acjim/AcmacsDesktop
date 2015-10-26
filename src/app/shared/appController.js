@@ -80,6 +80,7 @@ angular.module('acjim')
                         }
                     }
                 }
+                fs.rmdirSync(dirPath);
             } catch (e) {
                 console.log(e);
             }
