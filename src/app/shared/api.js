@@ -50,7 +50,7 @@ angular.module('acjim.api', [])
          * @returns {string}
          */
         api.create_input_parameter = function (command, additional_params, input_file) {
-            var store_path = config.store.temp;
+            var store_path = config.store.path;
             switch (command) {
                 case COMMANDS.IMPORT:
                     var file_name = 'input';

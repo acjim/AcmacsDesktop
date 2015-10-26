@@ -10,6 +10,8 @@
 
 
 var config = {};
+var gui = window.require('nw.gui');
+var datapath = gui.App.dataPath;
 
 config.store = {};
 config.devMode = process.env.DEV_MODE === 'true';
@@ -19,8 +21,7 @@ config.api = {};
 config.server_name =  'ACJIM';
 config.api.location = '/vagrant/';
 config.api.file = '';
-config.store.path = './data/';
-config.store.temp = './data/tmp/';
+config.store.path = datapath+'/data/';
 if(process.platform == "win32") {
     config.store.projectRoot = "C:\\Users\\Felix\\Dropbox\\www\\acjim\\";
     config.api.script = 'vagrant';
