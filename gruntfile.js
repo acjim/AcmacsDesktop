@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 version: "0.12.3",
                 platforms: platforms,
                 buildDir: './build', // Where the build version of my NW.js app is save
-                macZip: true,
+                macZip: false,
                 macIcns: './assets/osx/icon.icns',
                 credits: 'assets/osx/credits.html'
 
