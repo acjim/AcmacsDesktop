@@ -38,7 +38,6 @@
             RE_OPTIMIZE: 6,
             DISABLE_MAP: 8,
             NEW_MAP: 9,
-
             //// GROUPS ////
             MAP_TOOLS: 7
         };
