@@ -25,9 +25,9 @@
 
 angular
     .module('acjim.toolbar')
-    .controller('toolbarCtrl', ['$scope', '$rootScope', 'toolbar', 'toolbarItems', toolbarCtrl]);
+    .controller('toolbarCtrl', ['$rootScope', 'toolbar', 'toolbarItems', toolbarCtrl]);
 
-    function toolbarCtrl($scope, $rootScope, toolbar, toolbarItems) {
+    function toolbarCtrl($rootScope, toolbar, toolbarItems) {
 
         toolbar.init([
             {
