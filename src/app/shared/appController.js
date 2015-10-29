@@ -86,18 +86,6 @@ angular.module('acjim')
             }
         };
 
-        $scope.winOptions = {
-            x: 0,
-            y: 0,
-            width: 600,
-            height:500,
-            title: "abc",
-            onClose: function() {
-                console.log("close");
-                //var index = openWindows.indexOf(this);
-                //openWindows.splice(index, 1);
-            }
-        };
         $scope.openMaps = [];
         $scope.tableData = [];
 
