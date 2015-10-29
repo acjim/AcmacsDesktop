@@ -39,9 +39,14 @@
 
     function fileHandling ($q, fileDialog, api, Flash, cfpLoadingBar) {
 
+        // Data storage variables
         var tableData = null,
             acd1File = null,
             maps = [];
+
+        // Window layout variables
+        var position = 0;
+
 
         var service = {
             newFile: newFile,
@@ -50,7 +55,8 @@
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
             getMaps: getMaps,
-            getTable: getTableData
+            getTable: getTableData,
+            addMap: addMap
         };
 
         return service;
@@ -63,6 +69,32 @@
 
         function getMaps() {
             return maps;
+        }
+
+
+        /**
+         * Adds a map to the maps array
+         * @param mapData
+         */
+        function addMap(mapData) {
+
+            var mapOptions = {
+                id: maps.length,
+                x: 100 * position,
+                y: 50 * position++,
+                width: 400,
+                height:300,
+                title: "Map " + (maps.length + 1),
+                onClose: function() {
+                    maps.splice(this.id, 1);
+                }
+            };
+
+            maps.push({
+                data: mapData,
+                options: mapOptions
+            });
+
         }
 
 
@@ -133,7 +165,7 @@
 
                 tableData = JSON.parse(data[0]);
                 acd1File = output_acd1;
-                maps.push(JSON.parse(data[1]));
+                addMap(JSON.parse(data[1]));
 
             });
             cfpLoadingBar.complete();
