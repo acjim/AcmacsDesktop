@@ -41,8 +41,8 @@
 
         function link(scope) {
 
-            scope.$watch(toolbar.getAllItems(), function() {
-                scope.items = toolbar.getAllItems();
+            scope.$watch(toolbar.getStructure(), function() {
+                scope.items = toolbar.getStructure();
             });
 
 
