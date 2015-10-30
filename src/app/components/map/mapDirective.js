@@ -65,6 +65,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 scale = 1,
                 gridTranslate = [0,0],
                 gridScale = 1,
+                initialScale = 1,
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
@@ -113,7 +114,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 brush = createBrush();
 
                 // Create background grid
-                boxGroup = redrawGrid(boxGroup, boxSize, width / zoom.scale(), height / zoom.scale());
+                boxGroup = redrawGrid(boxGroup, boxSize, width / initialScale, height / initialScale);
 
                 manageMapTools();
 
@@ -398,7 +399,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // we need to fit it in both directions, so we scale according to
                 // the direction in which we need to shrink the most
-                minimalScaleValue = scale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
+                minimalScaleValue = scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
 
                 // translate so that it's in the center of the window
                 translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
