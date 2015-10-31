@@ -17,17 +17,15 @@
 </head>
 <body ng-controller="appCtrl">
 
-
+    <div flash-message="5000" class="flash-msg"></div>
 
     <div class="sidebar" ng-controller="toolbarCtrl">
         <div acjim-toolbar></div>
     </div>
 
-    <div ui-layout="{ flow : 'column' }" style="margin-left: 80px">
+    <div ui-layout="{ flow : 'column' }" style="margin-left: 81px">
 
         <div ui-layout-container>
-            <!-- workspace -->
-            <div flash-message="5000" class="flash-msg"></div>
             <ng-html-window ng-repeat="map in openMaps" options="map.options">
                 <div class="fullsize" ac-map map="map.data"></div>
             </ng-html-window>

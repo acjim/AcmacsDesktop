@@ -40,25 +40,13 @@
 
         var acd1File = null;
 
-
-        var service = {
-            newFile: newFile,
+        return {
             handleFileOpen: handleFileOpen,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines
         };
 
-        return service;
-
         ///////////////////
-
-
-        /**
-         * Creates a new table to edit
-         */
-        function newFile () {
-            //TODO: what happens if new file?
-        }
 
 
         /**

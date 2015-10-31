@@ -58,22 +58,20 @@ angular.module('acjim')
 
             fileHandling.handleFileOpen(filename).then(function(result) {
 
-                    var mapOptions = {
-                        id: $scope.openMaps.length,
-                        x: 100 * position,
-                        y: 50 * position++,
-                        width: 400,
-                        height:300,
-                        title: "Map " + ($scope.openMaps.length + 1),
-                        onClose: function() {
-                            $scope.openMaps.splice(this.id, 1);
-                        }
-                    };
-
                     $scope.tableData = result.table;
                     $scope.openMaps.push({
                         data: result.map,
-                        options: mapOptions
+                        options: {
+                            id: $scope.openMaps.length,
+                            x: 100 * position,
+                            y: 50 * position++,
+                            width: 400,
+                            height:300,
+                            title: "Map " + ($scope.openMaps.length + 1),
+                            onClose: function() {
+                                $scope.openMaps.splice(this.id, 1);
+                            }
+                        }
                     });
 
                     cfpLoadingBar.complete();
