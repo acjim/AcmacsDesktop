@@ -88,9 +88,7 @@ angular.module('acjim')
 
         // Reload
         $scope.$on('reload-app', function () {
-            if (location) {
-                location.reload();
-            }
+            nwService.gui.Window.get().reloadDev();
         });
 
         //Close app
