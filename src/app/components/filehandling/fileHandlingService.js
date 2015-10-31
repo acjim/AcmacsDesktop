@@ -29,7 +29,6 @@
     angular.module('acjim.fileHandling',['flash'])
         .factory('fileHandling', [
             '$q',
-            'fileDialog',
             'api',
             'Flash',
             'cfpLoadingBar',
@@ -37,14 +36,13 @@
         ]);
 
 
-    function fileHandling ($q, fileDialog, api, Flash, cfpLoadingBar) {
+    function fileHandling ($q, api, Flash, cfpLoadingBar) {
 
         var acd1File = null;
 
 
         var service = {
             newFile: newFile,
-            openFileDialog: openFileDialog,
             handleFileOpen: handleFileOpen,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines
@@ -60,18 +58,6 @@
          */
         function newFile () {
             //TODO: what happens if new file?
-        }
-
-
-        /**
-         * Opens a specific file
-         */
-        function openFileDialog () {
-            fileDialog.handleFileOpen(
-                handleFileOpen,
-                false,
-                '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
-            );
         }
 
 
