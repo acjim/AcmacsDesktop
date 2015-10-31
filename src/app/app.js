@@ -26,16 +26,17 @@
 var app = angular.module('acjim', [
     'ngRoute',
     'ui.bootstrap',
-    'DWand.nw-fileDialog',
+    'ui.layout',
     'acjim.fileHandling',
+    'acjim.api',
     'acjim.map',
     'acjim.table',
     'acjim.toolbar',
     'bgDirectives',
-    'acjim.api',
     'ngHtmlWindow',
     'angular-loading-bar',
-    'ngAnimate'
+    'ngAnimate',
+    'DWand.nw-fileDialog'
 ]);
 
 angular.module('acjim.toolbar', []);

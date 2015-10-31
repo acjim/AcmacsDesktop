@@ -93,7 +93,7 @@ angular.module('acjim')
             $scope.openMaps = newValue;
         });
 
-        $scope.$watch('fileHandlingService.getTable()', function (newValue) {
+        $scope.$watch('fileHandlingService.tableData', function (newValue) {
             $scope.tableData = newValue;
         });
 

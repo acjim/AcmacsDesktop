@@ -35,26 +35,10 @@ html {
 .sidebar {
   background-color: Menu;
   border-right: solid 1px WindowFrame;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1000;
-  display: block;
-  padding: 20px;
   overflow-x: hidden;
   overflow-y: auto;
 }
-.split-pane2 * {
-  height: 100%;
-}
-.fullWindowZone {
-  height: 100%;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-}
+
 
 .flash-msg {
   z-index: 3000;
@@ -80,7 +64,6 @@ html {
   fill: none;
   stroke: #ddd;
   shape-rendering: crispEdges;
-  vector-effect: non-scaling-stroke;
 }
 
 .fullsize {

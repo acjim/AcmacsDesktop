@@ -44,6 +44,8 @@
             acd1File = null,
             maps = [];
 
+        this.tableData = tableData;
+
         // Window layout variables
         var position = 0;
 
