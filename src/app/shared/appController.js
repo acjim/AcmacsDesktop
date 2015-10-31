@@ -41,7 +41,7 @@ angular.module('acjim')
 
         $scope.$on('open-file', function () {
 
-            fileDialog.handleFileOpen(
+            fileDialog.openFile(
                 handleFileOpen,
                 false,
                 '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
