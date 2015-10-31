@@ -32,7 +32,6 @@ var app = angular.module('acjim', [
     'acjim.map',
     'acjim.table',
     'acjim.toolbar',
-    'bgDirectives',
     'ngHtmlWindow',
     'angular-loading-bar',
     'ngAnimate',
