@@ -41,11 +41,11 @@ var app = angular.module('acjim', [
 
 angular.module('acjim.toolbar', []);
 
-app.run(function(nwService, $rootScope) {
+app.run(function(nwService, $rootScope, toolbar, toolbarItems) {
 
     var osModifier = process.platform === 'darwin' ? 'cmd' : 'ctrl';
 
-    // Create the menubar
+    // Create the menu bar
     $rootScope.menubar = nwService.createMenu({
         root: {
             type:'menubar',
@@ -84,4 +84,64 @@ app.run(function(nwService, $rootScope) {
             ]
         }
     });
+
+    //Create the toolbar
+    toolbar.init([
+        {
+            type: "buttonGroup",
+            buttons: [
+                {
+                    id: toolbarItems.SELECTION,
+                    caption: 'Selection',
+                    active: true,
+                    groupID: toolbarItems.MAP_TOOLS,
+                    icon: 'glyphicon glyphicon-unchecked',
+                    callback: function () {
+                        $rootScope.$emit('tool.selected');
+                    }
+                },
+                {
+                    id: toolbarItems.MOVEMENT,
+                    caption: 'Movement',
+                    groupID: toolbarItems.MAP_TOOLS,
+                    icon: 'glyphicon glyphicon-move',
+                    callback: function () {
+                        $rootScope.$emit('tool.selected');
+                    }
+                }
+            ]
+        },
+        {
+            type: "buttonGroup",
+            buttons: [
+                {
+                    id: toolbarItems.SHOW_ERROR_LINES,
+                    caption: 'Show Error Lines',
+                    icon: 'glyphicon glyphicon-transfer',
+                    togglable: true,
+                    callback: function () {
+                        $rootScope.$emit('api.geterrorlines');
+                    }
+                },
+                {
+                    id: toolbarItems.SHOW_CONNECTION_LINES,
+                    caption: 'Show Connection Lines',
+                    icon: 'glyphicon glyphicon glyphicon-road',
+                    togglable: true,
+                    callback: function () {
+                        $rootScope.$emit('api.getconnectionlines');
+                    }
+                }
+            ]
+        },
+        {
+            id: toolbarItems.RE_OPTIMIZE,
+            caption: 'Reoptimize',
+            icon: 'glyphicon glyphicon-refresh',
+            callback: function () {
+                $rootScope.$broadcast('api.reoptimize');
+            }
+        }
+    ]);
+
 });

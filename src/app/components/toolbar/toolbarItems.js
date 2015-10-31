@@ -32,14 +32,14 @@
             SELECTION: 1,
             MOVEMENT: 2,
             SHOW_ERROR_LINES: 3,
-            SHOW_CONNECTION_LINES: 10,
-            SHOW_BLOBS: 4,
-            SHOW_LABELS: 5,
-            RE_OPTIMIZE: 6,
+            SHOW_CONNECTION_LINES: 4,
+            SHOW_BLOBS: 5,
+            SHOW_LABELS: 6,
+            RE_OPTIMIZE: 7,
             DISABLE_MAP: 8,
             NEW_MAP: 9,
             //// GROUPS ////
-            MAP_TOOLS: 7
+            MAP_TOOLS: 10
         };
 
     }
