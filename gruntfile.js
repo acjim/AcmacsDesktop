@@ -10,9 +10,9 @@ module.exports = function(grunt) {
     if (grunt.option('platform')) {
         platforms.push(grunt.option('platform'));
     } else {
-        if (isMac) platforms.push('osx' + arch);
-        if (isWin) platforms.push('win' + arch);
-        if (isLinux) platforms.push('linux' + arch);
+        if (isMac) { platforms.push('osx' + arch); }
+        if (isWin) { platforms.push('win' + arch); }
+        if (isLinux) { platforms.push('linux' + arch); }
     }
 
     grunt.initConfig({
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', ['clean:build', 'nwjs']);
 
     var packageFlow = ['build', 'clean:package'];
-    if(isMac) packageFlow.push('appdmg');
+    if(isMac) { packageFlow.push('appdmg'); }
 
     grunt.registerTask('package', packageFlow);
 
