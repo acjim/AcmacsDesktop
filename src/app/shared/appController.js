@@ -118,10 +118,11 @@ angular.module('acjim')
                     for (var i = 0; i < files.length; i++) {
                         var filePath = dirPath + '/' + files[i];
                         if (files[i] !== '.gitkeep') {
-                            if (fs.statSync(filePath).isFile())
+                            if (fs.statSync(filePath).isFile()) {
                                 fs.unlinkSync(filePath);
-                            else
+                            } else {
                                 this.rmDir(filePath);
+                            }
                         }
                     }
                 }
@@ -138,12 +139,16 @@ angular.module('acjim')
         var Url = {
             get get(){
                 var vars= {};
-                if(window.location.search.length!==0)
-                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value){
-                        key=decodeURIComponent(key);
-                        if(typeof vars[key]==="undefined") {vars[key]= decodeURIComponent(value);}
-                        else {vars[key]= [].concat(vars[key], decodeURIComponent(value));}
+                if(window.location.search.length!==0) {
+                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                        key = decodeURIComponent(key);
+                        if (typeof vars[key] === "undefined") {
+                            vars[key] = decodeURIComponent(value);
+                        } else {
+                            vars[key] = [].concat(vars[key], decodeURIComponent(value));
+                        }
                     });
+                }
                 return vars;
             }
         };

@@ -85,7 +85,7 @@
                     buttons: loopItems(options.buttons),
                     active: options.active || false,
                     isButtonGroup: function () {
-                        return this.type === 'buttonGroup'
+                        return this.type === 'buttonGroup';
                     }
                 };
 

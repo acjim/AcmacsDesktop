@@ -39,7 +39,7 @@ app.directive('acMap', function() {
         controller: 'mapCtrl',
         controllerAs: 'mapData',
         template: '<p class="stressLabel">Stress: {{(d3Data.stress || "Undefined Value") | number: 3}}</p><div d3-map class="fullsize" data="d3Data" lable="title"></div>'
-    }
+    };
 });
 
 /*
@@ -215,7 +215,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("y2",(function(d) { return yScale(d.y2); }))
                     // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
-                    .attr("stroke-width", (function(d) { return d.width; }))
+                    .attr("stroke-width", (function(d) { return d.width; }));
 
                 errorlineGroup.exit().remove();
                 connectionlineGroup.exit().remove();
@@ -463,7 +463,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 xLines.append("line")
                     .attr("class", "x axis")
                     .attr("x1", function (d) {
-                        return d * boxSize
+                        return d * boxSize;
                     })
                     .attr("x2", function (d) {
                         return d * boxSize;
