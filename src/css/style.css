@@ -35,31 +35,22 @@ html {
 .sidebar {
   background-color: Menu;
   border-right: solid 1px WindowFrame;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1000;
-  display: block;
-  padding: 20px;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-.split-pane2 * {
   height: 100%;
-}
-.fullWindowZone {
-  height: 100%;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
+  width: 81px;
+  position: absolute;
 }
 
 .flash-msg {
   z-index: 3000;
   position: absolute;
 }
+
+.fullsize {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 /*********** Map styles **************/
 .node {
   stroke: #fff;
@@ -83,11 +74,6 @@ html {
   vector-effect: non-scaling-stroke;
 }
 
-.fullsize {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
 .stressLabel{
   height:20px;
   color: rgb(0,0,128);

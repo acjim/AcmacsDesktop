@@ -10,39 +10,35 @@
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="node_modules/angular-flash-alert/dist/angular-flash.min.css">
     <link rel="stylesheet" href="node_modules/angular-html-window/src/ngHtmlWindow.css">
+    <link rel="stylesheet" href="node_modules/angular-ui-layout/src/ui-layout.css">
+    <link rel='stylesheet' href='node_modules/angular-loading-bar/build/loading-bar.min.css'/>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/splitter.css">
 </head>
 <body ng-controller="appCtrl">
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- sidebar -->
-        <div class="col-sm-2 col-md-2 col-xs-2 sidebar" ng-controller="toolbarCtrl">
-            <div acjim-toolbar></div>
-        </div> <!-- /sidebar -->
+    <div flash-message="5000" class="flash-msg"></div>
 
-        <!-- workspace -->
-        <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 col-xs-10 cols-xs-offset-2 fullWindowZone">
-            <div flash-message="5000" class="flash-msg"></div>
+    <div class="sidebar" ng-controller="toolbarCtrl">
+        <div acjim-toolbar></div>
+    </div>
+
+    <div ui-layout="{ flow : 'column' }" style="margin-left: 81px">
+
+        <div ui-layout-container>
             <ng-html-window ng-repeat="map in openMaps" options="map.options">
-                <bg-splitter orientation="horizontal">
-                    <bg-pane min-size="10" style="overflow-y: scroll">
-                        <div class="pane-container">
-                            <ac-table table="tableData"></ac-table>
-                        </div>
-                    </bg-pane>
-                    <bg-pane min-size="150">
-                        <div class="pane-container">
-                            <div ac-map map="map.data"></div>
-                        </div>
-                    </bg-pane>
-                </bg-splitter>
+                <div class="fullsize" ac-map map="map.data"></div>
             </ng-html-window>
-        </div> <!-- /workspace -->
-    </div> <!-- /mainView -->
-    <!-- end app UI-->
-</div>
+
+        </div>
+
+        <div ui-layout-container size="20%">
+            <div class="pane-container">
+                <ac-table table="tableData"></ac-table>
+            </div>
+        </div>
+        <!-- end app UI-->
+    </div>
 
 <!-- vendor -->
 <script src="node_modules/underscore/underscore.js"></script>
@@ -54,11 +50,9 @@
 <script src="app/components/filehandling/fileDialog.js"></script>
 <script src="node_modules/angular-flash-alert/dist/angular-flash.min.js"></script>
 <script src="node_modules/angular-html-window/src/ngHtmlWindow.js"></script>
-
-
+<script src="node_modules/angular-ui-layout/src/ui-layout.js"></script>
 <script src="node_modules/angular-animate/angular-animate.min.js"></script>
-<link rel='stylesheet' href='node_modules/angular-loading-bar/build/loading-bar.min.css' type='text/css' media='all' />
-<script type='text/javascript' src='node_modules/angular-loading-bar/build/loading-bar.min.js'></script>
+<script src='node_modules/angular-loading-bar/build/loading-bar.min.js'></script>
 
 <!-- app -->
 <script src="./app/app.js"></script>
@@ -81,7 +75,6 @@
 <!-- directives -->
 <script src="./app/components/map/mapDirective.js"></script>
 <script src="./app/components/toolbar/toolbarDirective.js"></script>
-
 <script src="./app/shared/splitter.js"></script>
 </body>
 </html>

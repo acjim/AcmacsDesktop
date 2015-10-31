@@ -25,22 +25,14 @@ var app = angular.module('acjim.table',[]);
 
 app.controller('tableCtrl', ['$scope', function($scope) {
 
-    $scope.tableData = $scope.tableData.table;
 
 }])
 
 .directive('acTable', function() {
     return {
         restrict: 'E',
-        transclude: true,
-        scope: {},
-        bindToController: {
-            table: '='
-        },
-        controller: 'tableCtrl',
-        controllerAs: 'tableData',
         templateUrl: './app/components/table/tableView.html',
-        link: function(scope, iElement) {
+        link: function(scope) {
             scope.editItem = function (obj, parent_index, index) {
                 obj.target.setAttribute("contenteditable", true);
                 obj.target.focus();
