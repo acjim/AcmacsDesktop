@@ -24,16 +24,63 @@
     'use strict';
 
 angular.module('acjim')
-    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', appCtrl]);
+    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', appCtrl]);
 
 
-    function appCtrl ($scope, nwService, fileHandling) {
+    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
-        $scope.fileHandlingService = fileHandling;
+        $scope.openMaps = [];
+        $scope.tableData = null;
+
+        // Window layout variables
+        var position = 0;
+
+
+
+        /******************** Events *******************/
 
         $scope.$on('open-file', function () {
-            fileHandling.openFileDialog();
+
+            fileDialog.handleFileOpen(
+                handleFileOpen,
+                false,
+                '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
+            );
         });
+
+        function handleFileOpen(filename) {
+
+            if ($scope.tableData !== null) {
+                //open file in new window
+                window.open('index.html?fileToOpenOnStart=' + encodeURIComponent(filename));
+                return;
+            }
+
+            fileHandling.handleFileOpen(filename).then(function(result) {
+
+                    var mapOptions = {
+                        id: $scope.openMaps.length,
+                        x: 100 * position,
+                        y: 50 * position++,
+                        width: 400,
+                        height:300,
+                        title: "Map " + ($scope.openMaps.length + 1),
+                        onClose: function() {
+                            $scope.openMaps.splice(this.id, 1);
+                        }
+                    };
+
+                    $scope.tableData = result.table;
+                    $scope.openMaps.push({
+                        data: result.map,
+                        options: mapOptions
+                    });
+
+                    cfpLoadingBar.complete();
+
+                }
+            );
+        }
 
 
         // Open Debug Window
@@ -86,19 +133,8 @@ angular.module('acjim')
             }
         };
 
-        $scope.openMaps = [];
-        $scope.tableData = [];
 
-        $scope.$watch('fileHandlingService.getMaps()', function (newValue) {
-            $scope.openMaps = newValue;
-        });
-
-        $scope.$watch('fileHandlingService.tableData', function (newValue) {
-            $scope.tableData = newValue;
-        });
-
-
-        /*
+        /**
          * Handle file opening on application startup
          */
         var Url = {
@@ -115,9 +151,9 @@ angular.module('acjim')
         };
 
         if(!_.isUndefined(Url.get.fileToOpenOnStart)) {
-            fileHandling.openFile(Url.get.fileToOpenOnStart);
+            handleFileOpen(Url.get.fileToOpenOnStart);
         } else if (config.devMode) {
-            fileHandling.openFile("../test/data/test.save");
+            handleFileOpen("../test/data/test.save");
         }
 
     }

@@ -18,36 +18,29 @@
 <body ng-controller="appCtrl">
 
 
-<div ui-layout="{ flow : 'column' }" ng-controller="toolbarCtrl">
 
-        <!-- sidebar -->
-        <!--<div class="col-sm-2 col-md-2 col-xs-2 sidebar" ng-controller="toolbarCtrl">
-            <div acjim-toolbar></div>
-        </div> <!-- /sidebar -->
-    <div ui-layout-container>
-        <div class="sidebar">
-            <div acjim-toolbar></div>
-        </div>
+    <div class="sidebar" ng-controller="toolbarCtrl">
+        <div acjim-toolbar></div>
     </div>
 
-    <div ui-layout-container>
-        <!-- workspace -->
-        <div>
+    <div ui-layout="{ flow : 'column' }" style="margin-left: 80px">
+
+        <div ui-layout-container>
+            <!-- workspace -->
             <div flash-message="5000" class="flash-msg"></div>
             <ng-html-window ng-repeat="map in openMaps" options="map.options">
-                <div ac-map map="map.data"></div>
+                <div class="fullsize" ac-map map="map.data"></div>
             </ng-html-window>
-        </div> <!-- /workspace -->
 
-    </div>
-
-    <div ui-layout-container>
-        <div class="pane-container">
-            <ac-table table="tableData"></ac-table>
         </div>
+
+        <div ui-layout-container size="20%">
+            <div class="pane-container">
+                <ac-table table="tableData"></ac-table>
+            </div>
+        </div>
+        <!-- end app UI-->
     </div>
-    <!-- end app UI-->
-</div>
 
 <!-- vendor -->
 <script src="node_modules/underscore/underscore.js"></script>

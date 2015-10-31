@@ -35,15 +35,22 @@ html {
 .sidebar {
   background-color: Menu;
   border-right: solid 1px WindowFrame;
-  overflow-x: hidden;
-  overflow-y: auto;
+  height: 100%;
+  width: 80px;
+  position: absolute;
 }
-
 
 .flash-msg {
   z-index: 3000;
   position: absolute;
 }
+
+.fullsize {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 /*********** Map styles **************/
 .node {
   stroke: #fff;
@@ -64,13 +71,9 @@ html {
   fill: none;
   stroke: #ddd;
   shape-rendering: crispEdges;
+  vector-effect: non-scaling-stroke;
 }
 
-.fullsize {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
 .stressLabel{
   height:20px;
   color: rgb(0,0,128);

@@ -39,65 +39,20 @@
 
     function fileHandling ($q, fileDialog, api, Flash, cfpLoadingBar) {
 
-        // Data storage variables
-        var tableData = null,
-            acd1File = null,
-            maps = [];
-
-        this.tableData = tableData;
-
-        // Window layout variables
-        var position = 0;
+        var acd1File = null;
 
 
         var service = {
             newFile: newFile,
             openFileDialog: openFileDialog,
-            openFile: handleFileOpen,
+            handleFileOpen: handleFileOpen,
             reOptimize: reOptimize,
-            getErrorConnectionlines: getErrorConnectionlines,
-            getMaps: getMaps,
-            getTable: getTableData,
-            addMap: addMap
+            getErrorConnectionlines: getErrorConnectionlines
         };
 
         return service;
 
         ///////////////////
-
-        function getTableData(){
-            return tableData;
-        }
-
-        function getMaps() {
-            return maps;
-        }
-
-
-        /**
-         * Adds a map to the maps array
-         * @param mapData
-         */
-        function addMap(mapData) {
-
-            var mapOptions = {
-                id: maps.length,
-                x: 100 * position,
-                y: 50 * position++,
-                width: 400,
-                height:300,
-                title: "Map " + (maps.length + 1),
-                onClose: function() {
-                    maps.splice(this.id, 1);
-                }
-            };
-
-            maps.push({
-                data: mapData,
-                options: mapOptions
-            });
-
-        }
 
 
         /**
@@ -112,7 +67,7 @@
          * Opens a specific file
          */
         function openFileDialog () {
-            fileDialog.openFile(
+            fileDialog.handleFileOpen(
                 handleFileOpen,
                 false,
                 '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
@@ -149,43 +104,10 @@
 
 
         /**
-         * Called when file opening is completed
-         * @param output
-         */
-        function handleOpenComplete (output) {
-
-            var output_acd1 = output.output_acd1;
-            // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
-            var table_filename = output.table_json;
-            // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
-            var map_filename = output.map_json;
-
-            $q.all([
-                readFile(table_filename),
-                readFile(map_filename)
-            ]).then(function(data) {
-
-                tableData = JSON.parse(data[0]);
-                acd1File = output_acd1;
-                addMap(JSON.parse(data[1]));
-
-            });
-            cfpLoadingBar.complete();
-
-        }
-
-
-        /**
          * Callback function to handle the file opening
          * @param filename
          */
         function handleFileOpen (filename) {
-
-            if (tableData != null) {
-                //open file in new window
-                window.open('index.html?fileToOpenOnStart=' + encodeURIComponent(filename));
-                return;
-            }
 
             // Start loading bar
             cfpLoadingBar.start();
@@ -206,13 +128,13 @@
                 var table_additional_params = {}; // check documentation on execute>get_table for additional params
                 var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
 
-                api.import_user_data(filename, additional_params)
+                return api.import_user_data(filename, additional_params)
                     .then(function (output) {
 
                         cfpLoadingBar.set(0.3);
 
                         if (process.platform === "win32") { //vagrant can't handle 2 async calls
-                            api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function (output1) {
+                            return api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function (output1) {
                                 cfpLoadingBar.set(0.6)
                                 var output_table_json = output1;
                                 api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function (output2) {
@@ -231,18 +153,28 @@
                         } else {
 
                             //under unix, asyncronous is faster
-                            $q.all([
+                            return $q.all([
                                 api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
                                 api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
                             ]).then(function (data) {
                                 var output_table_json = data[0];
                                 var output_map_json = data[1];
+                                var result = {};
 
-                                handleOpenComplete({
-                                    output_acd1: output.output_acd1,
-                                    table_json: output_table_json,
-                                    map_json: output_map_json
+                                return $q.all([
+                                    readFile(output_table_json),
+                                    readFile(output_map_json)
+                                ]).then(function(data) {
+
+                                    result.table = JSON.parse(data[0]);
+                                    result.map = JSON.parse(data[1]);
+
+                                    acd1File = output.output_acd1;
+
+                                    return result;
+
                                 });
+
                             }, function (reason) {
                                 return errorReason(reason);
                             });
