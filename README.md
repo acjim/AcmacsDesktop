@@ -13,7 +13,7 @@ Unzip and put the binaries in the folder: `src/core`
 You need ``npm`` installed in order to get this working. The best way to install ``npm`` is to install [node.js](http://www.nodejs.org) using its installer.
 
 
-Run the following command in the root folder of the project (where this README.md is located):
+Run the following command in the root folder of the project (where this ``README.md`` is located):
 ```sh
 npm install
 ```
@@ -28,12 +28,12 @@ You need ``grunt`` installed to get this working. The best option is probably to
 npm install -g grunt
 ```
 
-### Install dependencies
+#### Install dependencies
 Install all project dependencies
 ```sh
 npm install
 ```
-### Build AcmacsDesktop application
+#### Build AcmacsDesktop application
 The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
 ```sh
 grunt build
@@ -58,16 +58,10 @@ linux64
 ```
 Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
 
-### Packaging the application
-Two possible packaging options are supported: making a `DMG` for OS X and putting it into a `.deb` file for Debian based systems.
-Because of certain restrictions, it is only possible to package the application for the system you are currently on.
+#### Packaging the application
+Currently, only `DMG` packaging for OS X is supported and you need to be on OS X in order for this to work.
 ```sh
 grunt package
-```
-When building a debian package, you need to install the two debian tools to create and lint the debian package:
-```sh
-sudo apt-get install devscripts
-sudo apt-get install debhelper
 ```
 
 
