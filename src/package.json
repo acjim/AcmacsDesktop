@@ -9,14 +9,14 @@
     "license": "MIT",
     "main": "index.html",
     "window": {
-        "title": "Acmacs Desktop",
-        "toolbar": false,
-        "frame": true,
-        "width": 1024,
-        "height": 600,
-        "resizable": true,
-        "show": false
+        "show": true,
+        "frame": false,
+        "width": 500,
+        "height": 400,
+        "resizable": false,
+        "position": "center"
     },
+    "single-instance": "false",
     "dependencies": {
         "angular": "^1.4.1",
         "angular-route": "^1.4.1",

@@ -51,9 +51,11 @@ angular.module('acjim')
         function handleFileOpen(filename) {
 
             if ($scope.tableData !== null) {
+
                 //open file in new window
-                window.open('index.html?fileToOpenOnStart=' + encodeURIComponent(filename));
+                nwService.parentWindow.emit("openFileInNewWindow", filename);
                 return;
+
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
@@ -96,40 +98,12 @@ angular.module('acjim')
             nwService.gui.Window.get().close();
         });
 
-
         nwService.window.on('close', function () {
-            this.hide(); // Pretend to be closed already
-            var win = nwService.gui.Window.get();
-            var win_id = win.id;
-            var store_path = config.store.path;
-            var data_path = store_path + win_id + '/';
-            console.log("Closing and removing generated files...");
-            $scope.rmDir(data_path);
+            // Pretend to be closed already
+            this.hide();
+            nwService.parentWindow.emit("window-close", nwService.window.id);
             this.close(true);
         });
-
-        $scope.rmDir = function (dirPath) {
-            try {
-                var files = fs.readdirSync(dirPath);
-
-                if (files.length > 0) {
-                    for (var i = 0; i < files.length; i++) {
-                        var filePath = dirPath + '/' + files[i];
-                        if (files[i] !== '.gitkeep') {
-                            if (fs.statSync(filePath).isFile()) {
-                                fs.unlinkSync(filePath);
-                            } else {
-                                this.rmDir(filePath);
-                            }
-                        }
-                    }
-                }
-                fs.rmdirSync(dirPath);
-            } catch (e) {
-                console.log(e);
-            }
-        };
-
 
         /**
          * Handle file opening on application startup
@@ -151,10 +125,8 @@ angular.module('acjim')
             }
         };
 
-        if(!_.isUndefined(Url.get.fileToOpenOnStart)) {
-            handleFileOpen(Url.get.fileToOpenOnStart);
-        } else if (config.devMode) {
-            handleFileOpen("../test/data/test.save");
+        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
+            handleFileOpen(Url.get.filename);
         }
 
     }
