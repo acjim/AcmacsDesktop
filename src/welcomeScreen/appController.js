@@ -9,13 +9,12 @@
 
     function appCtrl($scope, nwService, fileDialog, appMenuService) {
 
-        var win = nwService.window;
+        var win = nwService.window,
+            openWindows = 0;
 
-        var openWindows = 0;
+        appMenuService.setMinimalMenu();
 
         $scope.recentProjects = [];
-
-        win.showDevTools();
 
 
         $scope.openDocumentWindow = function (filename) {
@@ -48,6 +47,10 @@
         };
 
         win.focus();
+
+        if(config.devMode) {
+            $scope.openDocumentWindow("../test/data/test.save")
+        }
 
         /**************** AngularJS listeners ***************/
 
