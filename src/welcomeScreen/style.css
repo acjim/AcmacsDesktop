@@ -1,0 +1,13 @@
+body {
+    background-color: #f5f5f5;
+    padding: 50px;
+}
+
+a, a:hover, a:active {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+ul {
+    list-style-type: none;
+}
