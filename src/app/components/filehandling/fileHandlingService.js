@@ -477,7 +477,7 @@
 
         }
 
-        function updateTable(tableData) {
+        function updateTable(tableData, maps) {
             cfpLoadingBar.start();
 
             var version = tableData.version;
@@ -494,7 +494,6 @@
                 .then(function (output) {
                     acd1File = output; // update acd1 file
 
-                    //TODO projection number should be passed further into relax function which is missing projection parameter
                     var relax_additional_params = {
                         number_of_dimensions: 2,
                         number_of_optimizations: 1,
@@ -506,19 +505,21 @@
 
                             fs.readFile(filename, 'utf8', function (err, data) {
 
-                                //TODO how to get current map data here?
+                                //TODO decide on which map should be updated: currently a new map is created
                                 var mapJsonData = JSON.parse(data);
-                                mapJsonData.map = mapJsonData.best_map;
+                                var mapData = {data: {map: '', stress: ''}, options: {}};
+                                mapData.data.map = mapJsonData.best_map;
+                                mapData.data.stress = mapJsonData.stresses[0];
                                 for (var prop in maps) {
-                                    var mapData =  maps[prop];
+                                    var map =  maps[prop];
                                     break;
                                 }
-                                mapJsonData.stress = mapJsonData.stresses[0];
-                                maps.push(mapJsonData);
-                                mapJsonData.best_map.layout.forEach(function (layout, i) {
-                                    //mapData.d3Nodes[i].x = layout[0];
-                                    //mapData.d3Nodes[i].y = layout[1];
-                                });
+                                var id = maps.length;
+                                mapData.options = map.options;
+                                mapData.options.id = id;
+                                mapData.options.title = 'Map '+ (id+1);
+                                maps.push(mapData);
+
 
                                 cfpLoadingBar.complete();
 

@@ -26,14 +26,15 @@ var app = angular.module('acjim.table', []);
 app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
     $scope.$on('api.updateTable', function () {
-        fileHandling.updateTable($scope.tableData);
+        fileHandling.updateTable($scope.tableData, $scope.openMaps);
     });
 
 }])
 
     .directive('acTable', function () {
         return {
-            restrict: 'E',
+            controller: 'tableCtrl',
+            controllerAs: 'tableData',
             templateUrl: './app/components/table/tableView.html',
             link: function (scope, iElement) {
                 scope.editItem = function (obj, parent_index, index) {
@@ -53,6 +54,10 @@ app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function (
                         }
                     });
                 }
+            },
+            restrict: 'E',
+            bindToController: {
+                table: '='
             }
         }
     });
