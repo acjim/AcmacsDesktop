@@ -41,6 +41,7 @@
             NEW_MAP: 9,
             //// Another Button... ////
             SHOW_CONNECTION_LINES: 10,
+            UPDATE_TABLE: 11,
         };
 
         return tools;

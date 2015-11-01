@@ -21,34 +21,35 @@
  */
 'use strict';
 
-var app = angular.module('acjim.table',[]);
+var app = angular.module('acjim.table', []);
 
-app.controller('tableCtrl', ['$scope', function($scope) {
+app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
     $scope.tableData = $scope.tableData.table;
+    $scope.$on('api.updateTable', function () {
+        fileHandling.updateTable($scope.tableData);
+    });
 
 }])
 
-    .directive('acTable', function() {
+    .directive('acTable', function () {
         return {
             controller: 'tableCtrl',
             controllerAs: 'tableData',
             templateUrl: './app/components/table/tableView.html',
-            link: function(scope, iElement) {
+            link: function (scope, iElement) {
                 scope.editItem = function (obj, parent_index, index) {
                     obj.target.setAttribute("contenteditable", true);
                     obj.target.focus();
-                    var element  = angular.element(event.currentTarget);
+                    var element = angular.element(event.currentTarget);
                     element.bind("keydown keypress", function (event) {
-                        if(event.which === 13 || event.which === 27) {
+                        if (event.which === 13 || event.which === 27) {
                             obj.target.setAttribute("contenteditable", false);
                             event.preventDefault();
-                            if(scope.tableData.table.titers.titers_list_of_list)
-                            {
-                                scope.tableData.table.titers.titers_list_of_list[parent_index][index]= element.text();
-                            } else if(scope.tableData.table.titers.titers_list_of_dict)
-                            {
-                                scope.tableData.table.titers.titers_list_of_dict[parent_index][index]= element.text();
+                            if (scope.tableData.table.titers.titers_list_of_list) {
+                                scope.tableData.table.titers.titers_list_of_list[parent_index][index] = element.text();
+                            } else if (scope.tableData.table.titers.titers_list_of_dict) {
+                                scope.tableData.table.titers.titers_list_of_dict[parent_index][index] = element.text();
                             }
                             scope.$apply();
                         }

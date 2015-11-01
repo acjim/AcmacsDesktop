@@ -50,7 +50,8 @@
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
             getMaps: getMaps,
-            getTable: getTableData
+            getTable: getTableData,
+            updateTable: updateTable,
         };
 
         return service;
@@ -528,6 +529,58 @@
             // First, draw the error lines for antigens
             connect({from: 'antigens', to: 'sera'});
             connect({from: 'sera', to: 'antigens'});
+
+        }
+
+        function updateTable(tableData) {
+            cfpLoadingBar.start();
+
+            var version = tableData.version;
+            var info = tableData.info;
+            var table = tableData.table;
+            var additional_params = {
+                version: version,
+                table: table,
+                info: info,
+                remove_existing_projections: true
+            };
+
+            api.update_table(additional_params, acd1File)
+                .then(function (output) {
+                    acd1File = output; // update acd1 file
+
+                    //TODO projection number should be passed further into relax function which is missing projection parameter
+                    var relax_additional_params = {
+                        number_of_dimensions: 2,
+                        number_of_optimizations: 1,
+                        best_map: true
+                    };
+
+                    api.execute(api.get_commands().RELAX, relax_additional_params, acd1File)
+                        .then(function (filename) {
+
+                            fs.readFile(filename, 'utf8', function (err, data) {
+
+                                //TODO how to get current map data here?
+                                var mapJsonData = JSON.parse(data);
+                                mapJsonData.map = mapJsonData.best_map;
+                                for (var prop in maps) {
+                                    var mapData =  maps[prop];
+                                    break;
+                                }
+                                mapJsonData.stress = mapJsonData.stresses[0];
+                                maps.push(mapJsonData);
+                                cfpLoadingBar.complete();
+
+                            });
+
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
+
+                }, function (reason) {
+                    return errorReason(reason);
+                });
 
         }
 

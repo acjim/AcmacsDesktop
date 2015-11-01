@@ -166,13 +166,14 @@ angular.module('acjim.api', [])
                 case COMMANDS.UPDATE_TABLE:
                     var input_parameter = {command: COMMANDS.UPDATE_TABLE, data: {}};
 
-                    if (!additional_params.hasOwnProperty('table') || !additional_params.hasOwnProperty('info') || additional_params.hasOwnProperty('version'))
+                    if (!additional_params.hasOwnProperty('table') || !additional_params.hasOwnProperty('info') || !additional_params.hasOwnProperty('version'))
                     {
                         throw new Error('Missing mandatory datas, please make sure your data has: table, info and version');
                     }
                     if (additional_params.hasOwnProperty('remove_existing_projections')) {
                         input_parameter.data.remove_existing_projections = additional_params.remove_existing_projections; // boolean
                     }
+                    input_parameter.data = additional_params;
                     var file_name = this.extract_name(input_file);
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
@@ -346,6 +347,7 @@ angular.module('acjim.api', [])
 
             var script = config.api.script;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                 params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
@@ -353,7 +355,7 @@ angular.module('acjim.api', [])
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
                 params[params.length] = output_json;
-                params[params.length] = output_acd1;
+                params[params.length] = output_acd1_1;
             }
             // callback function for exec
             try {
@@ -392,7 +394,7 @@ angular.module('acjim.api', [])
             // callback function for exec
             function puts(error, stdout, stderr) {
                 if (error) {
-                    // @todo handle error/exception properly
+                    // TODO handle error/exception properly
                     //this.emit('error', error);
                     console.log(error);
                     deferred.reject(error);
@@ -402,7 +404,7 @@ angular.module('acjim.api', [])
 
             var script = config.api.script;
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "updated_acd1");
+            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "upt");
 
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
@@ -535,6 +537,14 @@ angular.module('acjim.api', [])
             }
             var date_now = DATE_NOW,
                 output = null;
+
+            // if filename already has command in it then simply add
+            if(file.indexOf(command) > - 1)
+            {
+                var randomnumber = Math.floor(Math.random() * (10)) + 1;
+                output = path + file + '_' + randomnumber + extension;
+                return output;
+            }
             // remove import param from generated file
             if(command === COMMANDS.IMPORT)
             {
