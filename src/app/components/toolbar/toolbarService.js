@@ -28,26 +28,27 @@
 
     function toolbar () {
 
-        var items = [],
+        var structure = [],
+            items = [],
             groups = [];
 
         var service = {
             init: init,
-            getAllItems: getAllItems,
-            getActiveItemFromGroup: getActiveItemFromGroup
+            getStructure: getStructure,
+            getActiveItemFromGroup: getActiveItemFromGroup,
+            getItemByID: getItemByID
         };
 
         return service;
 
         ///////////////////
 
-
         /**
          * Initializes the toolbar
          * @param options Array of options
          */
         function init(options) {
-            items = loopItems(options);
+            structure = loopItems(options);
         }
 
         /**
@@ -57,13 +58,13 @@
          */
         function loopItems(options) {
 
-            var items = [];
+            var structure = [];
 
             for (var i = 0; i < options.length; i++) {
-                items.push(constructItem(options[i]));
+                structure.push(constructItem(options[i]));
             }
 
-            return items;
+            return structure;
 
         }
 
@@ -74,32 +75,51 @@
          */
         function constructItem(options) {
 
-            var toolbarItem = {
-                id: options.id || null,
-                order: options.order || items.length,
-                icon: options.icon || null,
-                caption: options.caption || null,
-                type: options.type || 'button',
-                buttons: options.buttons ? loopItems(options.buttons) : null,
-                active: options.active || false,
-                togglable: options.togglable || false,
-                groupID: options.groupID || null,
-                callback: options.callback || null,
-                click: itemClick,
-                select: function(selected) {
-                    this.active = selected;
-                },
-                isButtonGroup: function() {
-                    return this.type === 'buttonGroup'
-                },
-                toggle: function() {
-                    this.select(!this.active);
-                }
-            };
+            var toolbarItem = null;
 
-            // If group id is provided, add item to that group
-            if (toolbarItem.groupID) {
-                addItemToGroup(toolbarItem, toolbarItem.groupID);
+            if (options.type === "buttonGroup") {
+
+                toolbarItem = {
+                    order: options.order || structure.length,
+                    type: 'buttonGroup',
+                    buttons: loopItems(options.buttons),
+                    active: options.active || false,
+                    isButtonGroup: function () {
+                        return this.type === 'buttonGroup';
+                    }
+                };
+
+            } else {
+
+                toolbarItem = {
+                    id: options.id || null,
+                    order: options.order || structure.length,
+                    icon: options.icon || null,
+                    caption: options.caption || null,
+                    type: 'button',
+                    active: options.active || false,
+                    togglable: options.togglable || false,
+                    groupID: options.groupID || null,
+                    callback: options.callback || null,
+                    click: itemClick,
+                    select: function (selected) {
+                        this.active = selected;
+                    },
+                    isButtonGroup: function () {
+                        return this.type === 'buttonGroup'
+                    },
+                    toggle: function () {
+                        this.select(!this.active);
+                    }
+                };
+
+                // If group id is provided, add item to that group
+                if (toolbarItem.groupID) {
+                    addItemToGroup(toolbarItem, toolbarItem.groupID);
+                }
+
+                items.push(toolbarItem);
+
             }
 
             return toolbarItem;
@@ -166,8 +186,8 @@
          * Returns an array of all toolbar items.
          * @returns {Array}
          */
-        function getAllItems() {
-            return items;
+        function getStructure() {
+            return structure;
         }
 
 
@@ -186,6 +206,17 @@
             } else {
                 return activeItem;
             }
+
+        }
+
+
+        /**
+         * Finds the item with the specific ID. Returns undefined if no item is found.
+         * @param itemID
+         */
+        function getItemByID(itemID) {
+
+            return _.find(items, function(item) { return item.id === itemID; });
 
         }
 

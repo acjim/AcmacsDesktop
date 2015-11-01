@@ -24,16 +24,63 @@
     'use strict';
 
 angular.module('acjim')
-    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', appCtrl]);
+    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', appCtrl]);
 
 
-    function appCtrl ($scope, nwService, fileHandling) {
+    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
-        $scope.fileHandlingService = fileHandling;
+        $scope.openMaps = [];
+        $scope.tableData = null;
+
+        // Window layout variables
+        var position = 0;
+
+
+
+        /******************** Events *******************/
 
         $scope.$on('open-file', function () {
-            fileHandling.openFileDialog();
+
+            fileDialog.openFile(
+                handleFileOpen,
+                false,
+                '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
+            );
         });
+
+        function handleFileOpen(filename) {
+
+            if ($scope.tableData !== null) {
+
+                //open file in new window
+                nwService.parentWindow.emit("openFileInNewWindow", filename);
+                return;
+
+            }
+
+            fileHandling.handleFileOpen(filename).then(function(result) {
+
+                    $scope.tableData = result.table;
+                    $scope.openMaps.push({
+                        data: result.map,
+                        options: {
+                            id: $scope.openMaps.length,
+                            x: 100 * position,
+                            y: 50 * position++,
+                            width: 400,
+                            height:300,
+                            title: "Map " + ($scope.openMaps.length + 1),
+                            onClose: function() {
+                                $scope.openMaps.splice(this.id, 1);
+                            }
+                        }
+                    });
+
+                    cfpLoadingBar.complete();
+
+                }
+            );
+        }
 
 
         // Open Debug Window
@@ -43,9 +90,7 @@ angular.module('acjim')
 
         // Reload
         $scope.$on('reload-app', function () {
-            if (location) {
-                location.reload();
-            }
+            nwService.gui.Window.get().reloadDev();
         });
 
         //Close app
@@ -53,82 +98,35 @@ angular.module('acjim')
             nwService.gui.Window.get().close();
         });
 
-
         nwService.window.on('close', function () {
-            this.hide(); // Pretend to be closed already
-            var win = nwService.gui.Window.get();
-            var win_id = win.id;
-            var store_path = config.store.path;
-            var data_path = store_path + win_id + '/';
-            console.log("Closing and removing generated files...");
-            $scope.rmDir(data_path);
+            // Pretend to be closed already
+            this.hide();
+            nwService.parentWindow.emit("window-close", nwService.window.id);
             this.close(true);
         });
 
-        $scope.rmDir = function (dirPath) {
-            try {
-                var files = fs.readdirSync(dirPath);
-
-                if (files.length > 0) {
-                    for (var i = 0; i < files.length; i++) {
-                        var filePath = dirPath + '/' + files[i];
-                        if (files[i] !== '.gitkeep') {
-                            if (fs.statSync(filePath).isFile())
-                                fs.unlinkSync(filePath);
-                            else
-                                this.rmDir(filePath);
-                        }
-                    }
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        };
-
-        $scope.winOptions = {
-            x: 0,
-            y: 0,
-            width: 600,
-            height:500,
-            title: "abc",
-            onClose: function() {
-                console.log("close");
-                //var index = openWindows.indexOf(this);
-                //openWindows.splice(index, 1);
-            }
-        };
-        $scope.openMaps = [];
-        $scope.tableData = [];
-
-        $scope.$watch('fileHandlingService.getMaps()', function (newValue) {
-            $scope.openMaps = newValue;
-        });
-
-        $scope.$watch('fileHandlingService.getTable()', function (newValue) {
-            $scope.tableData = newValue;
-        });
-
-
-        /*
+        /**
          * Handle file opening on application startup
          */
         var Url = {
             get get(){
                 var vars= {};
-                if(window.location.search.length!==0)
-                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value){
-                        key=decodeURIComponent(key);
-                        if(typeof vars[key]==="undefined") {vars[key]= decodeURIComponent(value);}
-                        else {vars[key]= [].concat(vars[key], decodeURIComponent(value));}
+                if(window.location.search.length!==0) {
+                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                        key = decodeURIComponent(key);
+                        if (typeof vars[key] === "undefined") {
+                            vars[key] = decodeURIComponent(value);
+                        } else {
+                            vars[key] = [].concat(vars[key], decodeURIComponent(value));
+                        }
                     });
+                }
                 return vars;
             }
         };
 
-        if(!_.isUndefined(Url.get.fileToOpenOnStart)) {
-            fileHandling.openFile(Url.get.fileToOpenOnStart);
-        } else if (config.devMode) {
-            fileHandling.openFile("../test/data/test.save");
+        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
+            handleFileOpen(Url.get.filename);
         }
 
     }

@@ -9,36 +9,38 @@ To be able to use the app you need the latest version of the **AcmacsCore.bundle
 
 Unzip and put the binaries in the folder: `src/core`
 
-## Run the application in development mode
+## Run the application (development mode)
 You need ``npm`` installed in order to get this working. The best way to install ``npm`` is to install [node.js](http://www.nodejs.org) using its installer.
-### Install project dependencies
-In the root folder of your app, run the following command.
+
+
+Run the following command in the root folder of the project (where this ``README.md`` is located):
 ```sh
 npm install
 ```
-
-### Update project dependencies
-If you already got the application running, but some dependencies changed, type:
-```sh
-npm update
-```
-
-### Start your app
+And start the application with:
 ```sh
 npm start
 ```
 
-## Build Instructions
+## Build the application (for deployment)
+You need ``grunt`` installed to get this working. The best option is probably to install it globally:
+```sh
+npm install -g grunt
+```
 
-### Install dependencies
+#### Install dependencies
+Install all project dependencies
 ```sh
 npm install
 ```
-### Build AcmacsDesktop application
+#### Build AcmacsDesktop application
 The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
 ```sh
 grunt build
 ```
+To prevent errors, you should only build the application on the system you are building it for. For example, if you would 
+like to make an ``OSX 32-bit`` build then build it on that specific architecture. 
+
 By default, the app is only built for the platform you are on. However, you can provide your desired build targets as parameters:
 ```sh
 grunt build --target=<target>
@@ -56,11 +58,12 @@ linux64
 ```
 Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
 
-### Package
-Currently, only `DMG` packaging for OS X is supported.
+#### Packaging the application
+Currently, only `DMG` packaging for OS X is supported and you need to be on OS X in order for this to work.
 ```sh
 grunt package
 ```
+
 
 # License
 GNU GENERAL PUBLIC LICENSE  

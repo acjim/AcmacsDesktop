@@ -10,9 +10,9 @@ module.exports = function(grunt) {
     if (grunt.option('platform')) {
         platforms.push(grunt.option('platform'));
     } else {
-        if (isMac) platforms.push('osx' + arch);
-        if (isWin) platforms.push('win' + arch);
-        if (isLinux) platforms.push('linux' + arch);
+        if (isMac) { platforms.push('osx' + arch); }
+        if (isWin) { platforms.push('win' + arch); }
+        if (isLinux) { platforms.push('linux' + arch); }
     }
 
     grunt.initConfig({
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 version: "0.12.3",
                 platforms: platforms,
                 buildDir: './build', // Where the build version of my NW.js app is save
-                macZip: true,
+                macZip: false,
                 macIcns: './assets/osx/icon.icns',
                 credits: 'assets/osx/credits.html'
 
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', ['clean:build', 'nwjs']);
 
     var packageFlow = ['build', 'clean:package'];
-    if(isMac) packageFlow.push('appdmg');
+    if(isMac) { packageFlow.push('appdmg'); }
 
     grunt.registerTask('package', packageFlow);
 

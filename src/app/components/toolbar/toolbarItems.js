@@ -28,23 +28,20 @@
 
     function toolbarItems () {
 
-        var tools = {
+        return {
             SELECTION: 1,
             MOVEMENT: 2,
             SHOW_ERROR_LINES: 3,
-            SHOW_BLOBS: 4,
-            SHOW_LABELS: 5,
-            RE_OPTIMIZE: 6,
-            //// GROUPS ////
-            MAP_TOOLS: 7,
+            SHOW_CONNECTION_LINES: 4,
+            SHOW_BLOBS: 5,
+            SHOW_LABELS: 6,
+            RE_OPTIMIZE: 7,
             DISABLE_MAP: 8,
             NEW_MAP: 9,
-            //// Another Button... ////
-            SHOW_CONNECTION_LINES: 10,
-            UPDATE_TABLE: 11,
+            //// GROUPS ////
+            MAP_TOOLS: 10,
+            UPDATE_TABLE:11
         };
-
-        return tools;
 
     }
 

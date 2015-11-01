@@ -29,62 +29,26 @@
     angular.module('acjim.fileHandling',['flash'])
         .factory('fileHandling', [
             '$q',
-            'fileDialog',
             'api',
             'Flash',
             'cfpLoadingBar',
+            '$timeout',
             fileHandling
         ]);
 
 
-    function fileHandling ($q, fileDialog, api, Flash, cfpLoadingBar) {
+    function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
 
-        var tableData = null,
-            acd1File = null,
-            maps = [];
+        var acd1File = null;
 
-        var service = {
-            newFile: newFile,
-            openFileDialog: openFileDialog,
-            openFile: handleFileOpen,
+        return {
+            handleFileOpen: handleFileOpen,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
-            getMaps: getMaps,
-            getTable: getTableData,
-            updateTable: updateTable,
+            updateTable: updateTable
         };
 
-        return service;
-
         ///////////////////
-
-        function getTableData(){
-            return tableData;
-        }
-
-        function getMaps() {
-            return maps;
-        }
-
-
-        /**
-         * Creates a new table to edit
-         */
-        function newFile () {
-            //TODO: what happens if new file?
-        }
-
-
-        /**
-         * Opens a specific file
-         */
-        function openFileDialog () {
-            fileDialog.openFile(
-                handleFileOpen,
-                false,
-                '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
-            );
-        }
 
 
         /**
@@ -116,46 +80,15 @@
 
 
         /**
-         * Called when file opening is completed
-         * @param output
-         */
-        function handleOpenComplete (output) {
-
-            var output_acd1 = output.output_acd1;
-            // parse file returned from table_filename to get json data related with table. NOTE: this file can only be json.
-            var table_filename = output.table_json;
-            // parse file returned from map_filename to get json data related with maps. NOTE: this file can only be json.
-            var map_filename = output.map_json;
-
-            $q.all([
-                readFile(table_filename),
-                readFile(map_filename)
-            ]).then(function(data) {
-
-                tableData = JSON.parse(data[0]);
-                acd1File = output_acd1;
-                maps.push(JSON.parse(data[1]));
-
-            });
-            cfpLoadingBar.complete();
-
-        }
-
-
-        /**
          * Callback function to handle the file opening
          * @param filename
          */
         function handleFileOpen (filename) {
 
-            if (tableData != null) {
-                //open file in new window
-                window.open('index.html?fileToOpenOnStart=' + encodeURIComponent(filename));
-                return;
-            }
-
             // Start loading bar
-            cfpLoadingBar.start();
+            $timeout(function() {
+                cfpLoadingBar.start();
+            }, 50);
 
             if (false && !fs.existsSync(config.api.path)) {
 
@@ -173,22 +106,25 @@
                 var table_additional_params = {}; // check documentation on execute>get_table for additional params
                 var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
 
-                api.import_user_data(filename, additional_params)
+                return api.import_user_data(filename, additional_params)
                     .then(function (output) {
+                        var result = {};
 
                         cfpLoadingBar.set(0.3);
 
                         if (process.platform === "win32") { //vagrant can't handle 2 async calls
-                            api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function (output1) {
-                                cfpLoadingBar.set(0.6)
+                            return api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function (output1) {
+                                cfpLoadingBar.set(0.6);
                                 var output_table_json = output1;
-                                api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function (output2) {
-                                    var output_map_json = output2;
-                                    handleOpenComplete({
-                                        output_acd1: output.output_acd1,
-                                        table_json: output_table_json,
-                                        map_json: output_map_json
-                                    });
+                                api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function (output_map_json) {
+
+                                    result.table = output_table_json;
+                                    result.map = output_map_json;
+
+                                    acd1File = output.output_acd1;
+
+                                    return result;
+
                                 }, function (reason) {
                                     return errorReason(reason);
                                 });
@@ -197,19 +133,28 @@
                             });
                         } else {
 
-                            //under unix, asyncronous is faster
-                            $q.all([
+                            //under unix, asynchronous is faster
+                            return $q.all([
                                 api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
                                 api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
                             ]).then(function (data) {
                                 var output_table_json = data[0];
                                 var output_map_json = data[1];
 
-                                handleOpenComplete({
-                                    output_acd1: output.output_acd1,
-                                    table_json: output_table_json,
-                                    map_json: output_map_json
+                                return $q.all([
+                                    readFile(output_table_json),
+                                    readFile(output_map_json)
+                                ]).then(function(data) {
+
+                                    result.table = JSON.parse(data[0]);
+                                    result.map = JSON.parse(data[1]);
+
+                                    acd1File = output.output_acd1;
+
+                                    return result;
+
                                 });
+
                             }, function (reason) {
                                 return errorReason(reason);
                             });
@@ -570,6 +515,11 @@
                                 }
                                 mapJsonData.stress = mapJsonData.stresses[0];
                                 maps.push(mapJsonData);
+                                mapJsonData.best_map.layout.forEach(function (layout, i) {
+                                    //mapData.d3Nodes[i].x = layout[0];
+                                    //mapData.d3Nodes[i].y = layout[1];
+                                });
+
                                 cfpLoadingBar.complete();
 
                             });
