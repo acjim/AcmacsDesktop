@@ -9,28 +9,27 @@ To be able to use the app you need the latest version of the **AcmacsCore.bundle
 
 Unzip and put the binaries in the folder: `src/core`
 
-## Run the application in development mode
+## Run the application (development mode)
 You need ``npm`` installed in order to get this working. The best way to install ``npm`` is to install [node.js](http://www.nodejs.org) using its installer.
-### Install project dependencies
-In the root folder of your app, run the following command.
+
+
+Run the following command in the root folder of the project (where this README.md is located):
 ```sh
 npm install
 ```
-
-### Update project dependencies
-If you already got the application running, but some dependencies changed, type:
-```sh
-npm update
-```
-
-### Start your app
+And start the application with:
 ```sh
 npm start
 ```
 
-## Build Instructions
+## Build the application (for deployment)
+You need ``grunt`` installed to get this working. The best option is probably to install it globally:
+```sh
+npm install -g grunt
+```
 
 ### Install dependencies
+Install all project dependencies
 ```sh
 npm install
 ```
@@ -39,6 +38,9 @@ The task runner grunt creates a folder `cache`, downloads the right nw.js versio
 ```sh
 grunt build
 ```
+To prevent errors, you should only build the application on the system you are building it for. For example, if you would 
+like to make an ``OSX 32-bit`` build then build it on that specific architecture. 
+
 By default, the app is only built for the platform you are on. However, you can provide your desired build targets as parameters:
 ```sh
 grunt build --target=<target>
@@ -56,11 +58,18 @@ linux64
 ```
 Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
 
-### Package
-Currently, only `DMG` packaging for OS X is supported.
+### Packaging the application
+Two possible packaging options are supported: making a `DMG` for OS X and putting it into a `.deb` file for Debian based systems.
+Because of certain restrictions, it is only possible to package the application for the system you are currently on.
 ```sh
 grunt package
 ```
+When building a debian package, you need to install the two debian tools to create and lint the debian package:
+```sh
+sudo apt-get install devscripts
+sudo apt-get install debhelper
+```
+
 
 # License
 GNU GENERAL PUBLIC LICENSE  
