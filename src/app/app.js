@@ -97,13 +97,27 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             ]
         },
         {
-            id: toolbarItems.RE_OPTIMIZE,
-            caption: 'Reoptimize',
-            icon: 'glyphicon glyphicon-refresh',
-            callback: function () {
-                $rootScope.$broadcast('api.reoptimize');
-            }
-        }
+            type: "buttonGroup",
+            buttons: [
+                {
+                    id: toolbarItems.RE_OPTIMIZE,
+                    caption: 'Reoptimize',
+                    icon: 'glyphicon glyphicon-refresh',
+                    callback: function () {
+                        $rootScope.$broadcast('api.reoptimize');
+                    }
+                },
+                {
+                    id: toolbarItems.UPDATE_TABLE,
+                    caption: 'Update Table',
+                    icon: 'glyphicon glyphicon-list-alt',
+                    callback: function () {
+                        $rootScope.$broadcast('api.updateTable');
+                    }
+                }
+            ]
+        },
+
     ]);
 
 });

@@ -44,7 +44,8 @@
         return {
             handleFileOpen: handleFileOpen,
             reOptimize: reOptimize,
-            getErrorConnectionlines: getErrorConnectionlines
+            getErrorConnectionlines: getErrorConnectionlines,
+            updateTable: updateTable
         };
 
         ///////////////////
@@ -473,6 +474,64 @@
             // First, draw the error lines for antigens
             connect({from: 'antigens', to: 'sera'});
             connect({from: 'sera', to: 'antigens'});
+
+        }
+
+        function updateTable(tableData, maps) {
+            cfpLoadingBar.start();
+
+            var version = tableData.version;
+            var info = tableData.info;
+            var table = tableData.table;
+            var additional_params = {
+                version: version,
+                table: table,
+                info: info,
+                remove_existing_projections: true
+            };
+
+            api.update_table(additional_params, acd1File)
+                .then(function (output) {
+                    acd1File = output; // update acd1 file
+
+                    var relax_additional_params = {
+                        number_of_dimensions: 2,
+                        number_of_optimizations: 1,
+                        best_map: true
+                    };
+
+                    api.execute(api.get_commands().RELAX, relax_additional_params, acd1File)
+                        .then(function (filename) {
+
+                            fs.readFile(filename, 'utf8', function (err, data) {
+
+                                //TODO decide on which map should be updated: currently a new map is created
+                                var mapJsonData = JSON.parse(data);
+                                var mapData = {data: {map: '', stress: ''}, options: {}};
+                                mapData.data.map = mapJsonData.best_map;
+                                mapData.data.stress = mapJsonData.stresses[0];
+                                for (var prop in maps) {
+                                    var map =  maps[prop];
+                                    break;
+                                }
+                                var id = maps.length;
+                                mapData.options = map.options;
+                                mapData.options.id = id;
+                                mapData.options.title = 'Map '+ (id+1);
+                                maps.push(mapData);
+
+
+                                cfpLoadingBar.complete();
+
+                            });
+
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
+
+                }, function (reason) {
+                    return errorReason(reason);
+                });
 
         }
 

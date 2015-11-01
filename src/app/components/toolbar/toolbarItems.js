@@ -39,7 +39,8 @@
             DISABLE_MAP: 8,
             NEW_MAP: 9,
             //// GROUPS ////
-            MAP_TOOLS: 10
+            MAP_TOOLS: 10,
+            UPDATE_TABLE:11
         };
 
     }
