@@ -32,11 +32,12 @@
             'api',
             'Flash',
             'cfpLoadingBar',
+            '$timeout',
             fileHandling
         ]);
 
 
-    function fileHandling ($q, api, Flash, cfpLoadingBar) {
+    function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
 
         var acd1File = null;
 
@@ -84,7 +85,9 @@
         function handleFileOpen (filename) {
 
             // Start loading bar
-            cfpLoadingBar.start();
+            $timeout(function() {
+                cfpLoadingBar.start();
+            }, 50);
 
             if (false && !fs.existsSync(config.api.path)) {
 
