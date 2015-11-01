@@ -12,7 +12,14 @@
         var win = nwService.window,
             openWindows = 0;
 
-        appMenuService.setMinimalMenu();
+        var isMac = process.process.platform === 'darwin';
+
+        if (isMac) {
+            appMenuService.setMinimalMenu();
+        } else {
+
+        }
+
 
         $scope.recentProjects = [];
 

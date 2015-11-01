@@ -1,6 +1,6 @@
 (function() {
     'use strict';
 
-    angular.module('AcmacsDesktop', ['DWand.nw-fileDialog']);
+    angular.module('AcmacsDesktop', ['DWand.nw-fileDialog', 'acjim.appMenu']);
 
 })();

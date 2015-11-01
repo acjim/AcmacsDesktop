@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('AcmacsDesktop')
+    angular.module('acjim.appMenu', [])
         .factory('appMenuService', ['nwService', appMenuService]);
 
     function appMenuService(nwService) {
@@ -13,7 +13,8 @@
                 type: 'menubar',
                 items: [
                     {
-                        label: 'File', items: [
+                        label: 'File',
+                        items: [
                         {
                             label: 'New...',
                             tooltip: 'Create a new file',
