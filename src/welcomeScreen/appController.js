@@ -94,12 +94,10 @@
             if (files.length > 0) {
                 for (var i = 0; i < files.length; i++) {
                     var filePath = dirPath + '/' + files[i];
-                    if (files[i] !== '.gitkeep') {
-                        if (fs.statSync(filePath).isFile()) {
-                            fs.unlinkSync(filePath);
-                        } else {
-                            cleanWindowData(filePath);
-                        }
+                    if (fs.statSync(filePath).isFile()) {
+                        fs.unlinkSync(filePath);
+                    } else {
+                        cleanWindowData(filePath);
                     }
                 }
             }
