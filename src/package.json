@@ -10,11 +10,12 @@
     "main": "index.html",
     "window": {
         "show": true,
-        "frame": false,
+        "frame": true,
         "width": 500,
         "height": 300,
         "resizable": false,
-        "position": "center"
+        "position": "center",
+        "toolbar": false
     },
     "single-instance": "false",
     "dependencies": {

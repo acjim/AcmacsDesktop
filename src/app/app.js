@@ -32,6 +32,7 @@ var app = angular.module('acjim', [
     'acjim.map',
     'acjim.table',
     'acjim.toolbar',
+    'acjim.appMenu',
     'ngHtmlWindow',
     'angular-loading-bar',
     'ngAnimate',
@@ -40,7 +41,11 @@ var app = angular.module('acjim', [
 
 angular.module('acjim.toolbar', []);
 
-app.run(function($rootScope, toolbar, toolbarItems) {
+app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
+
+    if (process.platform !== "darwin") {
+        appMenuService.createNormalMenu();
+    }
 
     //Create the toolbar
     toolbar.init([

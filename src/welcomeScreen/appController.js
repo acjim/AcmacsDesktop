@@ -14,6 +14,7 @@
 
         appMenuService.setMinimalMenu();
 
+
         $scope.recentProjects = [];
 
 
