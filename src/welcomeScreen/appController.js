@@ -5,27 +5,37 @@
         fs = require('fs');
 
     angular.module('AcmacsDesktop')
-        .controller('appCtrl', ['$scope', 'nwService', 'fileDialog', appCtrl]);
+        .controller('appCtrl', ['$scope', 'nwService', 'fileDialog', 'appMenuService', appCtrl]);
 
-    function appCtrl($scope, nwService, fileDialog) {
+    function appCtrl($scope, nwService, fileDialog, appMenuService) {
 
         var win = nwService.window;
+
         var openWindows = 0;
 
         $scope.recentProjects = [];
 
-        var docWindowOptions = {
-            show: true,
-            "new-instance": false,
-            "toolbar": false,
-            "width": 800,
-            "height": 600
-        };
+        win.showDevTools();
+
 
         $scope.openDocumentWindow = function (filename) {
-            win.hide();
-            openWindows++;
-            nwService.gui.Window.open('window.html?filename=' + encodeURIComponent(filename), docWindowOptions);
+
+            if (++openWindows === 1) {
+                appMenuService.createNormalMenu();
+                win.hide();
+            }
+
+            nwService.gui.Window.open(
+                'window.html?filename=' + encodeURIComponent(filename),
+                {
+                    show: true,
+                    "new-instance": false,
+                    "toolbar": false,
+                    "width": 800,
+                    "height": 600
+                }
+            );
+
         };
 
 
@@ -62,12 +72,13 @@
             var store_path = config.store.path;
             var data_path = store_path + windowID + '/';
 
-            cleanWindowData(data_path);
-
             if (--openWindows === 0) {
                 win.show();
                 win.focus();
+                appMenuService.setMinimalMenu();
             }
+
+            cleanWindowData(data_path);
 
         });
 
