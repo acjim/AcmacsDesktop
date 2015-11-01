@@ -2,265 +2,39 @@
 <html ng-app="AcmacsDesktop">
 <head>
     <title>Acmacs Desktop</title>
+
+    <!-- Le css -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="welcomeScreen/style.css">
+
 </head>
 <body ng-controller="appCtrl">
 
-    <h1>Splash Screen AcmacsDesktop</h1>
-    <label ng-click="openDocumentWindow()">New Project</label>
+    <h1>Acmacs Desktop</h1>
 
+    <div class="col col-first">
+        <ul class="m-new">
+            <li><a ng-click="openDocumentWindow()">New Project</a></li>
+            <li><a ng-click="openFile()">Open</a></li>
+            <li>Open a Recent Project
+                <ul>
+                    <li ng-repeat="project in recentProjects | limitTo:5">
+                        <a ng-click="openDocumentWindow(project.file)">{{project.name}}</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Le javascript -->
     <script src="node_modules/underscore/underscore.js"></script>
     <script src="node_modules/angular/angular.js"></script>
     <script src="app/components/filehandling/fileDialog.js"></script>
 
-    <script type="text/javascript">
+    <script src="welcomeScreen/app.js"></script>
 
-        var config = require('./config.js'),
-            fs = require('fs');
+    <script src="welcomeScreen/nwService.js"></script>
+    <script src="welcomeScreen/appController.js"></script>
 
-        var app = angular.module('AcmacsDesktop', ['DWand.nw-fileDialog']);
-
-        app.factory('nwService', function($rootScope) {
-
-            // Load native UI library
-            var gui = require('nw.gui'),
-                win = gui.Window.get(),
-                __activeWindowId = null;
-
-            // react on child window changes
-            win.on('active-window-changed', function (id) {
-                __activeWindowId = id;
-            });
-
-            return {
-                gui: gui,
-                window: win,
-                createMenu: createMenu
-            };
-
-            ////////////////////
-
-
-            function getActiveWindow() {
-                return global.__nwWindowsStore[__activeWindowId];
-            }
-
-
-            function createMenu(menuStructure) {
-
-                // Create the top menu
-                var menu = new gui.Menu(menuStructure.root);
-
-                if (process.platform === 'darwin') {
-                    menu.createMacBuiltin('Acmacs Desktop', { // can hide edit/window menu by setting below to true
-                        hideEdit: true,
-                        hideWindow: true
-                    });
-                }
-
-                // Create sub-menu items if they're provided
-                if (menuStructure.root && menuStructure.root.items) {
-                    createMenuItems(menu, menuStructure.root.items);
-                }
-
-                if (menu.type === 'menubar') {
-                    win.menu = menu;
-                }
-
-                return menu;
-            }
-
-            function createMenuItems(menu, items) {
-
-                _.each(items, function (i) {
-
-                    // Shortcut to integrate menu with Angular event system when click represents an eventName
-                    if (_.isString(i.click)) {
-
-                        i.click = (function (menu, eventName) {
-                            return function () {
-
-                                var nwWindow = getActiveWindow();
-
-                                // If no window is open, broadcast events in splash screen
-                                if (!nwWindow) {
-                                    $rootScope.$broadcast(eventName);
-                                    return;
-                                }
-
-                                nwWindow.emit("menu-action", eventName);
-
-                            }
-                        })(menu, i.click);
-
-                    }
-
-                    // Create a sub-menu if items are provided
-                    if (i.items) {
-                        i.submenu = new gui.Menu();
-                        createMenuItems(i.submenu, i.items);
-                    }
-
-                    // Append the menu item to the provided menu
-                    menu.append(new gui.MenuItem(i));
-                });
-
-            }
-
-        });
-
-        app.controller('appCtrl', function($scope, nwService, fileDialog) {
-
-            var win = nwService.window;
-            var openWindows = 0;
-
-            var docWindowOptions = {
-                show: true,
-                "new-instance": false,
-                "toolbar": false,
-                "width": 800,
-                "height": 600
-            };
-
-            $scope.openDocumentWindow = function (filename) {
-                win.hide();
-                openWindows++;
-                nwService.gui.Window.open('window.html?filename=' + encodeURIComponent(filename), docWindowOptions);
-            };
-
-
-            $scope.$on('open-file', function () {
-                fileDialog.openFile(
-                        $scope.openDocumentWindow,
-                        false,
-                        '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
-                );
-            });
-
-
-            // Open Debug Window
-            $scope.$on('open-debug', function () {
-                nwService.window.showDevTools();
-            });
-
-
-            win.on("openFileInNewWindow", function (filename) {
-                $scope.openDocumentWindow(filename);
-            });
-
-
-            win.on("window-close", function (windowID) {
-
-                var store_path = config.store.path;
-                var data_path = store_path + windowID + '/';
-
-                cleanWindowData(data_path);
-
-                if (--openWindows === 0) {
-                    win.show();
-                    win.focus();
-                }
-
-            });
-
-            function cleanWindowData(dirPath) {
-                try {
-                    var files = fs.readdirSync(dirPath);
-
-                    if (files.length > 0) {
-                        for (var i = 0; i < files.length; i++) {
-                            var filePath = dirPath + '/' + files[i];
-                            if (files[i] !== '.gitkeep') {
-                                if (fs.statSync(filePath).isFile()) {
-                                    fs.unlinkSync(filePath);
-                                } else {
-                                    cleanWindowData(filePath);
-                                }
-                            }
-                        }
-                    }
-                    fs.rmdirSync(dirPath);
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-
-            // Create the menu bar
-            var osModifier = process.platform === 'darwin' ? 'cmd' : 'ctrl';
-            nwService.createMenu({
-                root: {
-                    type: 'menubar',
-                    items: [
-                        {
-                            label: 'File', items: [
-                            {
-                                label: 'New...',
-                                tooltip: 'Create a new file',
-                                click: 'new-file',
-                                modifiers: osModifier,
-                                key: 'n'
-                            },
-                            {label: 'Open...', tooltip: 'Open a file', click: 'open-file', modifiers: osModifier, key: 'o'},
-                            {label: 'Close', tooltip: 'Close a file', click: 'close-file', modifiers: osModifier, key: 'w'},
-                            {
-                                label: 'Close All',
-                                tooltip: 'Close all currently open files',
-                                click: 'close-all',
-                                modifiers: osModifier + 'shift',
-                                key: 'w'
-                            },
-                            {type: 'separator'},
-                            {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's'},
-                            {
-                                label: 'Save All',
-                                tooltip: 'Save all files',
-                                click: 'save-all',
-                                modifiers: osModifier + 'alt',
-                                key: 's'
-                            },
-                            {
-                                label: 'Save As...',
-                                tooltip: 'Save file as...',
-                                click: 'save-as',
-                                modifiers: osModifier + 'shift',
-                                key: 's'
-                            },
-                            {label: 'Exit', tooltip: 'Quit Application', click: 'exit-app'} //TODO: See broadcast exit-app
-                        ]
-                        },
-                        {
-                            label: 'Edit', items: [
-                            {label: 'Undo', click: 'undo', modifiers: osModifier, key: 'z'},
-                            {label: 'Redo', click: 'redo', modifiers: osModifier + 'shift', key: 'z'},
-                            {type: 'separator'},
-                            {label: 'Cut', click: 'cut', modifiers: osModifier, key: 'x'},
-                            {label: 'Copy', click: 'copy', modifiers: osModifier, key: 'c'},
-                            {label: 'Paste', click: 'paste', modifiers: osModifier, key: 'v'},
-                            {type: 'separator'},
-                            {label: 'Find', click: 'find', modifiers: osModifier, key: 'f'},
-                            {label: 'Replace', click: 'find-replace', modifiers: osModifier + 'alt', key: 'z'}
-                        ]
-                        },
-                        {
-                            label: 'Backend', items: [
-                            {label: 'Reoptimization Map', click: 'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'},
-                            {label: 'Show Error Lines', click: 'api.geterrorlines'},
-                            {label: 'Show Connection Lines', click: 'api.getconnectionlines'}
-                        ]
-                        },
-                        {
-                            label: 'Debug', items: [
-                            {label: 'Show Developer Tools', click: 'open-debug', modifiers: osModifier + 'alt', key: 'i'},
-                            {label: 'Reload Application', click: 'reload-app', key: 'r'}
-                        ]
-                        }
-                    ]
-                }
-            });
-
-            win.focus();
-
-        });
-
-    </script>
 </body>
 </html>
