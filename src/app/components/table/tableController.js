@@ -25,7 +25,6 @@ var app = angular.module('acjim.table', []);
 
 app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
-    $scope.tableData = $scope.tableData.table;
     $scope.$on('api.updateTable', function () {
         fileHandling.updateTable($scope.tableData);
     });
@@ -34,8 +33,7 @@ app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function (
 
     .directive('acTable', function () {
         return {
-            controller: 'tableCtrl',
-            controllerAs: 'tableData',
+            restrict: 'E',
             templateUrl: './app/components/table/tableView.html',
             link: function (scope, iElement) {
                 scope.editItem = function (obj, parent_index, index) {
@@ -55,12 +53,6 @@ app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function (
                         }
                     });
                 }
-            },
-            restrict: 'E',
-            transclude: true,
-            scope: {},
-            bindToController: {
-                table: '='
             }
         }
     });
