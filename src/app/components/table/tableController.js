@@ -50,6 +50,7 @@ app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function (
                             } else if (scope.tableData.table.titers.titers_list_of_dict) {
                                 scope.tableData.table.titers.titers_list_of_dict[parent_index][index] = element.text();
                             }
+                            scope.tableData.modified = true;
                             scope.$apply();
                         }
                     });

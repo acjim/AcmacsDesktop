@@ -208,10 +208,11 @@
                         best_map: true
                     };
 
-                    api.execute(api.get_commands().RELAX, relax_additional_params, acd1File)
+                    api.relax(relax_additional_params, acd1File)
                         .then(function (filename) {
-
-                            fs.readFile(filename, 'utf8', function (err, data) {
+                            acd1File = filename.updated_acd1;
+                            var output_json = filename.output_json;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
 
                                 var mapJsonData = JSON.parse(data);
 
@@ -478,16 +479,21 @@
         }
 
         function updateTable(tableData, maps) {
-            cfpLoadingBar.start();
-
             var version = tableData.version;
             var info = tableData.info;
             var table = tableData.table;
+            var table_modified = (tableData.modified != undefined) ?  tableData.modified : false;
+            if(table_modified == false)
+            {
+                Flash.create('danger', "Table has not been modified, unable to create new map");
+                return;
+            }
+            cfpLoadingBar.start();
             var additional_params = {
                 version: version,
                 table: table,
                 info: info,
-                remove_existing_projections: true
+                remove_existing_projections: table_modified // cannot be false if the points have been modified.
             };
 
             api.update_table(additional_params, acd1File)
@@ -500,10 +506,11 @@
                         best_map: true
                     };
 
-                    api.execute(api.get_commands().RELAX, relax_additional_params, acd1File)
+                    api.relax(relax_additional_params, acd1File)
                         .then(function (filename) {
-
-                            fs.readFile(filename, 'utf8', function (err, data) {
+                            acd1File = filename.updated_acd1;
+                            var output_json = filename.output_json;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
 
                                 //TODO decide on which map should be updated: currently a new map is created
                                 var mapJsonData = JSON.parse(data);
