@@ -120,7 +120,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
             }
 
-
             /**
              * Renders the complete d3 map with data
              * @param data
@@ -224,9 +223,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
             }
 
-
-
-
             /**
              * Adds the selected tool functionality to the d3 map
              */
@@ -329,13 +325,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 $('#connectionlineLayer').css({'visibility': 'hidden'});
             }
 
-
             /**
              * Creates the brush
              * @returns {d3.svg.brush}
              */
             function createBrush() {
-
                 brush =  d3.svg.brush()
                     .x(xScale)
                     .y(yScale)
@@ -357,9 +351,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         d3.select(this).call(d3.event.target);
                     }
                 );
-
                 return brush;
-
             }
 
             /**
@@ -368,7 +360,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * @param dy The delta y value
              */
             function nudge(dx, dy) {
-
                 nodeGroup.filter(function(d) { return d.selected; })
                     .attr("transform", function(d) {
                         d.x += dx/zoom.scale();
@@ -385,9 +376,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
                     $rootScope.$emit('api.nudgeTriggeredErrorlines');
                 }
-
             }
-
 
             /**
              * Center the nodes in the middle of the svg
@@ -408,9 +397,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // translate so that it's in the center of the window
                 translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
                 translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
-
             }
-
 
             /**
              * Applies the current zoom and moves the objects accordingly.
@@ -443,7 +430,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }));
             }
-
 
             /**
              * Redraws/creates only the background grid of the map
@@ -531,7 +517,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
             }
 
-
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
              * mapDataPoints should be assigned to scope.data before passing it to the function
@@ -556,7 +541,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 return newMapData;
             }
-
 
             /////////////////////// LISTENERS ///////////////////////
 
@@ -625,7 +609,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             scope.$watch('data', function(newVals) {
                 renderWithData(newVals);
             }, true);
-
         }
     };
 }]);
