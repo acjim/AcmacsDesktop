@@ -37,7 +37,7 @@ var COMMANDS = {
     EXPORT: 'export',
     RELAX_EXISTING: 'relax_existing',
     SET_DISCONNECTED_POINTS: 'set_disconnected_points',
-    SET_UNMOVABLE_POINTS : 'set_unmovable_points',
+    SET_UNMOVABLE_POINTS: 'set_unmovable_points',
 };
 var gui = window.require('nw.gui');
 var win = gui.Window.get();
@@ -75,7 +75,6 @@ angular.module('acjim.api', [])
                         input_parameter.data.name = data_name.replace('-', '_');
                     }
                     file_name = file_name + '_' + DATE_NOW + ".json";
-
                     if (additional_params.hasOwnProperty('parse_antigen_names')) {
                         input_parameter.data.parse_antigen_names = additional_params.parse_antigen_names;
                     } else {
@@ -84,8 +83,6 @@ angular.module('acjim.api', [])
                     break;
                 case COMMANDS.GET_TABLE:
                     var input_parameter = {command: COMMANDS.GET_TABLE, data: {}};
-                    var file_name = this.extract_name(input_file);
-                    file_name = file_name + '_' + DATE_NOW + ".json";
                     break;
                 case COMMANDS.GET_MAP:
                     var input_parameter = {command: COMMANDS.GET_MAP, data: {projection: 0}};
@@ -107,9 +104,6 @@ angular.module('acjim.api', [])
                         input_parameter.data.blobs = additional_params.blobs;
                     }
 
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.RELAX:
                     var input_parameter = {command: COMMANDS.RELAX, data: {number_of_dimensions: 2}};
@@ -145,10 +139,6 @@ angular.module('acjim.api', [])
                     if (additional_params.hasOwnProperty('blobs')) {
                         input_parameter.data.blobs = additional_params.blobs;
                     }
-
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.NEW_PROJECTION:
                     var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: 0}};
@@ -161,25 +151,17 @@ angular.module('acjim.api', [])
                         throw new Error('Please pass coordinates');
                     }
                     input_parameter.data.coordinates = additional_params.coordinates;
-
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.UPDATE_TABLE:
                     var input_parameter = {command: COMMANDS.UPDATE_TABLE, data: {}};
 
-                    if (!additional_params.hasOwnProperty('table') || !additional_params.hasOwnProperty('info') || !additional_params.hasOwnProperty('version'))
-                    {
+                    if (!additional_params.hasOwnProperty('table') || !additional_params.hasOwnProperty('info') || !additional_params.hasOwnProperty('version')) {
                         throw new Error('Missing mandatory datas, please make sure your data has: table, info and version');
                     }
                     if (additional_params.hasOwnProperty('remove_existing_projections')) {
                         input_parameter.data.remove_existing_projections = additional_params.remove_existing_projections; // boolean
                     }
                     input_parameter.data = additional_params;
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.ERROR_LINES:
                     var input_parameter = {command: COMMANDS.ERROR_LINES, data: {}};
@@ -187,72 +169,60 @@ angular.module('acjim.api', [])
                     if (additional_params.hasOwnProperty('projection')) {
                         input_parameter.data.projection = additional_params.projection; // int
                     }
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.EXPORT:
-                    var input_parameter = {command: COMMANDS.EXPORT, data: {filname: 'export_output', format: "acd1_v2.bz2"}};
+                    var input_parameter = {
+                        command: COMMANDS.EXPORT,
+                        data: {filname: 'export_output', format: "acd1_v2.bz2"}
+                    };
 
-                    if (!additional_params.hasOwnProperty('format') || !additional_params.hasOwnProperty('filename'))
-                    {
+                    if (!additional_params.hasOwnProperty('format') || !additional_params.hasOwnProperty('filename')) {
                         throw new Error('Missing mandatory datas, please make sure your data has: format, and filename');
                     }
                     // TODO get path as input or parameter?
                     input_parameter.data.filename = config.store.path + aadditional_params.filename + "." + additional_params.format;
                     input_parameter.data.format = additional_params.format;
-
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.RELAX_EXISTING:
                     var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
 
-                    if (!additional_params.hasOwnProperty('projection'))
-                    {
+                    if (!additional_params.hasOwnProperty('projection')) {
                         throw new Error('Missing mandatory parameter, projection');
                     }
                     input_parameter.data.projection = additional_params.projection;
                     if (additional_params.hasOwnProperty('rough_optimization')) {
                         input_parameter.data.rough_optimization = additional_params.rough_optimization;
                     }
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.SET_DISCONNECTED_POINTS:
                     var input_parameter = {command: COMMANDS.SET_DISCONNECTED_POINTS, data: {projection: 0}};
 
-                    if (!additional_params.hasOwnProperty('projection'))
-                    {
+                    if (!additional_params.hasOwnProperty('projection')) {
                         throw new Error('Missing mandatory parameter, projection');
                     }
                     input_parameter.data.projection = additional_params.projection;
                     if (additional_params.hasOwnProperty('disconnected')) {
                         input_parameter.data.disconnected = additional_params.disconnected;
                     }
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 case COMMANDS.SET_UNMOVABLE_POINTS:
                     var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
 
-                    if (!additional_params.hasOwnProperty('projection'))
-                    {
+                    if (!additional_params.hasOwnProperty('projection')) {
                         throw new Error('Missing mandatory parameter, projection');
                     }
                     input_parameter.data.projection = additional_params.projection;
                     if (additional_params.hasOwnProperty('unmovable')) {
                         input_parameter.data.unmovable = additional_params.unmovable;
                     }
-                    var file_name = this.extract_name(input_file);
-                    var random_number = Math.random() * 89;
-                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
                 default :
                     break;
+            }
+            if (command !== COMMANDS.IMPORT) {
+                var file_name = this.extract_name(input_file);
+                var random_number = Math.random() * 89;
+                file_name = file_name + '_' + DATE_NOW + random_number + ".json";
             }
             var json_parameters = JSON.stringify(input_parameter, null, 4);
             var file_path = tmp_path + file_name;
@@ -455,9 +425,9 @@ angular.module('acjim.api', [])
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
-                params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
-            }else{
+            if (process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            } else {
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
                 params[params.length] = output_json;
@@ -633,23 +603,20 @@ angular.module('acjim.api', [])
          */
         api.create_file_path = function (path, file_name, extension, command) {
             var file = file_name.split('/').pop();
-            if(file.substr(0, file.lastIndexOf(".")).length > 0)
-            {
+            if (file.substr(0, file.lastIndexOf(".")).length > 0) {
                 file = file.substr(0, file.lastIndexOf("."));
             }
             var date_now = DATE_NOW,
                 output = null;
 
             // if filename already has command in it then simply add
-            if(file.indexOf(command) > - 1)
-            {
+            if (file.indexOf(command) > -1) {
                 var randomnumber = Math.floor(Math.random() * (10)) + 1;
                 output = path + file + '_' + randomnumber + extension;
                 return output;
             }
             // remove import param from generated file
-            if(command === COMMANDS.IMPORT)
-            {
+            if (command === COMMANDS.IMPORT) {
                 output = path + file + '_' + date_now + extension;
             } else {
                 output = path + file + '_' + command + '_' + date_now + extension;
@@ -683,7 +650,7 @@ angular.module('acjim.api', [])
          *
          * @returns {{GET_MAP: string, GET_TABLE: string, RELAX: string, NEW_PROJECTION: string}}
          */
-        api.get_commands = function() {
+        api.get_commands = function () {
             return COMMANDS;
         };
 
@@ -705,24 +672,24 @@ angular.module('acjim.api', [])
          *
          * @returns {*}
          */
-        api.asyncTest = function() {
+        api.asyncTest = function () {
             var deferred = $q.defer();
 
-            $timeout(function() {
+            $timeout(function () {
                 deferred.resolve(['Hello', 'world!']);
             }, 200);
 
             return deferred.promise;
         };
 
-        api.make_dir = function() {
-            if(!fs.existsSync(store_path)){
+        api.make_dir = function () {
+            if (!fs.existsSync(store_path)) {
                 fs.mkdirSync(store_path, '0777');
             }
-            if(!fs.existsSync(data_path)){
+            if (!fs.existsSync(data_path)) {
                 fs.mkdirSync(data_path, '0777');
             }
-            if(!fs.existsSync(tmp_path)){
+            if (!fs.existsSync(tmp_path)) {
                 fs.mkdirSync(tmp_path, '0777');
             }
         };
