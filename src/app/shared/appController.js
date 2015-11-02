@@ -98,10 +98,13 @@ angular.module('acjim')
             nwService.gui.Window.get().close();
         });
 
-        nwService.window.on('close', function () {
+        nwService.window.on('close', function (event) {
             // Pretend to be closed already
             this.hide();
-            nwService.parentWindow.emit("window-close", nwService.window.id);
+            if (event !== "quit") {
+                nwService.parentWindow.emit("window-close", nwService.window.id);
+                return;
+            }
             this.close(true);
         });
 
