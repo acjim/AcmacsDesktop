@@ -140,7 +140,20 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup.enter().append("path")
                     .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
-                    .attr("fill", function(d){ return d.style.fill_color })
+                    .attr("fill", function(d){
+                        if( Object.prototype.toString.call( d.style.fill_color ) === '[object Array]' ) {
+                            return d.style.fill_color[0];
+                        }else{
+                            return d.style.fill_color;
+                        }
+                    })
+                    .attr("stroke-opacity", function(d){
+                        if( Object.prototype.toString.call( d.style.fill_color ) === '[object Array]' ) {
+                            return d.style.fill_color[1];
+                        }else{
+                            return 0.5;
+                        }
+                    })
                     .attr("stroke", "#474747")
                     .attr("name", function(d){ return d.name })
                     .attr("d",d3.svg.symbol().size("50")
