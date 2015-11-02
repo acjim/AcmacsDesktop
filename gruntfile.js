@@ -53,7 +53,7 @@ module.exports = function(grunt) {
         karma: {
             unit: {
                 configFile: 'test/karma.conf.js',
-                background: true
+                background: false
             },
             travis: {
                 configFile: 'test/karma.conf.js',
@@ -84,7 +84,7 @@ module.exports = function(grunt) {
     grunt.registerTask('package', packageFlow);
 
     // Unit testint in development mode
-    grunt.registerTask('devmode', ['karma:unit', 'watch']);
+    grunt.registerTask('devmode', ['karma:unit']);
 
     // Task for travisCI
     grunt.registerTask('test', ['karma:travis']);

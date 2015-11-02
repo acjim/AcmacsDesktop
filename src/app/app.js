@@ -39,8 +39,6 @@ var app = angular.module('acjim', [
     'DWand.nw-fileDialog'
 ]);
 
-angular.module('acjim.toolbar', []);
-
 app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
 
     if (process.platform !== "darwin") {
