@@ -8,7 +8,6 @@
  config.server_name
  */
 
-
 var config = {};
 var gui = window.require('nw.gui');
 var datapath = gui.App.dataPath;

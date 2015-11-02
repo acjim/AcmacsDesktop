@@ -64,7 +64,6 @@
                 if (!_.isUndefined(point_info.name)) {
                     node_name = point_info.name;
                 }
-
                 $scope.d3Data.d3Nodes[i].name = node_name;
             });
 
@@ -96,7 +95,6 @@
                     }
                 }
             }
-
         }
 
         /********************* LISTENERS ********************/
@@ -137,7 +135,5 @@
             fileHandling.reOptimize($scope.d3Data);
             getErrorConnectionLines();
         });
-
     }
-
 })();

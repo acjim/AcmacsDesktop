@@ -120,7 +120,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
             }
 
-
             /**
              * Renders the complete d3 map with data
              * @param data
@@ -161,7 +160,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         }
                     })
                     .on("mouseup", function(d) {
-                        if (d.selected && shiftKey) d3.select(this).classed("selected", d.selected = false);
+                        if (d.selected && shiftKey) {
+                            d3.select(this).classed("selected", d.selected = false);
+                        }
                     })
                     .call(d3.behavior.drag()
                         .on("dragstart", function() {
@@ -221,9 +222,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 connectionlineGroup.exit().remove();
 
             }
-
-
-
 
             /**
              * Adds the selected tool functionality to the d3 map
@@ -327,13 +325,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 $('#connectionlineLayer').css({'visibility': 'hidden'});
             }
 
-
             /**
              * Creates the brush
              * @returns {d3.svg.brush}
              */
             function createBrush() {
-
                 brush =  d3.svg.brush()
                     .x(xScale)
                     .y(yScale)
@@ -355,9 +351,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         d3.select(this).call(d3.event.target);
                     }
                 );
-
                 return brush;
-
             }
 
             /**
@@ -366,7 +360,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * @param dy The delta y value
              */
             function nudge(dx, dy) {
-
                 nodeGroup.filter(function(d) { return d.selected; })
                     .attr("transform", function(d) {
                         d.x += dx/zoom.scale();
@@ -374,16 +367,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     });
 
-                if(d3.event.preventDefault) d3.event.preventDefault();
+                if(d3.event.preventDefault) {
+                    d3.event.preventDefault();
+                }
 
                 scope.pointsMoved = true;
 
                 if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
                     $rootScope.$emit('api.nudgeTriggeredErrorlines');
                 }
-
             }
-
 
             /**
              * Center the nodes in the middle of the svg
@@ -404,9 +397,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // translate so that it's in the center of the window
                 translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
                 translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
-
             }
-
 
             /**
              * Applies the current zoom and moves the objects accordingly.
@@ -427,7 +418,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // Move the graph
                 nodeGroup.attr("transform", function (d) {
-                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
+                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
                 });
                 errorlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
@@ -439,7 +430,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }));
             }
-
 
             /**
              * Redraws/creates only the background grid of the map
@@ -475,16 +465,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("x1", -boxSize)
                     .attr("x2", width + boxSize)
                     .attr("y1", function (d) {
-                        return d * boxSize
+                        return d * boxSize;
                     })
                     .attr("y2", function (d) {
-                        return d * boxSize
+                        return d * boxSize;
                     });
-
                 return parentContainer;
-
             }
-
 
             /**
              * Checks the width of the svg container
@@ -494,7 +481,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 return d3.select(iElement[0])[0][0].offsetWidth;
             }
 
-
             /**
              * Checks the height of the svg container
              * @returns {number} height
@@ -502,7 +488,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             function getContainerHeight() {
                 return d3.select(iElement[0])[0][0].offsetHeight;
             }
-
 
             /** Gets All D3 Selected Elements. This function should be called by the button responsible for Disabling nodes
              * @returns none
@@ -532,7 +517,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
             }
 
-
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
              * mapDataPoints should be assigned to scope.data before passing it to the function
@@ -557,7 +541,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 return newMapData;
             }
-
 
             /////////////////////// LISTENERS ///////////////////////
 
@@ -626,7 +609,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             scope.$watch('data', function(newVals) {
                 renderWithData(newVals);
             }, true);
-
         }
     };
 }]);
