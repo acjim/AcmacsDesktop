@@ -141,17 +141,17 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
                     .attr("fill", function(d){
                         // color as string
-                        if( Object.prototype.toString.call( d.style.fill_color ) === '[object Array]' ) {
+                        if(_.isArray(d.style.fill_color )) {
                             return d.style.fill_color[0];
                         }else{
                             return d.style.fill_color;
                         }
                     })
-                    .attr("stroke-opacity", function(d){
-                        if( Object.prototype.toString.call( d.style.fill_color ) === '[object Array]' ) {
+                    .attr("fill-opacity", function(d){
+                        if(_.isArray(d.style.fill_color)) {
                             return d.style.fill_color[1];
                         }else{
-                            return 0.5;
+                            return 1;
                         }
                     })
                     .attr("stroke", "#474747")
