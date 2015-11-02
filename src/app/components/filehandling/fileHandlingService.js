@@ -90,14 +90,28 @@
                 cfpLoadingBar.start();
             }, 50);
 
-            if (false && !fs.existsSync(config.api.path)) {
+            if (!fs.existsSync(config.api.path)) {
 
-                api.asyncTest().then(function() {
+                // If there is no AcmacsCore.bundle
+                return api.asyncTest().then(function() {
                     var output = api.stubOpen();
-                    var error_message = 'Core api is missing, please add core api';
+                    Flash.create('danger', 'Core api is missing, please add core api');
 
-                    Flash.create('danger', error_message);
-                    handleOpenComplete(output);
+                    return $q.all([
+                        readFile(output.table_json),
+                        readFile(output.map_json)
+                    ]).then(function(data) {
+
+                        var result = {};
+
+                        result.table = JSON.parse(data[0]);
+                        result.map = JSON.parse(data[1]);
+                        acd1File = output.output_acd1;
+
+                        return result;
+
+                    });
+
                 });
 
             } else {
@@ -108,58 +122,36 @@
 
                 return api.import_user_data(filename, additional_params)
                     .then(function (output) {
-                        var result = {};
 
                         cfpLoadingBar.set(0.3);
 
-                        if (process.platform === "win32") { //vagrant can't handle 2 async calls
-                            return api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1).then(function (output1) {
-                                cfpLoadingBar.set(0.6);
-                                var output_table_json = output1;
-                                api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1).then(function (output_map_json) {
+                        return $q.all([
+                            api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
+                            api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
+                        ]).then(function (data) {
+                            var output_table_json = data[0];
+                            var output_map_json = data[1];
 
-                                    result.table = output_table_json;
-                                    result.map = output_map_json;
-
-                                    acd1File = output.output_acd1;
-
-                                    return result;
-
-                                }, function (reason) {
-                                    return errorReason(reason);
-                                });
-                            }, function (reason) {
-                                return errorReason(reason);
-                            });
-                        } else {
-
-                            //under unix, asynchronous is faster
                             return $q.all([
-                                api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
-                                api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
-                            ]).then(function (data) {
-                                var output_table_json = data[0];
-                                var output_map_json = data[1];
+                                readFile(output_table_json),
+                                readFile(output_map_json)
+                            ]).then(function(data) {
 
-                                return $q.all([
-                                    readFile(output_table_json),
-                                    readFile(output_map_json)
-                                ]).then(function(data) {
+                                var result = {};
 
-                                    result.table = JSON.parse(data[0]);
-                                    result.map = JSON.parse(data[1]);
+                                result.table = JSON.parse(data[0]);
+                                result.map = JSON.parse(data[1]);
 
-                                    acd1File = output.output_acd1;
+                                acd1File = output.output_acd1;
 
-                                    return result;
+                                return result;
 
-                                });
-
-                            }, function (reason) {
-                                return errorReason(reason);
                             });
 
-                        }
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
+
                     }, function(reason) {
                         return errorReason(reason);
                     });
