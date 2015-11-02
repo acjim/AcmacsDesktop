@@ -44,10 +44,6 @@
             scope.$watch(toolbar.getStructure(), function() {
                 scope.items = toolbar.getStructure();
             });
-
-
-
-
         }
     }
 })();

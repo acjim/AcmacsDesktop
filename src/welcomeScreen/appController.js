@@ -10,9 +10,11 @@
     function appCtrl($scope, nwService, fileDialog, appMenuService) {
 
         var win = nwService.window,
+            gui = nwService.gui,
             openWindows = 0;
 
         appMenuService.setMinimalMenu();
+
 
 
         $scope.recentProjects = [];
@@ -85,6 +87,11 @@
             cleanWindowData(data_path);
 
         });
+
+        win.on('close', function() {
+            gui.App.quit();
+        });
+
 
     }
 

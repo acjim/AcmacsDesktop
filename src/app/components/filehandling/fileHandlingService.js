@@ -36,7 +36,6 @@
             fileHandling
         ]);
 
-
     function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
 
         var acd1File = null;
@@ -47,9 +46,6 @@
             getErrorConnectionlines: getErrorConnectionlines,
             updateTable: updateTable
         };
-
-        ///////////////////
-
 
         /**
          * Displays the error.
@@ -64,7 +60,6 @@
             return $q.reject(reason);
         }
 
-
         /**
          * Reads the file //TODO
          * @param filename
@@ -78,7 +73,6 @@
             return deferred.promise;
         }
 
-
         /**
          * Callback function to handle the file opening
          * @param filename
@@ -91,7 +85,6 @@
             }, 50);
 
             if (!fs.existsSync(config.api.path)) {
-
                 // If there is no AcmacsCore.bundle
                 return api.asyncTest().then(function() {
                     var output = api.stubOpen();
@@ -101,72 +94,51 @@
                         readFile(output.table_json),
                         readFile(output.map_json)
                     ]).then(function(data) {
-
                         var result = {};
-
                         result.table = JSON.parse(data[0]);
-                        result.map = JSON.parse(data[1]);
+                        result.map   = JSON.parse(data[1]);
                         acd1File = output.output_acd1;
-
                         return result;
-
                     });
-
                 });
-
             } else {
-
                 var additional_params = {};
                 var table_additional_params = {}; // check documentation on execute>get_table for additional params
                 var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
 
-                return api.import_user_data(filename, additional_params)
-                    .then(function (output) {
-
-                        cfpLoadingBar.set(0.3);
-
+                return api.import_user_data(filename, additional_params).then(function (output) {
+                    cfpLoadingBar.set(0.3);
+                    return $q.all([
+                        api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
+                        api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
+                    ]).then(function (data) {
+                        var output_table_json = data[0];
+                        var output_map_json   = data[1];
                         return $q.all([
-                            api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
-                            api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
-                        ]).then(function (data) {
-                            var output_table_json = data[0];
-                            var output_map_json = data[1];
-
-                            return $q.all([
-                                readFile(output_table_json),
-                                readFile(output_map_json)
-                            ]).then(function(data) {
-
-                                var result = {};
-
-                                result.table = JSON.parse(data[0]);
-                                result.map = JSON.parse(data[1]);
-
-                                acd1File = output.output_acd1;
-
-                                return result;
-
-                            });
-
-                        }, function (reason) {
-                            return errorReason(reason);
+                            readFile(output_table_json),
+                            readFile(output_map_json)
+                        ]).then(function(data) {
+                            var result = {};
+                            result.table = JSON.parse(data[0]);
+                            result.map   = JSON.parse(data[1]);
+                            acd1File = output.output_acd1;
+                            return result;
                         });
-
-                    }, function(reason) {
+                    }, function (reason) {
                         return errorReason(reason);
                     });
+                }, function(reason) {
+                    return errorReason(reason);
+                });
             }
         }
-
 
         /**
          * Calls api to re-optimize (relax) the map
          * @param mapData
          */
         function reOptimize(mapData){
-
             cfpLoadingBar.start();
-
             var list = [];
             mapData.d3Nodes.forEach(function (layout, i) {
                 list[i] = [
@@ -183,7 +155,6 @@
 
             api.new_projection(additional_params, acd1File)
                 .then(function (output) {
-
                     var output_json = output.output_json;
                     acd1File = output.output_acd1;
 
@@ -210,26 +181,19 @@
 
                                 // relax returns list of stresses for number of optimizations performed.
                                 mapData.stress = mapJsonData.stresses[0];
-
                                 mapJsonData.best_map.layout.forEach(function (layout, i) {
                                     mapData.d3Nodes[i].x = layout[0];
                                     mapData.d3Nodes[i].y = layout[1];
                                 });
-
                                 cfpLoadingBar.complete();
-
                             });
-
                     }, function (reason) {
                         return errorReason(reason);
                     });
-
                 }, function (reason) {
                     return errorReason(reason);
                 });
-
         }
-
 
         /**
          * Calls api to get data for error and connection lines
@@ -246,24 +210,16 @@
             //TODO set projection number from scope
             var additional_params = {};
             return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1File).then(function (filename) {
-
                 fs.readFile(filename, 'utf8', function (err, data) {
-
                     var mapJsonData = JSON.parse(data);
-
                     // relax returns array of error_lines.
                     mapData.map.error_lines = mapJsonData.error_lines;
                     calculateLines(mapData.map.error_lines, mapData.map.layout, result); //TODO: why first apply to scope? then calculate??
-
                     cfpLoadingBar.complete();
-
                 });
-
                 return result;
             });
-
         }
-
 
         /**
          * Calculate error and connection lines
@@ -306,7 +262,6 @@
                             (p2[0] <= probe[0] && probe[0] <= pq[0])
                         );
                     }
-
                 }else {
                     if(dyb > 0) {
                         return(
@@ -463,11 +418,9 @@
                 console.log('ConnectionsLayer: bailing out because there is no data to plot');
                 return false;
             }
-
             // First, draw the error lines for antigens
             connect({from: 'antigens', to: 'sera'});
             connect({from: 'sera', to: 'antigens'});
-
         }
 
         function updateTable(tableData, maps) {
@@ -519,21 +472,15 @@
                                 mapData.options.title = 'Map '+ (id+1);
                                 maps.push(mapData);
 
-
                                 cfpLoadingBar.complete();
 
                             });
-
                         }, function (reason) {
                             return errorReason(reason);
                         });
-
                 }, function (reason) {
                     return errorReason(reason);
                 });
-
         }
-
     }
-
 })();

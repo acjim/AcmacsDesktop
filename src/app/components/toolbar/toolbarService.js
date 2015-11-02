@@ -57,15 +57,11 @@
          * @returns {Array}
          */
         function loopItems(options) {
-
             var structure = [];
-
             for (var i = 0; i < options.length; i++) {
                 structure.push(constructItem(options[i]));
             }
-
             return structure;
-
         }
 
         /**
@@ -88,9 +84,7 @@
                         return this.type === 'buttonGroup';
                     }
                 };
-
             } else {
-
                 toolbarItem = {
                     id: options.id || null,
                     order: options.order || structure.length,
@@ -106,7 +100,7 @@
                         this.active = selected;
                     },
                     isButtonGroup: function () {
-                        return this.type === 'buttonGroup'
+                        return this.type === 'buttonGroup';
                     },
                     toggle: function () {
                         this.select(!this.active);
@@ -117,34 +111,25 @@
                 if (toolbarItem.groupID) {
                     addItemToGroup(toolbarItem, toolbarItem.groupID);
                 }
-
                 items.push(toolbarItem);
-
             }
-
             return toolbarItem;
-
         }
 
         /**
          * Function that is called when an item is clicked
          */
         function itemClick() {
-
             if (this.groupID != null && groups[this.groupID]) {
                 groupSelectItem(this.groupID, this);
             }
-
             if (this.togglable) {
                 this.toggle();
             }
-
             if (this.callback != null) {
                 this.callback();
             }
-
         }
-
 
         /**
          * Selects the given item in the group provided in the parameter
@@ -152,17 +137,12 @@
          * @param item
          */
         function groupSelectItem(groupID, item) {
-
             var group = groups[groupID];
-
             for (var i = 0; i < group.length; i ++) {
                 group[i].select(false);
             }
-
             item.select(true);
-
         }
-
 
         /**
          * Adds the item to the given group.
@@ -171,16 +151,13 @@
          */
         function addItemToGroup (item, groupID) {
             var group;
-
             if (!groups[groupID]) {
                 group = groups[groupID] = [];
             } else {
                 group = groups[groupID];
             }
-
             group.push(item);
         }
-
 
         /**
          * Returns an array of all toolbar items.
@@ -190,7 +167,6 @@
             return structure;
         }
 
-
         /**
          * Searches for the active item of a given group. Returns the first active item it finds. If no active item is
          * found, returns undefined.
@@ -198,29 +174,20 @@
          * @returns {*}
          */
         function getActiveItemFromGroup(groupID) {
-
             var activeItem = _.find(groups[groupID], function(item) { return item.active === true; });
-
             if (!activeItem) {
                 return { id: -1 };
             } else {
                 return activeItem;
             }
-
         }
-
 
         /**
          * Finds the item with the specific ID. Returns undefined if no item is found.
          * @param itemID
          */
         function getItemByID(itemID) {
-
             return _.find(items, function(item) { return item.id === itemID; });
-
         }
-
-
     }
-
 })();
