@@ -141,6 +141,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("class", "point")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
                     .attr("fill", function(d){
+                        // color as string
                         if( Object.prototype.toString.call( d.style.fill_color ) === '[object Array]' ) {
                             return d.style.fill_color[0];
                         }else{
