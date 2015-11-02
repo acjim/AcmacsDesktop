@@ -35,6 +35,9 @@ var COMMANDS = {
     UPDATE_TABLE: 'update_table',
     ERROR_LINES: 'get_error_lines',
     EXPORT: 'export',
+    RELAX_EXISTING: 'relax_existing',
+    SET_DISCONNECTED_POINTS: 'set_disconnected_points',
+    SET_UNMOVABLE_POINTS : 'set_unmovable_points',
 };
 var gui = window.require('nw.gui');
 var win = gui.Window.get();
@@ -203,6 +206,20 @@ angular.module('acjim.api', [])
                     var random_number = Math.random() * 89;
                     file_name = file_name + '_' + DATE_NOW + random_number + ".json";
                     break;
+                case COMMANDS.RELAX_EXISTING:
+                    var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
+
+                    if (!additional_params.hasOwnProperty('projection'))
+                    {
+                        throw new Error('Missing mandatory parameter, projection');
+                    }
+                    if (additional_params.hasOwnProperty('rough_optimization')) {
+                        input_parameter.data.rough_optimization = additional_params.rough_optimization;
+                    }
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
                 default :
                     break;
             }
@@ -300,23 +317,6 @@ angular.module('acjim.api', [])
          *
          * -------------
          *
-         * command = 'relax'
-         * additional_params = {
-         *                      number_of_dimensions: int, //mandatory
-         *                      number_of_optimizations: int, //mandatory
-         *                      //Optional data fields:
-         *                      error_lines: bool (default: False),
-         *                      minimum_column_basis: str (default: 'none')
-         *                      disconnect_having_few_titers: bool (default: True)
-         *                      rough_optimization: bool (default: False)
-         *                      best_map: bool (default: False)
-         *                      blob_number_of_directions: int (default: 36)
-         *                      blob_stress_diff: float (default: 0.1)
-         *                      blobs: bool (default: False)
-         *                      };
-         *
-         * -----------------
-         *
          * get_error_lines - Obtains error lines data for a projection
          * additional_params = {projection: int (default: 0) }
          * Result object:
@@ -389,6 +389,53 @@ angular.module('acjim.api', [])
         api.relax = function (additional_params, output_acd1) {
 
             var command = COMMANDS.RELAX;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+            var script = config.api.script;
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
+            }
+            // callback function for exec
+            try {
+                execFile(script, params, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+
+            function puts(error) {
+                if (error) {
+                    deferred.reject(error);
+                }
+                deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
+            }
+
+            return deferred.promise;
+        };
+
+        /**
+         * command = 'relax_existing', usually followed by get_map
+         *
+         * @param additional_params = {
+         *                      projection: int, //mandatory
+         *                      number_of_optimizations: int, //mandatory
+         *                      rough_optimization: bool (default: False)
+         *                      };
+         * Result object:
+         *   'stress' - resulting stress
+         */
+        api.relax_existing = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.RELAX_EXISTING;
             var deferred = $q.defer();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
