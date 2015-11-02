@@ -26,7 +26,6 @@
 angular.module('acjim')
     .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', appCtrl]);
 
-
     function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
         $scope.openMaps = [];
@@ -35,12 +34,9 @@ angular.module('acjim')
         // Window layout variables
         var position = 0;
 
-
-
         /******************** Events *******************/
 
         $scope.$on('open-file', function () {
-
             fileDialog.openFile(
                 handleFileOpen,
                 false,
@@ -49,17 +45,14 @@ angular.module('acjim')
         });
 
         function handleFileOpen(filename) {
-
             if ($scope.tableData !== null) {
 
                 //open file in new window
                 nwService.parentWindow.emit("openFileInNewWindow", filename);
                 return;
-
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
-
                     $scope.tableData = result.table;
                     $scope.openMaps.push({
                         data: result.map,
@@ -75,13 +68,10 @@ angular.module('acjim')
                             }
                         }
                     });
-
                     cfpLoadingBar.complete();
-
                 }
             );
         }
-
 
         // Open Debug Window
         $scope.$on('open-debug', function () {
@@ -131,7 +121,5 @@ angular.module('acjim')
         if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
             handleFileOpen(Url.get.filename);
         }
-
     }
-
 })();
