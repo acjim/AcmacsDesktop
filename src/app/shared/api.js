@@ -638,7 +638,7 @@ angular.module('acjim.api', [])
          */
         api.get_commands = function() {
             return COMMANDS;
-        }
+        };
 
         /**
          * stub function to be called when on windows system
@@ -649,8 +649,8 @@ angular.module('acjim.api', [])
             var output = {
                 "output_acd1": 'output_concentric.acd1',
                 "table_json": '../test/data/output/get_table_concentric.json',
-                "map_json": '../test/data/output/get_map.json',
-            }
+                "map_json": '../test/data/output/get_map.json'
+            };
             return output;
         };
 
