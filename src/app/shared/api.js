@@ -368,6 +368,61 @@ angular.module('acjim.api', [])
         };
 
         /**
+         * command = 'relax'
+         *
+         * @param additional_params = {
+         *                      number_of_dimensions: int, //mandatory
+         *                      number_of_optimizations: int, //mandatory
+         *                      //Optional data fields:
+         *                      error_lines: bool (default: False),
+         *                      minimum_column_basis: str (default: 'none')
+         *                      disconnect_having_few_titers: bool (default: True)
+         *                      rough_optimization: bool (default: False)
+         *                      best_map: bool (default: False)
+         *                      blob_number_of_directions: int (default: 36)
+         *                      blob_stress_diff: float (default: 0.1)
+         *                      blobs: bool (default: False)
+         *                      };
+         * @param output_acd1
+         * @returns {output_json: output_json, updated_acd1: output_acd1_1}
+         */
+        api.relax = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.RELAX;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+            var script = config.api.script;
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            if(process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                params[params.length-1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+            }else{
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
+            }
+            // callback function for exec
+            try {
+                execFile(script, params, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+
+            function puts(error) {
+                if (error) {
+                    deferred.reject(error);
+                }
+                deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
+            }
+
+            return deferred.promise;
+        };
+
+        /**
          * Updates table with changes supplied by the user.
          * Supplied data corresponds to the data obtained via get_table command.
          * Antigens/sera can be removed and new antigens/sera can be added.
