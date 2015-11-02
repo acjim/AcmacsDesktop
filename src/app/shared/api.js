@@ -213,8 +213,39 @@ angular.module('acjim.api', [])
                     {
                         throw new Error('Missing mandatory parameter, projection');
                     }
+                    input_parameter.data.projection = additional_params.projection;
                     if (additional_params.hasOwnProperty('rough_optimization')) {
                         input_parameter.data.rough_optimization = additional_params.rough_optimization;
+                    }
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
+                case COMMANDS.SET_DISCONNECTED_POINTS:
+                    var input_parameter = {command: COMMANDS.SET_DISCONNECTED_POINTS, data: {projection: 0}};
+
+                    if (!additional_params.hasOwnProperty('projection'))
+                    {
+                        throw new Error('Missing mandatory parameter, projection');
+                    }
+                    input_parameter.data.projection = additional_params.projection;
+                    if (additional_params.hasOwnProperty('disconnected')) {
+                        input_parameter.data.disconnected = additional_params.disconnected;
+                    }
+                    var file_name = this.extract_name(input_file);
+                    var random_number = Math.random() * 89;
+                    file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                    break;
+                case COMMANDS.SET_UNMOVABLE_POINTS:
+                    var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
+
+                    if (!additional_params.hasOwnProperty('projection'))
+                    {
+                        throw new Error('Missing mandatory parameter, projection');
+                    }
+                    input_parameter.data.projection = additional_params.projection;
+                    if (additional_params.hasOwnProperty('unmovable')) {
+                        input_parameter.data.unmovable = additional_params.unmovable;
                     }
                     var file_name = this.extract_name(input_file);
                     var random_number = Math.random() * 89;
