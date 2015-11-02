@@ -27,7 +27,5 @@
                 window: window,
                 parentWindow: parentWindow
             };
-
     }]);
-
 })();

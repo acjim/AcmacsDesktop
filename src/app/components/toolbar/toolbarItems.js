@@ -27,7 +27,6 @@
         .factory('toolbarItems', [toolbarItems]);
 
     function toolbarItems () {
-
         return {
             SELECTION: 1,
             MOVEMENT: 2,
@@ -42,7 +41,5 @@
             MAP_TOOLS: 10,
             UPDATE_TABLE:11
         };
-
     }
-
 })();
