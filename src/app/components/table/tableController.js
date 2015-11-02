@@ -54,7 +54,7 @@ app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function (
                             scope.$apply();
                         }
                     });
-                }
+                };
             },
             restrict: 'E',
             bindToController: {

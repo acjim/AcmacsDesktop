@@ -161,7 +161,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         }
                     })
                     .on("mouseup", function(d) {
-                        if (d.selected && shiftKey) d3.select(this).classed("selected", d.selected = false);
+                        if (d.selected && shiftKey) {
+                            d3.select(this).classed("selected", d.selected = false);
+                        }
                     })
                     .call(d3.behavior.drag()
                         .on("dragstart", function() {
@@ -374,7 +376,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     });
 
-                if(d3.event.preventDefault) d3.event.preventDefault();
+                if(d3.event.preventDefault) {
+                    d3.event.preventDefault();
+                }
 
                 scope.pointsMoved = true;
 
@@ -427,7 +431,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // Move the graph
                 nodeGroup.attr("transform", function (d) {
-                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")"
+                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
                 });
                 errorlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
@@ -475,16 +479,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("x1", -boxSize)
                     .attr("x2", width + boxSize)
                     .attr("y1", function (d) {
-                        return d * boxSize
+                        return d * boxSize;
                     })
                     .attr("y2", function (d) {
-                        return d * boxSize
+                        return d * boxSize;
                     });
-
                 return parentContainer;
-
             }
-
 
             /**
              * Checks the width of the svg container
@@ -494,7 +495,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 return d3.select(iElement[0])[0][0].offsetWidth;
             }
 
-
             /**
              * Checks the height of the svg container
              * @returns {number} height
@@ -502,7 +502,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             function getContainerHeight() {
                 return d3.select(iElement[0])[0][0].offsetHeight;
             }
-
 
             /** Gets All D3 Selected Elements. This function should be called by the button responsible for Disabling nodes
              * @returns none
