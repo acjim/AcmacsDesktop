@@ -116,8 +116,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     }
                 }
             ]
-        },
-
+        }
     ]);
 
 });
