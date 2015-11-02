@@ -100,7 +100,7 @@
                         this.active = selected;
                     },
                     isButtonGroup: function () {
-                        return this.type === 'buttonGroup'
+                        return this.type === 'buttonGroup';
                     },
                     toggle: function () {
                         this.select(!this.active);

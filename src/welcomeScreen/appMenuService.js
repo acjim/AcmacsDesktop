@@ -161,7 +161,7 @@
 
                             nwWindow.emit("menu-action", eventName);
 
-                        }
+                        };
                     })(menu, i.click);
 
                 }
