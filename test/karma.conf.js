@@ -15,10 +15,14 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
+            // Provide dependencies
             '../src/node_modules/angular/angular.js',
             '../node_modules/angular-mocks/angular-mocks.js',
-            // Add your modules to test here:
+            '../src/node_modules/underscore/underscore.js',
+
+            // Add your modules to test here, like:
             //'../src/app/componenteXY/*.js',
+            '../src/app/components/toolbar/toolbarService.js',
 
             //Add the spec files here:
             'unit/**/*.spec.js'
@@ -45,7 +49,7 @@ module.exports = function (config) {
 
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: false,
+        autoWatch: true,
 
 
         // start these browsers
