@@ -7,7 +7,7 @@ This project aims at providing a desktop application for working with antigenic 
 ## Include Core
 To be able to use the app you need the latest version of the **AcmacsCore.bundle**. You can download it [here](https://drive.google.com/open?id=0B3SjWA2XVkqCTERmV1BJUkZOYzA).
 
-Unzip and put the binaries in the folder: `src/core`
+Unzip and put the binaries in the `core` folder.
 
 ## Run the application (development mode)
 You need ``npm`` installed in order to get this working. The best way to install ``npm`` is to install [node.js](http://www.nodejs.org) using its installer.
