@@ -22,9 +22,9 @@ config.api.location = '/vagrant/';
 config.api.file = '';
 config.store.path = datapath+'/Local_Data/';
 
-config.api.script = './core/AcmacsCore.bundle/bin/c2env';
+config.api.script = '../core/AcmacsCore.bundle/bin/c2env';
 // if this file_path doesn't exist, and environment is development
-config.api.path = './core/AcmacsCore.bundle/';
+config.api.path = '../core/AcmacsCore.bundle/';
 
 config.api.params = [];
 config.api.params[0] = "api-acjim.py";

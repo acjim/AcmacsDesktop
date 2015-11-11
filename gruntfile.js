@@ -4,15 +4,26 @@ module.exports = function(grunt) {
     var isMac = /^darwin/.test(process.platform);
     var isLinux = /^linux/.test(process.platform);
     var arch = process.arch === 'x64' ? '64' : '32';
+    var coreTarget = "./build/AcmacsDesktop/";
 
     var platforms = [];
 
     if (grunt.option('platform')) {
         platforms.push(grunt.option('platform'));
+        coreTarget += grunt.option('platform');
     } else {
-        if (isMac) { platforms.push('osx' + arch); }
-        if (isWin) { platforms.push('win' + arch); }
-        if (isLinux) { platforms.push('linux' + arch); }
+        if (isMac) {
+            platforms.push('osx' + arch);
+            coreTarget += "osx" + arch + "/AcmacsDesktop.app/Contents/Resources"
+        }
+        if (isWin) {
+            platforms.push('win' + arch);
+            coreTarget += 'win' + arch;
+        }
+        if (isLinux) {
+            platforms.push('linux' + arch);
+            coreTarget += 'linux' + arch;
+        }
     }
 
     grunt.initConfig({
@@ -33,6 +44,18 @@ module.exports = function(grunt) {
 
             },
             src: './src/**/*'
+        },
+        copy: {
+            main: {
+                options: {
+                    mode: 0755,
+                },
+                expand: true,
+                src: ['./core/AcmacsCore.bundle/**'],
+                dest: coreTarget
+                // Mac:   ./build/AcmacsDesktop/osx64/AcmacsDesktop.app/Contents/Resources
+                // Linux: ./build/AcmacsDesktop/linux64
+            }
         },
         appdmg: {
             options: {
@@ -74,9 +97,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-appdmg');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Build the app for osx
-    grunt.registerTask('build', ['clean:build', 'nwjs']);
+    grunt.registerTask('build', ['clean:build', 'nwjs', 'copy']);
 
     var packageFlow = ['build', 'clean:package'];
     if(isMac) { packageFlow.push('appdmg'); }
