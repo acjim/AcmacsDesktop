@@ -409,7 +409,6 @@ angular.module('acjim.api', [])
          *
          * @param additional_params = {
          *                      projection: int, //mandatory
-         *                      number_of_optimizations: int, //mandatory
          *                      rough_optimization: bool (default: False)
          *                      };
          * Result object:

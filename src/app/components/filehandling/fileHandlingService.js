@@ -39,6 +39,7 @@
     function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
 
         var acd1File = null;
+        var projection = 0;
 
         return {
             handleFileOpen: handleFileOpen,
@@ -137,7 +138,7 @@
          * Calls api to re-optimize (relax) the map
          * @param mapData
          */
-        function reOptimize(mapData){
+        function reOptimize(mapData) {
             cfpLoadingBar.start();
             var list = [];
             mapData.d3Nodes.forEach(function (layout, i) {
@@ -146,50 +147,43 @@
                     layout.y
                 ];
             });
-
-            //TODO get projection from scope
             var additional_params = {
                 coordinates: list,
-                projection: 0
+                projection: projection
             };
 
             api.new_projection(additional_params, acd1File)
                 .then(function (output) {
                     var output_json = output.output_json;
                     acd1File = output.output_acd1;
-
-                    fs.readFile(output_json, 'utf8', function (err, data) {
-                        //var mapJsonData = JSON.parse(data);
-                        //$scope.projection = mapJsonData.projection;
-                        //TODO set projection for all new_projection call
-                    });
-
-                    //TODO projection number should be passed further into relax function which is missing projection parameter
+                    var output_data = fs.readFileSync(output_json, 'utf8');
+                    var mapJsonData = JSON.parse(output_data);
+                    projection = mapJsonData.projection;
                     var relax_additional_params = {
-                        number_of_dimensions: 2,
-                        number_of_optimizations: 1,
-                        best_map: true
+                        projection: projection
                     };
-
-                    api.relax(relax_additional_params, acd1File)
+                    api.relax_existing(relax_additional_params, acd1File)
                         .then(function (filename) {
                             acd1File = filename.updated_acd1;
-                            var output_json = filename.output_json;
-                            fs.readFile(output_json, 'utf8', function (err, data) {
-
-                                var mapJsonData = JSON.parse(data);
-
-                                // relax returns list of stresses for number of optimizations performed.
-                                mapData.stress = mapJsonData.stresses[0];
-                                mapJsonData.best_map.layout.forEach(function (layout, i) {
-                                    mapData.d3Nodes[i].x = layout[0];
-                                    mapData.d3Nodes[i].y = layout[1];
+                            var map_additional_params = {projection: projection};
+                            api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                                .then(function (filename) {
+                                    var output_json = filename;
+                                    fs.readFile(output_json, 'utf8', function (err, data) {
+                                        var mapJsonData = JSON.parse(data);
+                                        mapData.stress = mapJsonData.stress;
+                                        mapJsonData.map.layout.forEach(function (layout, i) {
+                                            mapData.d3Nodes[i].x = layout[0];
+                                            mapData.d3Nodes[i].y = layout[1];
+                                        });
+                                        cfpLoadingBar.complete();
+                                    });
+                                }, function (reason) {
+                                    return errorReason(reason);
                                 });
-                                cfpLoadingBar.complete();
-                            });
-                    }, function (reason) {
-                        return errorReason(reason);
-                    });
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
                 }, function (reason) {
                     return errorReason(reason);
                 });
