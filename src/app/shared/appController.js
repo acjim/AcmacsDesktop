@@ -80,10 +80,11 @@ angular.module('acjim')
 
         // Reload
         $scope.$on('reload-app', function () {
-            nwService.gui.Window.get().reloadDev();
+            nwService.window.removeAllListeners();
+            nwService.window.reload();
         });
 
-        //Close app
+        //Close app TODO: check if this is needed or hooked up do window.on('close') event
         $scope.$on('exit-app', function () {
             nwService.gui.Window.get().close();
         });
