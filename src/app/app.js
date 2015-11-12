@@ -114,7 +114,15 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     }
                 }
             ]
-        }
+        },{
+            id: 12,
+            caption: 'Show Hide Labels',
+            icon: 'glyphicon glyphicon-option-vertical',
+            togglable: true,
+            callback: function () {
+                $rootScope.$emit('Labels.show');
+            }
+        },
     ]);
 
 });

@@ -67,6 +67,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 gridScale = 1,
                 initialScale = 1,
                 brush = null,
+                visibility = 0,
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
@@ -79,7 +80,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 elementGroup,
                 nodeGroup,
                 errorlineGroup,
-                connectionlineGroup;
+                connectionlineGroup,
+                labelsGroup;
 
 
             /**
@@ -109,6 +111,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // reapply scales on the data
                 nodeGroup.attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; });
+                labelsGroup.attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; });
 
                 // Create brush
                 brush = createBrush();
@@ -163,6 +166,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         }));
 
 
+
+
                 // mouse event handlers
                 nodeGroup.on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
@@ -178,6 +183,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                             d3.select(this).classed("selected", d.selected = false);
                         }
                     })
+
                     .call(d3.behavior.drag()
                         .on("dragstart", function() {
                             d3.event.sourceEvent.stopPropagation();
@@ -192,9 +198,23 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 if(data.d3Errorlines && data.d3Connectionlines && data.d3Errorlines.length > 1 && data.d3Connectionlines.length > 1){
                     renderErrorlines(data.d3Errorlines, data.d3Connectionlines);
                 }
-
                 nodeGroup.exit().remove();
+
+                labelsGroup=labelsGroup.data(data.d3Nodes);
+                labelsGroup.enter().append("text")
+                    .attr("class", "text")
+                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("x", function(d) {return d.x; })
+                    .attr("y", function(d) { return d.y; })
+                    .style("visibility","hidden")
+                    .style("font-family","sans-serif")
+                    .style("font-size","10px")
+                    .style("fill","#330066")
+                    .text(function(d) {return d.name; });
+                labelsGroup.exit().remove();
+
             }
+
 
             /**
              * Renders the additional layers for connection and error lines
@@ -333,6 +353,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 nodeGroup = elementGroup.append("g")
                     .attr("class", "node")
                     .selectAll(".node");
+                labelsGroup = elementGroup.append("g")
+                    .attr("class", "text")
+                    .selectAll(".text");
+
 
                 //better way to set this hidden upon start?
                 $('#errorlineLayer').css({'visibility': 'hidden'});
@@ -433,6 +457,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 // Move the graph
                 nodeGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
+                });// Move the text labels
+                labelsGroup.attr("transform", function (d) {
+                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
                 });
                 errorlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
@@ -531,6 +558,18 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
             }
 
+            function GetNodeLabels() {
+
+                if (visibility == 0) {
+                    d3.selectAll(".text").style("visibility", "visible");
+                    visibility= 1;
+                }
+                else {
+                    d3.selectAll(".text").style("visibility", "hidden");
+                    visibility= 0;
+                }
+            }
+
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
              * mapDataPoints should be assigned to scope.data before passing it to the function
@@ -610,6 +649,13 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             scope.$on('ngWindow.resize', renderWithoutData);
 
+            /**
+             * Listens for event to get node labels or remove them
+             */
+
+            $rootScope.$on('Labels.show', function() {
+                GetNodeLabels();
+            });
 
             /**
              * Listens for container resize event and re-renders the map
