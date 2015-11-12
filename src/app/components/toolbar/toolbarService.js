@@ -23,7 +23,7 @@
 (function() {
     'use strict';
 
-    angular.module('acjim.toolbar')
+    angular.module('acjim.toolbar', [])
         .factory('toolbar', [toolbar]);
 
     function toolbar () {
@@ -33,6 +33,8 @@
             groups = [];
 
         var service = {
+            items: items,
+            groups: groups,
             init: init,
             getStructure: getStructure,
             getActiveItemFromGroup: getActiveItemFromGroup,
@@ -93,7 +95,7 @@
                     type: 'button',
                     active: options.active || false,
                     togglable: options.togglable || false,
-                    groupID: options.groupID || null,
+                    groupID: options.groupID,
                     callback: options.callback || null,
                     click: itemClick,
                     select: function (selected) {
@@ -150,13 +152,10 @@
          * @param groupID
          */
         function addItemToGroup (item, groupID) {
-            var group;
             if (!groups[groupID]) {
-                group = groups[groupID] = [];
-            } else {
-                group = groups[groupID];
+                groups[groupID] = [];
             }
-            group.push(item);
+            groups[groupID].push(item);
         }
 
         /**
