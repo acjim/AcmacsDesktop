@@ -11,7 +11,6 @@
 var config = {};
 var gui = window.require('nw.gui');
 var datapath = gui.App.dataPath;
-var execPath = process.execPath;
 
 config.store = {};
 config.dev_mode = 1;
@@ -24,7 +23,9 @@ config.api.file = '';
 config.store.path = datapath+'/Local_Data/';
 
 if(config.dev_mode === 0 && process.platform === 'linux'){
-    config.api.script = execPath + '/core/AcmacsCore.bundle/bin/c2env';
+    var execPath = process.execPath;
+    var path = execPath.substring(0, execPath.lastIndexOf("/"));
+    config.api.script = path + '/core/AcmacsCore.bundle/bin/c2env';
 } else {
     config.api.script = '../core/AcmacsCore.bundle/bin/c2env';
 }
