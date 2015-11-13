@@ -11,9 +11,10 @@
 var config = {};
 var gui = window.require('nw.gui');
 var datapath = gui.App.dataPath;
+var execPath = process.execPath;
 
 config.store = {};
-config.devMode = process.env.DEV_MODE === 'true';
+config.dev_mode = 1;
 config.debug = {};
 config.api = {};
 
@@ -22,9 +23,11 @@ config.api.location = '/vagrant/';
 config.api.file = '';
 config.store.path = datapath+'/Local_Data/';
 
-config.api.script = '../core/AcmacsCore.bundle/bin/c2env';
-// if this file_path doesn't exist, and environment is development
-config.api.path = '../core/AcmacsCore.bundle/';
+if(config.dev_mode === 1){
+    config.api.script = './core/AcmacsCore.bundle/bin/c2env';
+} else {
+    config.api.script = execPath + '../AcmacsCore.bundle/bin/c2env';
+}
 
 config.api.params = [];
 config.api.params[0] = "api-acjim.py";
