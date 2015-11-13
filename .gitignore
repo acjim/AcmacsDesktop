@@ -8,6 +8,7 @@ src/node_modules/
 /build/
 /publish/
 /cache/
+/tmp/
 
 #temporary files
 src/data/tmp/*.json

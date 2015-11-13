@@ -30,8 +30,9 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('src/package.json'),
         clean: {
             options: { force: true },
-            build: ["./build"],
-            package: ["./release"]
+            build: ["./build", "./tmp"],
+            package: ["./release"],
+            tmp: ["./tmp"]
         },
         nwjs: {
             options: {
@@ -43,10 +44,10 @@ module.exports = function(grunt) {
                 credits: 'assets/osx/credits.html'
 
             },
-            src: './src/**/*'
+            src: './tmp/**/*'
         },
         copy: {
-            main: {
+            corebundle: {
                 options: {
                     mode: 0755,
                 },
@@ -55,6 +56,11 @@ module.exports = function(grunt) {
                 dest: coreTarget
                 // Mac:   ./build/AcmacsDesktop/osx64/AcmacsDesktop.app/Contents/Resources
                 // Linux: ./build/AcmacsDesktop/linux64
+            },
+            tmp: {
+                expand: true,
+                src: ['./src/**/*'],
+                dest: './tmp'
             }
         },
         appdmg: {
@@ -90,26 +96,13 @@ module.exports = function(grunt) {
                 tasks: ['karma:unit:run']
             }
         },
-        'string-replace': {
-            build_mode: {
-                files: {'src/': 'src/config.js'},
-                options: {
-                    replacements: [
-                        {
-                            pattern: 'dev_mode = 1',
-                            replacement: 'dev_mode = 0'
-                        }
-                    ]
-                }
-            }
-        },
         replace: {
-            dev_mode: {
-                src: ['./src/config.js'],
+            build: {
+                src: ['./tmp/src/config.js'],
                 overwrite: true,               // overwrite matched source files
                 replacements: [{
-                    from: 'dev_mode = 0',
-                    to: 'dev_mode = 1',
+                    from: 'dev_mode = 1',
+                    to: 'dev_mode = 0'
                 }]
             }
         }
@@ -121,11 +114,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-appdmg');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-string-replace');
     grunt.loadNpmTasks('grunt-text-replace');
 
     // Build the app for osx
-    grunt.registerTask('build', ['string-replace', 'clean:build', 'nwjs', 'copy', 'replace']);
+    grunt.registerTask('build', ['clean:build', 'copy:tmp', 'replace', 'nwjs', 'copy:corebundle', 'clean:tmp']);
 
     var packageFlow = ['build', 'clean:package'];
     if(isMac) { packageFlow.push('appdmg'); }
