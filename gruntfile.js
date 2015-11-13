@@ -4,23 +4,35 @@ module.exports = function(grunt) {
     var isMac = /^darwin/.test(process.platform);
     var isLinux = /^linux/.test(process.platform);
     var arch = process.arch === 'x64' ? '64' : '32';
+    var coreTarget = "./build/AcmacsDesktop/";
 
     var platforms = [];
 
     if (grunt.option('platform')) {
         platforms.push(grunt.option('platform'));
+        coreTarget += grunt.option('platform');
     } else {
-        if (isMac) { platforms.push('osx' + arch); }
-        if (isWin) { platforms.push('win' + arch); }
-        if (isLinux) { platforms.push('linux' + arch); }
+        if (isMac) {
+            platforms.push('osx' + arch);
+            coreTarget += "osx" + arch + "/AcmacsDesktop.app/Contents/Resources"
+        }
+        if (isWin) {
+            platforms.push('win' + arch);
+            coreTarget += 'win' + arch;
+        }
+        if (isLinux) {
+            platforms.push('linux' + arch);
+            coreTarget += 'linux' + arch;
+        }
     }
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('src/package.json'),
         clean: {
             options: { force: true },
-            build: ["./build"],
-            package: ["./release"]
+            build: ["./build", "./tmp"],
+            package: ["./release"],
+            tmp: ["./tmp"]
         },
         nwjs: {
             options: {
@@ -32,7 +44,24 @@ module.exports = function(grunt) {
                 credits: 'assets/osx/credits.html'
 
             },
-            src: './src/**/*'
+            src: './tmp/**/*'
+        },
+        copy: {
+            corebundle: {
+                options: {
+                    mode: 0755,
+                },
+                expand: true,
+                src: ['./core/AcmacsCore.bundle/**'],
+                dest: coreTarget
+                // Mac:   ./build/AcmacsDesktop/osx64/AcmacsDesktop.app/Contents/Resources
+                // Linux: ./build/AcmacsDesktop/linux64
+            },
+            tmp: {
+                expand: true,
+                src: ['./src/**/*'],
+                dest: './tmp'
+            }
         },
         appdmg: {
             options: {
@@ -66,6 +95,16 @@ module.exports = function(grunt) {
                 files: ['src/**/*.js', 'test/unit/**/*.js'],
                 tasks: ['karma:unit:run']
             }
+        },
+        replace: {
+            build: {
+                src: ['./tmp/src/config.js'],
+                overwrite: true,               // overwrite matched source files
+                replacements: [{
+                    from: 'dev_mode = 1',
+                    to: 'dev_mode = 0'
+                }]
+            }
         }
     });
 
@@ -74,9 +113,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-appdmg');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-text-replace');
 
     // Build the app for osx
-    grunt.registerTask('build', ['clean:build', 'nwjs']);
+    grunt.registerTask('build', ['clean:build', 'copy:tmp', 'replace', 'nwjs', 'copy:corebundle', 'clean:tmp']);
 
     var packageFlow = ['build', 'clean:package'];
     if(isMac) { packageFlow.push('appdmg'); }

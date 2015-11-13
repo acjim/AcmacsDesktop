@@ -51,7 +51,7 @@
 
         win.focus();
 
-        if(config.devMode) {
+        if(config.dev_mode) {
             $scope.openDocumentWindow("../test/data/test.save")
         }
 

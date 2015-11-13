@@ -85,8 +85,7 @@
                 cfpLoadingBar.start();
             }, 50);
 
-            if (!fs.existsSync(config.api.path)) {
-                // If there is no AcmacsCore.bundle
+            if (!fs.existsSync(config.api.script)) { // If there is no AcmacsCore.bundle
                 return api.asyncTest().then(function() {
                     var output = api.stubOpen();
                     Flash.create('danger', 'Core api is missing, please add core api');
