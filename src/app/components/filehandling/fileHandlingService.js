@@ -140,7 +140,6 @@
         function reOptimize(mapData, pointsMoved) {
             cfpLoadingBar.start();
 
-            console.log(pointsMoved);
             // check if a node is moved
             if (pointsMoved === true)
             {
