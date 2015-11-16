@@ -39,16 +39,17 @@ var COMMANDS = {
     SET_DISCONNECTED_POINTS: 'set_disconnected_points',
     SET_UNMOVABLE_POINTS: 'set_unmovable_points',
 };
-var gui = window.require('nw.gui');
-var win = gui.Window.get();
-var win_id = win.id;
-var store_path = config.store.path;
-var data_path = store_path + win_id + '/';
-var tmp_path = data_path + 'tmp/';
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
         var api = {};
+        var script = config.api.script;
+        var gui = window.require('nw.gui');
+        var win = gui.Window.get();
+        var win_id = win.id;
+        var store_path = config.store.path;
+        var data_path = store_path + win_id + '/';
+        var tmp_path = data_path + 'tmp/';
 
         /**
          * creates json file with input parameters
@@ -249,7 +250,7 @@ angular.module('acjim.api', [])
 
             var deferred = $q.defer();
             var command = "import";
-            var script = config.api.script;
+            
             this.make_dir();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, input_file);
@@ -261,7 +262,7 @@ angular.module('acjim.api', [])
                     // @todo handle error/exception properly
                     //this.emit('error', error);
                     console.log(error);
-                    deferred.reject('Importing file failed!');
+                    deferred.reject(error);
                 }
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
@@ -335,7 +336,7 @@ angular.module('acjim.api', [])
                 deferred.resolve(output_json); // return call
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
@@ -378,9 +379,97 @@ angular.module('acjim.api', [])
             var deferred = $q.defer();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            params[params.length] = input_param_file;
+            params[params.length] = output_acd1;
+            params[params.length] = output_json;
+            params[params.length] = output_acd1_1;
+            // callback function for exec
+            try {
+                execFile(script, params, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+
+            function puts(error) {
+                if (error) {
+                    deferred.reject(error);
+                }
+                deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
+            }
+
+            return deferred.promise;
+        };
+
+        /**
+         * set_disconnected_points
+         *
+         * Sets disconnection attribute for the listed points.
+         * Disconnected points are not touched by the optimization engine,
+         * they are not moved and they do not contribute to stress.
+         * If list is empty, all points are made connected (regular).
+         * Passed list contains just point indices, first come antigens starting with 0,
+         * then come sera, index of the first serum is equal to the number of antigens in the table.
+         * @param additional_params = {  disconnected: list, projection: int }
+         * @param output_acd1
+         * @returns {output_json: output_json, updated_acd1: output_acd1_1}
+         */
+        api.set_disconnected_points = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.SET_DISCONNECTED_POINTS;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'dscpts');
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'dscpts');
+            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+            params[params.length] = input_param_file;
+            params[params.length] = output_acd1;
+            params[params.length] = output_json;
+            params[params.length] = output_acd1_1;
+            // callback function for exec
+            try {
+                execFile(script, params, puts);
+            } catch (Error) {
+                console.log(Error.message);
+                deferred.reject(Error.message);
+            }
+
+            function puts(error) {
+                if (error) {
+                    deferred.reject(error);
+                }
+                deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
+            }
+
+            return deferred.promise;
+        };
+
+        /**
+         * set_unmovable_points
+         * Sets unmovable attribute for the listed points. Unmovable points cannot be moved by
+         * the optimization engine, their coordinates are fixed, but they do contribute to stress.
+         * If list is empty, all points are made movable (regular). Passed list contains just point indices,
+         * first come antigens starting with 0, then come sera, index of the first serum is equal to the number
+         * of antigens in the table.
+         * @param additional_params = {  unmovable: list, projection: int }
+         * @param output_acd1
+         * @returns {output_json: output_json, updated_acd1: output_acd1_1}
+         */
+        api.set_unmovable_points = function (additional_params, output_acd1) {
+
+            var command = COMMANDS.SET_UNMOVABLE_POINTS;
+            var deferred = $q.defer();
+            // create and fetch input_parameter file
+            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             params[params.length] = input_param_file;
             params[params.length] = output_acd1;
@@ -420,7 +509,7 @@ angular.module('acjim.api', [])
             var deferred = $q.defer();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
@@ -485,7 +574,7 @@ angular.module('acjim.api', [])
                 deferred.resolve(new_output_acd1); // return call
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "upt");
 
@@ -528,7 +617,7 @@ angular.module('acjim.api', [])
                 }
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             params[params.length] = input_param_file;
@@ -572,7 +661,7 @@ angular.module('acjim.api', [])
                 deferred.resolve({output_json: output_json, output_acd1: new_output_acd1}); // return call
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var file = output_acd1.split('/').pop();
             file = file.substr(0, file.lastIndexOf("_"));

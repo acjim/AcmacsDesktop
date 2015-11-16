@@ -409,7 +409,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     d3.event.preventDefault();
                 }
 
-                scope.pointsMoved = true;
+                $rootScope.pointsMoved = true;
 
                 if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
                     $rootScope.$emit('api.nudgeTriggeredErrorlines');
