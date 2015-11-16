@@ -137,49 +137,63 @@
          * Calls api to re-optimize (relax) the map
          * @param mapData
          */
-        function reOptimize(mapData) {
+        function reOptimize(mapData, pointsMoved) {
             cfpLoadingBar.start();
-            var list = [];
-            mapData.d3Nodes.forEach(function (layout, i) {
-                list[i] = [
-                    layout.x,
-                    layout.y
-                ];
-            });
-            var additional_params = {
-                coordinates: list,
+
+            console.log(pointsMoved);
+            // check if a node is moved
+            if (pointsMoved === true)
+            {
+                var list = [];
+                mapData.d3Nodes.forEach(function (layout, i) {
+                    list[i] = [
+                        layout.x,
+                        layout.y
+                    ];
+                });
+                var additional_params = {
+                    coordinates: list,
+                    projection: projection
+                };
+
+                api.new_projection(additional_params, acd1File)
+                    .then(function (output) {
+                        var output_json = output.output_json;
+                        acd1File = output.output_acd1;
+                        var output_data = fs.readFileSync(output_json, 'utf8');
+                        var mapJsonData = JSON.parse(output_data);
+                        projection = mapJsonData.projection;
+                        relax_existing(mapData);
+                    }, function (reason) {
+                        return errorReason(reason);
+                    });
+            } else {
+                relax_existing(mapData);
+            }
+
+        }
+
+        function relax_existing(mapData)
+        {
+            var relax_additional_params = {
                 projection: projection
             };
-
-            api.new_projection(additional_params, acd1File)
-                .then(function (output) {
-                    var output_json = output.output_json;
-                    acd1File = output.output_acd1;
-                    var output_data = fs.readFileSync(output_json, 'utf8');
-                    var mapJsonData = JSON.parse(output_data);
-                    projection = mapJsonData.projection;
-                    var relax_additional_params = {
-                        projection: projection
-                    };
-                    api.relax_existing(relax_additional_params, acd1File)
+            api.relax_existing(relax_additional_params, acd1File)
+                .then(function (filename) {
+                    acd1File = filename.updated_acd1;
+                    var map_additional_params = {projection: projection};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
-                            acd1File = filename.updated_acd1;
-                            var map_additional_params = {projection: projection};
-                            api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
-                                .then(function (filename) {
-                                    var output_json = filename;
-                                    fs.readFile(output_json, 'utf8', function (err, data) {
-                                        var mapJsonData = JSON.parse(data);
-                                        mapData.stress = mapJsonData.stress;
-                                        mapJsonData.map.layout.forEach(function (layout, i) {
-                                            mapData.d3Nodes[i].x = layout[0];
-                                            mapData.d3Nodes[i].y = layout[1];
-                                        });
-                                        cfpLoadingBar.complete();
-                                    });
-                                }, function (reason) {
-                                    return errorReason(reason);
+                            var output_json = filename;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
+                                var mapJsonData = JSON.parse(data);
+                                mapData.stress = mapJsonData.stress;
+                                mapJsonData.map.layout.forEach(function (layout, i) {
+                                    mapData.d3Nodes[i].x = layout[0];
+                                    mapData.d3Nodes[i].y = layout[1];
                                 });
+                                cfpLoadingBar.complete();
+                            });
                         }, function (reason) {
                             return errorReason(reason);
                         });

@@ -103,7 +103,7 @@
          * Watches for a the reoptimize button
          */
         $scope.$on('api.reoptimize', function () {
-            fileHandling.reOptimize($scope.d3Data);
+            fileHandling.reOptimize($scope.d3Data, $rootScope.pointsMoved);
         });
 
 
