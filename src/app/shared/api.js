@@ -425,8 +425,8 @@ angular.module('acjim.api', [])
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'dscpts');
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'dscpts');
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             params[params.length] = input_param_file;
             params[params.length] = output_acd1;
@@ -468,8 +468,8 @@ angular.module('acjim.api', [])
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
+            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             params[params.length] = input_param_file;
             params[params.length] = output_acd1;
