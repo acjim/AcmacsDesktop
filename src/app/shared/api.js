@@ -39,16 +39,17 @@ var COMMANDS = {
     SET_DISCONNECTED_POINTS: 'set_disconnected_points',
     SET_UNMOVABLE_POINTS: 'set_unmovable_points',
 };
-var gui = window.require('nw.gui');
-var win = gui.Window.get();
-var win_id = win.id;
-var store_path = config.store.path;
-var data_path = store_path + win_id + '/';
-var tmp_path = data_path + 'tmp/';
 
 angular.module('acjim.api', [])
     .factory('api', ['$q', '$timeout', function ($q, $timeout) {
         var api = {};
+        var script = config.api.script;
+        var gui = window.require('nw.gui');
+        var win = gui.Window.get();
+        var win_id = win.id;
+        var store_path = config.store.path;
+        var data_path = store_path + win_id + '/';
+        var tmp_path = data_path + 'tmp/';
 
         /**
          * creates json file with input parameters
@@ -249,7 +250,7 @@ angular.module('acjim.api', [])
 
             var deferred = $q.defer();
             var command = "import";
-            var script = config.api.script;
+            
             this.make_dir();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, input_file);
@@ -335,7 +336,7 @@ angular.module('acjim.api', [])
                 deferred.resolve(output_json); // return call
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
@@ -378,7 +379,7 @@ angular.module('acjim.api', [])
             var deferred = $q.defer();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
@@ -420,7 +421,7 @@ angular.module('acjim.api', [])
             var deferred = $q.defer();
             // create and fetch input_parameter file
             var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
@@ -485,7 +486,7 @@ angular.module('acjim.api', [])
                 deferred.resolve(new_output_acd1); // return call
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "upt");
 
@@ -528,7 +529,7 @@ angular.module('acjim.api', [])
                 }
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
             params[params.length] = input_param_file;
@@ -572,7 +573,7 @@ angular.module('acjim.api', [])
                 deferred.resolve({output_json: output_json, output_acd1: new_output_acd1}); // return call
             }
 
-            var script = config.api.script;
+            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var file = output_acd1.split('/').pop();
             file = file.substr(0, file.lastIndexOf("_"));
