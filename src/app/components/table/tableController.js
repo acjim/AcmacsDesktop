@@ -25,10 +25,6 @@ var app = angular.module('acjim.table', []);
 
 app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
-    $scope.$on('api.updateTable', function () {
-        fileHandling.updateTable($scope.tableData, $scope.openMaps);
-    });
-
 }])
 
     .directive('acTable', function () {
@@ -36,26 +32,6 @@ app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function (
             controller: 'tableCtrl',
             controllerAs: 'tableData',
             templateUrl: './app/components/table/tableView.html',
-            link: function (scope, iElement) {
-                scope.editItem = function (obj, parent_index, index) {
-                    obj.target.setAttribute("contenteditable", true);
-                    obj.target.focus();
-                    var element = angular.element(event.currentTarget);
-                    element.bind("keydown keypress", function (event) {
-                        if (event.which === 13 || event.which === 27) {
-                            obj.target.setAttribute("contenteditable", false);
-                            event.preventDefault();
-                            if (scope.tableData.table.titers.titers_list_of_list) {
-                                scope.tableData.table.titers.titers_list_of_list[parent_index][index] = element.text();
-                            } else if (scope.tableData.table.titers.titers_list_of_dict) {
-                                scope.tableData.table.titers.titers_list_of_dict[parent_index][index] = element.text();
-                            }
-                            scope.tableData.modified = true;
-                            scope.$apply();
-                        }
-                    });
-                };
-            },
             restrict: 'E',
             bindToController: {
                 table: '='

@@ -104,14 +104,6 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     callback: function () {
                         $rootScope.$broadcast('api.reoptimize');
                     }
-                },
-                {
-                    id: toolbarItems.UPDATE_TABLE,
-                    caption: 'Update Table',
-                    icon: 'glyphicon glyphicon-list-alt',
-                    callback: function () {
-                        $rootScope.$broadcast('api.updateTable');
-                    }
                 }
             ]
         },{
