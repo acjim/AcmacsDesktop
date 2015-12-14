@@ -39,7 +39,6 @@
             NEW_MAP: 9,
             //// GROUPS ////
             MAP_TOOLS: 10,
-            UPDATE_TABLE:11,
             LABEL_NODES:12
         };
     }
