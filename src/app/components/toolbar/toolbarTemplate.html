@@ -5,8 +5,9 @@
          ng-class="{'active': item.active}"
          ng-if="item.isButtonGroup()">
 
-        <label tooltip-placement="bottom" tooltip="{{groupItem.caption}}" class="btn btn-default"
+        <label class="btn btn-default" type="button"
                ng-repeat="groupItem in item.buttons | orderBy:'order'"
+               title="{{groupItem.caption}}"
                ng-class="{'active': groupItem.active}"
                ng-click="groupItem.click()">
             <span class="{{groupItem.icon}}"></span>
@@ -15,7 +16,8 @@
     </div>
 
     <!-- If normal button -->
-    <label tooltip-placement="bottom" tooltip="{{item.caption}}" class="btn btn-default"
+    <label class="btn btn-default" type="button"
+           title="{{item.caption}}"
            ng-class="{'active': item.active}"
            ng-if="!item.isButtonGroup()"
            ng-click="item.click()">

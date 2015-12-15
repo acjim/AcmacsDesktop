@@ -52,19 +52,19 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             buttons: [
                 {
                     id: toolbarItems.SELECTION,
-                    caption: 'Selection',
+                    caption: 'Selection Tool',
                     active: true,
                     groupID: toolbarItems.MAP_TOOLS,
-                    icon: 'glyphicon glyphicon-unchecked',
+                    icon: 'icon acmacs-select',
                     callback: function () {
                         $rootScope.$emit('tool.selected');
                     }
                 },
                 {
                     id: toolbarItems.MOVEMENT,
-                    caption: 'Movement',
+                    caption: 'Movement Tool',
                     groupID: toolbarItems.MAP_TOOLS,
-                    icon: 'glyphicon glyphicon-move',
+                    icon: 'icon acmacs-move',
                     callback: function () {
                         $rootScope.$emit('tool.selected');
                     }
@@ -77,7 +77,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                 {
                     id: toolbarItems.SHOW_ERROR_LINES,
                     caption: 'Show Error Lines',
-                    icon: 'glyphicon glyphicon-transfer',
+                    icon: 'icon acmacs-error-line',
                     togglable: true,
                     callback: function () {
                         $rootScope.$emit('api.geterrorlines');
@@ -86,7 +86,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                 {
                     id: toolbarItems.SHOW_CONNECTION_LINES,
                     caption: 'Show Connection Lines',
-                    icon: 'glyphicon glyphicon glyphicon-road',
+                    icon: 'icon acmacs-connection',
                     togglable: true,
                     callback: function () {
                         $rootScope.$emit('api.getconnectionlines');
@@ -95,26 +95,23 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             ]
         },
         {
-            type: "buttonGroup",
-            buttons: [
-                {
-                    id: toolbarItems.RE_OPTIMIZE,
-                    caption: 'Reoptimize',
-                    icon: 'glyphicon glyphicon-refresh',
-                    callback: function () {
-                        $rootScope.$broadcast('api.reoptimize');
-                    }
-                }
-            ]
-        },{
-            id: 12,
-            caption: 'Show Hide Labels',
-            icon: 'glyphicon glyphicon-option-vertical',
+            id: toolbarItems.LABEL_NODES,
+            caption: 'Show Labels',
+            icon: 'icon acmacs-label',
             togglable: true,
             callback: function () {
-                $rootScope.$emit('Labels.show');
+                $rootScope.$emit('map.showLabels');
             }
         },
+        {
+            id: toolbarItems.RE_OPTIMIZE,
+            caption: 'Reoptimize',
+            icon: 'icon acmacs-optimize',
+            callback: function () {
+                $rootScope.$broadcast('api.reoptimize');
+            }
+        }
+
     ]);
 
 });

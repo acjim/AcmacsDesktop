@@ -653,7 +653,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * Listens for event to get node labels or remove them
              */
 
-            $rootScope.$on('Labels.show', function() {
+            $rootScope.$on('map.showLabels', function() {
                 GetNodeLabels();
             });
 

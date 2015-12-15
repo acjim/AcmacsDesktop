@@ -32,6 +32,7 @@ html {
   -webkit-user-select: none;
   cursor: default;
 }
+
 .menubar {
   background-color: #F0F0F0;
   border-bottom: 1px solid #EEE;
@@ -87,4 +88,83 @@ html {
   color: rgb(0,0,128);
   font-weight: bold;
   position: absolute;
+}
+
+/*********** Toolbar Icon Font **************/
+
+.menubar .btn {
+  padding: 1px 8px;
+  font-size: 18px;
+}
+
+@font-face {
+  font-family: "acmacs-icons";
+  src:url("fonts/acmacs-icons.eot");
+  src:url("fonts/acmacs-icons.eot?#iefix") format("embedded-opentype"),
+  url("fonts/acmacs-icons.woff") format("woff"),
+  url("fonts/acmacs-icons.ttf") format("truetype"),
+  url("fonts/acmacs-icons.svg#acmacs-icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "acmacs-icons" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="acmacs-"]:before,
+[class*=" acmacs-"]:before {
+  font-family: "acmacs-icons" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.acmacs-label:before {
+  content: "\65";
+}
+.acmacs-optimize:before {
+  content: "\66";
+}
+.acmacs-move:before {
+  content: "\67";
+}
+.acmacs-select:before {
+  content: "\6b";
+}
+.acmacs-optimize2:before {
+  content: "\6a";
+}
+.acmacs-optimize3:before {
+  content: "\6c";
+}
+.acmacs-clone3:before {
+  content: "\6e";
+}
+.acmacs-clone2:before {
+  content: "\70";
+}
+.acmacs-clone:before {
+  content: "\71";
+}
+.acmacs-error-line:before {
+  content: "\6f";
+}
+.acmacs-connection:before {
+  content: "\62";
 }
