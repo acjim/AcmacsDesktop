@@ -16,27 +16,31 @@
 </head>
 <body ng-controller="appCtrl">
 
-    <div flash-message="5000" class="flash-msg"></div>
-
-    <div class="sidebar">
+    <div class="menubar">
         <div acjim-toolbar></div>
     </div>
+    <div flash-message="5000" class="flash-msg"></div>
 
-    <div ui-layout="{ flow : 'column' }" style="margin-left: 81px">
 
-        <div ui-layout-container>
-            <ng-html-window ng-repeat="map in openMaps" options="map.options">
-                <div class="fullsize" ac-map map="map.data"></div>
-            </ng-html-window>
+    <div class="fullsize main">
 
-        </div>
+        <div ui-layout="{ flow : 'column' }">
 
-        <div ui-layout-container size="20%">
-            <div class="pane-container">
-                <ac-table table="tableData"></ac-table>
+            <div ui-layout-container>
+                <ng-html-window ng-repeat="map in openMaps" options="map.options">
+                    <div class="fullsize" ac-map map="map.data"></div>
+                </ng-html-window>
+
             </div>
+
+            <div ui-layout-container size="20%">
+                <div class="pane-container">
+                    <ac-table table="tableData"></ac-table>
+                </div>
+            </div>
+            <!-- end app UI-->
         </div>
-        <!-- end app UI-->
+
     </div>
 
     <!-- vendor -->
