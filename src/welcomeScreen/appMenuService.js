@@ -24,37 +24,27 @@
                     {
                         label: 'File',
                         items: [
-                        {
-                            label: 'New...',
-                            tooltip: 'Create a new file',
-                            click: 'new-file',
-                            modifiers: osModifier,
-                            key: 'n'
-                        },
+                        {label: 'New...', tooltip: 'Create a new file', click: 'new-file', modifiers: osModifier, key: 'n', enabled: false},
                         {label: 'Open...', tooltip: 'Open a file', click: 'open-file', modifiers: osModifier, key: 'o'},
-                        {label: 'Close', tooltip: 'Close a file', click: 'close-file', modifiers: osModifier, key: 'w'},
-                        {
-                            label: 'Close All',
-                            tooltip: 'Close all currently open files',
-                            click: 'close-all',
-                            modifiers: osModifier + 'shift',
-                            key: 'w'
-                        },
+                        {label: 'Close', tooltip: 'Close a file', click: 'close-file', modifiers: osModifier, key: 'w', enabled: false},
+                        //{label: 'Close All', tooltip: 'Close all currently open files', click: 'close-all', modifiers: osModifier + 'shift', key: 'w' },
                         {type: 'separator'},
-                        {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's'},
+                        {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's', enabled: false},
                         {
                             label: 'Save All',
                             tooltip: 'Save all files',
                             click: 'save-all',
                             modifiers: osModifier + 'alt',
-                            key: 's'
+                            key: 's',
+                            enabled: false
                         },
                         {
                             label: 'Save As...',
                             tooltip: 'Save file as...',
                             click: 'save-as',
                             modifiers: osModifier + 'shift',
-                            key: 's'
+                            key: 's',
+                            enabled: false
                         },
                         {label: 'Exit', tooltip: 'Quit Application', click: 'exit-app'} //TODO: See broadcast exit-app
                     ]
@@ -73,10 +63,11 @@
                     ]
                     },
                     {
-                        label: 'Backend', items: [
-                        {label: 'Reoptimization Map', click: 'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'},
-                        {label: 'Show Error Lines', click: 'api.geterrorlines'},
-                        {label: 'Show Connection Lines', click: 'api.getconnectionlines'}
+                        label: 'Map', items: [
+                        {label: 'Optimize', click: 'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'},
+                        {label: 'Show/Hide Error Lines', click: 'api.geterrorlines'},
+                        {label: 'Show/Hide Connection Lines', click: 'api.getconnectionlines'},
+                        {label: 'Show/Hide Labels', click: 'map.showLabels'}
                     ]
                     },
                     {
