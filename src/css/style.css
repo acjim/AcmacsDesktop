@@ -32,12 +32,15 @@ html {
   -webkit-user-select: none;
   cursor: default;
 }
-.sidebar {
-  background-color: Menu;
-  border-right: solid 1px WindowFrame;
-  height: 100%;
-  width: 81px;
-  position: absolute;
+.menubar {
+  background-color: #F0F0F0;
+  border-bottom: 1px solid #EEE;
+  padding: 10px 10px 10px;
+  width: 100%;
+}
+
+.main {
+  position: relative;
 }
 
 .flash-msg {
@@ -49,6 +52,11 @@ html {
     display: block;
     width: 100%;
     height: 100%;
+}
+
+.ui-layout-column > .ui-splitbar {
+  background: #F0F0F0;
+  border-left: 1px solid #EEE;
 }
 
 /*********** Map styles **************/
