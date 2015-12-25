@@ -44,7 +44,8 @@
         return {
             handleFileOpen: handleFileOpen,
             reOptimize: reOptimize,
-            getErrorConnectionlines: getErrorConnectionlines
+            getErrorConnectionlines: getErrorConnectionlines,
+            disableNodes: disableNodes
         };
 
         /**
@@ -224,6 +225,44 @@
                 });
                 return result;
             });
+        }
+        /**
+         * Calls api to disable nodes from a specific  map
+         * @param mapData
+         */
+        function disableNodes(mapData, disabledPoints) {
+            cfpLoadingBar.start();
+
+            var disable_additional_params = {
+                projection: projection,
+                unmovable: disabledPoints
+            };
+            api.set_unmovable_points(disable_additional_params, acd1File)
+                .then(function (filename) {
+                    acd1File = filename.updated_acd1;
+                    var map_additional_params = {projection: projection, unmovable: disabledPoints};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                        .then(function (filename) {
+                            var output_json = filename;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
+                                var mapJsonData = JSON.parse(data);
+                                mapData.stress = mapJsonData.stress;
+                                mapJsonData.map.layout.forEach(function (layout, i) {
+                                    mapData.d3Nodes[i].x = layout[0];
+                                    mapData.d3Nodes[i].y = layout[1];
+                                });
+                                cfpLoadingBar.complete();
+                            });
+                        }, function (reason) {
+                            console.log(reason);
+                            return errorReason(reason);
+                        });
+                }, function (reason) {
+                    console.log(reason);
+
+                    return errorReason(reason);
+                });
+
         }
 
         /**
