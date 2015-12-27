@@ -240,7 +240,7 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var map_additional_params = {projection: projection, unmovable: disabledPoints};
+                    var map_additional_params = {projection: projection};
                     api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
                             var output_json = filename;
