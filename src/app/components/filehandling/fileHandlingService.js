@@ -240,17 +240,15 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var map_additional_params = {projection: projection};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                    var relax_additional_params = { projection: projection };
+                    api.relax_existing(relax_additional_params, acd1File)
                         .then(function (filename) {
-                            var output_json = filename;
+                            var output = filename;
+                            var output_json = output.output_json;
+                            acd1File = output.output_acd1;
                             fs.readFile(output_json, 'utf8', function (err, data) {
                                 var mapJsonData = JSON.parse(data);
                                 mapData.stress = mapJsonData.stress;
-                                mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.d3Nodes[i].x = layout[0];
-                                    mapData.d3Nodes[i].y = layout[1];
-                                });
                                 cfpLoadingBar.complete();
                             });
                         }, function (reason) {
