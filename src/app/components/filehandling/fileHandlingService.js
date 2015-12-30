@@ -237,16 +237,27 @@
                 projection: projection,
                 unmovable: disabledPoints
             };
+            console.log(disabledPoints);
+
+            disabledPoints.sort(function(a, b) {
+                return b-a;
+            });
+            console.log(disabledPoints);
+            var list = [];
+            mapData.d3Nodes.forEach(function (layout, i) {
+                if (disabledPoints.indexOf(i) == -1) {
+
+                    list[i] = [
+                        layout.x,
+                        layout.y
+                    ];
+                 }
+            });
+            console.log(list);
+
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var list = [];
-                    mapData.d3Nodes.forEach(function (layout, i) {
-                        list[i] = [
-                            layout.x,
-                            layout.y
-                        ];
-                    });
                     var additional_params = {
                         coordinates: list,
                         projection: projection
