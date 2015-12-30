@@ -240,19 +240,27 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var relax_additional_params = { projection: projection };
-                    api.relax_existing(relax_additional_params, acd1File)
-                        .then(function (filename) {
-                            var output = filename;
+                    var list = [];
+                    mapData.d3Nodes.forEach(function (layout, i) {
+                        list[i] = [
+                            layout.x,
+                            layout.y
+                        ];
+                    });
+                    var additional_params = {
+                        coordinates: list,
+                        projection: projection
+                    };
+
+                    api.new_projection(additional_params, acd1File)
+                        .then(function (output) {
                             var output_json = output.output_json;
                             acd1File = output.output_acd1;
-                            fs.readFile(output_json, 'utf8', function (err, data) {
-                                var mapJsonData = JSON.parse(data);
-                                mapData.stress = mapJsonData.stress;
-                                cfpLoadingBar.complete();
-                            });
+                            var output_data = fs.readFileSync(output_json, 'utf8');
+                            var mapJsonData = JSON.parse(output_data);
+                            projection = mapJsonData.projection;
+                            relax_existing(mapData);
                         }, function (reason) {
-                            console.log(reason);
                             return errorReason(reason);
                         });
                 }, function (reason) {
