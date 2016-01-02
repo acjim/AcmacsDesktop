@@ -31,20 +31,12 @@
                         {type: 'separator'},
                         {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's', enabled: false},
                         {
-                            label: 'Save All',
-                            tooltip: 'Save all files',
-                            click: 'save-all',
-                            modifiers: osModifier + 'alt',
-                            key: 's',
-                            enabled: false
-                        },
-                        {
-                            label: 'Save As...',
-                            tooltip: 'Save file as...',
+                            label: 'Export...',
+                            tooltip: 'Export file as...',
                             click: 'save-as',
                             modifiers: osModifier + 'shift',
                             key: 's',
-                            enabled: false
+                            enabled: true
                         },
                         {label: 'Exit', tooltip: 'Quit Application', click: 'exit-app'} //TODO: See broadcast exit-app
                     ]

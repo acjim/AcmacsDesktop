@@ -43,6 +43,7 @@
 
         return {
             handleFileOpen: handleFileOpen,
+            handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines
         };
@@ -71,6 +72,19 @@
                 deferred.resolve(data);
             });
             return deferred.promise;
+        }
+
+        function handleFileSaveAs (filename){
+            //TODO: get_format > https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
+
+            cfpLoadingBar.start();
+            var additional_params = {format: 'acd1', filename: filename};
+            return api.export(acd1File, additional_params).then(function (output) {
+                cfpLoadingBar.complete();
+            }, function(reason) {
+                return errorReason(reason);
+            });
+
         }
 
         /**
