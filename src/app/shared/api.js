@@ -174,14 +174,13 @@ angular.module('acjim.api', [])
                 case COMMANDS.EXPORT:
                     var input_parameter = {
                         command: COMMANDS.EXPORT,
-                        data: {filname: 'export_output', format: "acd1_v2.bz2"}
+                        data: {filename: 'NewChart', format: "acd1"}
                     };
 
                     if (!additional_params.hasOwnProperty('format') || !additional_params.hasOwnProperty('filename')) {
-                        throw new Error('Missing mandatory datas, please make sure your data has: format, and filename');
+                        throw new Error('Missing mandatory data, please make sure your data has: format, and filename');
                     }
-                    // TODO get path as input or parameter?
-                    input_parameter.data.filename = config.store.path + aadditional_params.filename + "." + additional_params.format;
+                    input_parameter.data.filename = additional_params.filename;
                     input_parameter.data.format = additional_params.format;
                     break;
                 case COMMANDS.RELAX_EXISTING:
@@ -207,7 +206,7 @@ angular.module('acjim.api', [])
                     }
                     break;
                 case COMMANDS.SET_UNMOVABLE_POINTS:
-                    var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
+                    var input_parameter = {command: COMMANDS.SET_UNMOVABLE_POINTS, data: {projection: 0}};
 
                     if (!additional_params.hasOwnProperty('projection')) {
                         throw new Error('Missing mandatory parameter, projection');
@@ -615,6 +614,7 @@ angular.module('acjim.api', [])
                     console.log(error);
                     deferred.reject(error);
                 }
+                deferred.resolve(output_json); // return call
             }
 
             

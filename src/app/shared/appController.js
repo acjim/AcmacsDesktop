@@ -44,6 +44,18 @@ angular.module('acjim')
             );
         });
 
+        $scope.$on('save-as', function () {
+            fileDialog.saveAs(
+                handleFileSaveAs,
+                'NewChart.acd1',
+                '.acd1,.lispmds','save'
+            );
+        });
+
+        function handleFileSaveAs(filename) {
+            fileHandling.handleFileSaveAs(filename);
+        }
+
         function handleFileOpen(filename) {
             if ($scope.tableData !== null) {
                 if (!_.isEmpty($scope.tableData)) {
