@@ -243,37 +243,20 @@
                 return b-a;
             });
             console.log(disabledPoints);
-            var list = [];
-            mapData.d3Nodes.forEach(function (layout, i) {
-                if (disabledPoints.indexOf(i) == -1) {
 
-                    list[i] = [
-                        layout.x,
-                        layout.y
-                    ];
-                 }
-            });
-            console.log(list);
 
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var additional_params = {
-                        coordinates: list,
-                        projection: projection
-                    };
 
-                    api.new_projection(additional_params, acd1File)
-                        .then(function (output) {
-                            var output_json = output.output_json;
-                            acd1File = output.output_acd1;
+
+                            var output_json = filename.output_json;
+
                             var output_data = fs.readFileSync(output_json, 'utf8');
                             var mapJsonData = JSON.parse(output_data);
-                            projection = mapJsonData.projection;
-                            relax_existing(mapData);
-                        }, function (reason) {
-                            return errorReason(reason);
-                        });
+                           // mapData.stress = mapJsonData.stress;
+                            cfpLoadingBar.complete();
+
                 }, function (reason) {
                     console.log(reason);
 
