@@ -265,7 +265,15 @@
                                     mapData.d3Nodes[i].x = layout[0];
                                     mapData.d3Nodes[i].y = layout[1];
                                 });
-                                cfpLoadingBar.complete();
+
+                                var newfile = "/home/idrissou/malikou.acd1";
+                                var additional_params = {format: 'acd1', filename: newfile};
+                                return api.export(acd1File, additional_params).then(function (filename) {
+                                    cfpLoadingBar.complete();
+                                }, function (reason) {
+                                    return errorReason(reason);
+                                });
+
                             });
                         }, function (reason) {
                             return errorReason(reason);
