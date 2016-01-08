@@ -1,23 +1,23 @@
 /*
-    Antigenic Cartography for Desktop
-    [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
-    In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
-    This project aims at providing a desktop application for working with antigenic maps.
+ Antigenic Cartography for Desktop
+ [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
+ In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
+ This project aims at providing a desktop application for working with antigenic maps.
 
-    © 2015 The Antigenic Cartography Group at the University of Cambridge
+ © 2015 The Antigenic Cartography Group at the University of Cambridge
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 'use strict';
@@ -71,6 +71,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
+                disableArray =[],
                 color="",
                 shiftKey;
 
@@ -159,6 +160,9 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     })
                     .attr("stroke", "#474747")
                     .attr("name", function(d){ return d.name })
+                    .attr("label_version", function(d, i){
+                        return i;        // slug = label downcased, this works
+                    })
                     .attr("d",d3.svg.symbol().size("50")
                         .type(function(d) {
                             if (d.style.shape === "circle") { return "circle"; }
@@ -170,14 +174,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 // mouse event handlers
                 nodeGroup.on("mousedown", function(d) {
-                        if (!d.selected) { // Don't deselect on shift-drag.
-                            if (!shiftKey) {
-                                nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
-                            } else {
-                                d3.select(this).classed("selected", d.selected = true);
-                            }
+                    if (!d.selected) { // Don't deselect on shift-drag.
+                        if (!shiftKey) {
+                            nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
+                        } else {
+                            d3.select(this).classed("selected", d.selected = true);
                         }
-                    })
+                    }
+                })
                     .on("mouseup", function(d) {
                         if (d.selected && shiftKey) {
                             d3.select(this).classed("selected", d.selected = false);
@@ -191,7 +195,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .on("drag", function() {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                    )
+                )
                     .attr("opacity", (function(d) { return d.opacity; }));
 
 
@@ -380,8 +384,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         var extent = d3.event.target.extent();
                         nodeGroup.classed("selected", function (d) {
                             return d.selected = d.previouslySelected ^
-                                (extent[0][0] <= d.x && d.x < extent[1][0]
-                                && extent[0][1] <= d.y && d.y < extent[1][1]);
+                            (extent[0][0] <= d.x && d.x < extent[1][0]
+                            && extent[0][1] <= d.y && d.y < extent[1][1]);
                         });
                     })
                     .on("brushend", function () {
@@ -534,32 +538,49 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * @returns none
              */
             function DisableSelectedElements(){
+                $rootScope.disableArray=[];
+                $rootScope.disableArrayFlag=false;
                 var flag=0;
                 // Disable Button Functionality
                 d3.selectAll(".selected").each(function(d){
                     if (d.style.fill_color != "#bebebe") {
                         flag=1;
                         color=d.style.fill_color;
+                        d.style.fill_color = "#bebebe";
                         d3.select(this).transition()
                             .style("stroke", "green")
                             .style("opacity", .4)
                             .attr("style", "fill:#bebebe;");
-                        d.style.fill_color = "#bebebe";
+                        disableArray.push(d.id);
+                        //console.log(d.id);
+
                     }
-                    else{
+                    else if ("#bebebe"){
+                        flag=1;
                         d3.select(this).transition()
                             .attr("style", "fill:"+color);
                         d.style.fill_color = color;
+                        for( var c=0; c < disableArray.length; c++){
+                            if (d.id== disableArray[c]){
+                                disableArray.splice(c, 1);
+                                c= c-1;
+                            }
+                        }
                         flag=1;
                     }
+                    else{}
                 });
+
                 if (flag===0){
                     alert("Please Select at least One Node Before Clicking on Disable");
+                }
+                else{
+                    $rootScope.disableArrayFlag= true;
+                    $rootScope.disableArray= disableArray;
                 }
             }
 
             function GetNodeLabels() {
-
                 if (visibility == 0) {
                     d3.selectAll(".text").style("visibility", "visible");
                     visibility= 1;
@@ -576,23 +597,35 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * @returns a Data Array with the new Map Data
              */
             function GetNewDataFromCurrentMap(mapDataPoints) {
+                $rootScope.newMapArray=[];
+                $rootScope.newMapArrayflag=false;
+                var mapArray =[];
+                var length= mapDataPoints.d3Nodes.length;
+                for(var counter= 0; counter < length;counter++){
+                    mapArray.push(counter);
+                    $rootScope.newMapArray.push(counter);
+                }
                 var flag=0;
-                var newMapData = mapDataPoints;
-                for (var c = 0; c < newMapData.length; c++){
-                    d3.selectAll(".selected").each(function(d){
-                        if(newMapData[c].name.name === d.name.name){
-                            flag=1;
-                        }
-                    });
-                    //  check the flag, reset , delete.
-                    if (flag!=1){
-                        newMapData.splice(c, 1);
-                        c= c-1;
+                d3.selectAll(".selected").each(function(d){
+                    flag=1;
+                    mapArray.splice(d.id, 1);
+                });
+
+                if (flag===0){
+                    alert("Please Select at least One Node Before Creating a New Map");
+                }
+                else{
+                    console.log($rootScope.newMapArray.length);
+                    console.log(mapArray.length);
+                    for(var counter= 0; counter< mapArray.length; counter++){
+                        var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
+                        $rootScope.newMapArray.splice(index, 1);
                     }
-                    flag=0;
+                    console.log(mapArray);
+                    console.log($rootScope.newMapArray);
+                    $rootScope.newMapArrayflag= true;
                 }
 
-                return newMapData;
             }
 
             /////////////////////// LISTENERS ///////////////////////
@@ -600,7 +633,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /**
              * Watches for a node disable
              */
-            $rootScope.$on('node.disable', function() {
+            $rootScope.$on('api.set_disconnected_points', function() {
                 DisableSelectedElements();
             });
 
@@ -610,6 +643,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             $rootScope.$on('newMap.create', function() {
                 GetNewDataFromCurrentMap(scope.data);
+            });
+
+            /**
+             * Listens for event to get add/remove node labels
+             */
+
+            $rootScope.$on('map.showLabels', function() {
+                GetNodeLabels();
             });
 
             /**
@@ -649,13 +690,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              */
             scope.$on('ngWindow.resize', renderWithoutData);
 
-            /**
-             * Listens for event to get node labels or remove them
-             */
-
-            $rootScope.$on('map.showLabels', function() {
-                GetNodeLabels();
-            });
 
             /**
              * Listens for container resize event and re-renders the map

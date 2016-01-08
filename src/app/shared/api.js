@@ -206,7 +206,7 @@ angular.module('acjim.api', [])
                     }
                     break;
                 case COMMANDS.SET_UNMOVABLE_POINTS:
-                    var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
+                    var input_parameter = {command: COMMANDS.SET_UNMOVABLE_POINTS, data: {projection: 0}};
 
                     if (!additional_params.hasOwnProperty('projection')) {
                         throw new Error('Missing mandatory parameter, projection');

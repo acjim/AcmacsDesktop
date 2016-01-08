@@ -1,6 +1,6 @@
 /*
 	Antigenic Cartography for Desktop
-	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. 
+	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
 	In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
 	This project aims at providing a desktop application for working with antigenic maps.
 
@@ -109,6 +109,21 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             icon: 'icon acmacs-optimize',
             callback: function () {
                 $rootScope.$broadcast('api.reoptimize');
+            }
+        },
+        {
+            id: toolbarItems.DISABLE_MAP,
+            caption: 'Disable',
+            icon: 'glyphicon glyphicon-erase',
+            callback: function () {
+                $rootScope.$broadcast('api.set_disconnected_points');
+            }
+        },{
+            id: toolbarItems.NEW_MAP,
+            caption: 'Create New Map',
+            icon: 'glyphicon glyphicon-duplicate',
+            callback: function () {
+                $rootScope.$broadcast('newMap.create');
             }
         }
 
