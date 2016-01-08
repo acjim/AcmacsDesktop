@@ -76,10 +76,14 @@
         }
 
         function handleFileSaveAs(filename) {
-            //TODO: get_format > https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
+            //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
 
-            cfpLoadingBar.start();
-            var additional_params = {format: 'acd1', filename: filename};
+            var extension = (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename) : 'acd1';
+            var supported_extension = ["acd1","save","lispmds"];
+            if(supported_extension.indexOf(extension.toString()) < 0){
+                extension = "acd1";
+            }
+            var additional_params = {format: extension.toString(), filename: filename};
             return api.export(acd1File, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
             }, function (reason) {

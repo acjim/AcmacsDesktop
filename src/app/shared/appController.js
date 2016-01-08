@@ -48,7 +48,7 @@ angular.module('acjim')
             fileDialog.saveAs(
                 handleFileSaveAs,
                 'NewChart.acd1',
-                '.acd1,.mds'
+                '.acd1,.lispmds','save'
             );
         });
 
