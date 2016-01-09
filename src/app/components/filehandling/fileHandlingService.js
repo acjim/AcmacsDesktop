@@ -33,13 +33,15 @@
             'Flash',
             'cfpLoadingBar',
             '$timeout',
+            'fileDialog',
             fileHandling
         ]);
 
-    function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
+    function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout, fileDialog) {
 
         var acd1File = null;
         var projection = 0;
+        var new_acd1 = null;
 
         return {
             handleFileOpen: handleFileOpen,
@@ -91,7 +93,11 @@
                 extension = "save";
             }
             var additional_params = {format: extension.toString(), filename: filename};
-            return api.export(acd1File, additional_params).then(function (output) {
+            var acd1_file = acd1File;
+            if (new_acd1.length > 0) {
+                acd1_file = new_acd1;
+            }
+            return api.export(acd1_file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
             }, function (reason) {
                 return errorReason(reason);
@@ -272,20 +278,18 @@
 
             api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
-                    var new_acd1 = filename.updated_acd1;
+                    new_acd1 = filename.updated_acd1;
                     var relax_additional_params = {
                         projection: projection
                     };
                     api.relax_existing(relax_additional_params, new_acd1)
                         .then(function (filename) {
-                            var new_acd1 = filename.updated_acd1;
-                            var new_file = "/home/idrissou/malikou.acd1";
-                            var additional_params = {format: 'acd1', filename: new_file};
-                            return api.export(new_acd1, additional_params).then(function (filename) {
-                                cfpLoadingBar.complete();
-                            }, function (reason) {
-                                return errorReason(reason);
-                            });
+                            new_acd1 = filename.updated_acd1;
+                            fileDialog.saveAs(
+                                handleFileSaveAs,
+                                'NewChart.save',
+                                "'.acd1','.lispmds','save'"
+                            );
                         }, function (reason) {
                             return errorReason(reason);
                         });
@@ -315,22 +319,11 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-
-
-                    var output_json = filename.output_json;
-
-                    var output_data = fs.readFileSync(output_json, 'utf8');
-                    var mapJsonData = JSON.parse(output_data);
-                    // mapData.stress = mapJsonData.stress;
                     cfpLoadingBar.complete();
-
                 }, function (reason) {
                     console.log(reason);
-
                     return errorReason(reason);
                 });
-
-
         }
 
         /**
@@ -355,40 +348,9 @@
             api.set_disconnected_points (disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-
-
-                    var output_json = filename.output_json;
-
-                    var output_data = fs.readFileSync(output_json, 'utf8');
-                    //mapData.stress = mapJsonData.stress;
-                    var map_additional_params = {projection: projection};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
-                        .then(function (filename) {
-                            var output_json = filename;
-                            fs.readFile(output_json, 'utf8', function (err, data) {
-                                var mapJsonData = JSON.parse(data);
-                                mapData.stress = mapJsonData.stress;
-                                mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.d3Nodes[i].x = layout[0];
-                                    mapData.d3Nodes[i].y = layout[1];
-                                });
-
-                                var newfile = "/home/idrissou/malikou.acd1";
-                                var additional_params = {format: 'acd1', filename: newfile};
-                                return api.export(acd1File, additional_params).then(function (filename) {
-                                    cfpLoadingBar.complete();
-                                }, function (reason) {
-                                    return errorReason(reason);
-                                });
-
-                            });
-                        }, function (reason) {
-                            return errorReason(reason);
-                        });
-
+                    cfpLoadingBar.complete();
                 }, function (reason) {
                     console.log(reason);
-
                     return errorReason(reason);
                 });
 
