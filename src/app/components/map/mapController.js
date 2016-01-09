@@ -144,10 +144,9 @@
          *
          */
         $scope.$on('newMap.create', function () {
-            if ($rootScope.newMapArrayflag == true) {
-                fileHandling.disableNodes($scope.d3Data,$rootScope.newMapArray);
+            if ($rootScope.disableArrayFlag == true) {
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.d3Data,$rootScope.disableArray);
             }
-
         });
         /**
          * Watches for a the connectionlines button

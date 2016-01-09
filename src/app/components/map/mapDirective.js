@@ -701,7 +701,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * Watches to Create  a new Map from Already Existing Map
              */
             $rootScope.$on('newMap.create', function() {
-                GetNewDataFromCurrentMap(scope.data);
+                DisableSelectedElements();
             });
 
             /**

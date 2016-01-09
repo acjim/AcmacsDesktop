@@ -47,7 +47,8 @@
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
             disableNodes: disableNodes,
-            disableNodesWithouhtStress: disableNodesWithouhtStress
+            disableNodesWithouhtStress: disableNodesWithouhtStress,
+            createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne
         };
 
         /**
@@ -246,7 +247,48 @@
             });
         }
 
+        /**
+         * Calls api to create a new file from an already existing one n
+         * @param mapData and points to remove disabledPoints
+         */
+        function createNewFileFromAlreadyExistingOne(mapData, disabledPoints) {
+            cfpLoadingBar.start();
 
+            var disable_additional_params = {
+                projection: projection,
+                disconnected: disabledPoints
+            };
+            console.log(disabledPoints);
+
+            disabledPoints.sort(function (a, b) {
+                return b - a;
+            });
+            console.log(disabledPoints);
+
+            api.set_disconnected_points(disable_additional_params, acd1File)
+                .then(function (filename) {
+                    var new_acd1 = filename.updated_acd1;
+                    var relax_additional_params = {
+                        projection: projection
+                    };
+                    api.relax_existing(relax_additional_params, new_acd1)
+                        .then(function (filename) {
+                            var new_acd1 = filename.updated_acd1;
+                            var new_file = "/home/idrissou/malikou.acd1";
+                            var additional_params = {format: 'acd1', filename: new_file};
+                            return api.export(new_acd1, additional_params).then(function (filename) {
+                                cfpLoadingBar.complete();
+                            }, function (reason) {
+                                return errorReason(reason);
+                            });
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
+                }, function (reason) {
+                    console.log(reason);
+                    return errorReason(reason);
+                });
+        }
         /**
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
