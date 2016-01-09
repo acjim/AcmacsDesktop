@@ -46,7 +46,8 @@
             handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
-            disableNodes: disableNodes
+            disableNodes: disableNodes,
+            disableNodesWithouhtStress: disableNodesWithouhtStress
         };
 
         /**
@@ -244,6 +245,17 @@
                 return result;
             });
         }
+
+
+        /**
+         * Calls api to disable nodes (without Sress) from a specific  map
+         * @param mapData
+         */
+        function disableNodesWithouhtStress(mapData, disabledPoints) {
+            alert ("hello Rohan");
+
+        }
+
         /**
          * Calls api to disable nodes from a specific  map
          * @param mapData
@@ -268,10 +280,10 @@
                     acd1File = filename.updated_acd1;
 
 
-                            var output_json = filename.output_json;
+                    var output_json = filename.output_json;
 
-                            var output_data = fs.readFileSync(output_json, 'utf8');
-                           //mapData.stress = mapJsonData.stress;
+                    var output_data = fs.readFileSync(output_json, 'utf8');
+                    //mapData.stress = mapJsonData.stress;
                     var map_additional_params = {projection: projection};
                     api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {

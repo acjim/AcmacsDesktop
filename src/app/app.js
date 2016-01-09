@@ -110,10 +110,17 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('api.reoptimize');
             }
+        },{
+            id: toolbarItems.DISABLE_MAP2,
+            caption: 'Disable Map Without Stress',
+            icon: 'glyphicon glyphicon-scale',
+            callback: function () {
+                $rootScope.$broadcast('api.set_disconnected_points2');
+            }
         },
         {
             id: toolbarItems.DISABLE_MAP,
-            caption: 'Disable',
+            caption: 'Disable Map With Stress',
             icon: 'glyphicon glyphicon-erase',
             callback: function () {
                 $rootScope.$broadcast('api.set_disconnected_points');
