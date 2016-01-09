@@ -122,12 +122,21 @@
             }
         });
 
-        /** Watches for the Disable button
+        /** Watches for the Disable button with sress value
          *
          */
         $scope.$on('api.set_disconnected_points', function () {
             if ($rootScope.disableArrayFlag == true) {
                 fileHandling.disableNodes($scope.d3Data, $rootScope.disableArray);
+            }
+
+        });
+        /** Watches for the Stress Value without stress value
+         *
+         */
+        $scope.$on('api.set_disconnected_points2', function () {
+            if ($rootScope.disableArrayFlag == true) {
+                fileHandling.disableNodesWithouhtStress($scope.d3Data, $rootScope.disableArray);
             }
 
         });

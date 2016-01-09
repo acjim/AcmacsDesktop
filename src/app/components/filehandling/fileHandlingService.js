@@ -46,7 +46,8 @@
             handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
-            disableNodes: disableNodes
+            disableNodes: disableNodes,
+            disableNodesWithouhtStress: disableNodesWithouhtStress
         };
 
         /**
@@ -244,6 +245,47 @@
                 return result;
             });
         }
+
+
+        /**
+         * Calls api to disable nodes (without Sress) from a specific  map
+         * @param mapData
+         */
+        function disableNodesWithouhtStress(mapData, disabledPoints) {
+            cfpLoadingBar.start();
+
+            var disable_additional_params = {
+                projection: projection,
+                unmovable: disabledPoints
+            };
+            //console.log(disabledPoints);
+
+            disabledPoints.sort(function(a, b) {
+                return b-a;
+            });
+
+
+            api.set_unmovable_points(disable_additional_params, acd1File)
+                .then(function (filename) {
+                    acd1File = filename.updated_acd1;
+
+
+                    var output_json = filename.output_json;
+
+                    var output_data = fs.readFileSync(output_json, 'utf8');
+                    var mapJsonData = JSON.parse(output_data);
+                    // mapData.stress = mapJsonData.stress;
+                    cfpLoadingBar.complete();
+
+                }, function (reason) {
+                    console.log(reason);
+
+                    return errorReason(reason);
+                });
+
+
+        }
+
         /**
          * Calls api to disable nodes from a specific  map
          * @param mapData
@@ -268,10 +310,10 @@
                     acd1File = filename.updated_acd1;
 
 
-                            var output_json = filename.output_json;
+                    var output_json = filename.output_json;
 
-                            var output_data = fs.readFileSync(output_json, 'utf8');
-                           //mapData.stress = mapJsonData.stress;
+                    var output_data = fs.readFileSync(output_json, 'utf8');
+                    //mapData.stress = mapJsonData.stress;
                     var map_additional_params = {projection: projection};
                     api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {

@@ -534,10 +534,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 return d3.select(iElement[0])[0][0].offsetHeight;
             }
 
-            /** Gets All D3 Selected Elements. This function should be called by the button responsible for Disabling nodes
+            /** Gets All D3 Selected Elements Without Taking into account sress Value. This function should be called by the button responsible for Disabling nodes without taking
+             * into accoun the sress value
              * @returns none
              */
-            function DisableSelectedElements(){
+            function DisableSelectedElementsWithoutStress(){
                 $rootScope.disableArray=[];
                 $rootScope.disableArrayFlag=false;
                 var flag=0;
@@ -550,7 +551,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         d3.select(this).transition()
                             .style("stroke", "green")
                             .style("opacity", .4)
-                            .attr("style", "fill:#bebebe;");
+                            .attr("style", "fill:#bebebe");
                         disableArray.push(d.id);
                         //console.log(d.id);
 
@@ -581,6 +582,57 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
             }
 
+            /** Gets All D3 Selected Elements. This function should be called by the button responsible for Disabling nodes
+             * @returns none
+             */
+            function DisableSelectedElements(){
+                $rootScope.disableArray=[];
+                $rootScope.disableArrayFlag=false;
+                var flag=0;
+                // Disable Button Functionality
+                d3.selectAll(".selected").each(function(d){
+                    if (d.style.fill_color != "#bebebe") {
+                        flag=1;
+                        color=d.style.fill_color;
+                        d.style.fill_color = "#bebebe";
+                        d3.select(this).transition()
+                            .style("stroke", "green")
+                            .style("opacity", .4)
+                            .attr("style", "fill:#bebebe");
+                        disableArray.push(d.id);
+                        //console.log(d.id);
+
+                    }
+                    else if ("#bebebe"){
+                        flag=1;
+                        d3.select(this).transition()
+                            .attr("style", "fill:"+color);
+                        d.style.fill_color = color;
+                        for( var c=0; c < disableArray.length; c++){
+                            if (d.id== disableArray[c]){
+                                disableArray.splice(c, 1);
+                                c= c-1;
+                            }
+                        }
+                        flag=1;
+                    }
+                    else{}
+                });
+
+                if (flag===0){
+                    alert("Please Select at least One Node Before Clicking on Disable");
+                }
+                else{
+                    $rootScope.disableArrayFlag= true;
+                    console.log(disableArray);
+                    $rootScope.disableArray= disableArray;
+                }
+            }
+
+            /**
+             * Returns the node labels of nodes or removes them depending on the case
+             * @returns none
+             */
             function GetNodeLabels() {
                 if (visibility == 0) {
                     d3.selectAll(".text").style("visibility", "visible");
@@ -632,12 +684,18 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
             /////////////////////// LISTENERS ///////////////////////
 
             /**
-             * Watches for a node disable
+             * Watches for a node disable while Affecting the Stress Value
              */
             $rootScope.$on('api.set_disconnected_points', function() {
                 DisableSelectedElements();
             });
 
+            /**
+             * Watches for a node disable while Affecting the Stress Value
+             */
+            $rootScope.$on('api.set_disconnected_points2', function() {
+                DisableSelectedElementsWithoutStress();
+            });
 
             /**
              * Watches to Create  a new Map from Already Existing Map
