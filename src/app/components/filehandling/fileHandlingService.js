@@ -78,12 +78,17 @@
         }
 
         function handleFileSaveAs(filename) {
-            //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
 
-            var extension = (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename) : 'acd1';
+            //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
+            var extension = ".save";
+            if((/[.]/.exec(filename))) {
+                extension = /[^.]+$/.exec(filename);
+            } else {
+                filename = filename + extension;
+            }
             var supported_extension = ["acd1","save","lispmds"];
             if(supported_extension.indexOf(extension.toString()) < 0){
-                extension = "acd1";
+                extension = "save";
             }
             var additional_params = {format: extension.toString(), filename: filename};
             return api.export(acd1File, additional_params).then(function (output) {
