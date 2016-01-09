@@ -1,6 +1,6 @@
 /*
 	Antigenic Cartography for Desktop
-	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. 
+	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
 	In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
 	This project aims at providing a desktop application for working with antigenic maps.
 
@@ -43,6 +43,7 @@
 
         return {
             handleFileOpen: handleFileOpen,
+            handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
             getErrorConnectionlines: getErrorConnectionlines,
             disableNodes: disableNodes
@@ -72,6 +73,23 @@
                 deferred.resolve(data);
             });
             return deferred.promise;
+        }
+
+        function handleFileSaveAs(filename) {
+            //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
+
+            var extension = (/[.]/.exec(filename)) ? /[^.]+$/.exec(filename) : 'acd1';
+            var supported_extension = ["acd1","save","lispmds"];
+            if(supported_extension.indexOf(extension.toString()) < 0){
+                extension = "acd1";
+            }
+            var additional_params = {format: extension.toString(), filename: filename};
+            return api.export(acd1File, additional_params).then(function (output) {
+                cfpLoadingBar.complete();
+            }, function (reason) {
+                return errorReason(reason);
+            });
+
         }
 
         /**
@@ -235,7 +253,7 @@
 
             var disable_additional_params = {
                 projection: projection,
-                unmovable: disabledPoints
+                disconnected: disabledPoints
             };
             //console.log(disabledPoints);
 
@@ -245,7 +263,7 @@
             //console.log(disabledPoints);
 
 
-            api.set_unmovable_points(disable_additional_params, acd1File)
+            api.set_disconnected_points (disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
 
@@ -253,9 +271,31 @@
                             var output_json = filename.output_json;
 
                             var output_data = fs.readFileSync(output_json, 'utf8');
-                            var mapJsonData = JSON.parse(output_data);
-                           // mapData.stress = mapJsonData.stress;
-                            cfpLoadingBar.complete();
+                           //mapData.stress = mapJsonData.stress;
+                    var map_additional_params = {projection: projection};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                        .then(function (filename) {
+                            var output_json = filename;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
+                                var mapJsonData = JSON.parse(data);
+                                mapData.stress = mapJsonData.stress;
+                                mapJsonData.map.layout.forEach(function (layout, i) {
+                                    mapData.d3Nodes[i].x = layout[0];
+                                    mapData.d3Nodes[i].y = layout[1];
+                                });
+
+                                var newfile = "/home/idrissou/malikou.acd1";
+                                var additional_params = {format: 'acd1', filename: newfile};
+                                return api.export(acd1File, additional_params).then(function (filename) {
+                                    cfpLoadingBar.complete();
+                                }, function (reason) {
+                                    return errorReason(reason);
+                                });
+
+                            });
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
 
                 }, function (reason) {
                     console.log(reason);
