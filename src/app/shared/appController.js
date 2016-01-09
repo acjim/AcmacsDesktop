@@ -47,8 +47,8 @@ angular.module('acjim')
         $scope.$on('save-as', function () {
             fileDialog.saveAs(
                 handleFileSaveAs,
-                'NewChart.acd1',
-                '.acd1,.lispmds','save'
+                'NewChart.save',
+                "'.acd1','.lispmds','save'"
             );
         });
 
