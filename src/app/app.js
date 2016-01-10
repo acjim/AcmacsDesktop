@@ -80,7 +80,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-error-line',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('map.showErrorLines');
+                        $rootScope.$emit('map.showErrorLines', this.id);
                     }
                 },
                 {
@@ -89,7 +89,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-connection',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('map.getConnectionLines');
+                        $rootScope.$emit('map.getConnectionLines', this.id);
                     }
                 }
             ]

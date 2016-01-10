@@ -24,9 +24,9 @@
     'use strict';
 
     angular.module('acjim.map',[])
-        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', mapCtrl]);
+        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', 'toolbar', mapCtrl]);
 
-    function mapCtrl ($rootScope, $scope, fileHandling) {
+    function mapCtrl ($rootScope, $scope, fileHandling, toolbar) {
 
 
         /**
@@ -39,22 +39,6 @@
             });
         });
 
-
-        /**
-         * Watches for a the errorLines button
-         */
-        $rootScope.$on('map.showErrorLines', function (event, itemID) {
-            $scope.showErrorLines = toolbar.getItemByID(itemID).active;
-            getErrorConnectionLines();
-        });
-
-        /**
-         * Watches for a the connectionLines button
-         */
-        $rootScope.$on('map.getConnectionLines', function (event, itemID) {
-            $scope.showConnectionLines = toolbar.getItemByID(itemID).active;
-            getErrorConnectionLines();
-        });
 
         function getErrorConnectionLines() {
             fileHandling.getErrorConnectionLines($scope.data, $scope.acd1).then(function (result) {
@@ -71,6 +55,22 @@
                 }
             });
         }
+
+        /**
+         * Watches for a the errorLines button
+         */
+        $rootScope.$on('map.showErrorLines', function (event, itemID) {
+            $scope.showErrorLines = toolbar.getItemByID(itemID).active;
+            getErrorConnectionLines();
+        });
+
+        /**
+         * Watches for a the connectionLines button
+         */
+        $rootScope.$on('map.getConnectionLines', function (event, itemID) {
+            $scope.showConnectionLines = toolbar.getItemByID(itemID).active;
+            getErrorConnectionLines();
+        });
 
 
         /** Watches for the Disable button with sress value
