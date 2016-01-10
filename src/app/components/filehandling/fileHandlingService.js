@@ -279,9 +279,19 @@
                     api.relax_existing(relax_additional_params, new_acd1)
                         .then(function (filename) {
                             var new_acd1 = filename.updated_acd1;
-                            var new_file = "/home/idrissou/malikou.acd1";
+                            var input;
+                            input = prompt('Imput the location of the file, including the file name?\n example: /home/idrissou/idrissou.acd1"');
+                            if (input === null) {
+                                alert("No File Name Entered, No New Map File Created");
+                                return; //break out of the function early
+                            }
+                            else{
+                                var new_file = input;
+                                //"/home/idrissou/test.acd1";
+                            }
                             var additional_params = {format: 'acd1', filename: new_file};
                             return api.export(new_acd1, additional_params).then(function (filename) {
+                                alert("New Map Succesfully created at: "+new_file);
                                 cfpLoadingBar.complete();
                             }, function (reason) {
                                 return errorReason(reason);
@@ -294,6 +304,7 @@
                     return errorReason(reason);
                 });
         }
+
         /**
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
