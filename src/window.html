@@ -16,6 +16,7 @@
 <body ng-controller="appCtrl">
 
     <div flash-message="5000" class="flash-msg"></div>
+    <div class="overlay" ng-if="cloak"></div>
 
     <div ui-layout="{ flow : 'row', dividerSize: 0 }" class="main">
         <div ui-layout-container size="50px" collapsed="layout.toolbar" class="menubar">
