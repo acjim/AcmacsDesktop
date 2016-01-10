@@ -194,8 +194,7 @@
 
         }
 
-        function relax_existing(mapData, acd1)
-        {
+        function relax_existing(mapData, acd1) {
             var relax_additional_params = {
                 projection: acd1.projection
             };
@@ -309,24 +308,18 @@
          * Calls api to get data for error and connection lines
          */
         function getErrorConnectionLines(mapData, acd1){
-
-            var result = {
-                d3ErrorLines: [],
-                d3ConnectionLines: []
-            };
-
             cfpLoadingBar.start();
+            var additional_params = {projection: acd1.projection};
 
-            //TODO set projection number from scope
-            var additional_params = {};
             return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1.acd1File).then(function (filename) {
-                fs.readFile(filename, 'utf8', function (err, data) {
-                    var mapJsonData = JSON.parse(data);
+                return $q.all([
+                    readFile(filename)
+                ]).then(function(data) {
                     // relax returns array of error_lines.
-                    calculateLines(mapJsonData.error_lines, mapData.layout, result);
+                    var result = calculateLines(JSON.parse(data).error_lines, mapData.layout);
                     cfpLoadingBar.complete();
+                    return result;
                 });
-                return result;
             });
         }
 
@@ -485,209 +478,207 @@
 
 
         /**
-         * Calculate error and connection lines
-         * @param errorlines
-         * @param layout
-         * @param result
+         * Determine the sign of the error (line). Created different calculation because Eugene was using on matrices on SVG
+         * DOM elements. (I think..). Didn't want to touch DOM from here.
+         * Assumption: p1 and p2 are connected points, probe is the end of Error_Line, from viewpoint of p1
+         * - if probe lies on line in between points = red
+         * - if probe lies outside and is further away from p2 than p1 = blue
+         * @param p1
+         * @param p2
+         * @param probe
          * @returns {boolean}
          */
-        function calculateLines(errorlines, layout, result) {
-            var positive,
-                connect,
-                colour,
-                selected = {},
+        function positive (p1, p2, probe) {
+            var dxa, dya, dxb, dyb, cross;
+
+            // first check if probe is on line that runs through p1 and p2
+            dxa = probe[0] - p1.x;
+            dya = probe[1] - p1.y;
+
+            dxb = p2.x - p1.x;
+            dyb = p2.y - p1.y;
+
+            //if cross equals zero, point is on line
+            cross = dxa * dyb - dya * dxb;
+
+            // compare x and y coordinates, whether probe lies between p1 and p2
+            if (Math.abs(dxb) >= Math.abs(dyb)){
+                if (dxb > 0) {
+                    return (
+                        (p1.x <= probe[0] && probe[0] <= p2.x) ||
+                        (p2.x <= probe[0] && probe[0] <= pq.x)
+                    );
+                }
+            } else {
+                if (dyb > 0) {
+                    return (
+                        (p1.y <= probe[1] && probe[1] <= p2.y) ||
+                        (p2.y <= probe[1] && probe[1] <= p1.y)
+                    );
+                }
+            }
+        }
+
+
+        /**
+         * Connect lines (error/connection) in one direction
+         * @param arg {{from: String, to: String}}
+         * @param errorLines
+         * @param layout
+         * @param result
+         */
+        function connect(arg, errorLines, layout, result) {
+            var errorLineEnd,   // The set of pre-calculated error line endpoints pointing to the opposite end of each of the the current point's connections
+                from,           // The co-ordinates of the current line's origin
+                to,             // The co-ordinates of the current line's destination
+                nAntigens = errorLines.antigens.length,
+                originIndex,
+                destIndex,
+                o, d,
+                colour;
+
+            var selected = {},
                 connection = {},
                 pointsConnected = {};
 
-            // Determine the sign of the error.
-            // Created different calculation because Eugene was using on matrices on SVG DOM elements. (I think..)
-            // Didn't want to touch DOM from here.
-            positive = function (p1, p2, probe) {
-                var dxa, dya, dxb, dyb, cross;
-
-                // Assumption:
-                // p1 and p2 are connected points
-                // probe is the end of Error_Line, from viewpoint of p1
-                // if probe lies on line inbetween points = red
-                // if probe lies outside and is further away from p2 than p1 = blue
-
-                // first check if probe is on line that runs through p1 and p2
-                dxa = probe[0] - p1[0];
-                dya = probe[1] - p1[1];
-
-                dxb = p2[0] - p1[0];
-                dyb = p2[1] - p1[1];
-
-                cross = dxa * dyb - dya * dxb;
-                //if cross equals zero, point is on line
-
-                // compare x and y coordinates, whether probe lies between p1 and p2
-                if (Math.abs(dxb) >= Math.abs(dyb)){
-                    if(dxb > 0){
-                        return(
-                            (p1[0] <= probe[0] && probe[0] <= p2[0]) ||
-                            (p2[0] <= probe[0] && probe[0] <= pq[0])
-                        );
-                    }
-                }else {
-                    if(dyb > 0) {
-                        return(
-                            (p1[1] <= probe[1] && probe[1] <= p2[1]) ||
-                            (p2[1] <= probe[1] && probe[1] <= p1[1])
-                        );
-                    }
+            for (o = 0; o < errorLines[arg.from].length; o += 1) {
+                if (arg.from === 'antigens') {
+                    originIndex = o;
+                } else {
+                    originIndex = nAntigens + o;
                 }
-            };
 
-            //Connect lines (error/connection) in one direction
-            connect = function(arg){
-                var
-                // The set of pre-calculated error line endpoints pointing to the
-                // opposite end of each of the the current point's connections
-                    errorLineEnd,
+                from = layout[originIndex];
+                pointsConnected[from] = true;
 
-                // The co-ordinates of the current line's origin
-                    from,
+                // Cache this point's selection status to reduce complex property
+                // look-ups.
+                selected[originIndex] = true;
 
-                // The co-ordinates of the current line's destination
-                    to,
+                errorLineEnd = errorLines[arg.from][o];
+                for (d = 0; d < errorLineEnd.length; d += 1) {
+                    if (arg.from === 'antigens') {
+                        destIndex = nAntigens + d;
+                    } else {
+                        destIndex = d;
+                    }
 
-                    nAntigens = errorlines.antigens.length,
+                    if (
+                        connection[originIndex + ':' + destIndex] ||
+                        connection[destIndex + ':' + originIndex]
+                    ) {
+                        // This connection has already been plotted.
+                        continue;
+                    }
 
-                    originIndex,
-                    destIndex,
-                    o, d;
+                    to = layout[destIndex];
 
-                for (o = 0; o < errorlines[arg.from].length; o += 1) {
+                    if (positive(from, to, errorLineEnd[d])) {
+                        colour = 'red';
+                    }
+                    else {
+                        colour = 'blue';
+                    }
+
+                    result.d3ConnectionLines.push({
+                        x1: from.x,
+                        y1: from.y,
+                        x2: to.x,
+                        y2: to.y,
+                        stroke: 'grey',
+                        width: 0.4,
+                        opacity: 1.0
+                    });
+
+                    result.d3ErrorLines.push({
+                        x1: from.x,
+                        y1: from.y,
+                        x2: errorLineEnd[d][0],
+                        y2: errorLineEnd[d][1],
+                        stroke: colour,
+                        width: 0.6,
+                        opacity: 1.0
+                    });
+
+                    // Mark this connection to allow testing for duplicates.
+                    connection[originIndex + ':' + destIndex] = true;
+                }
+            } // for each origin: connection lines or the near-end error lines
+
+            // Render the error lines at the opposite end of each connection
+            for (d = 0; d < errorLines[arg.to].length; d += 1) {
+                if (arg.from === 'antigens') {
+                    destIndex = nAntigens + d;
+                }
+                else {
+                    destIndex = d;
+                }
+                to = layout[destIndex];
+
+                errorLineEnd = errorLines[arg.to][d];
+                for (o = 0; o < errorLineEnd.length; o += 1) {
                     if (arg.from === 'antigens') {
                         originIndex = o;
                     }
                     else {
                         originIndex = nAntigens + o;
                     }
-
                     from = layout[originIndex];
-                    pointsConnected[from] = true;
 
-                    // Cache this point's selection status to reduce complex property
-                    // look-ups.
-                    selected[originIndex] = true;
+                    if (connection[destIndex + ':' + originIndex]) {
+                        // This connection has already been plotted.
+                        continue;
+                    }
 
-                    errorLineEnd = errorlines[arg.from][o];
-                    for (d = 0; d < errorLineEnd.length; d += 1) {
-                        if (arg.from === 'antigens') {
-                            destIndex = nAntigens + d;
-                        }
-                        else {
-                            destIndex = d;
-                        }
-
-                        if (
-                            connection[originIndex + ':' + destIndex] ||
-                            connection[destIndex + ':' + originIndex]
-                        ) {
-                            // This connection has already been plotted.
-                            continue;
-                        }
-
-                        to = layout[destIndex];
-
-                        if (positive(from, to, errorLineEnd[d])) {
+                    // This filter selects only the error lines corresponding to selected points
+                    if (selected[originIndex]) {
+                        // Note the reversal of `to` and `from` in this case.
+                        if (positive(to, from, errorLineEnd[o])) {
                             colour = 'red';
                         }
                         else {
                             colour = 'blue';
                         }
 
-                        result.d3ConnectionLines.push({
-                            //start: [from[0], from[1]],
-                            //end: to,
-                            x1: from[0],
-                            y1: from[1],
-                            x2: to[0],
-                            y2: to[1],
-                            stroke: 'grey',
-                            width: 0.4,
-                            opacity: 1.0
-                        });
-
                         result.d3ErrorLines.push({
-                            //start: [from[0], from[1]],
-                            //end: errorLineEnd[d],
-                            x1: from[0],
-                            y1: from[1],
-                            x2: errorLineEnd[d][0],
-                            y2: errorLineEnd[d][1],
+                            x1: to.x,
+                            y1: to.y,
+                            x2: errorLineEnd[o][0],
+                            y2: errorLineEnd[o][1],
                             stroke: colour,
                             width: 0.6,
                             opacity: 1.0
                         });
-
-                        // Mark this connection to allow testing for duplicates.
-                        connection[originIndex + ':' + destIndex] = true;
                     }
-                } // for each origin: connection lines or the near-end error lines
+                }
+            } // renderErrorLines (at the opposite end)
 
-                // Render the error lines at the opposite end of each connection
-                for (d = 0; d < errorlines[arg.to].length; d += 1) {
-                    if (arg.from === 'antigens') {
-                        destIndex = nAntigens + d;
-                    }
-                    else {
-                        destIndex = d;
-                    }
-                    to = layout[destIndex];
+        }
 
-                    errorLineEnd = errorlines[arg.to][d];
-                    for (o = 0; o < errorLineEnd.length; o += 1) {
-                        if (arg.from === 'antigens') {
-                            originIndex = o;
-                        }
-                        else {
-                            originIndex = nAntigens + o;
-                        }
-                        from = layout[originIndex];
 
-                        if (connection[destIndex + ':' + originIndex]) {
-                            // This connection has already been plotted.
-                            continue;
-                        }
+        /**
+         * Calculate error and connection lines
+         * @param errorLines
+         * @param layout
+         @returns {{d3ErrorLines: Array, d3ConnectionLines: Array}}
+         */
+        function calculateLines(errorLines, layout) {
 
-                        // This filter selects only the error lines corresponding to selected points
-                        if (selected[originIndex]) {
-                            // Note the reversal of `to` and `from` in this case.
-                            if (positive(to, from, errorLineEnd[o])) {
-                                colour = 'red';
-                            }
-                            else {
-                                colour = 'blue';
-                            }
-
-                            result.d3ErrorLines.push({
-                                //start: [to[0], to[1]],
-                                //end: errorLineEnd[o],
-                                x1: to[0],
-                                y1: to[1],
-                                x2: errorLineEnd[o][0],
-                                y2: errorLineEnd[o][1],
-                                stroke: colour,
-                                width: 0.6,
-                                opacity: 1.0
-                            });
-                        }
-                    }
-                } // renderErrorLines (at the opposite end)
-
-            }; //connet lines
-
-            //probs leaving this out or moving it to different point
-            if (!layout || !errorlines) {
+            if (!layout || !errorLines) {
                 console.log('ConnectionsLayer: bailing out because there is no data to plot');
-                return false;
+                return {};
             }
+
+            var result = {
+                d3ErrorLines: [],
+                d3ConnectionLines: []
+            };
+
             // First, draw the error lines for antigens
-            connect({from: 'antigens', to: 'sera'});
-            connect({from: 'sera', to: 'antigens'});
+            connect({from: 'antigens', to: 'sera'}, errorLines, layout, result);
+            //connect({from: 'sera', to: 'antigens'}, errorLines, layout, result);
+
+            return result;
         }
 
     }
