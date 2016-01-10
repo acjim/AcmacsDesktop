@@ -71,7 +71,8 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                 }
             ]
         },
-        {
+        //TODO: temporarily bugged
+        /*{
             type: "buttonGroup",
             buttons: [
                 {
@@ -93,7 +94,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     }
                 }
             ]
-        },
+        },*/
         {
             id: toolbarItems.LABEL_NODES,
             caption: 'Show Labels',

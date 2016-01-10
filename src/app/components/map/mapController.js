@@ -43,6 +43,7 @@
          */
         $scope.$on('map.reOptimize', function () {
             fileHandling.reOptimize($scope.data, $scope.acd1, $scope.pointsMoved).then(function (result) {
+                $scope.pointsMoved = false;
                 $scope.data = result;
             });
         });
