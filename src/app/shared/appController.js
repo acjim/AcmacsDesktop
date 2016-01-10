@@ -28,13 +28,8 @@ angular.module('acjim')
 
     function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
-        $scope.openMaps = [];
-        $scope.tableData = null;
 
-        // Window layout variables
-        var position = 0;
-
-        /******************** Events *******************/
+        /******************** File Handling *******************/
 
         $scope.$on('open-file', function () {
             fileDialog.openFile(
@@ -66,29 +61,43 @@ angular.module('acjim')
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
-                    $scope.tableData = result.table;
-                    $scope.openMaps.push({
-                        data: result.map,
-                        acd1: {
-                            acd1File: result.acd1File,
-                            projection: result.projection || 0
-                        },
-                        options: {
-                            id: $scope.openMaps.length,
-                            x: 100 * position,
-                            y: 50 * position++,
-                            width: 400,
-                            height:300,
-                            title: "Map " + ($scope.openMaps.length + 1),
-                            onClose: function() {
-                                $scope.openMaps.splice(this.id, 1);
-                            }
+                $scope.tableData = result.table;
+                $scope.mapData = result.map;
+                cfpLoadingBar.complete();
+            });
+        }
+
+        /**
+         * Handle file opening on application startup
+         */
+        var Url = {
+            get get(){
+                var vars= {};
+                if(window.location.search.length!==0) {
+                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                        key = decodeURIComponent(key);
+                        if (typeof vars[key] === "undefined") {
+                            vars[key] = decodeURIComponent(value);
+                        } else {
+                            vars[key] = [].concat(vars[key], decodeURIComponent(value));
                         }
                     });
-                    cfpLoadingBar.complete();
                 }
-            );
+                return vars;
+            }
+        };
+
+        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
+            handleFileOpen(Url.get.filename);
         }
+
+        /******************** Window management *******************/
+
+            // Window layout variables
+        $scope.layout = {
+            toolbar: false,
+            table: false
+        };
 
         // Open Debug Window
         $scope.$on('open-debug', function () {
@@ -116,28 +125,17 @@ angular.module('acjim')
             this.close(true);
         });
 
-        /**
-         * Handle file opening on application startup
-         */
-        var Url = {
-            get get(){
-                var vars= {};
-                if(window.location.search.length!==0) {
-                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                        key = decodeURIComponent(key);
-                        if (typeof vars[key] === "undefined") {
-                            vars[key] = decodeURIComponent(value);
-                        } else {
-                            vars[key] = [].concat(vars[key], decodeURIComponent(value));
-                        }
-                    });
-                }
-                return vars;
-            }
-        };
 
-        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
-            handleFileOpen(Url.get.filename);
-        }
+        $scope.$on('layout.table', function () {
+            $scope.layout.table = !$scope.layout.table;
+            $scope.$apply();
+        });
+
+        $scope.$on('layout.toolbar', function () {
+            $scope.layout.toolbar = !$scope.layout.toolbar;
+            $scope.$apply();
+        });
+
+
     }
 })();

@@ -33,7 +33,7 @@
          * Watches for a the reoptimize button
          */
         $scope.$on('map.reOptimize', function () {
-            fileHandling.reOptimize($scope.data, $scope.acd1, $scope.pointsMoved).then(function (result) {
+            fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();
@@ -42,7 +42,7 @@
 
 
         function getErrorConnectionLines() {
-            fileHandling.getErrorConnectionLines($scope.data, $scope.acd1).then(function (result) {
+            fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                 if ($scope.showConnectionLines) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                 } else {
@@ -79,7 +79,7 @@
          */
         $scope.$on('api.set_disconnected_points', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disableNodes($scope.data, $scope.acd1, $rootScope.disableArray);
+                fileHandling.disableNodes($scope.data, $rootScope.disableArray);
             }
 
         });
@@ -89,7 +89,7 @@
          */
         $scope.$on('api.set_disconnected_points2', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disableNodesWithoutStress($scope.data,  $scope.acd1,$rootScope.disableArray);
+                fileHandling.disableNodesWithoutStress($scope.data, $rootScope.disableArray);
             }
 
         });
@@ -99,7 +99,7 @@
          */
         $scope.$on('newMap.create', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $scope.acd1, $rootScope.disableArray);
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.disableArray);
             }
         });
 
@@ -107,7 +107,7 @@
          * Watches for moved nodes while lines are displayed
          */
         $scope.$on('map.nudgeTriggered', function () {
-            fileHandling.getLinesWithProjection($scope.data, $scope.acd1).then(function(result) {
+            fileHandling.getLinesWithProjection($scope.data).then(function(result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();

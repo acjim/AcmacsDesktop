@@ -33,7 +33,6 @@ var app = angular.module('acjim', [
     'acjim.table',
     'acjim.toolbar',
     'acjim.appMenu',
-    'ngHtmlWindow',
     'angular-loading-bar',
     'ngAnimate',
     'DWand.nw-fileDialog'
