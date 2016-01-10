@@ -28,15 +28,6 @@
 
     function mapCtrl ($rootScope, $scope, fileHandling) {
 
-        function getErrorConnectionLines() {
-            fileHandling.getErrorConnectionLines($scope.data, $scope.acd1).then(function (result) {
-                $scope.data.d3Errorlines = result.d3ErrorLines;
-                $scope.data.d3Connectionlines = result.d3ConnectionLines;
-            });
-        }
-
-
-        /********************* LISTENERS ********************/
 
         /**
          * Watches for a the reoptimize button
@@ -50,16 +41,37 @@
 
 
         /**
-         * Watches for a the errorlines button
+         * Watches for a the errorLines button
          */
-        $rootScope.$on('api.geterrorlines', function () {
-            if ($rootScope.errorlinesShown !== true) {
-                $scope.data.d3Errorlines = [];
-                $scope.data.d3Connectionlines = [];
-
-                getErrorConnectionLines();
-            }
+        $rootScope.$on('map.showErrorLines', function (event, itemID) {
+            $scope.showErrorLines = toolbar.getItemByID(itemID).active;
+            getErrorConnectionLines();
         });
+
+        /**
+         * Watches for a the connectionLines button
+         */
+        $rootScope.$on('map.getConnectionLines', function (event, itemID) {
+            $scope.showConnectionLines = toolbar.getItemByID(itemID).active;
+            getErrorConnectionLines();
+        });
+
+        function getErrorConnectionLines() {
+            fileHandling.getErrorConnectionLines($scope.data, $scope.acd1).then(function (result) {
+                if ($scope.showConnectionLines) {
+                    $scope.data.d3ConnectionLines = result.d3ConnectionLines;
+                } else {
+                    $scope.data.d3ConnectionLines = [];
+                }
+
+                if ($scope.showErrorLines) {
+                    $scope.data.d3ErrorLines = result.d3ErrorLines;
+                } else {
+                    $scope.data.d3ErrorLines = [];
+                }
+            });
+        }
+
 
         /** Watches for the Disable button with sress value
          *
@@ -70,6 +82,7 @@
             }
 
         });
+
         /** Watches for the Stress Value without stress value
          *
          */
@@ -79,20 +92,13 @@
             }
 
         });
+
         /** Watches for New Map Create from Existing Map button
          *
          */
         $scope.$on('newMap.create', function () {
             if ($rootScope.disableArrayFlag == true) {
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $scope.acd1, $rootScope.disableArray);
-            }
-        });
-        /**
-         * Watches for a the connectionlines button
-         */
-        $rootScope.$on('api.getconnectionlines', function () {
-            if ($rootScope.connectionlinesShown !== true) {
-                getErrorConnectionLines();
             }
         });
 
