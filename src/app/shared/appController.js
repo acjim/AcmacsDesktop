@@ -29,13 +29,7 @@ angular.module('acjim')
     function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
 
-        // Window layout variables
-        $scope.layout = {
-            toolbar: false,
-            table: false
-        };
-
-        /******************** Events *******************/
+        /******************** File Handling *******************/
 
         $scope.$on('open-file', function () {
             fileDialog.openFile(
@@ -73,6 +67,38 @@ angular.module('acjim')
             });
         }
 
+        /**
+         * Handle file opening on application startup
+         */
+        var Url = {
+            get get(){
+                var vars= {};
+                if(window.location.search.length!==0) {
+                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                        key = decodeURIComponent(key);
+                        if (typeof vars[key] === "undefined") {
+                            vars[key] = decodeURIComponent(value);
+                        } else {
+                            vars[key] = [].concat(vars[key], decodeURIComponent(value));
+                        }
+                    });
+                }
+                return vars;
+            }
+        };
+
+        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
+            handleFileOpen(Url.get.filename);
+        }
+
+        /******************** Window management *******************/
+
+            // Window layout variables
+        $scope.layout = {
+            toolbar: false,
+            table: false
+        };
+
         // Open Debug Window
         $scope.$on('open-debug', function () {
             nwService.gui.Window.get().showDevTools();
@@ -99,28 +125,17 @@ angular.module('acjim')
             this.close(true);
         });
 
-        /**
-         * Handle file opening on application startup
-         */
-        var Url = {
-            get get(){
-                var vars= {};
-                if(window.location.search.length!==0) {
-                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                        key = decodeURIComponent(key);
-                        if (typeof vars[key] === "undefined") {
-                            vars[key] = decodeURIComponent(value);
-                        } else {
-                            vars[key] = [].concat(vars[key], decodeURIComponent(value));
-                        }
-                    });
-                }
-                return vars;
-            }
-        };
 
-        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
-            handleFileOpen(Url.get.filename);
-        }
+        $scope.$on('layout.table', function () {
+            $scope.layout.table = !$scope.layout.table;
+            $scope.$apply();
+        });
+
+        $scope.$on('layout.toolbar', function () {
+            $scope.layout.toolbar = !$scope.layout.toolbar;
+            $scope.$apply();
+        });
+
+
     }
 })();

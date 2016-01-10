@@ -57,9 +57,9 @@
                     {
                         label: 'Map', items: [
                         {label: 'Optimize', click: 'api.reoptimize', modifiers: osModifier + 'alt', key: 'r'},
-                        {label: 'Show/Hide Error Lines', click: 'api.geterrorlines'},
-                        {label: 'Show/Hide Connection Lines', click: 'api.getconnectionlines'},
-                        {label: 'Show/Hide Labels', click: 'map.showLabels'}
+                        {label: 'Toggle Error Lines', click: 'api.geterrorlines'},
+                        {label: 'Toggle Connection Lines', click: 'api.getconnectionlines'},
+                        {label: 'Toggle Labels', click: 'map.showLabels'}
                     ]
                     },
                     {
