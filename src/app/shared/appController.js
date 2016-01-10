@@ -93,12 +93,6 @@ angular.module('acjim')
 
         /******************** Window management *******************/
 
-            // Window layout variables
-        $scope.layout = {
-            toolbar: false,
-            table: false
-        };
-
         // Open Debug Window
         $scope.$on('open-debug', function () {
             nwService.gui.Window.get().showDevTools();
@@ -125,6 +119,18 @@ angular.module('acjim')
             this.close(true);
         });
 
+
+        /******************** Layout *******************/
+
+        $scope.layout = {
+            toolbar: false,
+            table: false
+        };
+        $scope.cloak = true;
+
+        $scope.$on('map.loaded', function () {
+            $scope.cloak = false;
+        });
 
         $scope.$on('layout.table', function () {
             $scope.layout.table = !$scope.layout.table;

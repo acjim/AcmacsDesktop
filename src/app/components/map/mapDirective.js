@@ -328,6 +328,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .attr("class", "text")
                     .selectAll(".text");
 
+                scope.$emit('map.loaded');
+
             }
 
             /**

@@ -62,6 +62,16 @@ html {
   margin: 0px;
 }
 
+.overlay {
+  background-color: #F0F0F0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 100;
+}
+
 /*********** Map styles **************/
 .node {
   stroke: #fff;
