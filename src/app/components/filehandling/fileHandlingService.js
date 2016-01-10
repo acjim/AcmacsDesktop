@@ -38,9 +38,6 @@
 
     function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
 
-        var acd1File = null;
-        var projection = 0;
-
         return {
             handleFileOpen: handleFileOpen,
             handleFileSaveAs: handleFileSaveAs,
@@ -91,7 +88,8 @@
                 extension = "save";
             }
             var additional_params = {format: extension.toString(), filename: filename};
-            return api.export(acd1File, additional_params).then(function (output) {
+            var acd1file = "abc"; //TODO: THIS NEEDS FIXING. As acd1File isn't stored globally anymore, only acd1 from currently active ng-map should be used here.
+            return api.export(acd1file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
             }, function (reason) {
                 return errorReason(reason);
@@ -122,7 +120,7 @@
                         var result = {};
                         result.table = JSON.parse(data[0]);
                         result.map   = JSON.parse(data[1]);
-                        acd1File = output.output_acd1;
+                        result.acd1File = output.output_acd1;
                         return result;
                     });
                 });
