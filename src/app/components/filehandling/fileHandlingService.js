@@ -37,6 +37,9 @@
         ]);
 
     function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
+        
+        var acd1File = null,
+            projection = 0;
 
         return {
             handleFileOpen: handleFileOpen,
@@ -59,6 +62,7 @@
             // TODO: set flash message based on environment
             var error_message = 'Unable to open the file, file import failed!';
             Flash.create('danger', error_message+"<br>\n"+reason);
+            console.log(reason);
             return $q.reject(reason);
         }
 
@@ -89,7 +93,6 @@
                 extension = "save";
             }
             var additional_params = {format: extension.toString(), filename: filename};
-            var acd1file = "abc"; //TODO: THIS NEEDS FIXING. As acd1File isn't stored globally anymore, only acd1 from currently active ng-map should be used here.
             return api.export(acd1file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
             }, function (reason) {
@@ -121,7 +124,7 @@
                         var result = {};
                         result.table = JSON.parse(data[0]);
                         result.map   = JSON.parse(data[1]);
-                        result.acd1File = output.output_acd1;
+                        acd1File = output.output_acd1;
                         return result;
                     });
                 });
@@ -145,7 +148,7 @@
                             var result = {};
                             result.table = JSON.parse(data[0]);
                             result.map   = parseLayoutData(JSON.parse(data[1]));
-                            result.acd1File = output.output_acd1;
+                            acd1File = output.output_acd1;
                             return result;
                         });
                     }, function (reason) {
@@ -163,7 +166,7 @@
          * @param acd1
          * @param pointsMoved
          */
-        function reOptimize(mapData, acd1, pointsMoved) {
+        function reOptimize(mapData, pointsMoved) {
             cfpLoadingBar.start();
 
             // check if a node is moved
@@ -177,22 +180,22 @@
                 });
                 var additional_params = {
                     coordinates: list,
-                    projection: acd1.projection
+                    projection: projection
                 };
 
-                return api.new_projection(additional_params, acd1.acd1File)
+                return api.new_projection(additional_params, acd1File)
                     .then(function (output) {
                         var output_json = output.output_json;
-                        acd1.acd1File = output.output_acd1;
+                        acd1File = output.output_acd1;
                         var output_data = fs.readFileSync(output_json, 'utf8');
                         var mapJsonData = JSON.parse(output_data);
-                        acd1.projection = mapJsonData.projection;
-                        return relax_existing(mapData, acd1);
+                        projection = mapJsonData.projection;
+                        return relax_existing(mapData);
                     }, function (reason) {
                         return errorReason(reason);
                     });
             } else {
-                return relax_existing(mapData, acd1);
+                return relax_existing(mapData);
             }
 
         }
@@ -204,7 +207,7 @@
          * @param acd1
          * @returns {*}
          */
-        function getLinesWithProjection(mapData, acd1) {
+        function getLinesWithProjection(mapData) {
 
             cfpLoadingBar.start();
 
@@ -218,20 +221,20 @@
 
             var additional_params = {
                 coordinates: list,
-                projection: acd1.projection
+                projection: projection
             };
 
-            return api.new_projection(additional_params, acd1.acd1File).then(function (output) {
+            return api.new_projection(additional_params, acd1File).then(function (output) {
                 var output_json = output.output_json;
-                acd1.acd1File = output.output_acd1;
+                acd1File = output.output_acd1;
                 var data = fs.readFileSync(output_json, 'utf8');
                 var mapJsonData = JSON.parse(data);
-                acd1.projection = mapJsonData.projection;
+                projection = mapJsonData.projection;
 
                 var map_additional_params = {
-                    projection: acd1.projection
+                    projection: projection
                 }; // check documentation on execute>get_map for what params can be passed
-                return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File).then(function (data) {
+                return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File).then(function (data) {
                     return $q.all([
                         readFile(data)
                     ]).then(function(output_data) {
@@ -249,17 +252,15 @@
         }
 
 
-
-
-        function relax_existing(mapData, acd1) {
+        function relax_existing(mapData) {
             var relax_additional_params = {
-                projection: acd1.projection
+                projection: projection
             };
-            return api.relax_existing(relax_additional_params, acd1.acd1File)
+            return api.relax_existing(relax_additional_params, acd1File)
                 .then(function (filename) {
-                    acd1.acd1File = filename.updated_acd1;
-                    var map_additional_params = {projection: acd1.projection};
-                    return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File)
+                    acd1File = filename.updated_acd1;
+                    var map_additional_params = {projection: projection};
+                    return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
                             return $q.all([
                                 readFile(filename)
@@ -364,11 +365,11 @@
         /**
          * Calls api to get data for error and connection lines
          */
-        function getErrorConnectionLines(mapData, acd1) {
+        function getErrorConnectionLines(mapData) {
             cfpLoadingBar.start();
-            var additional_params = {projection: acd1.projection};
+            var additional_params = {projection: projection};
 
-            return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1.acd1File).then(function (filename) {
+            return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1File).then(function (filename) {
                 return $q.all([
                     readFile(filename)
                 ]).then(function(data) {
@@ -384,11 +385,11 @@
          * Calls api to create a new file from an already existing one n
          * @param mapData and points to remove disabledPoints
          */
-        function createNewFileFromAlreadyExistingOne(mapData, acd1, disabledPoints) {
+        function createNewFileFromAlreadyExistingOne(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: acd1.projection,
+                projection: projection,
                 disconnected: disabledPoints
             };
             console.log(disabledPoints);
@@ -398,11 +399,11 @@
             });
             console.log(disabledPoints);
 
-            api.set_disconnected_points(disable_additional_params, acd1.acd1File)
+            api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     var new_acd1 = filename.updated_acd1;
                     var relax_additional_params = {
-                        projection: acd1.projection
+                        projection: projection
                     };
                     api.relax_existing(relax_additional_params, new_acd1)
                         .then(function (filename) {
@@ -437,11 +438,11 @@
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
          */
-        function disableNodesWithoutStress(mapData, acd1, disabledPoints) {
+        function disableNodesWithoutStress(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: acd1.projection,
+                projection: projection,
                 unmovable: disabledPoints
             };
             //console.log(disabledPoints);
@@ -451,9 +452,9 @@
             });
 
 
-            api.set_unmovable_points(disable_additional_params, acd1.acd1File)
+            api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
-                    acd1.acd1File = filename.updated_acd1;
+                    acd1File = filename.updated_acd1;
 
 
                     var output_json = filename.output_json;
@@ -476,11 +477,11 @@
          * Calls api to disable nodes from a specific  map
          * @param mapData
          */
-        function disableNodes(mapData, acd1, disabledPoints) {
+        function disableNodes(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: acd1.projection,
+                projection: projection,
                 disconnected: disabledPoints
             };
             //console.log(disabledPoints);
@@ -491,17 +492,17 @@
             //console.log(disabledPoints);
 
 
-            api.set_disconnected_points (disable_additional_params, acd1.acd1File)
+            api.set_disconnected_points (disable_additional_params, acd1File)
                 .then(function (filename) {
-                    acd1.acd1File = filename.updated_acd1;
+                    acd1File = filename.updated_acd1;
 
 
                     var output_json = filename.output_json;
 
                     var output_data = fs.readFileSync(output_json, 'utf8');
                     //mapData.stress = mapJsonData.stress;
-                    var map_additional_params = {projection: acd1.projection};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File)
+                    var map_additional_params = {projection: projection};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
                             var output_json = filename;
                             fs.readFile(output_json, 'utf8', function (err, data) {
@@ -514,7 +515,7 @@
 
                                 var newfile = "/home/idrissou/malikou.acd1";
                                 var additional_params = {format: 'acd1', filename: newfile};
-                                return api.export(acd1.acd1File, additional_params).then(function (filename) {
+                                return api.export(acd1File, additional_params).then(function (filename) {
                                     cfpLoadingBar.complete();
                                 }, function (reason) {
                                     return errorReason(reason);

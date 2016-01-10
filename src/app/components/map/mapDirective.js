@@ -27,12 +27,11 @@ var app = angular.module('acjim.map');
 /*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootScope, toolbar, toolbarItems) {
+app.directive('d3Map', ['$rootScope', '$window', 'toolbar', 'toolbarItems', function($rootScope, $window, toolbar, toolbarItems) {
     return {
         restrict: 'A',
         scope: {
-            data: "=",
-            acd1: "="
+            data: "="
         },
         controller: 'mapCtrl',
         template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>',
@@ -683,22 +682,20 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
 
             /**
-             * Listens for the window resize event and re-renders the map
+             * Listens for the container/window resize events and re-renders the map
              */
-            scope.$on('ngWindow.resize', renderWithoutData);
-
-
-            /**
-             * Listens for container resize event and re-renders the map
-             */
-            scope.$on('container-resized', renderWithoutData);
-
+            scope.$on('ui.layout.resize', renderWithoutData);
+            scope.$on('ui.layout.toggle', renderWithoutData);
+            var w = angular.element($window);
+            w.bind('resize', renderWithoutData);
 
             /**
              *  Watch for data changes and re-render
              */
             scope.$watch('data', function(newVals) {
-                renderWithData(newVals);
+                if (newVals) {
+                    renderWithData(newVals);
+                }
             }, true);
         }
     };

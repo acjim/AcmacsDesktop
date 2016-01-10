@@ -63,6 +63,12 @@
                     ]
                     },
                     {
+                        label: 'View', items: [
+                        {label: 'Toggle Toolbar', click: 'layout.toolbar'},
+                        {label: 'Toggle Table', click: 'layout.table'}
+                    ]
+                    },
+                    {
                         label: 'Debug', items: [
                         {label: 'Show Developer Tools', click: 'open-debug', modifiers: osModifier + 'alt', key: 'i'},
                         {label: 'Reload Application', click: 'reload-app', key: 'r'}

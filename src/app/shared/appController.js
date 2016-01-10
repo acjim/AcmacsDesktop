@@ -28,11 +28,12 @@ angular.module('acjim')
 
     function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
-        $scope.openMaps = [];
-        $scope.tableData = null;
 
         // Window layout variables
-        var position = 0;
+        $scope.layout = {
+            toolbar: false,
+            table: false
+        };
 
         /******************** Events *******************/
 
@@ -66,28 +67,10 @@ angular.module('acjim')
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
-                    $scope.tableData = result.table;
-                    $scope.openMaps.push({
-                        data: result.map,
-                        acd1: {
-                            acd1File: result.acd1File,
-                            projection: result.projection || 0
-                        },
-                        options: {
-                            id: $scope.openMaps.length,
-                            x: 100 * position,
-                            y: 50 * position++,
-                            width: 400,
-                            height:300,
-                            title: "Map " + ($scope.openMaps.length + 1),
-                            onClose: function() {
-                                $scope.openMaps.splice(this.id, 1);
-                            }
-                        }
-                    });
-                    cfpLoadingBar.complete();
-                }
-            );
+                $scope.tableData = result.table;
+                $scope.mapData = result.map;
+                cfpLoadingBar.complete();
+            });
         }
 
         // Open Debug Window
