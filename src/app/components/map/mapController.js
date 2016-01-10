@@ -17,7 +17,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function() {
@@ -36,6 +36,7 @@
             fileHandling.reOptimize($scope.data, $scope.acd1, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
+                getErrorConnectionLines();
             });
         });
 
@@ -105,9 +106,12 @@
         /**
          * Watches for moved nodes while lines are displayed
          */
-        $rootScope.$on('api.nudgeTriggeredErrorlines', function () {
-            fileHandling.reOptimize($scope.data);
-            getErrorConnectionLines();
+        $scope.$on('map.nudgeTriggered', function () {
+            fileHandling.getLinesWithProjection($scope.data, $scope.acd1).then(function(result) {
+                $scope.pointsMoved = false;
+                $scope.data = result;
+                getErrorConnectionLines();
+            });
         });
     }
 })();

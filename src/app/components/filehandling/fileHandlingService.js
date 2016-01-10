@@ -42,6 +42,7 @@
             handleFileOpen: handleFileOpen,
             handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
+            getLinesWithProjection: getLinesWithProjection,
             getErrorConnectionLines: getErrorConnectionLines,
             disableNodes: disableNodes,
             disableNodesWithoutStress: disableNodesWithoutStress,
@@ -159,6 +160,8 @@
         /**
          * Calls api to re-optimize (relax) the map
          * @param mapData
+         * @param acd1
+         * @param pointsMoved
          */
         function reOptimize(mapData, acd1, pointsMoved) {
             cfpLoadingBar.start();
@@ -193,6 +196,60 @@
             }
 
         }
+
+
+        /**
+         * Creates a new projection without optimization
+         * @param mapData
+         * @param acd1
+         * @returns {*}
+         */
+        function getLinesWithProjection(mapData, acd1) {
+
+            cfpLoadingBar.start();
+
+            var list = [];
+            mapData.layout.forEach(function (layout, i) {
+                list[i] = [
+                    layout.x,
+                    layout.y
+                ];
+            });
+
+            var additional_params = {
+                coordinates: list,
+                projection: acd1.projection
+            };
+
+            return api.new_projection(additional_params, acd1.acd1File).then(function (output) {
+                var output_json = output.output_json;
+                acd1.acd1File = output.output_acd1;
+                var data = fs.readFileSync(output_json, 'utf8');
+                var mapJsonData = JSON.parse(data);
+                acd1.projection = mapJsonData.projection;
+
+                var map_additional_params = {
+                    projection: acd1.projection
+                }; // check documentation on execute>get_map for what params can be passed
+                return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File).then(function (data) {
+                    return $q.all([
+                        readFile(data)
+                    ]).then(function(output_data) {
+                       mapData = parseLayoutData(JSON.parse(output_data));
+                       return mapData;
+                    });
+
+                }, function (reason) {
+                    return errorReason(reason);
+                });
+
+            }, function (reason) {
+                return errorReason(reason);
+            });
+        }
+
+
+
 
         function relax_existing(mapData, acd1) {
             var relax_additional_params = {
@@ -307,7 +364,7 @@
         /**
          * Calls api to get data for error and connection lines
          */
-        function getErrorConnectionLines(mapData, acd1){
+        function getErrorConnectionLines(mapData, acd1) {
             cfpLoadingBar.start();
             var additional_params = {projection: acd1.projection};
 
@@ -506,7 +563,7 @@
                 if (dxb > 0) {
                     return (
                         (p1.x <= probe[0] && probe[0] <= p2.x) ||
-                        (p2.x <= probe[0] && probe[0] <= pq.x)
+                        (p2.x <= probe[0] && probe[0] <= p1.x)
                     );
                 }
             } else {
@@ -663,17 +720,14 @@
          @returns {{d3ErrorLines: Array, d3ConnectionLines: Array}}
          */
         function calculateLines(errorLines, layout) {
-
             if (!layout || !errorLines) {
                 console.log('ConnectionsLayer: bailing out because there is no data to plot');
                 return {};
             }
-
             var result = {
                 d3ErrorLines: [],
                 d3ConnectionLines: []
             };
-
             // First, draw the error lines for antigens
             connect({from: 'antigens', to: 'sera'}, errorLines, layout, result);
             //connect({from: 'sera', to: 'antigens'}, errorLines, layout, result);

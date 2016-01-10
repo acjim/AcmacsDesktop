@@ -181,6 +181,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .on("drag", function() {
                             nudge(d3.event.dx, d3.event.dy);
                         })
+                        .on("dragend", function() {
+                            if(scope.showErrorLines || scope.showConnectionLines){
+                                scope.$emit('map.nudgeTriggered');
+                            }
+                        })
                     )
                     .attr("opacity", (function(d) { return d.opacity; }));
 
@@ -374,10 +379,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
 
                 scope.pointsMoved = true;
-
-                if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
-                    $rootScope.$emit('api.nudgeTriggeredErrorlines');
-                }
             }
 
             /**
