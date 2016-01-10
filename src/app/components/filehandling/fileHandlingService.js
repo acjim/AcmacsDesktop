@@ -47,7 +47,7 @@
             reOptimize: reOptimize,
             getErrorConnectionLines: getErrorConnectionLines,
             disableNodes: disableNodes,
-            disableNodesWithouhtStress: disableNodesWithouhtStress,
+            disableNodesWithoutStress: disableNodesWithoutStress,
             createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne
         };
 
@@ -336,11 +336,11 @@
          * Calls api to create a new file from an already existing one n
          * @param mapData and points to remove disabledPoints
          */
-        function createNewFileFromAlreadyExistingOne(mapData, disabledPoints) {
+        function createNewFileFromAlreadyExistingOne(mapData, acd1, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: projection,
+                projection: acd1.projection,
                 disconnected: disabledPoints
             };
             console.log(disabledPoints);
@@ -350,11 +350,11 @@
             });
             console.log(disabledPoints);
 
-            api.set_disconnected_points(disable_additional_params, acd1File)
+            api.set_disconnected_points(disable_additional_params, acd1.acd1File)
                 .then(function (filename) {
                     var new_acd1 = filename.updated_acd1;
                     var relax_additional_params = {
-                        projection: projection
+                        projection: acd1.projection
                     };
                     api.relax_existing(relax_additional_params, new_acd1)
                         .then(function (filename) {
@@ -378,11 +378,11 @@
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
          */
-        function disableNodesWithouhtStress(mapData, disabledPoints) {
+        function disableNodesWithoutStress(mapData, acd1, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: projection,
+                projection: acd1.projection,
                 unmovable: disabledPoints
             };
             //console.log(disabledPoints);
@@ -392,9 +392,9 @@
             });
 
 
-            api.set_unmovable_points(disable_additional_params, acd1File)
+            api.set_unmovable_points(disable_additional_params, acd1.acd1File)
                 .then(function (filename) {
-                    acd1File = filename.updated_acd1;
+                    acd1.acd1File = filename.updated_acd1;
 
 
                     var output_json = filename.output_json;
@@ -417,11 +417,11 @@
          * Calls api to disable nodes from a specific  map
          * @param mapData
          */
-        function disableNodes(mapData, disabledPoints) {
+        function disableNodes(mapData, acd1, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: projection,
+                projection: acd1.projection,
                 disconnected: disabledPoints
             };
             //console.log(disabledPoints);
@@ -432,30 +432,30 @@
             //console.log(disabledPoints);
 
 
-            api.set_disconnected_points (disable_additional_params, acd1File)
+            api.set_disconnected_points (disable_additional_params, acd1.acd1File)
                 .then(function (filename) {
-                    acd1File = filename.updated_acd1;
+                    acd1.acd1File = filename.updated_acd1;
 
 
                     var output_json = filename.output_json;
 
                     var output_data = fs.readFileSync(output_json, 'utf8');
                     //mapData.stress = mapJsonData.stress;
-                    var map_additional_params = {projection: projection};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                    var map_additional_params = {projection: acd1.projection};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File)
                         .then(function (filename) {
                             var output_json = filename;
                             fs.readFile(output_json, 'utf8', function (err, data) {
                                 var mapJsonData = JSON.parse(data);
                                 mapData.stress = mapJsonData.stress;
                                 mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.d3Nodes[i].x = layout[0];
-                                    mapData.d3Nodes[i].y = layout[1];
+                                    mapData.layout[i].x = layout[0];
+                                    mapData.layout[i].y = layout[1];
                                 });
 
                                 var newfile = "/home/idrissou/malikou.acd1";
                                 var additional_params = {format: 'acd1', filename: newfile};
-                                return api.export(acd1File, additional_params).then(function (filename) {
+                                return api.export(acd1.acd1File, additional_params).then(function (filename) {
                                     cfpLoadingBar.complete();
                                 }, function (reason) {
                                     return errorReason(reason);
@@ -474,8 +474,13 @@
 
         }
 
+
         /**
          * Calculate error and connection lines
+         * @param errorlines
+         * @param layout
+         * @param result
+         * @returns {boolean}
          */
         function calculateLines(errorlines, layout, result) {
             var positive,

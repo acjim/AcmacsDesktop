@@ -1,23 +1,23 @@
 /*
- Antigenic Cartography for Desktop
- [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
- In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
- This project aims at providing a desktop application for working with antigenic maps.
+    Antigenic Cartography for Desktop
+    [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
+    In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
+    This project aims at providing a desktop application for working with antigenic maps.
 
- © 2015 The Antigenic Cartography Group at the University of Cambridge
+    © 2015 The Antigenic Cartography Group at the University of Cambridge
 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function() {
@@ -43,7 +43,6 @@
          */
         $scope.$on('map.reOptimize', function () {
             fileHandling.reOptimize($scope.data, $scope.acd1, $scope.pointsMoved).then(function (result) {
-                console.log("reoptimize done");
                 $scope.data = result;
             });
         });
@@ -54,8 +53,8 @@
          */
         $rootScope.$on('api.geterrorlines', function () {
             if ($rootScope.errorlinesShown !== true) {
-                $scope.d3Data.d3Errorlines = [];
-                $scope.d3Data.d3Connectionlines = [];
+                $scope.data.d3Errorlines = [];
+                $scope.data.d3Connectionlines = [];
 
                 getErrorConnectionLines();
             }
@@ -66,7 +65,7 @@
          */
         $scope.$on('api.set_disconnected_points', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disableNodes($scope.d3Data, $rootScope.disableArray);
+                fileHandling.disableNodes($scope.data, $scope.acd1, $rootScope.disableArray);
             }
 
         });
@@ -75,7 +74,7 @@
          */
         $scope.$on('api.set_disconnected_points2', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disableNodesWithouhtStress($scope.d3Data, $rootScope.disableArray);
+                fileHandling.disableNodesWithoutStress($scope.data,  $scope.acd1,$rootScope.disableArray);
             }
 
         });
@@ -84,7 +83,7 @@
          */
         $scope.$on('newMap.create', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.d3Data,$rootScope.disableArray);
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $scope.acd1, $rootScope.disableArray);
             }
         });
         /**
@@ -100,7 +99,7 @@
          * Watches for moved nodes while lines are displayed
          */
         $rootScope.$on('api.nudgeTriggeredErrorlines', function () {
-            fileHandling.reOptimize($scope.d3Data);
+            fileHandling.reOptimize($scope.data);
             getErrorConnectionLines();
         });
     }
