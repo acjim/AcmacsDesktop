@@ -69,6 +69,10 @@ angular.module('acjim')
                     $scope.tableData = result.table;
                     $scope.openMaps.push({
                         data: result.map,
+                        acd1: {
+                            acd1File: result.acd1File,
+                            projection: result.projection || 0
+                        },
                         options: {
                             id: $scope.openMaps.length,
                             x: 100 * position,

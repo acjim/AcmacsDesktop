@@ -108,7 +108,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             caption: 'Reoptimize',
             icon: 'icon acmacs-optimize',
             callback: function () {
-                $rootScope.$broadcast('api.reoptimize');
+                $rootScope.$broadcast('map.reOptimize');
             }
         },{
             id: toolbarItems.DISABLE_MAP2,

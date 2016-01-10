@@ -25,24 +25,6 @@
 var app = angular.module('acjim.map');
 
 /*
- * Wrapper directive for the d3 map
- */
-app.directive('acMap', function() {
-    return {
-        restrict: 'A',
-        transclude: true,
-        scope: {},
-        bindToController: {
-            map: '=',
-            acd1: '='
-        },
-        controller: 'mapCtrl',
-        controllerAs: 'mapData',
-        template: '<p class="stressLabel">Stress: {{(d3Data.stress || "Undefined Value") | number: 3}}</p><div d3-map class="fullsize" data="d3Data" lable="title"></div>'
-    };
-});
-
-/*
  * D3 directive
  */
 app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootScope, toolbar, toolbarItems) {
@@ -50,8 +32,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
         restrict: 'A',
         scope: {
             data: "=",
-            label: "@"
+            acd1: "="
         },
+        controller: 'mapCtrl',
+        template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>',
         link: function(scope, iElement) {
 
             var svg = null,
@@ -138,11 +122,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 renderWithoutData();
 
                 // Enter
-                nodeGroup = nodeGroup.data(data.d3Nodes);
+                nodeGroup = nodeGroup.data(data.layout);
 
                 nodeGroup.enter().append("path")
-                    .attr("class", "point")
-                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("class", "point");
+
+                //Update
+                nodeGroup
+                    .attr("transform", function(d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                    })
                     .attr("fill", function(d){
                         // color as string
                         if(_.isArray(d.style.fill_color )) {
@@ -172,16 +161,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
 
 
-                // mouse event handlers
+                // Event handlers
                 nodeGroup.on("mousedown", function(d) {
-                    if (!d.selected) { // Don't deselect on shift-drag.
-                        if (!shiftKey) {
-                            nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
-                        } else {
-                            d3.select(this).classed("selected", d.selected = true);
+                        if (!d.selected) { // Don't deselect on shift-drag.
+                            if (!shiftKey) {
+                                nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
+                            } else {
+                                d3.select(this).classed("selected", d.selected = true);
+                            }
                         }
-                    }
-                })
+                    })
                     .on("mouseup", function(d) {
                         if (d.selected && shiftKey) {
                             d3.select(this).classed("selected", d.selected = false);
@@ -195,16 +184,18 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .on("drag", function() {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                )
+                    )
                     .attr("opacity", (function(d) { return d.opacity; }));
 
+                // Exit
+                nodeGroup.exit().remove();
 
                 if(data.d3Errorlines && data.d3Connectionlines && data.d3Errorlines.length > 1 && data.d3Connectionlines.length > 1){
                     renderErrorlines(data.d3Errorlines, data.d3Connectionlines);
                 }
-                nodeGroup.exit().remove();
 
-                labelsGroup=labelsGroup.data(data.d3Nodes);
+
+                labelsGroup=labelsGroup.data(data.layout);
                 labelsGroup.enter().append("text")
                     .attr("class", "text")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
@@ -329,8 +320,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                dataExtentX = d3.extent(scope.data.d3Nodes, function(d) { return d.x;});
-                dataExtentY = d3.extent(scope.data.d3Nodes, function(d) { return d.y;});
+                dataExtentX = d3.extent(scope.data.layout, function(d) { return d.x;});
+                dataExtentY = d3.extent(scope.data.layout, function(d) { return d.y;});
 
                 centerNodes();
 
@@ -413,7 +404,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     d3.event.preventDefault();
                 }
 
-                $rootScope.pointsMoved = true;
+                scope.pointsMoved = true;
 
                 if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
                     $rootScope.$emit('api.nudgeTriggeredErrorlines');
@@ -653,7 +644,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 $rootScope.newMapArray=[];
                 $rootScope.newMapArrayflag=false;
                 var mapArray =[];
-                var length= mapDataPoints.d3Nodes.length;
+                var length= mapDataPoints.layout.length;
                 for(var counter= 0; counter < length;counter++){
                     mapArray.push(counter);
                     $rootScope.newMapArray.push(counter);
