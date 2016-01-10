@@ -624,7 +624,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
                 else{
                     $rootScope.disableArrayFlag= true;
-                    console.log(disableArray);
+                   // console.log(disableArray);
                     $rootScope.disableArray= disableArray;
                 }
             }
