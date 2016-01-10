@@ -162,7 +162,7 @@
          * Calls api to re-optimize (relax) the map
          * @param mapData
          */
-        function reOptimize(mapData, pointsMoved) {
+        function reOptimize(mapData, pointsMoved, disabledArray) {
             cfpLoadingBar.start();
 
             // check if a node is moved
@@ -170,10 +170,16 @@
             {
                 var list = [];
                 mapData.d3Nodes.forEach(function (layout, i) {
-                    list[i] = [
-                        layout.x,
-                        layout.y
-                    ];
+                    var counter= 0;
+                    var index = disabledArray.indexOf(layout.id);
+                    if (index == -1) {
+                        list[counter] = [
+                            layout.x,
+                            layout.y
+                        ];
+                        counter++;
+
+                    }
                 });
                 var additional_params = {
                     coordinates: list,
@@ -196,6 +202,7 @@
             }
 
         }
+
 
         function relax_existing(mapData)
         {
