@@ -17,26 +17,17 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 (function() {
     'use strict';
 
     angular.module('acjim.map',[])
-        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', mapCtrl]);
+        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', 'toolbar', mapCtrl]);
 
-    function mapCtrl ($rootScope, $scope, fileHandling) {
+    function mapCtrl ($rootScope, $scope, fileHandling, toolbar) {
 
-        function getErrorConnectionLines() {
-            fileHandling.getErrorConnectionLines($scope.data, $scope.acd1).then(function (result) {
-                $scope.data.d3Errorlines = result.d3ErrorLines;
-                $scope.data.d3Connectionlines = result.d3ConnectionLines;
-            });
-        }
-
-
-        /********************* LISTENERS ********************/
 
         /**
          * Watches for a the reoptimize button
@@ -45,21 +36,43 @@
             fileHandling.reOptimize($scope.data, $scope.acd1, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
+                getErrorConnectionLines();
             });
         });
 
 
-        /**
-         * Watches for a the errorlines button
-         */
-        $rootScope.$on('api.geterrorlines', function () {
-            if ($rootScope.errorlinesShown !== true) {
-                $scope.data.d3Errorlines = [];
-                $scope.data.d3Connectionlines = [];
+        function getErrorConnectionLines() {
+            fileHandling.getErrorConnectionLines($scope.data, $scope.acd1).then(function (result) {
+                if ($scope.showConnectionLines) {
+                    $scope.data.d3ConnectionLines = result.d3ConnectionLines;
+                } else {
+                    $scope.data.d3ConnectionLines = [];
+                }
 
-                getErrorConnectionLines();
-            }
+                if ($scope.showErrorLines) {
+                    $scope.data.d3ErrorLines = result.d3ErrorLines;
+                } else {
+                    $scope.data.d3ErrorLines = [];
+                }
+            });
+        }
+
+        /**
+         * Watches for a the errorLines button
+         */
+        $rootScope.$on('map.showErrorLines', function (event, itemID) {
+            $scope.showErrorLines = toolbar.getItemByID(itemID).active;
+            getErrorConnectionLines();
         });
+
+        /**
+         * Watches for a the connectionLines button
+         */
+        $rootScope.$on('map.getConnectionLines', function (event, itemID) {
+            $scope.showConnectionLines = toolbar.getItemByID(itemID).active;
+            getErrorConnectionLines();
+        });
+
 
         /** Watches for the Disable button with sress value
          *
@@ -70,6 +83,7 @@
             }
 
         });
+
         /** Watches for the Stress Value without stress value
          *
          */
@@ -79,6 +93,7 @@
             }
 
         });
+
         /** Watches for New Map Create from Existing Map button
          *
          */
@@ -87,21 +102,16 @@
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $scope.acd1, $rootScope.disableArray);
             }
         });
-        /**
-         * Watches for a the connectionlines button
-         */
-        $rootScope.$on('api.getconnectionlines', function () {
-            if ($rootScope.connectionlinesShown !== true) {
-                getErrorConnectionLines();
-            }
-        });
 
         /**
          * Watches for moved nodes while lines are displayed
          */
-        $rootScope.$on('api.nudgeTriggeredErrorlines', function () {
-            fileHandling.reOptimize($scope.data);
-            getErrorConnectionLines();
+        $scope.$on('map.nudgeTriggered', function () {
+            fileHandling.getLinesWithProjection($scope.data, $scope.acd1).then(function(result) {
+                $scope.pointsMoved = false;
+                $scope.data = result;
+                getErrorConnectionLines();
+            });
         });
     }
 })();

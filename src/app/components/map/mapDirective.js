@@ -158,9 +158,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                             else if (d.style.shape === "box") { return "square"; }
                         }));
 
-
-
-
                 // Event handlers
                 nodeGroup.on("mousedown", function(d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
@@ -184,15 +181,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .on("drag", function() {
                             nudge(d3.event.dx, d3.event.dy);
                         })
+                        .on("dragend", function() {
+                            if(scope.showErrorLines || scope.showConnectionLines){
+                                scope.$emit('map.nudgeTriggered');
+                            }
+                        })
                     )
                     .attr("opacity", (function(d) { return d.opacity; }));
 
                 // Exit
                 nodeGroup.exit().remove();
-
-                if(data.d3Errorlines && data.d3Connectionlines && data.d3Errorlines.length > 1 && data.d3Connectionlines.length > 1){
-                    renderErrorlines(data.d3Errorlines, data.d3Connectionlines);
-                }
 
 
                 labelsGroup=labelsGroup.data(data.layout);
@@ -208,46 +206,28 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .text(function(d) {return d.name; });
                 labelsGroup.exit().remove();
 
-            }
 
-
-            /**
-             * Renders the additional layers for connection and error lines
-             * @param errorline_data, connectionline_data
-             */
-            function renderErrorlines(errorline_data, connectionline_data){
-
-                // checks if the map is drawn the for the first time, adds svg, groups and zoom if necessary
-                if (!svg) {
-                    initializeSVG();
-                    renderWithData(data);
-                }
-
-                // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
-                errorlineGroup = errorlineGroup.data(errorline_data);
+                errorlineGroup = errorlineGroup.data(data.d3ErrorLines);
                 errorlineGroup.enter().append("line")
                     .attr("class", "errorline")
                     .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }))
-                    //.attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
+                errorlineGroup.exit().remove();
 
-                connectionlineGroup = connectionlineGroup.data(connectionline_data);
+                connectionlineGroup = connectionlineGroup.data(data.d3ConnectionLines);
                 connectionlineGroup.enter().append("line")
                     .attr("class", "connectionline")
                     .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }))
-                    // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }));
-
-                errorlineGroup.exit().remove();
                 connectionlineGroup.exit().remove();
 
             }
@@ -337,12 +317,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 connectionlineGroup = elementGroup.append("g")
                     .attr("class", "connectionline")
-                    .attr("id", "connectionlineLayer")
                     .selectAll(".connectionline");
 
                 errorlineGroup = elementGroup.append("g")
                     .attr("class", "errorline")
-                    .attr("id", "errorlineLayer")
                     .selectAll(".errorline");
 
                 nodeGroup = elementGroup.append("g")
@@ -352,10 +330,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("class", "text")
                     .selectAll(".text");
 
-
-                //better way to set this hidden upon start?
-                $('#errorlineLayer').css({'visibility': 'hidden'});
-                $('#connectionlineLayer').css({'visibility': 'hidden'});
             }
 
             /**
@@ -405,10 +379,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 }
 
                 scope.pointsMoved = true;
-
-                if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
-                    $rootScope.$emit('api.nudgeTriggeredErrorlines');
-                }
             }
 
             /**
@@ -456,12 +426,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 labelsGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
                 });
-                errorlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
+                errorlineGroup
+                    .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }));
 
-                connectionlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
+                connectionlineGroup
+                    .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }));
@@ -703,31 +675,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 GetNodeLabels();
             });
 
-            /**
-             * Watches for errorline button to show/hide layer and set flag
-             */
-            $rootScope.$on('api.geterrorlines', function(){
-                if ($('#errorlineLayer').css('visibility') === 'hidden'){
-                    $('#errorlineLayer').css({'visibility': 'visible'});
-                    $rootScope.errorlinesShown = true;
-                }else{
-                    $('#errorlineLayer').css({'visibility':'hidden'});
-                    $rootScope.errorlinesShown = false;
-                }
-            });
-
-            /**
-             * Watches for connectionline button to show/hide layer and set flag
-             */
-            $rootScope.$on('api.getconnectionlines', function(){
-                if ($('#connectionlineLayer').css('visibility') === 'hidden'){
-                    $('#connectionlineLayer').css({'visibility': 'visible'});
-                    $rootScope.connectionlinesShown = true;
-                }else{
-                    $('#connectionlineLayer').css({'visibility':'hidden'});
-                    $rootScope.connectionlinesShown = false;
-                }
-            });
 
             /**
              * Watches for a tool change

@@ -71,8 +71,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                 }
             ]
         },
-        //TODO: temporarily bugged
-        /*{
+        {
             type: "buttonGroup",
             buttons: [
                 {
@@ -81,7 +80,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-error-line',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('api.geterrorlines');
+                        $rootScope.$emit('map.showErrorLines', this.id);
                     }
                 },
                 {
@@ -90,11 +89,11 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-connection',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('api.getconnectionlines');
+                        $rootScope.$emit('map.getConnectionLines', this.id);
                     }
                 }
             ]
-        },*/
+        },
         {
             id: toolbarItems.LABEL_NODES,
             caption: 'Show Labels',
