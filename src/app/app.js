@@ -88,18 +88,18 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-connection',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('map.getConnectionLines', this.id);
+                        $rootScope.$emit('map.showConnectionLines', this.id);
                     }
                 }
             ]
         },
         {
-            id: toolbarItems.LABEL_NODES,
+            id: toolbarItems.SHOW_LABELS,
             caption: 'Show Labels',
             icon: 'icon acmacs-label',
             togglable: true,
             callback: function () {
-                $rootScope.$emit('map.showLabels');
+                $rootScope.$emit('map.showLabels', this.id);
             }
         },
         {

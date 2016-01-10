@@ -27,7 +27,7 @@ var app = angular.module('acjim.map');
 /*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', '$window', 'toolbar', 'toolbarItems', function($rootScope, $window, toolbar, toolbarItems) {
+app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', function($rootScope, $window, $timeout, toolbar, toolbarItems) {
     return {
         restrict: 'A',
         scope: {
@@ -50,7 +50,6 @@ app.directive('d3Map', ['$rootScope', '$window', 'toolbar', 'toolbarItems', func
                 gridScale = 1,
                 initialScale = 1,
                 brush = null,
-                visibility = 0,
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
@@ -595,14 +594,11 @@ app.directive('d3Map', ['$rootScope', '$window', 'toolbar', 'toolbarItems', func
              * Returns the node labels of nodes or removes them depending on the case
              * @returns none
              */
-            function GetNodeLabels() {
-                if (visibility == 0) {
+            function toggleNodeLabels(showLabels) {
+                if (showLabels) {
                     d3.selectAll(".text").style("visibility", "visible");
-                    visibility= 1;
-                }
-                else {
+                } else {
                     d3.selectAll(".text").style("visibility", "hidden");
-                    visibility= 0;
                 }
             }
 
@@ -666,12 +662,16 @@ app.directive('d3Map', ['$rootScope', '$window', 'toolbar', 'toolbarItems', func
                 DisableSelectedElements();
             });
 
+
             /**
              * Listens for event to get add/remove node labels
              */
-
-            $rootScope.$on('map.showLabels', function() {
-                GetNodeLabels();
+            $rootScope.$on('map.showLabels', function(event, itemID) {
+                $timeout(function() {
+                    var item = toolbar.getItemByID(toolbarItems.SHOW_LABELS);
+                    if (!itemID) { item.active = !item.active; }
+                    toggleNodeLabels(item.active);
+                });
             });
 
 

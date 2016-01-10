@@ -24,9 +24,9 @@
     'use strict';
 
     angular.module('acjim.map',[])
-        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', 'toolbar', mapCtrl]);
+        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', 'toolbar', 'toolbarItems', mapCtrl]);
 
-    function mapCtrl ($rootScope, $scope, fileHandling, toolbar) {
+    function mapCtrl ($rootScope, $scope, fileHandling, toolbar, toolbarItems) {
 
 
         /**
@@ -61,15 +61,19 @@
          * Watches for a the errorLines button
          */
         $rootScope.$on('map.showErrorLines', function (event, itemID) {
-            $scope.showErrorLines = toolbar.getItemByID(itemID).active;
+            var item = toolbar.getItemByID(toolbarItems.SHOW_ERROR_LINES);
+            if (!itemID) { item.active = !item.active; }
+            $scope.showErrorLines = item.active;
             getErrorConnectionLines();
         });
 
         /**
          * Watches for a the connectionLines button
          */
-        $rootScope.$on('map.getConnectionLines', function (event, itemID) {
-            $scope.showConnectionLines = toolbar.getItemByID(itemID).active;
+        $rootScope.$on('map.showConnectionLines', function (event, itemID) {
+            var item = toolbar.getItemByID(toolbarItems.SHOW_CONNECTION_LINES);
+            if (!itemID) { item.active = !item.active; }
+            $scope.showConnectionLines = item.active;
             getErrorConnectionLines();
         });
 
