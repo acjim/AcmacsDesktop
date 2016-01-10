@@ -28,7 +28,7 @@
 
             <div ui-layout-container>
                 <ng-html-window ng-repeat="map in openMaps" options="map.options">
-                    <div class="fullsize" ac-map map="map.data"></div>
+                    <div class="fullsize" d3-map data="map.data" acd1="map.acd1"></div>
                 </ng-html-window>
 
             </div>

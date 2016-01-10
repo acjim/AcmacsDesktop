@@ -38,16 +38,13 @@
 
     function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout) {
 
-        var acd1File = null;
-        var projection = 0;
-
         return {
             handleFileOpen: handleFileOpen,
             handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
-            getErrorConnectionlines: getErrorConnectionlines,
+            getErrorConnectionLines: getErrorConnectionLines,
             disableNodes: disableNodes,
-            disableNodesWithouhtStress: disableNodesWithouhtStress,
+            disableNodesWithoutStress: disableNodesWithoutStress,
             createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne
         };
 
@@ -91,7 +88,8 @@
                 extension = "save";
             }
             var additional_params = {format: extension.toString(), filename: filename};
-            return api.export(acd1File, additional_params).then(function (output) {
+            var acd1file = "abc"; //TODO: THIS NEEDS FIXING. As acd1File isn't stored globally anymore, only acd1 from currently active ng-map should be used here.
+            return api.export(acd1file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
             }, function (reason) {
                 return errorReason(reason);
@@ -122,7 +120,7 @@
                         var result = {};
                         result.table = JSON.parse(data[0]);
                         result.map   = JSON.parse(data[1]);
-                        acd1File = output.output_acd1;
+                        result.acd1File = output.output_acd1;
                         return result;
                     });
                 });
@@ -145,8 +143,8 @@
                         ]).then(function(data) {
                             var result = {};
                             result.table = JSON.parse(data[0]);
-                            result.map   = JSON.parse(data[1]);
-                            acd1File = output.output_acd1;
+                            result.map   = parseLayoutData(JSON.parse(data[1]));
+                            result.acd1File = output.output_acd1;
                             return result;
                         });
                     }, function (reason) {
@@ -162,14 +160,13 @@
          * Calls api to re-optimize (relax) the map
          * @param mapData
          */
-        function reOptimize(mapData, pointsMoved) {
+        function reOptimize(mapData, acd1, pointsMoved) {
             cfpLoadingBar.start();
 
             // check if a node is moved
-            if (pointsMoved === true)
-            {
+            if (pointsMoved === true) {
                 var list = [];
-                mapData.d3Nodes.forEach(function (layout, i) {
+                mapData.layout.forEach(function (layout, i) {
                     list[i] = [
                         layout.x,
                         layout.y
@@ -177,46 +174,43 @@
                 });
                 var additional_params = {
                     coordinates: list,
-                    projection: projection
+                    projection: acd1.projection
                 };
 
-                api.new_projection(additional_params, acd1File)
+                return api.new_projection(additional_params, acd1.acd1File)
                     .then(function (output) {
                         var output_json = output.output_json;
-                        acd1File = output.output_acd1;
+                        acd1.acd1File = output.output_acd1;
                         var output_data = fs.readFileSync(output_json, 'utf8');
                         var mapJsonData = JSON.parse(output_data);
-                        projection = mapJsonData.projection;
-                        relax_existing(mapData);
+                        acd1.projection = mapJsonData.projection;
+                        return relax_existing(mapData, acd1);
                     }, function (reason) {
                         return errorReason(reason);
                     });
             } else {
-                relax_existing(mapData);
+                return relax_existing(mapData, acd1);
             }
 
         }
 
-        function relax_existing(mapData)
+        function relax_existing(mapData, acd1)
         {
             var relax_additional_params = {
-                projection: projection
+                projection: acd1.projection
             };
-            api.relax_existing(relax_additional_params, acd1File)
+            return api.relax_existing(relax_additional_params, acd1.acd1File)
                 .then(function (filename) {
-                    acd1File = filename.updated_acd1;
-                    var map_additional_params = {projection: projection};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                    acd1.acd1File = filename.updated_acd1;
+                    var map_additional_params = {projection: acd1.projection};
+                    return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File)
                         .then(function (filename) {
-                            var output_json = filename;
-                            fs.readFile(output_json, 'utf8', function (err, data) {
-                                var mapJsonData = JSON.parse(data);
-                                mapData.stress = mapJsonData.stress;
-                                mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.d3Nodes[i].x = layout[0];
-                                    mapData.d3Nodes[i].y = layout[1];
-                                });
+                            return $q.all([
+                                readFile(filename)
+                            ]).then(function(data) {
+                                mapData = parseLayoutData(JSON.parse(data));
                                 cfpLoadingBar.complete();
+                                return mapData;
                             });
                         }, function (reason) {
                             return errorReason(reason);
@@ -226,10 +220,95 @@
                 });
         }
 
+
+        /**
+         * Creates the data structure of the map data object and returns it.
+         * @param data
+         * @returns {{
+         *      stress: Number,
+         *      layout: Array,
+         *      d3ConnectionLines: Array,
+         *      d3ErrorLines: Array
+         * }}
+         */
+        function parseLayoutData (data) {
+
+            var oldMap = data.map;
+
+            if (_.isUndefined(oldMap)) {
+                //TODO: Throw error what went wrong
+                return {};
+            }
+
+            var newData = {};
+            newData.layout = [];
+            newData.d3ConnectionLines = [];
+            newData.d3ErrorLines = [];
+            newData.stress = data.stress;
+
+            oldMap.layout.forEach(function (layout, i) {
+                newData.layout[i] = {
+                    "x": layout[0],
+                    "y": layout[1],
+                    "id": i
+                };
+            });
+
+            oldMap.point_info.forEach(function (point_info, i) {
+
+                var node_name = "undefined";
+
+                if (!_.isUndefined(point_info.name)) {
+                    node_name = point_info.name;
+                }
+
+                newData.layout[i].name = node_name;
+            });
+
+            oldMap.styles.points.forEach(function (point, i) {
+                newData.layout[i].style = oldMap.styles.styles[point];
+            });
+
+            // checking if the drawing order is available
+            if (!_.isUndefined(oldMap.styles.drawing_order)) {
+
+                // In case the drawing_order is defined, we order the nodes based on their drawing order.
+                var order_list = oldMap.styles.drawing_order[0].concat(oldMap.styles.drawing_order[1]);
+                var length = order_list.length;
+
+                // start a bubble sort.
+                // The start of the sorting of drawing order following Bubble sort algorithm
+                for (var i = 0; i < length; i++) {
+
+                    for (var j = (length - 1); j > 0; j--) {
+
+                        if (order_list[j] < order_list[j - 1]) {
+
+                            // swapping the order_list  to keep the reference
+                            var temp = order_list[j - 1];
+                            order_list[j - 1] = order_list[j];
+                            order_list[j] = temp;
+
+                            // swapping the data
+                            temp = newData.layout[j - 1];
+                            newData.layout[j - 1] = newData.layout[j];
+                            newData.layout[j] = temp;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return newData;
+        }
+
         /**
          * Calls api to get data for error and connection lines
          */
-        function getErrorConnectionlines(mapData){
+        function getErrorConnectionLines(mapData, acd1){
 
             var result = {
                 d3ErrorLines: [],
@@ -240,12 +319,11 @@
 
             //TODO set projection number from scope
             var additional_params = {};
-            return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1File).then(function (filename) {
+            return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1.acd1File).then(function (filename) {
                 fs.readFile(filename, 'utf8', function (err, data) {
                     var mapJsonData = JSON.parse(data);
                     // relax returns array of error_lines.
-                    mapData.map.error_lines = mapJsonData.error_lines;
-                    calculateLines(mapData.map.error_lines, mapData.map.layout, result); //TODO: why first apply to scope? then calculate??
+                    calculateLines(mapJsonData.error_lines, mapData.layout, result);
                     cfpLoadingBar.complete();
                 });
                 return result;
@@ -256,11 +334,11 @@
          * Calls api to create a new file from an already existing one n
          * @param mapData and points to remove disabledPoints
          */
-        function createNewFileFromAlreadyExistingOne(mapData, disabledPoints) {
+        function createNewFileFromAlreadyExistingOne(mapData, acd1, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: projection,
+                projection: acd1.projection,
                 disconnected: disabledPoints
             };
             console.log(disabledPoints);
@@ -270,11 +348,11 @@
             });
             console.log(disabledPoints);
 
-            api.set_disconnected_points(disable_additional_params, acd1File)
+            api.set_disconnected_points(disable_additional_params, acd1.acd1File)
                 .then(function (filename) {
                     var new_acd1 = filename.updated_acd1;
                     var relax_additional_params = {
-                        projection: projection
+                        projection: acd1.projection
                     };
                     api.relax_existing(relax_additional_params, new_acd1)
                         .then(function (filename) {
@@ -309,11 +387,11 @@
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
          */
-        function disableNodesWithouhtStress(mapData, disabledPoints) {
+        function disableNodesWithoutStress(mapData, acd1, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: projection,
+                projection: acd1.projection,
                 unmovable: disabledPoints
             };
             //console.log(disabledPoints);
@@ -323,9 +401,9 @@
             });
 
 
-            api.set_unmovable_points(disable_additional_params, acd1File)
+            api.set_unmovable_points(disable_additional_params, acd1.acd1File)
                 .then(function (filename) {
-                    acd1File = filename.updated_acd1;
+                    acd1.acd1File = filename.updated_acd1;
 
 
                     var output_json = filename.output_json;
@@ -348,11 +426,11 @@
          * Calls api to disable nodes from a specific  map
          * @param mapData
          */
-        function disableNodes(mapData, disabledPoints) {
+        function disableNodes(mapData, acd1, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: projection,
+                projection: acd1.projection,
                 disconnected: disabledPoints
             };
             //console.log(disabledPoints);
@@ -363,30 +441,30 @@
             //console.log(disabledPoints);
 
 
-            api.set_disconnected_points (disable_additional_params, acd1File)
+            api.set_disconnected_points (disable_additional_params, acd1.acd1File)
                 .then(function (filename) {
-                    acd1File = filename.updated_acd1;
+                    acd1.acd1File = filename.updated_acd1;
 
 
                     var output_json = filename.output_json;
 
                     var output_data = fs.readFileSync(output_json, 'utf8');
                     //mapData.stress = mapJsonData.stress;
-                    var map_additional_params = {projection: projection};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                    var map_additional_params = {projection: acd1.projection};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1.acd1File)
                         .then(function (filename) {
                             var output_json = filename;
                             fs.readFile(output_json, 'utf8', function (err, data) {
                                 var mapJsonData = JSON.parse(data);
                                 mapData.stress = mapJsonData.stress;
                                 mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.d3Nodes[i].x = layout[0];
-                                    mapData.d3Nodes[i].y = layout[1];
+                                    mapData.layout[i].x = layout[0];
+                                    mapData.layout[i].y = layout[1];
                                 });
 
                                 var newfile = "/home/idrissou/malikou.acd1";
                                 var additional_params = {format: 'acd1', filename: newfile};
-                                return api.export(acd1File, additional_params).then(function (filename) {
+                                return api.export(acd1.acd1File, additional_params).then(function (filename) {
                                     cfpLoadingBar.complete();
                                 }, function (reason) {
                                     return errorReason(reason);
@@ -405,8 +483,13 @@
 
         }
 
+
         /**
          * Calculate error and connection lines
+         * @param errorlines
+         * @param layout
+         * @param result
+         * @returns {boolean}
          */
         function calculateLines(errorlines, layout, result) {
             var positive,
