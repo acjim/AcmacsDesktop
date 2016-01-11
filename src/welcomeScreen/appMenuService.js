@@ -58,12 +58,19 @@
                     {
                         label: 'Map', items: [
                         {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'o'},
+                        {type: 'separator'},
+                        {
+                            label: 'Zoom', items: [
+                            {label: 'Zoom In', click: 'map.zoomIn', modifiers: osModifier, key: '+'},
+                            {label: 'Zoom Out', click: 'map.zoomOut', modifiers: osModifier, key: '-'},
+                            {type: 'separator'},
+                            {label: 'Normal Zoom', click: 'map.zoomInitial', modifiers: osModifier, key: '0'}
+                        ]},
                         {
                             label: 'Tools', items: [
                             {label: 'Selection Tool', click: 'map.selectionTool', modifiers: osModifier + 'alt', key: 'v'},
                             {label: 'Movement Tool', click: 'map.movementTool', modifiers: osModifier + 'alt', key: 'm'}
-                        ]
-                        },
+                        ]},
                         {type: 'separator'},
                         {label: 'Toggle Error Lines', click: 'map.showErrorLines'},
                         {label: 'Toggle Connection Lines', click: 'map.showConnectionLines'},
@@ -73,7 +80,8 @@
                     {
                         label: 'View', items: [
                         {label: 'Toggle Toolbar', click: 'layout.toolbar'},
-                        {label: 'Toggle Table', click: 'layout.table'}
+                        {label: 'Toggle Table', click: 'layout.table'},
+                        {type: 'separator'}
                     ]
                     },
                     {
