@@ -39,10 +39,9 @@
             NEW_MAP: 9,
             ZOOM_IN: 14,
             ZOOM_OUT: 15,
-            //// GROUPS ////
             MAP_TOOLS: 10,
             DISABLE_MAP2:13,
-            NEW_MAP_FROM_OPPOSITE: 14,
+            NEW_MAP_FROM_OPPOSITE: 16
 
         };
     }

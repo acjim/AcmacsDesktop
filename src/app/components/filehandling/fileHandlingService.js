@@ -63,13 +63,13 @@
             // Get info message
             var rx = /INFO(.*)\[acmacs/g;
             var warnMsg = rx.exec(reason);
-            if (warnMsg[1]) {
+            if (!_.isArray(warnMsg) && warnMsg[1]) {
                 console.warn(warnMsg[1]);
             }
             // Get error message
             rx = /ERROR(.*)\n/g;
             var arr = rx.exec(reason);
-            if (arr[1]) {
+            if (!_.isArray(arr) && arr[1]) {
                 console.error(arr[1]);
             }
             console.error(reason);
