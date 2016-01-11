@@ -125,7 +125,6 @@
          *
          */
         $scope.$on('newMap.create2', function () {
-             alert("hello");
             if ($rootScope.newMapArrayflag == true) {
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
             }

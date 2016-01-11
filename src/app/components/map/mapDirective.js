@@ -691,8 +691,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Watches to Create  a new Map from Selected Nodes
              */
             $rootScope.$on('newMap.create2', function() {
-                console.log("scope data");
-                console.log(scope.data);
                 GetNewDataFromCurrentMap(scope.data,1);
             });
 
