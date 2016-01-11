@@ -52,12 +52,10 @@ angular.module('acjim')
         }
 
         function handleFileOpen(filename) {
-            if ($scope.tableData !== null) {
-                if (!_.isEmpty($scope.tableData)) {
-                    //open file in new window
-                    nwService.parentWindow.emit("openFileInNewWindow", filename);
-                    return;
-                }
+            if (!_.isEmpty($scope.tableData)) {
+                //open file in new window
+                nwService.parentWindow.emit("openFileInNewWindow", filename);
+                return;
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
@@ -104,9 +102,14 @@ angular.module('acjim')
             nwService.window.reload();
         });
 
-        //Close app TODO: check if this is needed or hooked up do window.on('close') event
-        $scope.$on('exit-app', function () {
+        // Close window
+        $scope.$on('close-window', function () {
             nwService.gui.Window.get().close();
+        });
+
+        // Close app
+        $scope.$on('exit-app', function () {
+            nwService.gui.App.quit();
         });
 
         nwService.window.on('close', function (event) {
