@@ -677,9 +677,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             });
 
             /**
-             * Watches to Create  a new Map from Already Existing Map
+             * Watches to Create  a new Map from Non Selected Nodes
              */
             $rootScope.$on('newMap.create', function() {
+                DisableSelectedElements();
+            });
+
+            /**
+             * Watches to Create  a new Map from Selected Nodes
+             */
+            $rootScope.$on('newMap.create2', function() {
                 DisableSelectedElements();
             });
 
