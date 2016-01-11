@@ -34,7 +34,7 @@
          */
 
         $scope.$on('map.reOptimize', function () {
-            fileHandling.reOptimize($scope.d3Data, $rootScope.pointsMoved,$rootScope.disableArray).then(function (result) {
+            fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();

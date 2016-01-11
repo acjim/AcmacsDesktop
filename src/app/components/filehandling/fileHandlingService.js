@@ -194,24 +194,17 @@
          * @param acd1
          * @param pointsMoved
          */
-        function reOptimize(mapData, pointsMoved, disabledArray) {
+        function reOptimize(mapData, pointsMoved) {
             cfpLoadingBar.start();
 
             // check if a node is moved
-            if (pointsMoved === true)
-            {
+            if (pointsMoved === true) {
                 var list = [];
-                mapData.d3Nodes.forEach(function (layout, i) {
-                    var counter= 0;
-                    var index = disabledArray.indexOf(layout.id);
-                    if (index == -1) {
-                        list[counter] = [
-                            layout.x,
-                            layout.y
-                        ];
-                        counter++;
-
-                    }
+                mapData.layout.forEach(function (layout, i) {
+                    list[i] = [
+                        layout.x,
+                        layout.y
+                    ];
                 });
                 var additional_params = {
                     coordinates: list,
