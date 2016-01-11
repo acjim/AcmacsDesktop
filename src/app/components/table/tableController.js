@@ -23,7 +23,7 @@
 
 var app = angular.module('acjim.table', []);
 
-app.controller('tableCtrl',  ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope) {
+app.controller('tableCtrl',  ['$rootScope', '$scope', function ($rootScope, $scope) {
 }])
 
     .directive('acTable', function () {
