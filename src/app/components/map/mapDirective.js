@@ -49,6 +49,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 gridTranslate = [0,0],
                 gridScale = 1,
                 initialScale = 1,
+                initialTranslate = [0, 0],
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
@@ -103,7 +104,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 boxGroup = redrawGrid(boxGroup, boxSize, width / initialScale, height / initialScale);
 
                 manageMapTools();
-
+                applyZoom();
             }
 
             /**
@@ -402,8 +403,40 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 minimalScaleValue = scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
 
                 // translate so that it's in the center of the window
-                translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
-                translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
+                initialTranslate[0] = translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
+                initialTranslate[1] = translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
+            }
+
+            /**
+             * Handles zoom clicks over the toolbar buttons
+             * @returns {boolean}
+             */
+            function zoomClick(direction) {
+                svg.call(zoom.event); // https://github.com/mbostock/d3/issues/2387
+
+                // Record the coordinates (in data space) of the center (in screen space).
+                var center0 = [width / 2, height / 2],
+                    translate0 = zoom.translate(),
+                    coordinates0 = coordinates(center0);
+
+                zoom.scale(zoom.scale() * Math.pow(2, +direction));
+
+                // Translate back to the center.
+                var center1 = point(coordinates0);
+                zoom.translate([translate0[0] + center0[0] - center1[0], translate0[1] + center0[1] - center1[1]]);
+                svg.transition().duration(200).call(zoom.event);
+
+                applyZoom();
+            }
+
+            function coordinates(point) {
+                var scale = zoom.scale(), translate = zoom.translate();
+                return [(point[0] - translate[0]) / scale, (point[1] - translate[1]) / scale];
+            }
+
+            function point(coordinates) {
+                var scale = zoom.scale(), translate = zoom.translate();
+                return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
             }
 
             /**
@@ -412,16 +445,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function applyZoom() {
 
-                // Move the grid
-                if(d3.event) {
-                    gridTranslate = d3.event.translate[0] % (boxSize * d3.event.scale) + "," + d3.event.translate[1] % (boxSize * d3.event.scale);
-                    gridScale = d3.event.scale;
-                }
+                translate = zoom.translate();
+                scale = gridScale = zoom.scale();
+                gridTranslate = translate[0] % (boxSize * gridScale) + "," + translate[1] % (boxSize * gridScale);
+
                 boxGroup.attr("transform",
                     "translate(" + gridTranslate + ")scale(" + gridScale + ")");
-
-                translate = zoom.translate();
-                scale = zoom.scale();
 
                 // Move the graph
                 nodeGroup.attr("transform", function (d) {
@@ -501,7 +530,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 return d3.select(iElement[0])[0][0].offsetHeight;
             }
 
-
+            /**
+             * Handles keydown events
+             */
             function keydown() {
                 if (!d3.event.metaKey) switch (d3.event.keyCode) {
                     case 38: nudge( 0, -1); break; // UP
@@ -512,6 +543,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 shiftKey = d3.event.shiftKey || d3.event.metaKey;
             }
 
+            /**
+             * Handles keyup events
+             */
             function keyup() {
                 shiftKey = d3.event.shiftKey || d3.event.metaKey;
             }
@@ -683,6 +717,21 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 DisableSelectedElements();
             });
 
+            /**
+             * Handles zoom events
+             */
+            $rootScope.$on('map.zoomIn', function() {
+                zoomClick(+1);
+            });
+            $rootScope.$on('map.zoomOut', function() {
+                zoomClick(-1);
+            });
+            $rootScope.$on('map.zoomInitial', function() {
+                svg.call(zoom.event); // https://github.com/mbostock/d3/issues/2387
+                zoom.scale(initialScale);
+                zoom.translate(initialTranslate);
+                svg.transition().duration(200).call(zoom.event);
+            });
 
             /**
              * Listens for event to get add/remove node labels
