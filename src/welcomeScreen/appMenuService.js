@@ -58,6 +58,10 @@
                     {
                         label: 'Map', items: [
                         {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'o'},
+                        {type: 'separator'},
+                        {label: 'Zoom In', click: 'map.zoom'},
+                        {label: 'Zoom Out', click: 'map.zoom'},
+                        {type: 'separator'},
                         {
                             label: 'Tools', items: [
                             {label: 'Selection Tool', click: 'map.selectionTool', modifiers: osModifier + 'alt', key: 'v'},
@@ -73,7 +77,8 @@
                     {
                         label: 'View', items: [
                         {label: 'Toggle Toolbar', click: 'layout.toolbar'},
-                        {label: 'Toggle Table', click: 'layout.table'}
+                        {label: 'Toggle Table', click: 'layout.table'},
+                        {type: 'separator'}
                     ]
                     },
                     {
