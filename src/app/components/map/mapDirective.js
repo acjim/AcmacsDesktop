@@ -49,6 +49,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 gridTranslate = [0,0],
                 gridScale = 1,
                 initialScale = 1,
+                initialTranslate = [0, 0],
                 brush = null,
                 dataExtentX = null,
                 dataExtentY = null,
@@ -402,15 +403,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 minimalScaleValue = scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
 
                 // translate so that it's in the center of the window
-                translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
-                translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
+                initialTranslate[0] = translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
+                initialTranslate[1] = translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
             }
 
             /**
              * Handles zoom clicks over the toolbar buttons
              * @returns {boolean}
              */
-            function zoomClick(id) {
+            function zoomClick(direction) {
                 svg.call(zoom.event); // https://github.com/mbostock/d3/issues/2387
 
                 // Record the coordinates (in data space) of the center (in screen space).
@@ -418,7 +419,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     translate0 = zoom.translate(),
                     coordinates0 = coordinates(center0);
 
-                var direction = (id === toolbarItems.ZOOM_IN) ? +1 : -1;
                 zoom.scale(zoom.scale() * Math.pow(2, +direction));
 
                 // Translate back to the center.
@@ -717,9 +717,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 DisableSelectedElements();
             });
 
-
-            $rootScope.$on('map.zoom', function(event, id) {
-                zoomClick(id);
+            /**
+             * Handles zoom events
+             */
+            $rootScope.$on('map.zoomIn', function() {
+                zoomClick(+1);
+            });
+            $rootScope.$on('map.zoomOut', function() {
+                zoomClick(-1);
+            });
+            $rootScope.$on('map.zoomInitial', function() {
+                svg.call(zoom.event); // https://github.com/mbostock/d3/issues/2387
+                zoom.scale(initialScale);
+                zoom.translate(initialTranslate);
+                svg.transition().duration(200).call(zoom.event);
             });
 
             /**

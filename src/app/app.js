@@ -79,7 +79,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'glyphicon glyphicon-zoom-in',
                     togglable: false,
                     callback: function () {
-                        $rootScope.$emit('map.zoom', this.id);
+                        $rootScope.$emit('map.zoomIn');
                     }
                 },
                 {
@@ -88,7 +88,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'glyphicon glyphicon-zoom-out',
                     togglable: false,
                     callback: function () {
-                        $rootScope.$emit('map.zoom', this.id);
+                        $rootScope.$emit('map.zoomOut');
                     }
                 }
             ]
