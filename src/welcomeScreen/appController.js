@@ -88,7 +88,8 @@
 
         });
 
-        win.on('close', function() {
+        win.on('close', function(windowID) {
+            cleanWindowData(config.store.path);
             gui.App.quit();
         });
 
@@ -109,7 +110,9 @@
                     }
                 }
             }
-            fs.rmdirSync(dirPath);
+            if(dirPath !== config.store.path) {
+                fs.rmdirSync(dirPath);
+            }
         } catch (e) {
             console.log(e);
         }
