@@ -133,7 +133,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             }
         },{
             id: toolbarItems.NEW_MAP_FROM_OPPOSITE,
-            caption: 'Create New Map',
+            caption: 'Create New Map From Selected Elements',
             icon: 'glyphicon glyphicon-duplicate',
             callback: function () {
                 $rootScope.$broadcast('newMap.create2');

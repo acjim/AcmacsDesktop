@@ -629,7 +629,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns a Data Array with the new Map Data
              */
 
-                function GetNewDataFromCurrentMap(mapDataPoints, index) {
+                function GetNewDataFromCurrentMap(mapDataPoints, indexValue) {
+
                     $rootScope.newMapArray=[];
                     $rootScope.newMapArrayflag=false;
                     var mapArray =[];
@@ -647,16 +648,17 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     if (flag===0){
                         alert("Please Select at least One Node Before Creating a New Map");
                     }
-                    else{
+                    else {
                         // console.log($rootScope.newMapArray.length);
                         //console.log(mapArray.length);
-                        for(var counter= 0; counter< mapArray.length; counter++){
+                        for (var counter = 0; counter < mapArray.length; counter++) {
                             var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
                             $rootScope.newMapArray.splice(index, 1);
                         }
                         //console.log(mapArray);
-                        if(index==1)
-                        $rootScope.newMapArray= mapArray;
+                        if (indexValue === 1) {
+                            $rootScope.newMapArray = mapArray;
+                        }
                         $rootScope.newMapArrayflag= true;
                     }
 
