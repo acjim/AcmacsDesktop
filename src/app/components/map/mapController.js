@@ -24,9 +24,9 @@
     'use strict';
 
     angular.module('acjim.map',[])
-        .controller('mapCtrl', ['$rootScope', '$scope', 'fileHandling', 'toolbar', 'toolbarItems', mapCtrl]);
+        .controller('mapCtrl', ['$rootScope', '$scope', '$timeout', 'fileHandling', 'toolbar', 'toolbarItems', mapCtrl]);
 
-    function mapCtrl ($rootScope, $scope, fileHandling, toolbar, toolbarItems) {
+    function mapCtrl ($rootScope, $scope, $timeout, fileHandling, toolbar, toolbarItems) {
 
 
         /**
@@ -78,6 +78,21 @@
             getErrorConnectionLines();
         });
 
+        /**
+         * Listens for nwjs menu item clicks and switches map tools accordingly
+         */
+        $rootScope.$on('map.selectionTool', function () {
+            $timeout(function() {
+                var item = toolbar.getItemByID(toolbarItems.SELECTION);
+                item.click();
+            });
+        });
+        $rootScope.$on('map.movementTool', function () {
+            $timeout(function() {
+                var item = toolbar.getItemByID(toolbarItems.MOVEMENT);
+                item.click();
+            });
+        });
 
         /** Watches for the Disable button with sress value
          *

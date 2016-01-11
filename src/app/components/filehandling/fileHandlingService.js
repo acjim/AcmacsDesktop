@@ -55,16 +55,38 @@
         };
 
         /**
-         * Displays the error.
+         * Displays errors that occurred
          * @param reason
          * @returns {Promise}
          */
         function errorReason (reason) {
             cfpLoadingBar.complete();
-            // TODO: set flash message based on environment
-            var error_message = 'Unable to open the file, file import failed!';
-            Flash.create('danger', error_message+"<br>\n"+reason);
-            console.log(reason);
+
+            // Get info message
+            var rx = /INFO(.*)\[acmacs/g;
+            var warnMsg = rx.exec(reason);
+            if (warnMsg[1]) {
+                console.warn(warnMsg[1]);
+            }
+            // Get error message
+            rx = /ERROR(.*)\n/g;
+            var arr = rx.exec(reason);
+            if (arr[1]) {
+                console.error(arr[1]);
+            }
+            console.error(reason);
+
+            //Build flash message
+            var error_message = "<strong>Oops, that didn't go as expected!</strong></br>";
+            if (warnMsg[1]) {
+                error_message += "Here is what could have gone wrong:</br>";
+                error_message += warnMsg[1];
+            } else {
+                error_message += "Please check the log for errors or contact a developer.";
+            }
+
+            Flash.create('danger', error_message);
+            Flash.pause();
             return $q.reject(reason);
         }
 
@@ -169,6 +191,8 @@
         /**
          * Calls api to re-optimize (relax) the map
          * @param mapData
+         * @param acd1
+         * @param pointsMoved
          */
         function reOptimize(mapData, pointsMoved, disabledArray) {
             cfpLoadingBar.start();
@@ -432,6 +456,7 @@
                     return errorReason(reason);
                 });
         }
+
         /**
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
@@ -482,19 +507,40 @@
             api.set_disconnected_points (disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var relax_additional_params = {
-                        projection: projection
-                    };
-                    api.relax_existing(relax_additional_params, acd1File)
+
+
+                    var output_json = filename.output_json;
+
+                    var output_data = fs.readFileSync(output_json, 'utf8');
+                    //mapData.stress = mapJsonData.stress;
+                    var map_additional_params = {projection: projection};
+                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
-                            acd1File = filename.updated_acd1;
-                            cfpLoadingBar.complete();
+                            var output_json = filename;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
+                                var mapJsonData = JSON.parse(data);
+                                mapData.stress = mapJsonData.stress;
+                                mapJsonData.map.layout.forEach(function (layout, i) {
+                                    mapData.layout[i].x = layout[0];
+                                    mapData.layout[i].y = layout[1];
+                                });
+
+                                var newfile = "/home/idrissou/malikou.acd1";
+                                var additional_params = {format: 'acd1', filename: newfile};
+                                return api.export(acd1File, additional_params).then(function (filename) {
+                                    cfpLoadingBar.complete();
+                                }, function (reason) {
+                                    return errorReason(reason);
+                                });
+
+                            });
                         }, function (reason) {
-                            console.log(reason);
                             return errorReason(reason);
                         });
+
                 }, function (reason) {
                     console.log(reason);
+
                     return errorReason(reason);
                 });
 
