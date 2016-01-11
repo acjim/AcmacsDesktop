@@ -131,8 +131,14 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('newMap.create');
             }
+        },{
+            id: toolbarItems.NEW_MAP_FROM_OPPOSITE,
+            caption: 'Create New Map From Non Selected Elements',
+            icon: 'glyphicon glyphicon-duplicate',
+            callback: function () {
+                $rootScope.$broadcast('newMap.create2');
+            }
         }
-
     ]);
 
 });
