@@ -62,23 +62,26 @@
 
             // Get info message
             var rx = /INFO(.*)\[acmacs/g;
-            var warnMsg = rx.exec(reason);
-            if (warnMsg[1]) {
-                console.warn(warnMsg[1]);
+            var warnMsg = null;
+            var arr = rx.exec(reason);
+            if (_.isArray(arr) && arr[1]) {
+                    warnMsg = arr[1];
+                    console.warn('INFO:  ' + warnMsg);
             }
+
             // Get error message
             rx = /ERROR(.*)\n/g;
-            var arr = rx.exec(reason);
-            if (arr[1]) {
-                console.error(arr[1]);
+            arr = rx.exec(reason);
+            if (_.isArray(arr) && arr[1]) {
+                    console.error('ERROR:  ' + arr[1]);
             }
             console.error(reason);
 
             //Build flash message
             var error_message = "<strong>Oops, that didn't go as expected!</strong></br>";
-            if (warnMsg[1]) {
+            if (warnMsg) {
                 error_message += "Here is what could have gone wrong:</br>";
-                error_message += warnMsg[1];
+                error_message += warnMsg;
             } else {
                 error_message += "Please check the log for errors or contact a developer.";
             }
