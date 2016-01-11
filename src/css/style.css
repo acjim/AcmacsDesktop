@@ -37,11 +37,7 @@ html {
   background-color: #F0F0F0;
   border-bottom: 1px solid #EEE;
   padding: 10px 10px 10px;
-  width: 100%;
-}
-
-.main {
-  position: relative;
+  overflow: hidden;
 }
 
 .flash-msg {
@@ -50,14 +46,30 @@ html {
 }
 
 .fullsize {
-    display: block;
-    width: 100%;
-    height: 100%;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .ui-layout-column > .ui-splitbar {
   background: #F0F0F0;
   border-left: 1px solid #EEE;
+}
+
+.table {
+  font-size: 9pt;
+  margin: 0px;
+}
+
+.overlay {
+  background-color: #F0F0F0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 100;
 }
 
 /*********** Map styles **************/

@@ -25,33 +25,16 @@
 var app = angular.module('acjim.map');
 
 /*
- * Wrapper directive for the d3 map
- */
-app.directive('acMap', function() {
-    return {
-        restrict: 'A',
-        transclude: true,
-        scope: {},
-        bindToController: {
-            map: '=',
-            acd1: '='
-        },
-        controller: 'mapCtrl',
-        controllerAs: 'mapData',
-        template: '<p class="stressLabel">Stress: {{(d3Data.stress || "Undefined Value") | number: 3}}</p><div d3-map class="fullsize" data="d3Data" lable="title"></div>'
-    };
-});
-
-/*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootScope, toolbar, toolbarItems) {
+app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', function($rootScope, $window, $timeout, toolbar, toolbarItems) {
     return {
         restrict: 'A',
         scope: {
-            data: "=",
-            label: "@"
+            data: "="
         },
+        controller: 'mapCtrl',
+        template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>',
         link: function(scope, iElement) {
 
             var svg = null,
@@ -67,7 +50,6 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 gridScale = 1,
                 initialScale = 1,
                 brush = null,
-                visibility = 0,
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
@@ -138,11 +120,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 renderWithoutData();
 
                 // Enter
-                nodeGroup = nodeGroup.data(data.d3Nodes);
+                nodeGroup = nodeGroup.data(data.layout);
 
                 nodeGroup.enter().append("path")
-                    .attr("class", "point")
-                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
+                    .attr("class", "point");
+
+                //Update
+                nodeGroup
+                    .attr("transform", function(d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                    })
                     .attr("fill", function(d){
                         // color as string
                         if(_.isArray(d.style.fill_color )) {
@@ -169,19 +156,16 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                             else if (d.style.shape === "box") { return "square"; }
                         }));
 
-
-
-
-                // mouse event handlers
+                // Event handlers
                 nodeGroup.on("mousedown", function(d) {
-                    if (!d.selected) { // Don't deselect on shift-drag.
-                        if (!shiftKey) {
-                            nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
-                        } else {
-                            d3.select(this).classed("selected", d.selected = true);
+                        if (!d.selected) { // Don't deselect on shift-drag.
+                            if (!shiftKey) {
+                                nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
+                            } else {
+                                d3.select(this).classed("selected", d.selected = true);
+                            }
                         }
-                    }
-                })
+                    })
                     .on("mouseup", function(d) {
                         if (d.selected && shiftKey) {
                             d3.select(this).classed("selected", d.selected = false);
@@ -195,16 +179,19 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                         .on("drag", function() {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                )
+                        .on("dragend", function() {
+                            if(scope.showErrorLines || scope.showConnectionLines){
+                                scope.$emit('map.nudgeTriggered');
+                            }
+                        })
+                    )
                     .attr("opacity", (function(d) { return d.opacity; }));
 
-
-                if(data.d3Errorlines && data.d3Connectionlines && data.d3Errorlines.length > 1 && data.d3Connectionlines.length > 1){
-                    renderErrorlines(data.d3Errorlines, data.d3Connectionlines);
-                }
+                // Exit
                 nodeGroup.exit().remove();
 
-                labelsGroup=labelsGroup.data(data.d3Nodes);
+
+                labelsGroup=labelsGroup.data(data.layout);
                 labelsGroup.enter().append("text")
                     .attr("class", "text")
                     .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
@@ -217,46 +204,28 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .text(function(d) {return d.name; });
                 labelsGroup.exit().remove();
 
-            }
 
-
-            /**
-             * Renders the additional layers for connection and error lines
-             * @param errorline_data, connectionline_data
-             */
-            function renderErrorlines(errorline_data, connectionline_data){
-
-                // checks if the map is drawn the for the first time, adds svg, groups and zoom if necessary
-                if (!svg) {
-                    initializeSVG();
-                    renderWithData(data);
-                }
-
-                // TODO: disable selecting/moving nodes when lines are displayed? Or figure out way to move the respective lines..
-                errorlineGroup = errorlineGroup.data(errorline_data);
+                errorlineGroup = errorlineGroup.data(data.d3ErrorLines);
                 errorlineGroup.enter().append("line")
                     .attr("class", "errorline")
                     .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }))
-                    //.attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }))
                     .attr("opacity", (function(d) { return d.opacity; }));
+                errorlineGroup.exit().remove();
 
-                connectionlineGroup = connectionlineGroup.data(connectionline_data);
+                connectionlineGroup = connectionlineGroup.data(data.d3ConnectionLines);
                 connectionlineGroup.enter().append("line")
                     .attr("class", "connectionline")
                     .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }))
-                    // .attr("transform", function(d) { return "translate(" + xScale(d.x1) + "," + yScale(d.y1) + ")"; })
                     .attr("stroke", (function(d) { return d.stroke; } ))
                     .attr("stroke-width", (function(d) { return d.width; }));
-
-                errorlineGroup.exit().remove();
                 connectionlineGroup.exit().remove();
 
             }
@@ -329,8 +298,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                dataExtentX = d3.extent(scope.data.d3Nodes, function(d) { return d.x;});
-                dataExtentY = d3.extent(scope.data.d3Nodes, function(d) { return d.y;});
+                dataExtentX = d3.extent(scope.data.layout, function(d) { return d.x;});
+                dataExtentY = d3.extent(scope.data.layout, function(d) { return d.y;});
 
                 centerNodes();
 
@@ -346,12 +315,10 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
                 connectionlineGroup = elementGroup.append("g")
                     .attr("class", "connectionline")
-                    .attr("id", "connectionlineLayer")
                     .selectAll(".connectionline");
 
                 errorlineGroup = elementGroup.append("g")
                     .attr("class", "errorline")
-                    .attr("id", "errorlineLayer")
                     .selectAll(".errorline");
 
                 nodeGroup = elementGroup.append("g")
@@ -361,10 +328,8 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     .attr("class", "text")
                     .selectAll(".text");
 
+                scope.$emit('map.loaded');
 
-                //better way to set this hidden upon start?
-                $('#errorlineLayer').css({'visibility': 'hidden'});
-                $('#connectionlineLayer').css({'visibility': 'hidden'});
             }
 
             /**
@@ -413,11 +378,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                     d3.event.preventDefault();
                 }
 
-                $rootScope.pointsMoved = true;
-
-                if($rootScope.connectionlinesShown || $rootScope.errorlinesShown){
-                    $rootScope.$emit('api.nudgeTriggeredErrorlines');
-                }
+                scope.pointsMoved = true;
             }
 
             /**
@@ -465,12 +426,14 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 labelsGroup.attr("transform", function (d) {
                     return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
                 });
-                errorlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
+                errorlineGroup
+                    .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }));
 
-                connectionlineGroup.attr("x1",(function(d) { return xScale(d.x1); }))
+                connectionlineGroup
+                    .attr("x1",(function(d) { return xScale(d.x1); }))
                     .attr("y1",(function(d) { return yScale(d.y1); }))
                     .attr("x2",(function(d) { return xScale(d.x2); }))
                     .attr("y2",(function(d) { return yScale(d.y2); }));
@@ -633,14 +596,11 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
              * Returns the node labels of nodes or removes them depending on the case
              * @returns none
              */
-            function GetNodeLabels() {
-                if (visibility == 0) {
+            function toggleNodeLabels(showLabels) {
+                if (showLabels) {
                     d3.selectAll(".text").style("visibility", "visible");
-                    visibility= 1;
-                }
-                else {
+                } else {
                     d3.selectAll(".text").style("visibility", "hidden");
-                    visibility= 0;
                 }
             }
 
@@ -653,7 +613,7 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 $rootScope.newMapArray=[];
                 $rootScope.newMapArrayflag=false;
                 var mapArray =[];
-                var length= mapDataPoints.d3Nodes.length;
+                var length= mapDataPoints.layout.length;
                 for(var counter= 0; counter < length;counter++){
                     mapArray.push(counter);
                     $rootScope.newMapArray.push(counter);
@@ -704,39 +664,18 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
                 DisableSelectedElements();
             });
 
+
             /**
              * Listens for event to get add/remove node labels
              */
-
-            $rootScope.$on('map.showLabels', function() {
-                GetNodeLabels();
+            $rootScope.$on('map.showLabels', function(event, itemID) {
+                $timeout(function() {
+                    var item = toolbar.getItemByID(toolbarItems.SHOW_LABELS);
+                    if (!itemID) { item.active = !item.active; }
+                    toggleNodeLabels(item.active);
+                });
             });
 
-            /**
-             * Watches for errorline button to show/hide layer and set flag
-             */
-            $rootScope.$on('api.geterrorlines', function(){
-                if ($('#errorlineLayer').css('visibility') === 'hidden'){
-                    $('#errorlineLayer').css({'visibility': 'visible'});
-                    $rootScope.errorlinesShown = true;
-                }else{
-                    $('#errorlineLayer').css({'visibility':'hidden'});
-                    $rootScope.errorlinesShown = false;
-                }
-            });
-
-            /**
-             * Watches for connectionline button to show/hide layer and set flag
-             */
-            $rootScope.$on('api.getconnectionlines', function(){
-                if ($('#connectionlineLayer').css('visibility') === 'hidden'){
-                    $('#connectionlineLayer').css({'visibility': 'visible'});
-                    $rootScope.connectionlinesShown = true;
-                }else{
-                    $('#connectionlineLayer').css({'visibility':'hidden'});
-                    $rootScope.connectionlinesShown = false;
-                }
-            });
 
             /**
              * Watches for a tool change
@@ -745,22 +684,20 @@ app.directive('d3Map', ['$rootScope', 'toolbar', 'toolbarItems', function($rootS
 
 
             /**
-             * Listens for the window resize event and re-renders the map
+             * Listens for the container/window resize events and re-renders the map
              */
-            scope.$on('ngWindow.resize', renderWithoutData);
-
-
-            /**
-             * Listens for container resize event and re-renders the map
-             */
-            scope.$on('container-resized', renderWithoutData);
-
+            scope.$on('ui.layout.resize', renderWithoutData);
+            scope.$on('ui.layout.toggle', renderWithoutData);
+            var w = angular.element($window);
+            w.bind('resize', renderWithoutData);
 
             /**
              *  Watch for data changes and re-render
              */
             scope.$watch('data', function(newVals) {
-                renderWithData(newVals);
+                if (newVals) {
+                    renderWithData(newVals);
+                }
             }, true);
         }
     };

@@ -33,7 +33,6 @@ var app = angular.module('acjim', [
     'acjim.table',
     'acjim.toolbar',
     'acjim.appMenu',
-    'ngHtmlWindow',
     'angular-loading-bar',
     'ngAnimate',
     'DWand.nw-fileDialog'
@@ -80,7 +79,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-error-line',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('api.geterrorlines');
+                        $rootScope.$emit('map.showErrorLines', this.id);
                     }
                 },
                 {
@@ -89,18 +88,18 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
                     icon: 'icon acmacs-connection',
                     togglable: true,
                     callback: function () {
-                        $rootScope.$emit('api.getconnectionlines');
+                        $rootScope.$emit('map.showConnectionLines', this.id);
                     }
                 }
             ]
         },
         {
-            id: toolbarItems.LABEL_NODES,
+            id: toolbarItems.SHOW_LABELS,
             caption: 'Show Labels',
             icon: 'icon acmacs-label',
             togglable: true,
             callback: function () {
-                $rootScope.$emit('map.showLabels');
+                $rootScope.$emit('map.showLabels', this.id);
             }
         },
         {
@@ -108,7 +107,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             caption: 'Reoptimize',
             icon: 'icon acmacs-optimize',
             callback: function () {
-                $rootScope.$broadcast('api.reoptimize');
+                $rootScope.$broadcast('map.reOptimize');
             }
         },{
             id: toolbarItems.DISABLE_MAP2,
