@@ -274,7 +274,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .on("touchstart.brush", null)
                     .on("touchmove.brush", null)
                     .on("touchend.brush", null);
-                brushGroup.select('.background').style('cursor', '');
+                brushGroup.select('.background').style('cursor', 'move');
 
                 //Enable zoom
                 svg.call(zoom);
@@ -288,6 +288,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 if (svg) {
                     return;
                 }
+
+                d3.select("body")
+                    .on("keydown", keydown)
+                    .on("keyup", keyup);
 
                 // Initialize SVG element
                 svg = d3.select(iElement[0])
@@ -495,6 +499,21 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function getContainerHeight() {
                 return d3.select(iElement[0])[0][0].offsetHeight;
+            }
+
+
+            function keydown() {
+                if (!d3.event.metaKey) switch (d3.event.keyCode) {
+                    case 38: nudge( 0, -1); break; // UP
+                    case 40: nudge( 0, +1); break; // DOWN
+                    case 37: nudge(-1,  0); break; // LEFT
+                    case 39: nudge(+1,  0); break; // RIGHT
+                }
+                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+            }
+
+            function keyup() {
+                shiftKey = d3.event.shiftKey || d3.event.metaKey;
             }
 
             /** Gets All D3 Selected Elements Without Taking into account sress Value. This function should be called by the button responsible for Disabling nodes without taking

@@ -26,19 +26,20 @@
                         items: [
                         {label: 'New...', tooltip: 'Create a new file', click: 'new-file', modifiers: osModifier, key: 'n', enabled: false},
                         {label: 'Open...', tooltip: 'Open a file', click: 'open-file', modifiers: osModifier, key: 'o'},
-                        {label: 'Close', tooltip: 'Close a file', click: 'close-file', modifiers: osModifier, key: 'w', enabled: false},
+                        {label: 'Close Window', tooltip: 'Close Window', click: 'close-window', modifiers: osModifier, key: 'w'},
                         //{label: 'Close All', tooltip: 'Close all currently open files', click: 'close-all', modifiers: osModifier + 'shift', key: 'w' },
                         {type: 'separator'},
                         {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's', enabled: false},
                         {
-                            label: 'Export...',
+                            label: 'Export file as...',
                             tooltip: 'Export file as...',
                             click: 'save-as',
                             modifiers: osModifier + 'shift',
                             key: 's',
                             enabled: true
                         },
-                        {label: 'Exit', tooltip: 'Quit Application', click: 'exit-app'} //TODO: See broadcast exit-app
+                        {type: 'separator'},
+                        {label: 'Exit Application', tooltip: 'Quit Application', click: 'exit-app'}
                     ]
                     },
                     {
@@ -56,7 +57,14 @@
                     },
                     {
                         label: 'Map', items: [
-                        {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'r'},
+                        {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'o'},
+                        {
+                            label: 'Tools', items: [
+                            {label: 'Selection Tool', click: 'map.selectionTool', modifiers: osModifier + 'alt', key: 'v'},
+                            {label: 'Movement Tool', click: 'map.movementTool', modifiers: osModifier + 'alt', key: 'm'}
+                        ]
+                        },
+                        {type: 'separator'},
                         {label: 'Toggle Error Lines', click: 'map.showErrorLines'},
                         {label: 'Toggle Connection Lines', click: 'map.showConnectionLines'},
                         {label: 'Toggle Labels', click: 'map.showLabels'}
@@ -71,7 +79,7 @@
                     {
                         label: 'Debug', items: [
                         {label: 'Show Developer Tools', click: 'open-debug', modifiers: osModifier + 'alt', key: 'i'},
-                        {label: 'Reload Application', click: 'reload-app', key: 'r'}
+                        {label: 'Reload Application', click: 'reload-app', modifiers: osModifier, key: 'r'}
                     ]
                     }
                 ]
