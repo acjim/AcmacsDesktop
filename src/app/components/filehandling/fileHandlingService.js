@@ -482,7 +482,17 @@
             api.set_disconnected_points (disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    cfpLoadingBar.complete();
+                    var relax_additional_params = {
+                        projection: projection
+                    };
+                    api.relax_existing(relax_additional_params, acd1File)
+                        .then(function (filename) {
+                            acd1File = filename.updated_acd1;
+                            cfpLoadingBar.complete();
+                        }, function (reason) {
+                            console.log(reason);
+                            return errorReason(reason);
+                        });
                 }, function (reason) {
                     console.log(reason);
                     return errorReason(reason);
