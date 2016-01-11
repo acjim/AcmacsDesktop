@@ -42,7 +42,13 @@ html {
 
 .flash-msg {
   z-index: 3000;
+  top: 20px;
   position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  width: 50%;
 }
 
 .fullsize {
