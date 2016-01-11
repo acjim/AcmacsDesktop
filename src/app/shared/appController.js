@@ -28,13 +28,8 @@ angular.module('acjim')
 
     function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
 
-        $scope.openMaps = [];
-        $scope.tableData = null;
 
-        // Window layout variables
-        var position = 0;
-
-        /******************** Events *******************/
+        /******************** File Handling *******************/
 
         $scope.$on('open-file', function () {
             fileDialog.openFile(
@@ -47,8 +42,8 @@ angular.module('acjim')
         $scope.$on('save-as', function () {
             fileDialog.saveAs(
                 handleFileSaveAs,
-                'NewChart.acd1',
-                '.acd1,.lispmds','save'
+                'NewChart.save',
+                "'.acd1','.lispmds','save'"
             );
         });
 
@@ -57,60 +52,18 @@ angular.module('acjim')
         }
 
         function handleFileOpen(filename) {
-            if ($scope.tableData !== null) {
-                if (!_.isEmpty($scope.tableData)) {
-                    //open file in new window
-                    nwService.parentWindow.emit("openFileInNewWindow", filename);
-                    return;
-                }
+            if (!_.isEmpty($scope.tableData)) {
+                //open file in new window
+                nwService.parentWindow.emit("openFileInNewWindow", filename);
+                return;
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
-                    $scope.tableData = result.table;
-                    $scope.openMaps.push({
-                        data: result.map,
-                        options: {
-                            id: $scope.openMaps.length,
-                            x: 100 * position,
-                            y: 50 * position++,
-                            width: 400,
-                            height:300,
-                            title: "Map " + ($scope.openMaps.length + 1),
-                            onClose: function() {
-                                $scope.openMaps.splice(this.id, 1);
-                            }
-                        }
-                    });
-                    cfpLoadingBar.complete();
-                }
-            );
+                $scope.tableData = result.table;
+                $scope.mapData = result.map;
+                cfpLoadingBar.complete();
+            });
         }
-
-        // Open Debug Window
-        $scope.$on('open-debug', function () {
-            nwService.gui.Window.get().showDevTools();
-        });
-
-        // Reload
-        $scope.$on('reload-app', function () {
-            nwService.window.removeAllListeners();
-            nwService.window.reload();
-        });
-
-        //Close app TODO: check if this is needed or hooked up do window.on('close') event
-        $scope.$on('exit-app', function () {
-            nwService.gui.Window.get().close();
-        });
-
-        nwService.window.on('close', function (event) {
-            // Pretend to be closed already
-            this.hide();
-            if (event !== "quit") {
-                nwService.parentWindow.emit("window-close", nwService.window.id);
-                return;
-            }
-            this.close(true);
-        });
 
         /**
          * Handle file opening on application startup
@@ -135,5 +88,63 @@ angular.module('acjim')
         if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {
             handleFileOpen(Url.get.filename);
         }
+
+        /******************** Window management *******************/
+
+        // Open Debug Window
+        $scope.$on('open-debug', function () {
+            nwService.gui.Window.get().showDevTools();
+        });
+
+        // Reload
+        $scope.$on('reload-app', function () {
+            nwService.window.removeAllListeners();
+            nwService.window.reload();
+        });
+
+        // Close window
+        $scope.$on('close-window', function () {
+            nwService.gui.Window.get().close();
+        });
+
+        // Close app
+        $scope.$on('exit-app', function () {
+            nwService.gui.App.quit();
+        });
+
+        nwService.window.on('close', function (event) {
+            // Pretend to be closed already
+            this.hide();
+            if (event !== "quit") {
+                nwService.parentWindow.emit("window-close", nwService.window.id);
+                return;
+            }
+            this.close(true);
+        });
+
+
+        /******************** Layout *******************/
+
+        $scope.layout = {
+            toolbar: false,
+            table: false
+        };
+        $scope.cloak = true;
+
+        $scope.$on('map.loaded', function () {
+            $scope.cloak = false;
+        });
+
+        $scope.$on('layout.table', function () {
+            $scope.layout.table = !$scope.layout.table;
+            $scope.$apply();
+        });
+
+        $scope.$on('layout.toolbar', function () {
+            $scope.layout.toolbar = !$scope.layout.toolbar;
+            $scope.$apply();
+        });
+
+
     }
 })();

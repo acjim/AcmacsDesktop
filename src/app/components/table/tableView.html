@@ -1,23 +1,23 @@
-<div>
+<div class="tablePane">
     <table class="table table-bordered table-hover table-condensed">
         <thead>
         <tr>
             <th>Antigens/Sera</th>
-            <th ng-repeat="sera in tableData.table.sera"><span class="fullsize" tooltip-placement="bottom" tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
+            <th ng-repeat="sera in data.table.table.sera"><span class="fullsize" tooltip-placement="bottom" tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
         </tr>
         </thead>
         <tbody>
         <!-- http://jsfiddle.net/7MhLd/1266/ -->
-        <tr ng-if="tableData.table.titers.titers_list_of_list" ng-repeat="titer_list in tableData.table.titers.titers_list_of_list track by $index">
-            <td ng-repeat="antigen in tableData.table.antigens[$index]" width="10%">
+        <tr ng-if="data.table.table.titers.titers_list_of_list" ng-repeat="titer_list in data.table.table.titers.titers_list_of_list track by $index">
+            <td ng-repeat="antigen in data.table.table.antigens[$index]" width="10%">
                 <span class="fullsize" tooltip-placement="right" tooltip="{{antigen}}">{{antigen}}</span>
             </td>
             <td ng-repeat="titer in titer_list track by $index">
                 <span ng-dblclick="editItem($event, $parent.$index, $index)">{{titer}}</span>
             </td>
         </tr>
-        <tr ng-if="tableData.table.titers.titers_list_of_dict" ng-repeat="titer_list in tableData.table.titers.titers_list_of_dict">
-            <td ng-if="$first" ng-repeat="antigen in tableData.table.antigens[$index]" width="10%">
+        <tr ng-if="data.table.table.titers.titers_list_of_dict" ng-repeat="titer_list in data.table.table.titers.titers_list_of_dict">
+            <td ng-if="$first" ng-repeat="antigen in data.table.antigens[$index]" width="10%">
                 <span class="fullsize" tooltip-placement="right" tooltip="{{antigen}}">{{antigen}}</span>
             </td>
             <td ng-repeat="titer in titer_list track by $index">
