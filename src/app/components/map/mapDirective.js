@@ -629,11 +629,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns a Data Array with the new Map Data
              */
 
-                function GetNewDataFromCurrentMap(mapDataPoints) {
+                function GetNewDataFromCurrentMap(mapDataPoints, index) {
                     $rootScope.newMapArray=[];
                     $rootScope.newMapArrayflag=false;
                     var mapArray =[];
-                    var length= mapDataPoints.d3Nodes.length;
+                    var length= mapDataPoints.layout.length;
                     for(var counter= 0; counter < length;counter++){
                         mapArray.push(counter);
                         $rootScope.newMapArray.push(counter);
@@ -655,7 +655,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             $rootScope.newMapArray.splice(index, 1);
                         }
                         //console.log(mapArray);
-
+                        if(index==1)
                         $rootScope.newMapArray= mapArray;
                         $rootScope.newMapArrayflag= true;
                     }
@@ -684,14 +684,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Watches to Create  a new Map from Non Selected Nodes
              */
             $rootScope.$on('newMap.create', function() {
-                DisableSelectedElements();
+                GetNewDataFromCurrentMap(scope.data,2);
             });
 
             /**
              * Watches to Create  a new Map from Selected Nodes
              */
             $rootScope.$on('newMap.create2', function() {
-                GetNewDataFromCurrentMap();
+                console.log("scope data");
+                console.log(scope.data);
+                GetNewDataFromCurrentMap(scope.data,1);
             });
 
 
