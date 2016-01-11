@@ -517,15 +517,7 @@
                                     mapData.layout[i].x = layout[0];
                                     mapData.layout[i].y = layout[1];
                                 });
-
-                                var newfile = "/home/idrissou/malikou.acd1";
-                                var additional_params = {format: 'acd1', filename: newfile};
-                                return api.export(acd1File, additional_params).then(function (filename) {
-                                    cfpLoadingBar.complete();
-                                }, function (reason) {
-                                    return errorReason(reason);
-                                });
-
+                                cfpLoadingBar.complete();
                             });
                         }, function (reason) {
                             return errorReason(reason);
