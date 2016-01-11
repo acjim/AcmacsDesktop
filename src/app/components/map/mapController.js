@@ -113,10 +113,18 @@
 
         });
 
-        /** Watches for New Map Create from Existing Map button
+        /** Watches for New Map Create from opposite of Selected Nodes
          *
          */
         $scope.$on('newMap.create', function () {
+            if ($rootScope.disableArrayFlag == true) {
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.disableArray);
+            }
+        });
+        /** Watches for New Map Create from   Selected Nodes
+         *
+         */
+        $scope.$on('newMap.create2', function () {
             if ($rootScope.disableArrayFlag == true) {
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.disableArray);
             }
