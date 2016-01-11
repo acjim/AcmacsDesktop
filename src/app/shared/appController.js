@@ -52,12 +52,10 @@ angular.module('acjim')
         }
 
         function handleFileOpen(filename) {
-            if ($scope.tableData !== null) {
-                if (!_.isEmpty($scope.tableData)) {
-                    //open file in new window
-                    nwService.parentWindow.emit("openFileInNewWindow", filename);
-                    return;
-                }
+            if (!_.isEmpty($scope.tableData)) {
+                //open file in new window
+                nwService.parentWindow.emit("openFileInNewWindow", filename);
+                return;
             }
 
             fileHandling.handleFileOpen(filename).then(function(result) {
