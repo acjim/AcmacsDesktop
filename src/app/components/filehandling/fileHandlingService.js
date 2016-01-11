@@ -435,6 +435,7 @@
                             input = prompt('Imput the location of the file, including the file name?\n example: /home/idrissou/idrissou.acd1"');
                             if (input === null) {
                                 alert("No File Name Entered, No New Map File Created");
+                                cfpLoadingBar.complete();
                                 return; //break out of the function early
                             }
                             else{

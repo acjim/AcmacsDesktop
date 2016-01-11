@@ -41,7 +41,8 @@
             ZOOM_OUT: 15,
             //// GROUPS ////
             MAP_TOOLS: 10,
-            DISABLE_MAP2:13
+            DISABLE_MAP2:13,
+            NEW_MAP_FROM_OPPOSITE: 14,
 
         };
     }
