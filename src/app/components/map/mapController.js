@@ -117,8 +117,8 @@
          *
          */
         $scope.$on('newMap.create', function () {
-            if ($rootScope.disableArrayFlag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.disableArray);
+            if ($rootScope.newMapArrayflag == true) {
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
             }
         });
         /** Watches for New Map Create from   Selected Nodes
