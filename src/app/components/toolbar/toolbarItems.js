@@ -37,6 +37,8 @@
             RE_OPTIMIZE: 7,
             DISABLE_MAP: 8,
             NEW_MAP: 9,
+            ZOOM_IN: 14,
+            ZOOM_OUT: 15,
             //// GROUPS ////
             MAP_TOOLS: 10,
             DISABLE_MAP2:13,

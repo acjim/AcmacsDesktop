@@ -74,6 +74,29 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             type: "buttonGroup",
             buttons: [
                 {
+                    id: toolbarItems.ZOOM_IN,
+                    caption: 'Zoom In',
+                    icon: 'glyphicon glyphicon-zoom-in',
+                    togglable: false,
+                    callback: function () {
+                        $rootScope.$emit('map.zoomIn');
+                    }
+                },
+                {
+                    id: toolbarItems.ZOOM_OUT,
+                    caption: 'Zoom Out',
+                    icon: 'glyphicon glyphicon-zoom-out',
+                    togglable: false,
+                    callback: function () {
+                        $rootScope.$emit('map.zoomOut');
+                    }
+                }
+            ]
+        },
+        {
+            type: "buttonGroup",
+            buttons: [
+                {
                     id: toolbarItems.SHOW_ERROR_LINES,
                     caption: 'Show Error Lines',
                     icon: 'icon acmacs-error-line',
@@ -109,7 +132,8 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('map.reOptimize');
             }
-        },{
+        },
+        {
             id: toolbarItems.DISABLE_MAP2,
             caption: 'Disable Map Without Stress',
             icon: 'glyphicon glyphicon-scale',
