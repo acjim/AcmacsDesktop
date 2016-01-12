@@ -32,6 +32,7 @@
         /**
          * Watches for a the reoptimize button
          */
+
         $scope.$on('map.reOptimize', function () {
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
