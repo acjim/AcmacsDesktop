@@ -540,14 +540,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     case 37: nudge(-1,  0); break; // LEFT
                     case 39: nudge(+1,  0); break; // RIGHT
                 }
-                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                shiftKey = d3.event.shiftKey;
             }
 
             /**
              * Handles keyup events
              */
             function keyup() {
-                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                shiftKey = d3.event.shiftKey;
             }
 
             /** Gets All D3 Selected Elements Without Taking into account sress Value. This function should be called by the button responsible for Disabling nodes without taking
