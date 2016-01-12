@@ -41,7 +41,7 @@
 
         var acd1File = null;
         var projection = 0;
-        var new_acd1 = null;
+        var new_acd1 = "";
         var projection_comment = null;
 
         return {
