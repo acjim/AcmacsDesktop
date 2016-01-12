@@ -147,11 +147,13 @@ angular.module('acjim.api', [])
                         var projection = additional_params.projection;
                         var input_parameter = {command: COMMANDS.NEW_PROJECTION, data: {projection: projection}};
                     }
-
                     if (!additional_params.hasOwnProperty('coordinates')) {
                         throw new Error('Please pass coordinates');
                     }
                     input_parameter.data.coordinates = additional_params.coordinates;
+                    if (additional_params.hasOwnProperty('comment')) {
+                        input_parameter.data.comment = additional_params.comment;
+                    }
                     break;
                 case COMMANDS.UPDATE_TABLE:
                     var input_parameter = {command: COMMANDS.UPDATE_TABLE, data: {}};
@@ -638,11 +640,12 @@ angular.module('acjim.api', [])
          * additional_params = {
          *                      coordinates: list //mandatory
          *                      projection: int //mandatory
+         *                      comment: str //optional (default '')
          *               };
          *
          * @param additional_params
          * @param output_acd1
-         * @returns {*} object with Name of the files generated : output_json and new_outupt_acd1
+         * @returns {*} object with Name of the files generated : output_json and new_output_acd1
          */
         api.new_projection = function (additional_params, output_acd1) {
 
@@ -653,15 +656,11 @@ angular.module('acjim.api', [])
             // callback function for exec
             function puts(error, stdout, stderr) {
                 if (error) {
-                    // @todo handle error/exception properly
-                    //this.emit('error', error);
                     console.log(error);
                     deferred.reject(error);
                 }
                 deferred.resolve({output_json: output_json, output_acd1: new_output_acd1}); // return call
             }
-
-            
             var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
             var file = output_acd1.split('/').pop();
             file = file.substr(0, file.lastIndexOf("_"));

@@ -86,7 +86,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 // Zoom
                 zoom = d3.behavior.zoom()
-                    .scaleExtent([minimalScaleValue, 300])
+                    .scaleExtent([minimalScaleValue, 500])
                     .x(xScale)
                     .y(yScale)
                     .translate(translate)
@@ -101,7 +101,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 brush = createBrush();
 
                 // Create background grid
-                boxGroup = redrawGrid(boxGroup, boxSize, width / initialScale, height / initialScale);
+                boxGroup = redrawGrid(boxGroup, boxSize, width / minimalScaleValue, height / minimalScaleValue);
 
                 manageMapTools();
                 applyZoom();
@@ -400,11 +400,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 // we need to fit it in both directions, so we scale according to
                 // the direction in which we need to shrink the most
-                minimalScaleValue = scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
+                scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
+                minimalScaleValue = 1;
 
                 // translate so that it's in the center of the window
-                initialTranslate[0] = translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
-                initialTranslate[1] = translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
+                initialTranslate[0] = translate[0] = -(dataExtentX[0]) * initialScale + (width - dataWidthX * initialScale) / 2;
+                initialTranslate[1] = translate[1] = -(dataExtentY[0]) * initialScale + (height - dataWidthY * initialScale) / 2;
             }
 
             /**
@@ -540,14 +541,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     case 37: nudge(-1,  0); break; // LEFT
                     case 39: nudge(+1,  0); break; // RIGHT
                 }
-                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                shiftKey = d3.event.shiftKey;
             }
 
             /**
              * Handles keyup events
              */
             function keyup() {
-                shiftKey = d3.event.shiftKey || d3.event.metaKey;
+                shiftKey = d3.event.shiftKey;
             }
 
             /** Gets All D3 Selected Elements Without Taking into account sress Value. This function should be called by the button responsible for Disabling nodes without taking
@@ -640,7 +641,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }
                 else{
                     $rootScope.disableArrayFlag= true;
-                    console.log(disableArray);
+                   // console.log(disableArray);
                     $rootScope.disableArray= disableArray;
                 }
             }
@@ -662,35 +663,41 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * mapDataPoints should be assigned to scope.data before passing it to the function
              * @returns a Data Array with the new Map Data
              */
-            function GetNewDataFromCurrentMap(mapDataPoints) {
-                $rootScope.newMapArray=[];
-                $rootScope.newMapArrayflag=false;
-                var mapArray =[];
-                var length= mapDataPoints.layout.length;
-                for(var counter= 0; counter < length;counter++){
-                    mapArray.push(counter);
-                    $rootScope.newMapArray.push(counter);
-                }
-                var flag=0;
-                d3.selectAll(".selected").each(function(d){
-                    flag=1;
-                    mapArray.splice(d.id, 1);
-                });
 
-                if (flag===0){
-                    alert("Please Select at least One Node Before Creating a New Map");
-                }
-                else{
-                    console.log($rootScope.newMapArray.length);
-                    console.log(mapArray.length);
-                    for(var counter= 0; counter< mapArray.length; counter++){
-                        var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
-                        $rootScope.newMapArray.splice(index, 1);
+                function GetNewDataFromCurrentMap(mapDataPoints, indexValue) {
+
+                    $rootScope.newMapArray=[];
+                    $rootScope.newMapArrayflag=false;
+                    var mapArray =[];
+                    var length= mapDataPoints.layout.length;
+                    for(var counter= 0; counter < length;counter++){
+                        mapArray.push(counter);
+                        $rootScope.newMapArray.push(counter);
                     }
-                    console.log(mapArray);
-                    console.log($rootScope.newMapArray);
-                    $rootScope.newMapArrayflag= true;
-                }
+                    var flag=0;
+                    d3.selectAll(".selected").each(function(d){
+                        flag=1;
+                        mapArray.splice(d.id, 1);
+                    });
+
+                    if (flag===0){
+                        alert("Please Select at least One Node Before Creating a New Map");
+                    }
+                    else {
+                        // console.log($rootScope.newMapArray.length);
+                        //console.log(mapArray.length);
+                        for (var counter = 0; counter < mapArray.length; counter++) {
+                            var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
+                            $rootScope.newMapArray.splice(index, 1);
+                        }
+                        //console.log(mapArray);
+                        if (indexValue === 1) {
+                            $rootScope.newMapArray = mapArray;
+                        }
+                        $rootScope.newMapArrayflag= true;
+                    }
+
+
 
             }
 
@@ -711,10 +718,17 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             });
 
             /**
-             * Watches to Create  a new Map from Already Existing Map
+             * Watches to Create  a new Map from Non Selected Nodes
              */
             $rootScope.$on('newMap.create', function() {
-                DisableSelectedElements();
+                GetNewDataFromCurrentMap(scope.data,2);
+            });
+
+            /**
+             * Watches to Create  a new Map from Selected Nodes
+             */
+            $rootScope.$on('newMap.create2', function() {
+                GetNewDataFromCurrentMap(scope.data,1);
             });
 
             /**
