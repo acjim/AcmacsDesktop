@@ -38,6 +38,10 @@ var app = angular.module('acjim', [
     'DWand.nw-fileDialog'
 ]);
 
+app.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.includeSpinner = false;
+}]);
+
 app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
 
     if (process.platform !== "darwin") {

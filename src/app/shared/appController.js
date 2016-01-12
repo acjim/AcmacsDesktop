@@ -61,7 +61,6 @@ angular.module('acjim')
             fileHandling.handleFileOpen(filename).then(function(result) {
                 $scope.tableData = result.table;
                 $scope.mapData = result.map;
-                cfpLoadingBar.complete();
             });
         }
 
@@ -133,6 +132,7 @@ angular.module('acjim')
 
         $scope.$on('map.loaded', function () {
             $scope.cloak = false;
+            cfpLoadingBar.complete();
         });
 
         $scope.$on('layout.table', function () {
