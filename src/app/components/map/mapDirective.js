@@ -86,7 +86,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 // Zoom
                 zoom = d3.behavior.zoom()
-                    .scaleExtent([minimalScaleValue, 300])
+                    .scaleExtent([minimalScaleValue, 500])
                     .x(xScale)
                     .y(yScale)
                     .translate(translate)
@@ -101,7 +101,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 brush = createBrush();
 
                 // Create background grid
-                boxGroup = redrawGrid(boxGroup, boxSize, width / initialScale, height / initialScale);
+                boxGroup = redrawGrid(boxGroup, boxSize, width / minimalScaleValue, height / minimalScaleValue);
 
                 manageMapTools();
                 applyZoom();
@@ -400,11 +400,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 // we need to fit it in both directions, so we scale according to
                 // the direction in which we need to shrink the most
-                minimalScaleValue = scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
+                scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
+                minimalScaleValue = 1;
 
                 // translate so that it's in the center of the window
-                initialTranslate[0] = translate[0] = -(dataExtentX[0]) * minimalScaleValue + (width - dataWidthX * minimalScaleValue) / 2;
-                initialTranslate[1] = translate[1] = -(dataExtentY[0]) * minimalScaleValue + (height - dataWidthY * minimalScaleValue) / 2;
+                initialTranslate[0] = translate[0] = -(dataExtentX[0]) * initialScale + (width - dataWidthX * initialScale) / 2;
+                initialTranslate[1] = translate[1] = -(dataExtentY[0]) * initialScale + (height - dataWidthY * initialScale) / 2;
             }
 
             /**
