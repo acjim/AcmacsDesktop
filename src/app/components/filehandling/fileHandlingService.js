@@ -128,6 +128,7 @@
             }
             return api.export(acd1_file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
+                Flash.create('success', 'File exported successfully!');
             }, function (reason) {
                 return errorReason(reason);
             });
