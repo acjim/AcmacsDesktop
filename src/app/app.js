@@ -151,7 +151,7 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
         },{
             id: toolbarItems.NEW_MAP,
             caption: 'Create New Map From Non Selected Elements',
-            icon: 'glyphicon glyphicon-duplicate',
+            icon: 'glyphicon glyphicon-scissors',
             callback: function () {
                 $rootScope.$broadcast('newMap.create');
             }
