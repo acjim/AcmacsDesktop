@@ -48,7 +48,7 @@
             handleFileOpen: handleFileOpen,
             handleFileSaveAs: handleFileSaveAs,
             reOptimize: reOptimize,
-            getLinesWithProjection: getLinesWithProjection,
+            getNewProjection: getNewProjection,
             getErrorConnectionLines: getErrorConnectionLines,
             disableNodes: disableNodes,
             disableNodesWithoutStress: disableNodesWithoutStress,
@@ -143,7 +143,7 @@
             // Start loading bar
             $timeout(function() {
                 cfpLoadingBar.start();
-            }, 50);
+            }, 100);
 
             if (!fs.existsSync(config.api.script)) { // If there is no AcmacsCore.bundle
                 return api.asyncTest().then(function() {
@@ -172,12 +172,14 @@
                         api.execute(api.get_commands().GET_TABLE, table_additional_params, output.output_acd1),
                         api.execute(api.get_commands().GET_MAP, map_additional_params, output.output_acd1)
                     ]).then(function (data) {
+                        cfpLoadingBar.set(0.6);
                         var output_table_json = data[0];
                         var output_map_json   = data[1];
                         return $q.all([
                             readFile(output_table_json),
                             readFile(output_map_json)
                         ]).then(function(data) {
+                            cfpLoadingBar.set(0.9);
                             var result = {};
                             result.table = JSON.parse(data[0]);
                             result.map   = parseLayoutData(JSON.parse(data[1]));
@@ -242,7 +244,7 @@
          * @param acd1
          * @returns {*}
          */
-        function getLinesWithProjection(mapData) {
+        function getNewProjection(mapData) {
 
             cfpLoadingBar.start();
 
@@ -303,7 +305,6 @@
                                 readFile(filename)
                             ]).then(function(data) {
                                 mapData = parseLayoutData(JSON.parse(data));
-                                cfpLoadingBar.complete();
                                 return mapData;
                             });
                         }, function (reason) {
