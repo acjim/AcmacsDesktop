@@ -736,6 +736,10 @@ angular.module('acjim.api', [])
             return "INFO " + error + "[acmacs-api, source: web-api]";
         }
 
+        api.get_data_path = function () {
+            return data_path;
+        }
+
         /**
          * stub function to be called when on windows system
          *
