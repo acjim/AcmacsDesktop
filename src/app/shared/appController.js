@@ -31,12 +31,16 @@ angular.module('acjim')
 
         /******************** File Handling *******************/
 
-        $scope.$on('open-file', function () {
-            fileDialog.openFile(
-                handleFileOpen,
-                false,
-                '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
-            );
+        $scope.$on('open-file', function (event, filename) {
+            if (!_.isEmpty(filename)) {
+                fileDialog.openFile(
+                    handleFileOpen,
+                    false,
+                    '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'
+                );
+            } else {
+                handleFileOpen(filename);
+            }
         });
 
         $scope.$on('save-as', function () {
