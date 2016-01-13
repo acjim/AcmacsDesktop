@@ -153,6 +153,7 @@ angular.module('acjim.api', [])
                     input_parameter.data.coordinates = additional_params.coordinates;
                     if (additional_params.hasOwnProperty('comment')) {
                         input_parameter.data.comment = additional_params.comment;
+                        input_parameter.data.comment = additional_params.comment;
                     }
                     break;
                 case COMMANDS.UPDATE_TABLE:
@@ -249,38 +250,32 @@ angular.module('acjim.api', [])
          */
         api.import_user_data = function (input_file, additional_params) {
 
-            var deferred = $q.defer();
-            var command = "import";
-            
-            this.make_dir();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, input_file);
-
-
             // callback function for exec
             function puts(error) {
                 if (error) {
-                    // @todo handle error/exception properly
-                    //this.emit('error', error);
-                    console.log(error);
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve({input_file: input_file, output_acd1: output_acd1}); // return call
             }
 
-            var output_json = this.create_file_path(data_path, input_file, '.json', COMMANDS.IMPORT);
-            var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', COMMANDS.IMPORT);
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = input_file;
-            params[params.length] = output_json;
-            params[params.length] = output_acd1;
-            // callback function for exec
             try {
+                var deferred = $q.defer();
+                var command = "import";
+                this.make_dir();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, input_file);
+                var output_json = this.create_file_path(data_path, input_file, '.json', COMMANDS.IMPORT);
+                var output_acd1 = this.create_file_path(data_path, input_file, '.acd1', COMMANDS.IMPORT);
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = input_file;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+
+                deferred.reject(api.format_error_message(Error.message));
             }
             return deferred.promise;
         };
@@ -323,34 +318,29 @@ angular.module('acjim.api', [])
          */
         api.execute = function (command, additional_params, output_acd1) {
 
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            // callback function for exec
             function puts(error) {
                 if (error) {
-                    // @todo handle error/exception properly
-                    //this.emit('error', error);
-                    console.log(error);
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve(output_json); // return call
             }
 
-            
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            params[params.length] = output_acd1_1;
-            // callback function for exec
             try {
+                var deferred = $q.defer();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+
+                deferred.reject(api.format_error_message(Error.message));
             }
             return deferred.promise;
         };
@@ -376,29 +366,29 @@ angular.module('acjim.api', [])
          */
         api.relax = function (additional_params, output_acd1) {
 
-            var command = COMMANDS.RELAX;
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            params[params.length] = output_acd1_1;
-            // callback function for exec
             try {
+                var command = COMMANDS.RELAX;
+                var deferred = $q.defer();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+
+                deferred.reject(api.format_error_message(Error.message));
             }
 
             function puts(error) {
                 if (error) {
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
             }
@@ -421,29 +411,28 @@ angular.module('acjim.api', [])
          */
         api.set_disconnected_points = function (additional_params, output_acd1) {
 
-            var command = COMMANDS.SET_DISCONNECTED_POINTS;
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'dscpts');
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'dscpts');
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            params[params.length] = output_acd1_1;
-            // callback function for exec
             try {
+                var command = COMMANDS.SET_DISCONNECTED_POINTS;
+                var deferred = $q.defer();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'dscpts');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'dscpts');
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+                deferred.reject(api.format_error_message(Error.message));
             }
 
             function puts(error) {
                 if (error) {
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
             }
@@ -464,29 +453,29 @@ angular.module('acjim.api', [])
          */
         api.set_unmovable_points = function (additional_params, output_acd1) {
 
-            var command = COMMANDS.SET_UNMOVABLE_POINTS;
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            params[params.length] = output_acd1_1;
-            // callback function for exec
             try {
+                var command = COMMANDS.SET_UNMOVABLE_POINTS;
+                var deferred = $q.defer();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+
+                deferred.reject(api.format_error_message(Error.message));
             }
 
             function puts(error) {
                 if (error) {
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
             }
@@ -506,33 +495,32 @@ angular.module('acjim.api', [])
          */
         api.relax_existing = function (additional_params, output_acd1) {
 
-            var command = COMMANDS.RELAX_EXISTING;
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            if (process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
-                params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
-            } else {
-                params[params.length] = input_param_file;
-                params[params.length] = output_acd1;
-                params[params.length] = output_json;
-                params[params.length] = output_acd1_1;
-            }
-            // callback function for exec
             try {
+                var command = COMMANDS.RELAX_EXISTING;
+                var deferred = $q.defer();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                if (process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
+                    params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
+                } else {
+                    params[params.length] = input_param_file;
+                    params[params.length] = output_acd1;
+                    params[params.length] = output_json;
+                    params[params.length] = output_acd1_1;
+                }
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+                deferred.reject(api.format_error_message(Error.message));
             }
 
             function puts(error) {
                 if (error) {
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve({output_json: output_json, updated_acd1: output_acd1_1}); // return call
             }
@@ -560,36 +548,32 @@ angular.module('acjim.api', [])
          */
         api.update_table = function (additional_params, output_acd1) {
 
-            var command = COMMANDS.UPDATE_TABLE;
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
             // callback function for exec
             function puts(error, stdout, stderr) {
                 if (error) {
-                    // TODO handle error/exception properly
-                    //this.emit('error', error);
-                    console.log(error);
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
-                deferred.resolve(new_output_acd1); // return call
+                deferred.resolve(new_output_acd1);
             }
 
-            
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "upt");
-
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            params[params.length] = new_output_acd1;
-
             try {
+                var command = COMMANDS.UPDATE_TABLE;
+                var deferred = $q.defer();
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "upt");
+
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = new_output_acd1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+                deferred.reject(api.format_error_message(Error.message));
             }
             return deferred.promise;
         };
@@ -606,31 +590,27 @@ angular.module('acjim.api', [])
          */
         api.export = function (output_acd1, additional_params) {
 
-            var deferred = $q.defer();
-            var command = COMMANDS.EXPORT;
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-
-            // callback function for exec
-            function puts(error, stdout, stderr) {
+            // callback function for execFile
+            function result(error, stdout, stderr) {
                 if (error) {
-                    console.log(error);
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
-                deferred.resolve(output_json); // return call
+                deferred.resolve(output_json);
             }
 
-            
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            // callback function for exec
             try {
-                execFile(script, params, puts);
+                var deferred = $q.defer();
+                var command = COMMANDS.EXPORT;
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                execFile(script, params, result);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+                deferred.reject(api.format_error_message(Error.message));
             }
             return deferred.promise;
         };
@@ -649,32 +629,31 @@ angular.module('acjim.api', [])
          */
         api.new_projection = function (additional_params, output_acd1) {
 
-            var command = COMMANDS.NEW_PROJECTION;
-            var deferred = $q.defer();
-            // create and fetch input_parameter file
-            var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-            // callback function for exec
+            // callback function for execFile
             function puts(error, stdout, stderr) {
                 if (error) {
-                    console.log(error);
-                    deferred.reject(error);
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
                 }
                 deferred.resolve({output_json: output_json, output_acd1: new_output_acd1}); // return call
             }
-            var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-            var file = output_acd1.split('/').pop();
-            file = file.substr(0, file.lastIndexOf("_"));
-            var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "up");
-            var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
-            params[params.length] = input_param_file;
-            params[params.length] = output_acd1;
-            params[params.length] = output_json;
-            params[params.length] = new_output_acd1;
+
             try {
+                var command = COMMANDS.NEW_PROJECTION;
+                var deferred = $q.defer();
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var file = output_acd1.split('/').pop();
+                file = file.substr(0, file.lastIndexOf("_"));
+                var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "up");
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = new_output_acd1;
                 execFile(script, params, puts);
             } catch (Error) {
-                console.log(Error.message);
-                deferred.reject(Error.message);
+                deferred.reject(api.format_error_message(Error.message));
             }
             return deferred.promise;
         };
@@ -740,6 +719,22 @@ angular.module('acjim.api', [])
         api.get_commands = function () {
             return COMMANDS;
         };
+
+        /**
+         * Get the error message from the generated output file in case of errors
+         *
+         * @param output_file {String} Output_file name along with path
+         * @returns {String}
+         */
+        api.get_error_message = function (output_file) {
+            var output_raw = fs.readFileSync(output_file, 'utf8');
+            var output_data = JSON.parse(output_raw);
+            return (typeof output_data.errors[0] !== 'undefined') ? "INFO " + output_data.errors[0] + "[acmacs-api, source: core-bundle]" : 'Error Occurred!';
+        }
+
+        api.format_error_message = function (error) {
+            return "INFO " + error + "[acmacs-api, source: web-api]";
+        }
 
         /**
          * stub function to be called when on windows system
