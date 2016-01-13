@@ -32,7 +32,7 @@ angular.module('acjim')
         /******************** File Handling *******************/
 
         $scope.$on('open-file', function (event, filename) {
-            if (!_.isEmpty(filename)) {
+            if (_.isEmpty(filename)) {
                 fileDialog.openFile(
                     handleFileOpen,
                     false,
