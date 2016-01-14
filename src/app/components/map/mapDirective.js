@@ -54,6 +54,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
+                colorArray= [],
                 disableArray =[],
                 color="",
                 shiftKey;
@@ -564,6 +565,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     if (d.style.fill_color != "#bebebe") {
                         flag=1;
                         color=d.style.fill_color;
+
+                        colorArray[""+d.id+""]= d.style.fill_color;
                         d.style.fill_color = "#bebebe";
                         d3.select(this).transition()
                             .style("stroke", "green")
@@ -576,8 +579,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     else if ("#bebebe"){
                         flag=1;
                         d3.select(this).transition()
-                            .attr("style", "fill:"+color);
-                        d.style.fill_color = color;
+                            .attr("style", "fill:"+colorArray[""+d.id+""]);
+                        d.style.fill_color = colorArray[""+d.id+""];
                         for( var c=0; c < disableArray.length; c++){
                             if (d.id== disableArray[c]){
                                 disableArray.splice(c, 1);
@@ -588,6 +591,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                     else{}
                 });
+                console.log(colorArray);
 
                 if (flag===0){
                     alert("Please Select at least One Node Before Clicking on Disable");
@@ -610,21 +614,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 d3.selectAll(".selected").each(function(d){
                     if (d.style.fill_color != "#bebebe") {
                         flag=1;
-                        color=d.style.fill_color;
+                        colorArray[""+d.id+""]= d.style.fill_color;
                         d.style.fill_color = "#bebebe";
                         d3.select(this).transition()
                             .style("stroke", "green")
                             .style("opacity", .4)
                             .attr("style", "fill:#bebebe");
                         disableArray.push(d.id);
-                        //console.log(d.id);
-
                     }
                     else if ("#bebebe"){
                         flag=1;
                         d3.select(this).transition()
-                            .attr("style", "fill:"+color);
-                        d.style.fill_color = color;
+                            .attr("style", "fill:"+colorArray[""+d.id+""]);
+                        d.style.fill_color = colorArray[""+d.id+""];
                         for( var c=0; c < disableArray.length; c++){
                             if (d.id== disableArray[c]){
                                 disableArray.splice(c, 1);
@@ -684,13 +686,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         alert("Please Select at least One Node Before Creating a New Map");
                     }
                     else {
-                        // console.log($rootScope.newMapArray.length);
-                        //console.log(mapArray.length);
                         for (var counter = 0; counter < mapArray.length; counter++) {
                             var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
                             $rootScope.newMapArray.splice(index, 1);
                         }
-                        //console.log(mapArray);
                         if (indexValue === 1) {
                             $rootScope.newMapArray = mapArray;
                         }
