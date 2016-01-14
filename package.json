@@ -8,7 +8,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "postinstall": "(cd src && npm install && npm update)",
+    "postinstall": "(cd src && npm install)",
     "start": "./node_modules/.bin/nw src",
     "test": "grunt test"
   },
