@@ -24,37 +24,38 @@
     'use strict';
 
     angular.module('acjim.map',[])
-        .controller('mapCtrl', ['$rootScope', '$scope', '$timeout', 'fileHandling', 'toolbar', 'toolbarItems', mapCtrl]);
+        .controller('mapCtrl', ['$rootScope', '$scope', '$timeout', 'fileHandling', 'toolbar', 'toolbarItems', 'cfpLoadingBar', mapCtrl]);
 
-    function mapCtrl ($rootScope, $scope, $timeout, fileHandling, toolbar, toolbarItems) {
+    function mapCtrl ($rootScope, $scope, $timeout, fileHandling, toolbar, toolbarItems, cfpLoadingBar) {
 
 
         /**
          * Watches for a the reoptimize button
          */
+
         $scope.$on('map.reOptimize', function () {
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();
+                cfpLoadingBar.complete();
             });
         });
 
 
         function getErrorConnectionLines() {
-            fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
-                if ($scope.showConnectionLines) {
-                    $scope.data.d3ConnectionLines = result.d3ConnectionLines;
-                } else {
-                    $scope.data.d3ConnectionLines = [];
-                }
+            if (!$scope.showConnectionLines) { $scope.data.d3ConnectionLines = []; }
+            if (!$scope.showErrorLines) { $scope.data.d3ErrorLines = []; }
 
-                if ($scope.showErrorLines) {
+            if ($scope.showConnectionLines || $scope.showErrorLines) {
+                fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
+                    $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
-                } else {
-                    $scope.data.d3ErrorLines = [];
-                }
-            });
+
+                    if (!$scope.showConnectionLines) { $scope.data.d3ConnectionLines = []; }
+                    if (!$scope.showErrorLines) { $scope.data.d3ErrorLines = []; }
+                });
+            }
         }
 
         /**
@@ -134,7 +135,7 @@
          * Watches for moved nodes while lines are displayed
          */
         $scope.$on('map.nudgeTriggered', function () {
-            fileHandling.getLinesWithProjection($scope.data).then(function(result) {
+            fileHandling.getNewProjection($scope.data).then(function(result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();

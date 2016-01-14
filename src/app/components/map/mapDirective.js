@@ -402,7 +402,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 // we need to fit it in both directions, so we scale according to
                 // the direction in which we need to shrink the most
                 scale = initialScale = gridScale = Math.min(width_ratio, height_ratio) * 0.8;
-                minimalScaleValue = 1;
+                minimalScaleValue = scale * 0.2;
 
                 // translate so that it's in the center of the window
                 initialTranslate[0] = translate[0] = -(dataExtentX[0]) * initialScale + (width - dataWidthX * initialScale) / 2;
