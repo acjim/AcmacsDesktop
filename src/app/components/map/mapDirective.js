@@ -686,13 +686,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         alert("Please Select at least One Node Before Creating a New Map");
                     }
                     else {
-                        // console.log($rootScope.newMapArray.length);
-                        //console.log(mapArray.length);
                         for (var counter = 0; counter < mapArray.length; counter++) {
                             var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
                             $rootScope.newMapArray.splice(index, 1);
                         }
-                        //console.log(mapArray);
                         if (indexValue === 1) {
                             $rootScope.newMapArray = mapArray;
                         }
