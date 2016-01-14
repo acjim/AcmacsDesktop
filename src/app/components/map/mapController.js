@@ -43,6 +43,9 @@
         });
 
 
+        /**
+         * Calls fileHandlingService for API call to backend to get Error & Connectionlines
+         */
         function getErrorConnectionLines() {
             if (!$scope.showConnectionLines) { $scope.data.d3ConnectionLines = []; }
             if (!$scope.showErrorLines) { $scope.data.d3ErrorLines = []; }
@@ -59,13 +62,28 @@
         }
 
         /**
+         * Gets new Projection before calling Errorlines from API. This is necessary when nodes where moved, pushes information of new coordinates to backend.
+         */
+        function getProjectionBeforeErrorLines(){
+            fileHandling.getNewProjection($scope.data).then(function(result) {
+                $scope.pointsMoved = false;
+                $scope.data = result;
+                getErrorConnectionLines();
+            });
+        }
+
+        /**
          * Watches for a the errorLines button
          */
         $rootScope.$on('map.showErrorLines', function (event, itemID) {
             var item = toolbar.getItemByID(toolbarItems.SHOW_ERROR_LINES);
             if (!itemID) { item.active = !item.active; }
             $scope.showErrorLines = item.active;
-            getErrorConnectionLines();
+            if($scope.pointsMoved){
+                getProjectionBeforeErrorLines()
+            }else {
+                getErrorConnectionLines();
+            }
         });
 
         /**
@@ -75,7 +93,11 @@
             var item = toolbar.getItemByID(toolbarItems.SHOW_CONNECTION_LINES);
             if (!itemID) { item.active = !item.active; }
             $scope.showConnectionLines = item.active;
-            getErrorConnectionLines();
+            if($scope.pointsMoved){
+                getProjectionBeforeErrorLines()
+            }else {
+                getErrorConnectionLines();
+            }
         });
 
         /**
@@ -135,11 +157,7 @@
          * Watches for moved nodes while lines are displayed
          */
         $scope.$on('map.nudgeTriggered', function () {
-            fileHandling.getNewProjection($scope.data).then(function(result) {
-                $scope.pointsMoved = false;
-                $scope.data = result;
-                getErrorConnectionLines();
-            });
+            getProjectionBeforeErrorLines();
         });
     }
 })();
