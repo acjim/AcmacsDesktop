@@ -614,8 +614,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 d3.selectAll(".selected").each(function(d){
                     if (d.style.fill_color != "#bebebe") {
                         flag=1;
-                        color=d.style.fill_color;
-
                         colorArray[""+d.id+""]= d.style.fill_color;
                         d.style.fill_color = "#bebebe";
                         d3.select(this).transition()
@@ -623,8 +621,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             .style("opacity", .4)
                             .attr("style", "fill:#bebebe");
                         disableArray.push(d.id);
-                        //console.log(d.id);
-
                     }
                     else if ("#bebebe"){
                         flag=1;
