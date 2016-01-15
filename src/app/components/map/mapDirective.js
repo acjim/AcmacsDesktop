@@ -27,7 +27,7 @@ var app = angular.module('acjim.map');
 /*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', function($rootScope, $window, $timeout, toolbar, toolbarItems) {
+app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', function ($rootScope, $window, $timeout, toolbar, toolbarItems) {
     return {
         restrict: 'A',
         scope: {
@@ -35,7 +35,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
         },
         controller: 'mapCtrl',
         template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>',
-        link: function(scope, iElement) {
+        link: function (scope, iElement) {
 
             var svg = null,
                 width = 0,
@@ -46,7 +46,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 minimalScaleValue = null,
                 translate = [0, 0],
                 scale = 1,
-                gridTranslate = [0,0],
+                gridTranslate = [0, 0],
                 gridScale = 1,
                 initialScale = 1,
                 initialTranslate = [0, 0],
@@ -54,9 +54,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
-                colorArray= [],
-                disableArray =[],
-                color="",
+                colorArray = [],
+                disableArray = [],
+                color = "",
                 shiftKey;
 
             // d3 groups
@@ -95,8 +95,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .on("zoom", applyZoom);
 
                 // reapply scales on the data
-                nodeGroup.attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; });
-                labelsGroup.attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; });
+                nodeGroup.attr("transform", function (d) {
+                    return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                });
+                labelsGroup.attr("transform", function (d) {
+                    return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                });
 
                 // Create brush
                 brush = createBrush();
@@ -112,7 +116,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Renders the complete d3 map with data
              * @param data
              */
-            function renderWithData (data) {
+            function renderWithData(data) {
 
                 // checks if the map is drawn the for the first time, adds svg, groups and zoom if necessary
                 if (!svg) {
@@ -129,105 +133,149 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 //Update
                 nodeGroup
-                    .attr("transform", function(d) {
+                    .attr("transform", function (d) {
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     })
-                    .attr("fill", function(d){
+                    .attr("fill", function (d) {
                         // color as string
-                        if(_.isArray(d.style.fill_color )) {
+                        if (_.isArray(d.style.fill_color)) {
                             return d.style.fill_color[0];
-                        }else{
+                        } else {
                             return d.style.fill_color;
                         }
                     })
-                    .attr("fill-opacity", function(d){
-                        if(_.isArray(d.style.fill_color)) {
+                    .attr("fill-opacity", function (d) {
+                        if (_.isArray(d.style.fill_color)) {
                             return d.style.fill_color[1];
-                        }else{
+                        } else {
                             return 1;
                         }
                     })
                     .attr("stroke", "#474747")
-                    .attr("name", function(d){ return d.name })
-                    .attr("label_version", function(d, i){
+                    .attr("name", function (d) {
+                        return d.name
+                    })
+                    .attr("label_version", function (d, i) {
                         return i;        // slug = label downcased, this works
                     })
-                    .attr("d",d3.svg.symbol().size("50")
-                        .type(function(d) {
-                            if (d.style.shape === "circle") { return "circle"; }
-                            else if (d.style.shape === "box") { return "square"; }
+                    .attr("d", d3.svg.symbol().size("50")
+                        .type(function (d) {
+                            if (d.style.shape === "circle") {
+                                return "circle";
+                            }
+                            else if (d.style.shape === "box") {
+                                return "square";
+                            }
                         }));
 
                 // Event handlers
-                nodeGroup.on("mousedown", function(d) {
+                nodeGroup.on("mousedown", function (d) {
                         if (!d.selected) { // Don't deselect on shift-drag.
                             if (!shiftKey) {
-                                nodeGroup.classed("selected", function(p) { return p.selected = d === p; });
+                                nodeGroup.classed("selected", function (p) {
+                                    return p.selected = d === p;
+                                });
                             } else {
                                 d3.select(this).classed("selected", d.selected = true);
                             }
                         }
                     })
-                    .on("mouseup", function(d) {
+                    .on("mouseup", function (d) {
                         if (d.selected && shiftKey) {
                             d3.select(this).classed("selected", d.selected = false);
                         }
                     })
 
                     .call(d3.behavior.drag()
-                        .on("dragstart", function() {
+                        .on("dragstart", function () {
                             d3.event.sourceEvent.stopPropagation();
                         })
-                        .on("drag", function() {
+                        .on("drag", function () {
                             nudge(d3.event.dx, d3.event.dy);
                         })
-                        .on("dragend", function() {
-                            if(scope.showErrorLines || scope.showConnectionLines){
+                        .on("dragend", function () {
+                            if (scope.showErrorLines || scope.showConnectionLines) {
                                 scope.$emit('map.nudgeTriggered');
                             }
                         })
                     )
-                    .attr("opacity", (function(d) { return d.opacity; }));
+                    .attr("opacity", (function (d) {
+                        return d.opacity;
+                    }));
 
                 // Exit
                 nodeGroup.exit().remove();
 
 
-                labelsGroup=labelsGroup.data(data.layout);
+                labelsGroup = labelsGroup.data(data.layout);
                 labelsGroup.enter().append("text")
                     .attr("class", "text")
-                    .attr("transform", function(d) { return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")"; })
-                    .attr("x", function(d) {return d.x; })
-                    .attr("y", function(d) { return d.y; })
-                    .style("visibility","hidden")
-                    .style("font-family","sans-serif")
-                    .style("font-size","10px")
-                    .style("fill","#330066")
-                    .text(function(d) {return d.name; });
+                    .attr("transform", function (d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                    })
+                    .attr("x", function (d) {
+                        return d.x;
+                    })
+                    .attr("y", function (d) {
+                        return d.y;
+                    })
+                    .style("visibility", "hidden")
+                    .style("font-family", "sans-serif")
+                    .style("font-size", "10px")
+                    .style("fill", "#330066")
+                    .text(function (d) {
+                        return d.name;
+                    });
                 labelsGroup.exit().remove();
 
 
                 errorlineGroup = errorlineGroup.data(data.d3ErrorLines);
                 errorlineGroup.enter().append("line")
                     .attr("class", "errorline")
-                    .attr("x1",(function(d) { return xScale(d.x1); }))
-                    .attr("y1",(function(d) { return yScale(d.y1); }))
-                    .attr("x2",(function(d) { return xScale(d.x2); }))
-                    .attr("y2",(function(d) { return yScale(d.y2); }))
-                    .attr("stroke", (function(d) { return d.stroke; } ))
-                    .attr("stroke-width", (function(d) { return d.width; }))
-                    .attr("opacity", (function(d) { return d.opacity; }));
+                    .attr("x1", (function (d) {
+                        return xScale(d.x1);
+                    }))
+                    .attr("y1", (function (d) {
+                        return yScale(d.y1);
+                    }))
+                    .attr("x2", (function (d) {
+                        return xScale(d.x2);
+                    }))
+                    .attr("y2", (function (d) {
+                        return yScale(d.y2);
+                    }))
+                    .attr("stroke", (function (d) {
+                        return d.stroke;
+                    } ))
+                    .attr("stroke-width", (function (d) {
+                        return d.width;
+                    }))
+                    .attr("opacity", (function (d) {
+                        return d.opacity;
+                    }));
                 errorlineGroup.exit().remove();
 
                 connectionlineGroup = connectionlineGroup.data(data.d3ConnectionLines);
                 connectionlineGroup.enter().append("line")
                     .attr("class", "connectionline")
-                    .attr("x1",(function(d) { return xScale(d.x1); }))
-                    .attr("y1",(function(d) { return yScale(d.y1); }))
-                    .attr("x2",(function(d) { return xScale(d.x2); }))
-                    .attr("y2",(function(d) { return yScale(d.y2); }))
-                    .attr("stroke", (function(d) { return d.stroke; } ))
-                    .attr("stroke-width", (function(d) { return d.width; }));
+                    .attr("x1", (function (d) {
+                        return xScale(d.x1);
+                    }))
+                    .attr("y1", (function (d) {
+                        return yScale(d.y1);
+                    }))
+                    .attr("x2", (function (d) {
+                        return xScale(d.x2);
+                    }))
+                    .attr("y2", (function (d) {
+                        return yScale(d.y2);
+                    }))
+                    .attr("stroke", (function (d) {
+                        return d.stroke;
+                    } ))
+                    .attr("stroke-width", (function (d) {
+                        return d.width;
+                    }));
                 connectionlineGroup.exit().remove();
 
             }
@@ -239,7 +287,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 var currentTool = toolbar.getActiveItemFromGroup(toolbarItems.MAP_TOOLS);
 
-                switch(currentTool.id) {
+                switch (currentTool.id) {
                     case toolbarItems.SELECTION:
                         enableSelectionTool();
                         break;
@@ -304,8 +352,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                dataExtentX = d3.extent(scope.data.layout, function(d) { return d.x;});
-                dataExtentY = d3.extent(scope.data.layout, function(d) { return d.y;});
+                dataExtentX = d3.extent(scope.data.layout, function (d) {
+                    return d.x;
+                });
+                dataExtentY = d3.extent(scope.data.layout, function (d) {
+                    return d.y;
+                });
 
                 centerNodes();
 
@@ -314,7 +366,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .attr("transform", "translate(" + gridTranslate + ")scale(" + gridScale + ")");
 
                 brushGroup = svg.append("g")
-                    .datum(function () { return {selected: false, previouslySelected: false}; })
+                    .datum(function () {
+                        return {selected: false, previouslySelected: false};
+                    })
                     .attr("class", "brush");
 
                 elementGroup = svg.append("g");
@@ -343,7 +397,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns {d3.svg.brush}
              */
             function createBrush() {
-                brush =  d3.svg.brush()
+                brush = d3.svg.brush()
                     .x(xScale)
                     .y(yScale)
                     .on("brushstart", function () {
@@ -355,15 +409,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         var extent = d3.event.target.extent();
                         nodeGroup.classed("selected", function (d) {
                             return d.selected = d.previouslySelected ^
-                            (extent[0][0] <= d.x && d.x < extent[1][0]
-                            && extent[0][1] <= d.y && d.y < extent[1][1]);
+                                (extent[0][0] <= d.x && d.x < extent[1][0]
+                                && extent[0][1] <= d.y && d.y < extent[1][1]);
                         });
                     })
                     .on("brushend", function () {
-                        d3.event.target.clear();
-                        d3.select(this).call(d3.event.target);
-                    }
-                );
+                            d3.event.target.clear();
+                            d3.select(this).call(d3.event.target);
+                        }
+                    );
                 return brush;
             }
 
@@ -373,14 +427,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @param dy The delta y value
              */
             function nudge(dx, dy) {
-                nodeGroup.filter(function(d) { return d.selected; })
-                    .attr("transform", function(d) {
-                        d.x += dx/zoom.scale();
-                        d.y += dy/zoom.scale();
+                nodeGroup.filter(function (d) {
+                        return d.selected;
+                    })
+                    .attr("transform", function (d) {
+                        d.x += dx / zoom.scale();
+                        d.y += dy / zoom.scale();
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     });
 
-                if(d3.event.preventDefault) {
+                if (d3.event.preventDefault) {
                     d3.event.preventDefault();
                 }
 
@@ -390,10 +446,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Center the nodes in the middle of the svg
              */
-            function centerNodes () {
+            function centerNodes() {
 
-                var dataWidthX = Math.abs(dataExtentX[1]-dataExtentX[0]),
-                    dataWidthY = Math.abs(dataExtentY[1]-dataExtentY[0]);
+                var dataWidthX = Math.abs(dataExtentX[1] - dataExtentX[0]),
+                    dataWidthY = Math.abs(dataExtentY[1] - dataExtentY[0]);
 
                 // how much larger the drawing area is than the width and the height
                 var width_ratio = width / dataWidthX;
@@ -456,22 +512,38 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 // Move the graph
                 nodeGroup.attr("transform", function (d) {
-                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
+                    return "translate(" + xScale(d.x) + ", " + yScale(d.y) + ")";
                 });// Move the text labels
                 labelsGroup.attr("transform", function (d) {
-                    return "translate("+xScale(d.x)+", "+yScale(d.y)+")";
+                    return "translate(" + xScale(d.x) + ", " + yScale(d.y) + ")";
                 });
                 errorlineGroup
-                    .attr("x1",(function(d) { return xScale(d.x1); }))
-                    .attr("y1",(function(d) { return yScale(d.y1); }))
-                    .attr("x2",(function(d) { return xScale(d.x2); }))
-                    .attr("y2",(function(d) { return yScale(d.y2); }));
+                    .attr("x1", (function (d) {
+                        return xScale(d.x1);
+                    }))
+                    .attr("y1", (function (d) {
+                        return yScale(d.y1);
+                    }))
+                    .attr("x2", (function (d) {
+                        return xScale(d.x2);
+                    }))
+                    .attr("y2", (function (d) {
+                        return yScale(d.y2);
+                    }));
 
                 connectionlineGroup
-                    .attr("x1",(function(d) { return xScale(d.x1); }))
-                    .attr("y1",(function(d) { return yScale(d.y1); }))
-                    .attr("x2",(function(d) { return xScale(d.x2); }))
-                    .attr("y2",(function(d) { return yScale(d.y2); }));
+                    .attr("x1", (function (d) {
+                        return xScale(d.x1);
+                    }))
+                    .attr("y1", (function (d) {
+                        return yScale(d.y1);
+                    }))
+                    .attr("x2", (function (d) {
+                        return xScale(d.x2);
+                    }))
+                    .attr("y2", (function (d) {
+                        return yScale(d.y2);
+                    }));
             }
 
             /**
@@ -482,7 +554,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @param height intended heiht of the grid
              * @returns parentContainer
              */
-            function redrawGrid (parentContainer, boxSize, width, height) {
+            function redrawGrid(parentContainer, boxSize, width, height) {
 
                 parentContainer.selectAll("*").remove();
 
@@ -537,10 +609,18 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function keydown() {
                 if (!d3.event.metaKey) switch (d3.event.keyCode) {
-                    case 38: nudge( 0, -1); break; // UP
-                    case 40: nudge( 0, +1); break; // DOWN
-                    case 37: nudge(-1,  0); break; // LEFT
-                    case 39: nudge(+1,  0); break; // RIGHT
+                    case 38:
+                        nudge(0, -1);
+                        break; // UP
+                    case 40:
+                        nudge(0, +1);
+                        break; // DOWN
+                    case 37:
+                        nudge(-1, 0);
+                        break; // LEFT
+                    case 39:
+                        nudge(+1, 0);
+                        break; // RIGHT
                 }
                 shiftKey = d3.event.shiftKey;
             }
@@ -557,17 +637,17 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              *
              * @constructor
              */
-            function fixSelectedNodes(){
-                $rootScope.disableArray=[];
-                $rootScope.disableArrayFlag=false;
-                var flag=0;
+            function fixSelectedNodes() {
+                $rootScope.disableArray = [];
+                $rootScope.disableArrayFlag = false;
+                var flag = 0;
                 // Disable Button Functionality
-                d3.selectAll(".selected").each(function(d){
+                d3.selectAll(".selected").each(function (d) {
                     if (d.style.fill_color != "#bebebe") {
-                        flag=1;
-                        color=d.style.fill_color;
+                        flag = 1;
+                        color = d.style.fill_color;
 
-                        colorArray[""+d.id+""]= d.style.fill_color;
+                        colorArray["" + d.id + ""] = d.style.fill_color;
                         d.style.fill_color = "#bebebe";
                         d3.select(this).transition()
                             .style("stroke", "green")
@@ -575,27 +655,28 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             .attr("style", "fill:#bebebe");
                         disableArray.push(d.id);
                     }
-                    else if ("#bebebe"){
-                        flag=1;
+                    else if ("#bebebe") {
+                        flag = 1;
                         d3.select(this).transition()
-                            .attr("style", "fill:"+colorArray[""+d.id+""]);
-                        d.style.fill_color = colorArray[""+d.id+""];
-                        for( var c=0; c < disableArray.length; c++){
-                            if (d.id== disableArray[c]){
+                            .attr("style", "fill:" + colorArray["" + d.id + ""]);
+                        d.style.fill_color = colorArray["" + d.id + ""];
+                        for (var c = 0; c < disableArray.length; c++) {
+                            if (d.id == disableArray[c]) {
                                 disableArray.splice(c, 1);
-                                c= c-1;
+                                c = c - 1;
                             }
                         }
-                        flag=1;
+                        flag = 1;
                     }
-                    else{}
+                    else {
+                    }
                 });
-                if (flag===0){
+                if (flag === 0) {
                     alert("Please Select at least One Node Before Clicking on Disable");
                 }
-                else{
-                    $rootScope.disableArrayFlag= true;
-                    $rootScope.disableArray= disableArray;
+                else {
+                    $rootScope.disableArrayFlag = true;
+                    $rootScope.disableArray = disableArray;
                 }
             }
 
@@ -604,15 +685,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              *
              * @constructor
              */
-            function disconnectSelectedNodes(){
-                $rootScope.disableArray=[];
-                $rootScope.disableArrayFlag=false;
-                var flag=0;
+            function disconnectSelectedNodes() {
+                $rootScope.disableArray = [];
+                $rootScope.disableArrayFlag = false;
+                var flag = 0;
                 // Disable Button Functionality
-                d3.selectAll(".selected").each(function(d){
+                d3.selectAll(".selected").each(function (d) {
                     if (d.style.fill_color != "#bebebe") {
-                        flag=1;
-                        colorArray[""+d.id+""]= d.style.fill_color;
+                        flag = 1;
+                        colorArray["" + d.id + ""] = d.style.fill_color;
                         d.style.fill_color = "#bebebe";
                         d3.select(this).transition()
                             .style("stroke", "green")
@@ -620,28 +701,29 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             .attr("style", "fill:#bebebe");
                         disableArray.push(d.id);
                     }
-                    else if ("#bebebe"){
-                        flag=1;
+                    else if ("#bebebe") {
+                        flag = 1;
                         d3.select(this).transition()
-                            .attr("style", "fill:"+colorArray[""+d.id+""]);
-                        d.style.fill_color = colorArray[""+d.id+""];
-                        for( var c=0; c < disableArray.length; c++){
-                            if (d.id== disableArray[c]){
+                            .attr("style", "fill:" + colorArray["" + d.id + ""]);
+                        d.style.fill_color = colorArray["" + d.id + ""];
+                        for (var c = 0; c < disableArray.length; c++) {
+                            if (d.id == disableArray[c]) {
                                 disableArray.splice(c, 1);
-                                c= c-1;
+                                c = c - 1;
                             }
                         }
-                        flag=1;
+                        flag = 1;
                     }
-                    else{}
+                    else {
+                    }
                 });
 
-                if (flag===0){
+                if (flag === 0) {
                     alert("Please Select at least One Node Before Clicking on Disable");
                 }
-                else{
-                    $rootScope.disableArrayFlag= true;
-                    $rootScope.disableArray= disableArray;
+                else {
+                    $rootScope.disableArrayFlag = true;
+                    $rootScope.disableArray = disableArray;
                 }
             }
 
@@ -703,14 +785,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Watches for a set_disconnected_points (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
              */
-            $rootScope.$on('api.set_disconnected_points', function() {
+            $rootScope.$on('api.set_disconnected_points', function () {
                 disconnectSelectedNodes();
             });
 
             /**
              * Listens for button press on set_unmovable_points (FIX_NODES: Nodes continue to contribute to stress)
              */
-            $rootScope.$on('api.set_unmovable_points', function() {
+            $rootScope.$on('api.set_unmovable_points', function () {
                 fixSelectedNodes();
             });
 
@@ -724,20 +806,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Watches to Create  a new Map from Selected Nodes
              */
-            $rootScope.$on('newMap.create_from_selected', function() {
-                getNewDataFromCurrentMap(scope.data,1);
+            $rootScope.$on('newMap.create_from_selected', function () {
+                getNewDataFromCurrentMap(scope.data, 1);
             });
 
             /**
              * Handles zoom events
              */
-            $rootScope.$on('map.zoomIn', function() {
+            $rootScope.$on('map.zoomIn', function () {
                 zoomClick(+1);
             });
-            $rootScope.$on('map.zoomOut', function() {
+            $rootScope.$on('map.zoomOut', function () {
                 zoomClick(-1);
             });
-            $rootScope.$on('map.zoomInitial', function() {
+            $rootScope.$on('map.zoomInitial', function () {
                 svg.call(zoom.event); // https://github.com/mbostock/d3/issues/2387
                 zoom.scale(initialScale);
                 zoom.translate(initialTranslate);
@@ -747,10 +829,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Listens for event to get add/remove node labels
              */
-            $rootScope.$on('map.showLabels', function(event, itemID) {
-                $timeout(function() {
+            $rootScope.$on('map.showLabels', function (event, itemID) {
+                $timeout(function () {
                     var item = toolbar.getItemByID(toolbarItems.SHOW_LABELS);
-                    if (!itemID) { item.active = !item.active; }
+                    if (!itemID) {
+                        item.active = !item.active;
+                    }
                     toggleNodeLabels(item.active);
                 });
             });
@@ -773,7 +857,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              *  Watch for data changes and re-render
              */
-            scope.$watch('data', function(newVals) {
+            scope.$watch('data', function (newVals) {
                 if (newVals) {
                     renderWithData(newVals);
                 }
