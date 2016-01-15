@@ -28,6 +28,7 @@
 
     angular.module('acjim.fileHandling', ['flash'])
         .factory('fileHandling', [
+            '$rootScope',
             '$q',
             'api',
             'Flash',
@@ -37,7 +38,7 @@
             fileHandling
         ]);
 
-    function fileHandling($q, api, Flash, cfpLoadingBar, $timeout, fileDialog) {
+    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, fileDialog) {
 
         var acd1File = null;
         var projection = 0;
@@ -125,6 +126,7 @@
             var acd1_file = acd1File;
             if (new_acd1.length > 0) {
                 acd1_file = new_acd1;
+                new_acd1 = "";
             }
             return api.export(acd1_file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
@@ -444,11 +446,11 @@
                     api.relax_existing(relax_additional_params, new_acd1)
                         .then(function (filename) {
                             new_acd1 = filename.updated_acd1;
-                            fileDialog.saveAs(
-                                handleFileSaveAs,
-                                'NewChart.save',
-                                "'.acd1','.lispmds','save'"
-                            );
+                            // save the file using the selected (or non-selected points) and open the file in new window.
+                            var data_path = api.get_data_path();
+                            var output_file = api.create_file_path(data_path, acd1File, ".acd1", "np");
+                            handleFileSaveAs(output_file);
+                            $rootScope.$broadcast('open-file', output_file);
                         }, function (reason) {
                             return errorReason(reason);
                         });
