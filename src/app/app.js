@@ -151,7 +151,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.DISCONNECT_NODES,
-            caption: 'Disconnects Selected Nodes From The Map',
+            caption: 'Disconnect Selected Nodes',
             icon: 'glyphicon glyphicon-erase',
             callback: function () {
                 $rootScope.$broadcast('api.set_disconnected_points');
