@@ -50,8 +50,8 @@
             reOptimize: reOptimize,
             getNewProjection: getNewProjection,
             getErrorConnectionLines: getErrorConnectionLines,
-            disableNodes: disableNodes,
-            disableNodesWithoutStress: disableNodesWithoutStress,
+            disconnectNodes: disconnectNodes,
+            fixNodes: fixNodes,
             createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne
         };
 
@@ -431,12 +431,9 @@
                 projection: (projection == 0) ? projection : projection_comment,
                 disconnected: disabledPoints
             };
-            console.log(disabledPoints);
-
             disabledPoints.sort(function (a, b) {
                 return b - a;
             });
-            console.log(disabledPoints);
 
             api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
@@ -456,7 +453,6 @@
                             return errorReason(reason);
                         });
                 }, function (reason) {
-                    console.log(reason);
                     return errorReason(reason);
                 });
         }
@@ -465,14 +461,13 @@
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
          */
-        function disableNodesWithoutStress(mapData, disabledPoints) {
+        function fixNodes(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
                 projection: (projection == 0) ? projection : projection_comment,
                 unmovable: disabledPoints
             };
-            //console.log(disabledPoints);
 
             disabledPoints.sort(function(a, b) {
                 return b-a;
@@ -484,7 +479,6 @@
                     acd1File = filename.updated_acd1;
                     cfpLoadingBar.complete();
                 }, function (reason) {
-                    console.log(reason);
                     return errorReason(reason);
                 });
         }
@@ -493,19 +487,17 @@
          * Calls api to disable nodes from a specific  map
          * @param mapData
          */
-        function disableNodes(mapData, disabledPoints) {
+        function disconnectNodes(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
                 projection: (projection == 0) ? projection : projection_comment,
                 disconnected: disabledPoints
             };
-            //console.log(disabledPoints);
 
             disabledPoints.sort(function(a, b) {
                 return b-a;
             });
-            //console.log(disabledPoints);
 
 
             api.set_disconnected_points (disable_additional_params, acd1File)
@@ -529,8 +521,6 @@
                         });
 
                 }, function (reason) {
-                    console.log(reason);
-
                     return errorReason(reason);
                 });
 
@@ -724,7 +714,6 @@
          */
         function calculateLines(errorLines, layout) {
             if (!layout || !errorLines) {
-                console.log('ConnectionsLayer: bailing out because there is no data to plot');
                 return {};
             }
             var result = {

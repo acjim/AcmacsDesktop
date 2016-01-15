@@ -247,7 +247,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         enableMovementTool();
                         break;
                     default:
-                        console.log("Didn't recognize the tool given and did nothing. Could it be that no tool is selected?");
+                        //console.log("Didn't recognize the tool given and did nothing. Could it be that no tool is selected?");
                         break;
                 }
 
@@ -552,11 +552,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 shiftKey = d3.event.shiftKey;
             }
 
-            /** Gets All D3 Selected Elements Without Taking into account sress Value. This function should be called by the button responsible for Disabling nodes without taking
-             * into accoun the sress value
-             * @returns none
+            /**
+             * Gets All D3 Selected Elements, makes them fixed (unmovable/deselects on map):
+             *
+             * @constructor
              */
-            function DisableSelectedElementsWithoutStress(){
+            function fixSelectedNodes(){
                 $rootScope.disableArray=[];
                 $rootScope.disableArrayFlag=false;
                 var flag=0;
@@ -573,8 +574,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             .style("opacity", .4)
                             .attr("style", "fill:#bebebe");
                         disableArray.push(d.id);
-                        //console.log(d.id);
-
                     }
                     else if ("#bebebe"){
                         flag=1;
@@ -591,22 +590,21 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                     else{}
                 });
-                console.log(colorArray);
-
                 if (flag===0){
                     alert("Please Select at least One Node Before Clicking on Disable");
                 }
                 else{
                     $rootScope.disableArrayFlag= true;
-                    console.log(disableArray);
                     $rootScope.disableArray= disableArray;
                 }
             }
 
-            /** Gets All D3 Selected Elements. This function should be called by the button responsible for Disabling nodes
-             * @returns none
+            /**
+             * Gets All D3 Selected Elements, disconnects the selected points (deselects)
+             *
+             * @constructor
              */
-            function DisableSelectedElements(){
+            function disconnectSelectedNodes(){
                 $rootScope.disableArray=[];
                 $rootScope.disableArrayFlag=false;
                 var flag=0;
@@ -643,13 +641,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }
                 else{
                     $rootScope.disableArrayFlag= true;
-                   // console.log(disableArray);
                     $rootScope.disableArray= disableArray;
                 }
             }
 
             /**
              * Returns the node labels of nodes or removes them depending on the case
+             *
              * @returns none
              */
             function toggleNodeLabels(showLabels) {
@@ -662,40 +660,40 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
-             * mapDataPoints should be assigned to scope.data before passing it to the function
-             * @returns a Data Array with the new Map Data
+             *
+             * @param mapDataPoints Object {} mapDataPoints should be assigned to scope.data before passing it to the function
+             * @param indexValue int
+             * @constructor a Data Array with the new Map Data
              */
+            function getNewDataFromCurrentMap(mapDataPoints, indexValue) {
 
-                function GetNewDataFromCurrentMap(mapDataPoints, indexValue) {
+                $rootScope.newMapArray = [];
+                $rootScope.newMapArrayflag = false;
+                var mapArray = [];
+                var length = mapDataPoints.layout.length;
+                for (var counter = 0; counter < length; counter++) {
+                    mapArray.push(counter);
+                    $rootScope.newMapArray.push(counter);
+                }
+                var flag = 0;
+                d3.selectAll(".selected").each(function (d) {
+                    flag = 1;
+                    mapArray.splice(d.id, 1);
+                });
 
-                    $rootScope.newMapArray=[];
-                    $rootScope.newMapArrayflag=false;
-                    var mapArray =[];
-                    var length= mapDataPoints.layout.length;
-                    for(var counter= 0; counter < length;counter++){
-                        mapArray.push(counter);
-                        $rootScope.newMapArray.push(counter);
+                if (flag === 0) {
+                    alert("Please Select at least One Node Before Creating a New Map");
+                }
+                else {
+                    for (var counter = 0; counter < mapArray.length; counter++) {
+                        var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
+                        $rootScope.newMapArray.splice(index, 1);
                     }
-                    var flag=0;
-                    d3.selectAll(".selected").each(function(d){
-                        flag=1;
-                        mapArray.splice(d.id, 1);
-                    });
-
-                    if (flag===0){
-                        alert("Please Select at least One Node Before Creating a New Map");
+                    if (indexValue === 1) {
+                        $rootScope.newMapArray = mapArray;
                     }
-                    else {
-                        for (var counter = 0; counter < mapArray.length; counter++) {
-                            var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
-                            $rootScope.newMapArray.splice(index, 1);
-                        }
-                        if (indexValue === 1) {
-                            $rootScope.newMapArray = mapArray;
-                        }
-                        $rootScope.newMapArrayflag= true;
-                    }
-
+                    $rootScope.newMapArrayflag = true;
+                }
 
 
             }
@@ -703,31 +701,31 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /////////////////////// LISTENERS ///////////////////////
 
             /**
-             * Watches for a node disable while Affecting the Stress Value
+             * Watches for a set_disconnected_points (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
              */
             $rootScope.$on('api.set_disconnected_points', function() {
-                DisableSelectedElements();
+                disconnectSelectedNodes();
             });
 
             /**
-             * Watches for a node disable while Affecting the Stress Value
+             * Listens for button press on set_unmovable_points (FIX_NODES: Nodes continue to contribute to stress)
              */
-            $rootScope.$on('api.set_disconnected_points2', function() {
-                DisableSelectedElementsWithoutStress();
+            $rootScope.$on('api.set_unmovable_points', function() {
+                fixSelectedNodes();
             });
 
             /**
              * Watches to Create  a new Map from Non Selected Nodes
              */
-            $rootScope.$on('newMap.create', function() {
-                GetNewDataFromCurrentMap(scope.data,2);
+            $rootScope.$on('newMap.create_from_unselected', function () {
+                getNewDataFromCurrentMap(scope.data, 2);
             });
 
             /**
              * Watches to Create  a new Map from Selected Nodes
              */
-            $rootScope.$on('newMap.create2', function() {
-                GetNewDataFromCurrentMap(scope.data,1);
+            $rootScope.$on('newMap.create_from_selected', function() {
+                getNewDataFromCurrentMap(scope.data,1);
             });
 
             /**

@@ -142,33 +142,33 @@ app.run(function($rootScope, toolbar, toolbarItems, appMenuService) {
             }
         },
         {
-            id: toolbarItems.DISABLE_MAP2,
-            caption: 'Disable Map Without Stress',
+            id: toolbarItems.FIX_NODES,
+            caption: 'Fix Selected Nodes',
             icon: 'glyphicon glyphicon-scale',
             callback: function () {
-                $rootScope.$broadcast('api.set_disconnected_points2');
+                $rootScope.$broadcast('api.set_unmovable_points');
             }
         },
         {
-            id: toolbarItems.DISABLE_MAP,
-            caption: 'Disable Map With Stress',
+            id: toolbarItems.DISCONNECT_NODES,
+            caption: 'Disconnects Selected Nodes From The Map',
             icon: 'glyphicon glyphicon-erase',
             callback: function () {
                 $rootScope.$broadcast('api.set_disconnected_points');
             }
         },{
-            id: toolbarItems.NEW_MAP,
+            id: toolbarItems.NEW_MAP_FROM_UNSELECTED,
             caption: 'Create New Map From Non Selected Elements',
             icon: 'glyphicon glyphicon-scissors',
             callback: function () {
-                $rootScope.$broadcast('newMap.create');
+                $rootScope.$broadcast('newMap.create_from_unselected');
             }
         },{
-            id: toolbarItems.NEW_MAP_FROM_OPPOSITE,
+            id: toolbarItems.NEW_MAP_FROM_SELECTED,
             caption: 'Create New Map From Selected Elements',
             icon: 'glyphicon glyphicon-duplicate',
             callback: function () {
-                $rootScope.$broadcast('newMap.create2');
+                $rootScope.$broadcast('newMap.create_from_selected');
             }
         }
     ]);

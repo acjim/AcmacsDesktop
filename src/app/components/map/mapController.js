@@ -116,38 +116,39 @@
             });
         });
 
-        /** Watches for the Disable button with sress value
-         *
+        /**
+         * Listens for click event on Disconnect Nodes button (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
          */
         $scope.$on('api.set_disconnected_points', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disableNodes($scope.data, $rootScope.disableArray);
+                fileHandling.disconnectNodes($scope.data, $rootScope.disableArray);
             }
 
         });
 
-        /** Watches for the Stress Value without stress value
-         *
+        /**
+         * Listens for click on Fix Nodes button (FIX_NODES: Nodes continue to contribute to stress)
          */
-        $scope.$on('api.set_disconnected_points2', function () {
+        $scope.$on('api.set_unmovable_points', function () {
             if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disableNodesWithoutStress($scope.data, $rootScope.disableArray);
+                fileHandling.fixNodes($scope.data, $rootScope.disableArray);
             }
 
         });
 
-        /** Watches for New Map Create from opposite of Selected Nodes
-         *
+        /**
+         * Watches for New Map Create from opposite of Selected Nodes
          */
-        $scope.$on('newMap.create', function () {
+        $scope.$on('newMap.create_from_unselected', function () {
             if ($rootScope.newMapArrayflag == true) {
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
             }
         });
-        /** Watches for New Map Create from   Selected Nodes
-         *
+
+        /**
+         * Watches for New Map Create from Selected Nodes
          */
-        $scope.$on('newMap.create2', function () {
+        $scope.$on('newMap.create_from_selected', function () {
             if ($rootScope.newMapArrayflag == true) {
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
             }
