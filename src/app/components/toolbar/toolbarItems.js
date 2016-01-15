@@ -35,13 +35,13 @@
             SHOW_BLOBS: 5,
             SHOW_LABELS: 6,
             RE_OPTIMIZE: 7,
-            DISABLE_MAP: 8,
-            NEW_MAP: 9,
+            DISCONNECT_NODES: 8,
+            NEW_MAP_FROM_UNSELECTED: 9,
             ZOOM_IN: 14,
             ZOOM_OUT: 15,
             MAP_TOOLS: 10,
-            DISABLE_MAP2:13,
-            NEW_MAP_FROM_OPPOSITE: 16
+            FIX_NODES:13,
+            NEW_MAP_FROM_SELECTED: 16
 
         };
     }

@@ -1,32 +1,32 @@
 /*
-	Antigenic Cartography for Desktop
-	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
-	In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
-	This project aims at providing a desktop application for working with antigenic maps.
+ Antigenic Cartography for Desktop
+ [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens.
+ In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
+ This project aims at providing a desktop application for working with antigenic maps.
 
-	© 2015 The Antigenic Cartography Group at the University of Cambridge
+ © 2015 The Antigenic Cartography Group at the University of Cambridge
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-(function() {
+(function () {
     'use strict';
 
     var config = require('./config.js'),
         fs = require('fs');
 
-    angular.module('acjim.fileHandling',['flash'])
+    angular.module('acjim.fileHandling', ['flash'])
         .factory('fileHandling', [
             '$q',
             'api',
@@ -37,7 +37,7 @@
             fileHandling
         ]);
 
-    function fileHandling ($q, api, Flash, cfpLoadingBar, $timeout, fileDialog) {
+    function fileHandling($q, api, Flash, cfpLoadingBar, $timeout, fileDialog) {
 
         var acd1File = null;
         var projection = 0;
@@ -50,8 +50,8 @@
             reOptimize: reOptimize,
             getNewProjection: getNewProjection,
             getErrorConnectionLines: getErrorConnectionLines,
-            disableNodes: disableNodes,
-            disableNodesWithoutStress: disableNodesWithoutStress,
+            disconnectNodes: disconnectNodes,
+            fixNodes: fixNodes,
             createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne
         };
 
@@ -60,7 +60,7 @@
          * @param reason
          * @returns {Promise}
          */
-        function errorReason (reason) {
+        function errorReason(reason) {
             cfpLoadingBar.complete();
 
             // Get info message
@@ -68,15 +68,15 @@
             var warnMsg = null;
             var arr = rx.exec(reason);
             if (_.isArray(arr) && arr[1]) {
-                    warnMsg = arr[1];
-                    console.warn('INFO:  ' + warnMsg);
+                warnMsg = arr[1];
+                console.warn('INFO:  ' + warnMsg);
             }
 
             // Get error message
             rx = /ERROR(.*)\n/g;
             arr = rx.exec(reason);
             if (_.isArray(arr) && arr[1]) {
-                    console.error('ERROR:  ' + arr[1]);
+                console.error('ERROR:  ' + arr[1]);
             }
             console.error(reason);
 
@@ -100,9 +100,9 @@
          * @param filename
          * @returns {*}
          */
-        function readFile (filename) {
+        function readFile(filename) {
             var deferred = $q.defer();
-            fs.readFile(filename, 'utf8', function (err,data) {
+            fs.readFile(filename, 'utf8', function (err, data) {
                 deferred.resolve(data);
             });
             return deferred.promise;
@@ -112,13 +112,13 @@
 
             //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
             var extension = ".save";
-            if((/[.]/.exec(filename))) {
+            if ((/[.]/.exec(filename))) {
                 extension = /[^.]+$/.exec(filename);
             } else {
                 filename = filename + extension;
             }
-            var supported_extension = ["acd1","save","lispmds"];
-            if(supported_extension.indexOf(extension.toString()) < 0){
+            var supported_extension = ["acd1", "save", "lispmds"];
+            if (supported_extension.indexOf(extension.toString()) < 0) {
                 extension = "save";
             }
             var additional_params = {format: extension.toString(), filename: filename};
@@ -139,25 +139,25 @@
          * Callback function to handle the file opening
          * @param filename
          */
-        function handleFileOpen (filename) {
+        function handleFileOpen(filename) {
 
             // Start loading bar
-            $timeout(function() {
+            $timeout(function () {
                 cfpLoadingBar.start();
             }, 100);
 
             if (!fs.existsSync(config.api.script)) { // If there is no AcmacsCore.bundle
-                return api.asyncTest().then(function() {
+                return api.asyncTest().then(function () {
                     var output = api.stubOpen();
                     Flash.create('danger', 'Core api is missing, please add core api');
 
                     return $q.all([
                         readFile(output.table_json),
                         readFile(output.map_json)
-                    ]).then(function(data) {
+                    ]).then(function (data) {
                         var result = {};
                         result.table = JSON.parse(data[0]);
-                        result.map   = JSON.parse(data[1]);
+                        result.map = JSON.parse(data[1]);
                         acd1File = output.output_acd1;
                         return result;
                     });
@@ -175,22 +175,22 @@
                     ]).then(function (data) {
                         cfpLoadingBar.set(0.6);
                         var output_table_json = data[0];
-                        var output_map_json   = data[1];
+                        var output_map_json = data[1];
                         return $q.all([
                             readFile(output_table_json),
                             readFile(output_map_json)
-                        ]).then(function(data) {
+                        ]).then(function (data) {
                             cfpLoadingBar.set(0.9);
                             var result = {};
                             result.table = JSON.parse(data[0]);
-                            result.map   = parseLayoutData(JSON.parse(data[1]));
+                            result.map = parseLayoutData(JSON.parse(data[1]));
                             acd1File = output.output_acd1;
                             return result;
                         });
                     }, function (reason) {
                         return errorReason(reason);
                     });
-                }, function(reason) {
+                }, function (reason) {
                     return errorReason(reason);
                 });
             }
@@ -217,7 +217,7 @@
                 var additional_params = {
                     coordinates: list,
                     projection: projection,
-                    comment: "projection_"+ projection
+                    comment: "projection_" + projection
                 };
 
                 return api.new_projection(additional_params, acd1File)
@@ -260,7 +260,7 @@
             var additional_params = {
                 coordinates: list,
                 projection: projection,
-                comment: "projection_"+projection
+                comment: "projection_" + projection
             };
 
             return api.new_projection(additional_params, acd1File).then(function (output) {
@@ -277,9 +277,9 @@
                 return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File).then(function (data) {
                     return $q.all([
                         readFile(data)
-                    ]).then(function(output_data) {
-                       mapData = parseLayoutData(JSON.parse(output_data));
-                       return mapData;
+                    ]).then(function (output_data) {
+                        mapData = parseLayoutData(JSON.parse(output_data));
+                        return mapData;
                     });
 
                 }, function (reason) {
@@ -304,7 +304,7 @@
                         .then(function (filename) {
                             return $q.all([
                                 readFile(filename)
-                            ]).then(function(data) {
+                            ]).then(function (data) {
                                 mapData = parseLayoutData(JSON.parse(data));
                                 return mapData;
                             });
@@ -327,7 +327,7 @@
          *      d3ErrorLines: Array
          * }}
          */
-        function parseLayoutData (data) {
+        function parseLayoutData(data) {
 
             var oldMap = data.map;
 
@@ -411,7 +411,7 @@
             return api.execute(api.get_commands().ERROR_LINES, additional_params, acd1File).then(function (filename) {
                 return $q.all([
                     readFile(filename)
-                ]).then(function(data) {
+                ]).then(function (data) {
                     // relax returns array of error_lines.
                     var result = calculateLines(JSON.parse(data).error_lines, mapData.layout);
                     cfpLoadingBar.complete();
@@ -431,12 +431,9 @@
                 projection: (projection == 0) ? projection : projection_comment,
                 disconnected: disabledPoints
             };
-            console.log(disabledPoints);
-
             disabledPoints.sort(function (a, b) {
                 return b - a;
             });
-            console.log(disabledPoints);
 
             api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
@@ -456,7 +453,6 @@
                             return errorReason(reason);
                         });
                 }, function (reason) {
-                    console.log(reason);
                     return errorReason(reason);
                 });
         }
@@ -465,17 +461,16 @@
          * Calls api to disable nodes (without Sress) from a specific  map
          * @param mapData
          */
-        function disableNodesWithoutStress(mapData, disabledPoints) {
+        function fixNodes(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
                 projection: (projection == 0) ? projection : projection_comment,
                 unmovable: disabledPoints
             };
-            //console.log(disabledPoints);
 
-            disabledPoints.sort(function(a, b) {
-                return b-a;
+            disabledPoints.sort(function (a, b) {
+                return b - a;
             });
 
 
@@ -484,7 +479,6 @@
                     acd1File = filename.updated_acd1;
                     cfpLoadingBar.complete();
                 }, function (reason) {
-                    console.log(reason);
                     return errorReason(reason);
                 });
         }
@@ -493,22 +487,20 @@
          * Calls api to disable nodes from a specific  map
          * @param mapData
          */
-        function disableNodes(mapData, disabledPoints) {
+        function disconnectNodes(mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
                 projection: (projection == 0) ? projection : projection_comment,
                 disconnected: disabledPoints
             };
-            //console.log(disabledPoints);
 
-            disabledPoints.sort(function(a, b) {
-                return b-a;
+            disabledPoints.sort(function (a, b) {
+                return b - a;
             });
-            //console.log(disabledPoints);
 
 
-            api.set_disconnected_points (disable_additional_params, acd1File)
+            api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
                     var map_additional_params = {projection: (projection == 0) ? projection : projection_comment};
@@ -529,8 +521,6 @@
                         });
 
                 }, function (reason) {
-                    console.log(reason);
-
                     return errorReason(reason);
                 });
 
@@ -548,7 +538,7 @@
          * @param probe
          * @returns {boolean}
          */
-        function positive (p1, p2, probe) {
+        function positive(p1, p2, probe) {
             var dxa, dya, dxb, dyb, cross;
 
             // first check if probe is on line that runs through p1 and p2
@@ -562,7 +552,7 @@
             cross = dxa * dyb - dya * dxb;
 
             // compare x and y coordinates, whether probe lies between p1 and p2
-            if (Math.abs(dxb) >= Math.abs(dyb)){
+            if (Math.abs(dxb) >= Math.abs(dyb)) {
                 if (dxb > 0) {
                     return (
                         (p1.x <= probe[0] && probe[0] <= p2.x) ||
@@ -724,7 +714,6 @@
          */
         function calculateLines(errorLines, layout) {
             if (!layout || !errorLines) {
-                console.log('ConnectionsLayer: bailing out because there is no data to plot');
                 return {};
             }
             var result = {
