@@ -44,6 +44,7 @@
         var projection = 0;
         var new_acd1 = "";
         var projection_comment = null;
+        var is_changed = false;
 
         return {
             handleFileOpen: handleFileOpen,
@@ -53,7 +54,9 @@
             getErrorConnectionLines: getErrorConnectionLines,
             disconnectNodes: disconnectNodes,
             fixNodes: fixNodes,
-            createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne
+            createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne,
+            setMapIsChanged: setMapIsChanged,
+            getMapIsChanged: getMapIsChanged
         };
 
         /**
@@ -281,6 +284,7 @@
                         readFile(data)
                     ]).then(function (output_data) {
                         mapData = parseLayoutData(JSON.parse(output_data));
+                        setMapIsChanged(true);
                         return mapData;
                     });
 
@@ -308,6 +312,7 @@
                                 readFile(filename)
                             ]).then(function (data) {
                                 mapData = parseLayoutData(JSON.parse(data));
+                                setMapIsChanged(true);
                                 return mapData;
                             });
                         }, function (reason) {
@@ -416,6 +421,7 @@
                 ]).then(function (data) {
                     // relax returns array of error_lines.
                     var result = calculateLines(JSON.parse(data).error_lines, mapData.layout);
+                    setMapIsChanged(true);
                     cfpLoadingBar.complete();
                     return result;
                 });
@@ -479,6 +485,7 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
+                    setMapIsChanged(true);
                     cfpLoadingBar.complete();
                 }, function (reason) {
                     return errorReason(reason);
@@ -518,6 +525,7 @@
                                 });
                                 cfpLoadingBar.complete();
                             });
+                            setMapIsChanged(true);
                         }, function (reason) {
                             return errorReason(reason);
                         });
@@ -728,6 +736,26 @@
 
             return result;
         }
+
+        /**
+         *
+         * @returns {boolean}
+         */
+        function getMapIsChanged()
+        {
+            return is_changed;
+        }
+
+        /**
+         * If opened map has been changed in any way set as true else false
+         *
+         * @param changed Boolean
+         */
+        function setMapIsChanged(changed)
+        {
+            is_changed = changed;
+        }
+
 
     }
 })();

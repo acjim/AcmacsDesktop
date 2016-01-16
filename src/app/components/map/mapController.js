@@ -76,6 +76,7 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
+                fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
             });
         }
@@ -167,10 +168,17 @@
         });
 
         /**
-         * Watches for moved nodes while lines are displayed
+         * Watches for moved nodes while lines(error/connection) are displayed
+         */
+        $scope.$on('map.nudgeTriggeredOnLine', function () {
+            getProjectionBeforeErrorLines();
+        });
+
+        /**
+         * Watches for moved nodes while lines(error/connection) are not displayed
          */
         $scope.$on('map.nudgeTriggered', function () {
-            getProjectionBeforeErrorLines();
+            fileHandling.setMapIsChanged(true);
         });
     }
 })();
