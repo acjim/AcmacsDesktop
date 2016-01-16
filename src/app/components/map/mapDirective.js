@@ -195,6 +195,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         })
                         .on("dragend", function () {
                             if (scope.showErrorLines || scope.showConnectionLines) {
+                                scope.$emit('map.nudgeTriggeredOnLine');
+                            } else {
                                 scope.$emit('map.nudgeTriggered');
                             }
                         })

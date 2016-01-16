@@ -24,9 +24,9 @@
     'use strict';
 
 angular.module('acjim')
-    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', appCtrl]);
+    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$window',appCtrl]);
 
-    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar) {
+    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $window) {
 
 
         /******************** File Handling *******************/
@@ -49,6 +49,10 @@ angular.module('acjim')
                 'NewChart.save',
                 "'.acd1','.lispmds','save'"
             );
+        });
+
+        $scope.$on('save-file', function () {
+            fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName());
         });
 
         function handleFileSaveAs(filename) {
@@ -117,13 +121,33 @@ angular.module('acjim')
 
         nwService.window.on('close', function (event) {
             // Pretend to be closed already
-            this.hide();
-            if (event !== "quit") {
+            if (fileHandling.getMapIsChanged()) {
+                var answer = $window.confirm("Map has been modified, do you want to save before exit?")
+                //todo: use proper confirmation dialog
+                if (answer) {
+                    cfpLoadingBar.start();
+                    fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event).then(function (output) {
+                        fileHandling.setMapIsChanged(false);
+                        setTimeout(function() {closeWindow(output.current_window, output.triggered_event)}, 1500);
+                    }, function (reason) {
+                        return errorReason(reason);
+                    });
+                } else {
+                    closeWindow(this, event);
+                }
+            } else {
+                closeWindow(this, event);
+            }
+        });
+
+        function closeWindow(current_window, event_triggered) {
+            current_window.hide();
+            if (event_triggered !== "quit") {
                 nwService.parentWindow.emit("window-close", nwService.window.id);
                 return;
             }
-            this.close(true);
-        });
+            current_window.close(true);
+        }
 
 
         /******************** Layout *******************/
