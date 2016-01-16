@@ -29,7 +29,7 @@
                         {label: 'Close Window', tooltip: 'Close Window', click: 'close-window', modifiers: osModifier, key: 'w'},
                         //{label: 'Close All', tooltip: 'Close all currently open files', click: 'close-all', modifiers: osModifier + 'shift', key: 'w' },
                         {type: 'separator'},
-                        {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's', enabled: false},
+                        {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's', enabled: true},
                         {
                             label: 'Export file as...',
                             tooltip: 'Export file as...',
