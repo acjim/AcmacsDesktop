@@ -45,6 +45,7 @@
         var new_acd1 = "";
         var projection_comment = null;
         var is_changed = false;
+        var original_filename = "";
 
         return {
             handleFileOpen: handleFileOpen,
@@ -56,7 +57,8 @@
             fixNodes: fixNodes,
             createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne,
             setMapIsChanged: setMapIsChanged,
-            getMapIsChanged: getMapIsChanged
+            getMapIsChanged: getMapIsChanged,
+            getOriginalFileName: getOriginalFileName
         };
 
         /**
@@ -112,9 +114,10 @@
             return deferred.promise;
         }
 
-        function handleFileSaveAs(filename) {
+        function handleFileSaveAs(filename, current_window, triggered_event) {
 
             //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
+            cfpLoadingBar.start();
             var extension = ".save";
             if ((/[.]/.exec(filename))) {
                 extension = /[^.]+$/.exec(filename);
@@ -133,7 +136,8 @@
             }
             return api.export(acd1_file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
-                Flash.create('success', 'File exported successfully!');
+                Flash.create('success', 'File saved successfully!');
+                return {current_window: current_window, triggered_event: triggered_event};
             }, function (reason) {
                 return errorReason(reason);
             });
@@ -171,7 +175,7 @@
                 var additional_params = {};
                 var table_additional_params = {}; // check documentation on execute>get_table for additional params
                 var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
-
+                original_filename = filename;
                 return api.import_user_data(filename, additional_params).then(function (output) {
                     cfpLoadingBar.set(0.3);
                     return $q.all([
@@ -455,7 +459,7 @@
                             // save the file using the selected (or non-selected points) and open the file in new window.
                             var data_path = api.get_data_path();
                             var output_file = api.create_file_path(data_path, acd1File, ".acd1", "np");
-                            handleFileSaveAs(output_file);
+                            handleFileSaveAs(output_file, null, null);
                             $rootScope.$broadcast('open-file', output_file);
                         }, function (reason) {
                             return errorReason(reason);
@@ -754,6 +758,15 @@
         function setMapIsChanged(changed)
         {
             is_changed = changed;
+        }
+
+        /**
+         *
+         * @returns {string} returns original file name
+         */
+        function getOriginalFileName()
+        {
+            return original_filename;
         }
 
 
