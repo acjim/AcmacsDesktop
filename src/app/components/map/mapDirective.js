@@ -92,6 +92,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .y(yScale)
                     .translate(translate)
                     .scale(scale)
+                    .on("zoomstart", zoomStart)
                     .on("zoom", applyZoom);
 
                 // reapply scales on the data
@@ -498,6 +499,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var scale = zoom.scale(), translate = zoom.translate();
                 return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
             }
+
+
+            /**
+             * Deselects all nodes when using the zoom
+             */
+            function zoomStart() {
+                nodeGroup.each(function(d) {
+                    d.selected = false;
+                    d.previouslySelected = false;
+                });
+                nodeGroup.classed("selected", false);
+            }
+
 
             /**
              * Applies the current zoom and moves the objects accordingly.
