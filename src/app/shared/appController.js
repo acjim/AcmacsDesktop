@@ -24,9 +24,9 @@
     'use strict';
 
 angular.module('acjim')
-    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$window', '$timeout', appCtrl]);
+    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$window', '$timeout', '$document', appCtrl]);
 
-    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $window, $timeout) {
+    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $window, $timeout, $document) {
 
 
         /******************** File Handling *******************/
@@ -69,6 +69,7 @@ angular.module('acjim')
             fileHandling.handleFileOpen(filename).then(function(result) {
                 $scope.tableData = result.table;
                 $scope.mapData = result.map;
+                $document[0].title += " - " + filename;
             });
         }
 
