@@ -24,9 +24,9 @@
     'use strict';
 
 angular.module('acjim')
-    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$window',appCtrl]);
+    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$window', '$timeout', appCtrl]);
 
-    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $window) {
+    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $window, $timeout) {
 
 
         /******************** File Handling *******************/
@@ -154,23 +154,31 @@ angular.module('acjim')
 
         $scope.layout = {
             toolbar: false,
-            table: false
+            table: true
         };
+
         $scope.cloak = true;
 
         $scope.$on('map.loaded', function () {
+            // FIXME: This hotfix enables hiding the table on startup.
+            // When omitting this, the collapsed state gets changed to
+            // false by the ui.layout directive.
+            $scope.layout.table = true;
+
             $scope.cloak = false;
             cfpLoadingBar.complete();
         });
 
         $scope.$on('layout.table', function () {
-            $scope.layout.table = !$scope.layout.table;
-            $scope.$apply();
+            $timeout(function() {
+                $scope.layout.table = !$scope.layout.table;
+            });
         });
 
         $scope.$on('layout.toolbar', function () {
-            $scope.layout.toolbar = !$scope.layout.toolbar;
-            $scope.$apply();
+            $timeout(function() {
+                $scope.layout.toolbar = !$scope.layout.toolbar;
+            });
         });
 
 
