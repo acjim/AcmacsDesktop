@@ -1,7 +1,7 @@
 {
   "name": "AcmacsDesktop",
   "description": "A desktop app for antigenic cartography",
-  "version": "0.3.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/acjim/AcmacsDesktop.git"
