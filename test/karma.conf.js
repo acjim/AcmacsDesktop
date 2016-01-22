@@ -16,9 +16,9 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             // Provide dependencies
-            '../src/node_modules/angular/angular.js',
+            '../src/bower_components/angular/angular.js',
             '../node_modules/angular-mocks/angular-mocks.js',
-            '../src/node_modules/underscore/underscore.js',
+            '../src/bower_components/underscore/underscore.js',
 
             // Add your modules to test here, like:
             //'../src/app/componenteXY/*.js',
