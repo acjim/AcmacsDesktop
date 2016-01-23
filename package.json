@@ -1,14 +1,14 @@
 {
   "name": "AcmacsDesktop",
   "description": "A desktop app for antigenic cartography",
-  "version": "0.3.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/acjim/AcmacsDesktop.git"
   },
   "license": "MIT",
   "scripts": {
-    "postinstall": "(cd src && npm install)",
+    "postinstall": "(cd src && ../node_modules/.bin/bower install)",
     "start": "./node_modules/.bin/nw src",
     "test": "grunt test"
   },
@@ -28,7 +28,8 @@
     "karma-junit-reporter": "~0.3",
     "karma-phantomjs-launcher": "~0.2",
     "phantomjs": "~1.9.18",
-    "nw": "~0.12"
+    "nw": "~0.12",
+    "bower": "^1.7.2"
   },
   "optionalDependencies":{
     "grunt-appdmg": "^0.3.2"

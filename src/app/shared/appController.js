@@ -24,9 +24,9 @@
     'use strict';
 
 angular.module('acjim')
-    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$window',appCtrl]);
+    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$timeout', '$document', 'dialogs', appCtrl]);
 
-    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $window) {
+    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $timeout, $document, dialogs) {
 
 
         /******************** File Handling *******************/
@@ -69,6 +69,7 @@ angular.module('acjim')
             fileHandling.handleFileOpen(filename).then(function(result) {
                 $scope.tableData = result.table;
                 $scope.mapData = result.map;
+                $document[0].title += " - " + filename;
             });
         }
 
@@ -120,33 +121,33 @@ angular.module('acjim')
         });
 
         nwService.window.on('close', function (event) {
-            // Pretend to be closed already
             if (fileHandling.getMapIsChanged()) {
-                var answer = $window.confirm("Map has been modified, do you want to save before exit?")
-                //todo: use proper confirmation dialog
-                if (answer) {
-                    cfpLoadingBar.start();
+                var dlg = dialogs.confirm("Save File?", "Map has been modified, do you want to save before exit?", {backdrop: false, size: 'sm'});
+
+                dlg.result.then(function(){
+                    // If file should be saved
                     fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event).then(function (output) {
-                        fileHandling.setMapIsChanged(false);
-                        setTimeout(function() {closeWindow(output.current_window, output.triggered_event)}, 1500);
+                        closeWindow(output.triggered_event);
                     }, function (reason) {
-                        return errorReason(reason);
+                        return errorReason(reason); //TODO: This will throw an error!!
                     });
-                } else {
-                    closeWindow(this, event);
-                }
+                }, function(){
+                    //If no or dialog closed
+                    closeWindow(event);
+                });
             } else {
-                closeWindow(this, event);
+                closeWindow(event);
             }
         });
 
-        function closeWindow(current_window, event_triggered) {
-            current_window.hide();
+        function closeWindow(event_triggered) {
+            // Pretend to be closed already
+            nwService.window.hide();
             if (event_triggered !== "quit") {
                 nwService.parentWindow.emit("window-close", nwService.window.id);
                 return;
             }
-            current_window.close(true);
+            nwService.window.close(true);
         }
 
 
@@ -154,23 +155,31 @@ angular.module('acjim')
 
         $scope.layout = {
             toolbar: false,
-            table: false
+            table: true
         };
+
         $scope.cloak = true;
 
         $scope.$on('map.loaded', function () {
+            // FIXME: This hotfix enables hiding the table on startup.
+            // When omitting this, the collapsed state gets changed to
+            // false by the ui.layout directive.
+            $scope.layout.table = true;
+
             $scope.cloak = false;
             cfpLoadingBar.complete();
         });
 
         $scope.$on('layout.table', function () {
-            $scope.layout.table = !$scope.layout.table;
-            $scope.$apply();
+            $timeout(function() {
+                $scope.layout.table = !$scope.layout.table;
+            });
         });
 
         $scope.$on('layout.toolbar', function () {
-            $scope.layout.toolbar = !$scope.layout.toolbar;
-            $scope.$apply();
+            $timeout(function() {
+                $scope.layout.toolbar = !$scope.layout.toolbar;
+            });
         });
 
 

@@ -34,11 +34,11 @@
             'Flash',
             'cfpLoadingBar',
             '$timeout',
-            'fileDialog',
+            '$document',
             fileHandling
         ]);
 
-    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, fileDialog) {
+    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document) {
 
         var acd1File = null;
         var projection = 0;
@@ -114,9 +114,16 @@
             return deferred.promise;
         }
 
+
+        /**
+         * Handles the file save
+         * @param filename
+         * @param current_window
+         * @param triggered_event
+         * @returns {*}
+         */
         function handleFileSaveAs(filename, current_window, triggered_event) {
 
-            //Known issue: https://github.com/nwjs/nw.js/wiki/File-dialogs#filter-file accept doesn't work with nwsaveas
             cfpLoadingBar.start();
             var extension = ".save";
             if ((/[.]/.exec(filename))) {
@@ -137,6 +144,7 @@
             return api.export(acd1_file, additional_params).then(function (output) {
                 cfpLoadingBar.complete();
                 Flash.create('success', 'File saved successfully!');
+                setMapIsChanged(false);
                 return {current_window: current_window, triggered_event: triggered_event};
             }, function (reason) {
                 return errorReason(reason);
@@ -745,8 +753,7 @@
          *
          * @returns {boolean}
          */
-        function getMapIsChanged()
-        {
+        function getMapIsChanged() {
             return is_changed;
         }
 
@@ -755,17 +762,23 @@
          *
          * @param changed Boolean
          */
-        function setMapIsChanged(changed)
-        {
-            is_changed = changed;
+        function setMapIsChanged(changed) {
+            if (is_changed !== changed) {
+                is_changed = changed;
+                if (is_changed) {
+                    $document[0].title += "*";
+                } else {
+                    var str =  $document[0].title;
+                    $document[0].title = str.substring(0, str.length - 1);
+                }
+            }
         }
 
         /**
          *
          * @returns {string} returns original file name
          */
-        function getOriginalFileName()
-        {
+        function getOriginalFileName() {
             return original_filename;
         }
 

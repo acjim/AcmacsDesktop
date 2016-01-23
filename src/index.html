@@ -4,7 +4,7 @@
     <title>Acmacs Desktop</title>
 
     <!-- Le css -->
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="welcomeScreen/style.css">
 
 </head>
@@ -14,8 +14,7 @@
 
     <div class="col col-first">
         <ul class="m-new">
-            <li><a ng-click="openDocumentWindow()">New Project</a></li>
-            <li><a ng-click="openFile()">Open</a></li>
+            <li><a ng-click="openFile()">Open File</a></li>
             <li>Open a Recent Project
                 <ul>
                     <li ng-repeat="project in recentProjects | limitTo:5">
@@ -27,8 +26,8 @@
     </div>
 
     <!-- Le javascript -->
-    <script src="node_modules/underscore/underscore.js"></script>
-    <script src="node_modules/angular/angular.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
     <script src="app/components/filehandling/fileDialog.js"></script>
 
     <script src="welcomeScreen/app.js"></script>

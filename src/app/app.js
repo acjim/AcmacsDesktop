@@ -27,6 +27,7 @@ var app = angular.module('acjim', [
     'ngRoute',
     'ui.bootstrap',
     'ui.layout',
+    'dialogs.main',
     'acjim.fileHandling',
     'acjim.api',
     'acjim.map',
