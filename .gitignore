@@ -2,7 +2,7 @@
 
 # Node modules
 node_modules
-src/node_modules/
+src/bower_components/
 
 # Build folders
 /build/
