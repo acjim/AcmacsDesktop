@@ -34,14 +34,24 @@
          */
 
         $scope.$on('map.reOptimize', function () {
+            console.log($scope.pointsMoved);
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
+                update();
                 getErrorConnectionLines();
                 cfpLoadingBar.complete();
             });
         });
 
+        function update (){
+            console.log($rootScope.disableArray);
+            var length= $rootScope.disableArray.length;
+            for (var counter = 0; counter < length; counter++) {
+                $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color="#bebebe";
+            }
+
+        }
 
         /**
          * Calls fileHandlingService for API call to backend to get Error & Connectionlines
@@ -58,6 +68,8 @@
                 fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
+                    update();
+
 
                     if (!$scope.showConnectionLines) {
                         $scope.data.d3ConnectionLines = [];
@@ -65,6 +77,7 @@
                     if (!$scope.showErrorLines) {
                         $scope.data.d3ErrorLines = [];
                     }
+
                 });
             }
         }
@@ -76,6 +89,7 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
+                update();
                 fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
             });

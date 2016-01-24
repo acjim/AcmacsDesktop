@@ -434,9 +434,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         return d.selected;
                     })
                     .attr("transform", function (d) {
-                        d.x += dx / zoom.scale();
-                        d.y += dy / zoom.scale();
-                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                        if (d.style.fill_color != "#bebebe") {
+                            d.x += dx / zoom.scale();
+                            d.y += dy / zoom.scale();
+                            return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                        }
+                        else {
+                            d.x += 0 / zoom.scale();
+                            d.y += 0 / zoom.scale();
+                            return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                        }
                     });
 
                 if (d3.event.preventDefault) {
@@ -654,7 +661,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @constructor
              */
             function fixSelectedNodes() {
-                $rootScope.disableArray = [];
+                //$rootScope.disableArray = [];
+                var flagDisable;
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
@@ -669,7 +677,17 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             .style("stroke", "green")
                             .style("opacity", .4)
                             .attr("style", "fill:#bebebe");
-                        disableArray.push(d.id);
+                        d.fixed= true;
+                        for (var c = 0; c < disableArray.length; c++) {
+                            if (d.id == disableArray[c]) {
+                                flagDisable= 1;
+                            }
+                        }
+                        if (flagDisable!=1){
+                            disableArray.push(d.id);
+                            flagDisable= 0;
+                        }
+
                     }
                     else if ("#bebebe") {
                         flag = 1;
@@ -693,6 +711,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 else {
                     $rootScope.disableArrayFlag = true;
                     $rootScope.disableArray = disableArray;
+                    $rootScope.colorArray= colorArray;
                 }
             }
 
@@ -702,7 +721,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @constructor
              */
             function disconnectSelectedNodes() {
-                $rootScope.disableArray = [];
+                //$rootScope.disableArray = [];
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
@@ -740,6 +759,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 else {
                     $rootScope.disableArrayFlag = true;
                     $rootScope.disableArray = disableArray;
+                    $rootScope.colorArray= colorArray;
+
                 }
             }
 
@@ -764,7 +785,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @constructor a Data Array with the new Map Data
              */
             function getNewDataFromCurrentMap(mapDataPoints, indexValue) {
-
                 $rootScope.newMapArray = [];
                 $rootScope.newMapArrayflag = false;
                 var mapArray = [];
