@@ -27,7 +27,7 @@ var app = angular.module('acjim.map');
 /*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', function ($rootScope, $window, $timeout, toolbar, toolbarItems) {
+app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', 'dialogs', function ($rootScope, $window, $timeout, toolbar, toolbarItems, dialogs) {
     return {
         restrict: 'A',
         scope: {
@@ -688,7 +688,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                 });
                 if (flag === 0) {
-                    alert("Please Select at least One Node Before Clicking on Disable");
+                    var notice = "No nodes selected, please select one or more nodes to be fixed";
+                    var dlg = dialogs.notify('Notice!', notice);
                 }
                 else {
                     $rootScope.disableArrayFlag = true;
@@ -735,7 +736,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
 
                 if (flag === 0) {
-                    alert("Please Select at least One Node Before Clicking on Disable");
+                    var notice = "No nodes selected, please select one or more nodes to disconnect";
+                    var dlg = dialogs.notify('Notice!', notice);
                 }
                 else {
                     $rootScope.disableArrayFlag = true;
@@ -780,7 +782,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
 
                 if (flag === 0) {
-                    alert("Please Select at least One Node Before Creating a New Map");
+                    var notice = "No nodes selected to create new map, please select one or more nodes";
+                    var dlg = dialogs.notify('Notice!', notice);
                 }
                 else {
                     for (var counter = 0; counter < mapArray.length; counter++) {
