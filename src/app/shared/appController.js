@@ -130,7 +130,7 @@ angular.module('acjim')
 
                 dlg.result.then(function(){
                     // If file should be saved
-                    fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event).then(function (output) {
+                    fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event, $scope.mapData).then(function (output) {
                         closeWindow(output.triggered_event);
                     }, function (reason) {
                         return errorReason(reason); //TODO: This will throw an error!!
