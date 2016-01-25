@@ -183,6 +183,9 @@ angular.module('acjim.api', [])
                     if (!additional_params.hasOwnProperty('format') || !additional_params.hasOwnProperty('filename')) {
                         throw new Error('Missing mandatory data, please make sure your data has: format, and filename');
                     }
+                    if (additional_params.hasOwnProperty('projection')) {
+                        input_parameter.data.projection = additional_params.projection;
+                    }
                     input_parameter.data.filename = additional_params.filename;
                     input_parameter.data.format = additional_params.format;
                     break;

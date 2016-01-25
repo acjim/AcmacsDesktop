@@ -43,20 +43,24 @@ angular.module('acjim')
             }
         });
 
-        $scope.$on('save-as', function () {
-            fileDialog.saveAs(
-                handleFileSaveAs,
-                'NewChart.save',
-                "'.acd1','.lispmds','save'"
-            );
+        $scope.$on('save-as', function (event, filename) {
+            if (_.isEmpty(filename)) {
+                fileDialog.saveAs(
+                    handleFileSaveAs,
+                    'NewChart.save',
+                    "'.acd1','.lispmds','save'"
+                );
+            } else {
+                handleFileSaveAs(filename);
+            }
         });
 
         $scope.$on('save-file', function () {
-            fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName());
+            fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), null, null, $scope.mapData);
         });
 
         function handleFileSaveAs(filename) {
-            fileHandling.handleFileSaveAs(filename);
+            fileHandling.handleFileSaveAs(filename, null, null, $scope.mapData);
         }
 
         function handleFileOpen(filename) {

@@ -122,34 +122,59 @@
          * @param triggered_event
          * @returns {*}
          */
-        function handleFileSaveAs(filename, current_window, triggered_event) {
+        function handleFileSaveAs(filename, current_window, triggered_event, mapData) {
 
             cfpLoadingBar.start();
-            var extension = ".save";
-            if ((/[.]/.exec(filename))) {
-                extension = /[^.]+$/.exec(filename);
-            } else {
-                filename = filename + extension;
-            }
-            var supported_extension = ["acd1", "save", "lispmds"];
-            if (supported_extension.indexOf(extension.toString()) < 0) {
-                extension = "save";
-            }
-            var additional_params = {format: extension.toString(), filename: filename};
             var acd1_file = acd1File;
             if (new_acd1.length > 0) {
                 acd1_file = new_acd1;
                 new_acd1 = "";
             }
-            return api.export(acd1_file, additional_params).then(function (output) {
-                cfpLoadingBar.complete();
-                Flash.create('success', 'File saved successfully!');
-                setMapIsChanged(false);
-                return {current_window: current_window, triggered_event: triggered_event};
-            }, function (reason) {
-                return errorReason(reason);
+            var list = [];
+            mapData.layout.forEach(function (layout, i) {
+                list[i] = [
+                    layout.x,
+                    layout.y
+                ];
             });
+            var additional_params = {
+                coordinates: list,
+                projection: projection
+            };
 
+            // get new projection before export
+            return api.new_projection(additional_params, acd1_file)
+                .then(function (output) {
+                    acd1_file = output.output_acd1;
+                    var output_json = output.output_json;
+                    var data = fs.readFileSync(output_json, 'utf8');
+                    var mapJsonData = JSON.parse(data);
+                    var projection_number = mapJsonData.projection;
+                    console.log(projection_number);
+
+                    // process extension and other export parameters
+                    var extension = ".save";
+                    if ((/[.]/.exec(filename))) {
+                        extension = /[^.]+$/.exec(filename);
+                    } else {
+                        filename = filename + extension;
+                    }
+                    var supported_extension = ["acd1", "save", "lispmds"];
+                    if (supported_extension.indexOf(extension.toString()) < 0) {
+                        extension = "save";
+                    }
+                    var export_params = {format: extension.toString(), filename: filename, projection: projection_number};
+                    return api.export(acd1_file, export_params).then(function (output) {
+                        cfpLoadingBar.complete();
+                        Flash.create('success', 'File saved successfully!');
+                        setMapIsChanged(false);
+                        return {current_window: current_window, triggered_event: triggered_event};
+                    }, function (reason) {
+                        return errorReason(reason);
+                    });
+                }, function (reason) {
+                    return errorReason(reason);
+                });
         }
 
         /**
@@ -467,7 +492,7 @@
                             // save the file using the selected (or non-selected points) and open the file in new window.
                             var data_path = api.get_data_path();
                             var output_file = api.create_file_path(data_path, acd1File, ".acd1", "np");
-                            handleFileSaveAs(output_file, null, null);
+                            $rootScope.$broadcast('save-as', output_file);
                             $rootScope.$broadcast('open-file', output_file);
                         }, function (reason) {
                             return errorReason(reason);
