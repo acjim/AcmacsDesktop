@@ -150,7 +150,6 @@
                     var data = fs.readFileSync(output_json, 'utf8');
                     var mapJsonData = JSON.parse(data);
                     var projection_number = mapJsonData.projection;
-                    console.log(projection_number);
 
                     // process extension and other export parameters
                     var extension = ".save";
