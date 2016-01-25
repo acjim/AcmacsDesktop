@@ -45,10 +45,12 @@
         });
 
         function update (){
-            console.log($rootScope.disableArray);
-            var length= $rootScope.disableArray.length;
-            for (var counter = 0; counter < length; counter++) {
-                $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color="#bebebe";
+
+            if ($rootScope.disableArray) {
+                var length = $rootScope.disableArray.length;
+                for (var counter = 0; counter < length; counter++) {
+                    $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
+                }
             }
 
         }
