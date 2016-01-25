@@ -458,7 +458,6 @@
                 ]).then(function (data) {
                     // relax returns array of error_lines.
                     var result = calculateLines(JSON.parse(data).error_lines, mapData.layout);
-                    setMapIsChanged(true);
                     cfpLoadingBar.complete();
                     return result;
                 });
