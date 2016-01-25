@@ -95,7 +95,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .on("zoomstart", zoomStart)
                     .on("zoom", applyZoom);
 
-                // reapply scales on the data
+                // reapply scales on the data, only if data is already defined, otherwise wait
                 if (nodeGroup) {
                     nodeGroup.attr("transform", function (d) {
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
@@ -112,7 +112,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     // Create background grid
                     if (boxGroup)
                         boxGroup = redrawGrid(boxGroup, boxSize, width / minimalScaleValue, height / minimalScaleValue);
-
 
                     manageMapTools();
                     applyZoom();
