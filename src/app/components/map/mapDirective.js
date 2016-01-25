@@ -95,22 +95,27 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .on("zoomstart", zoomStart)
                     .on("zoom", applyZoom);
 
-                // reapply scales on the data
-                nodeGroup.attr("transform", function (d) {
-                    return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
-                });
-                labelsGroup.attr("transform", function (d) {
-                    return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
-                });
+                // reapply scales on the data, only if data is already defined, otherwise wait
+                if (nodeGroup) {
+                    nodeGroup.attr("transform", function (d) {
+                        return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                    });
 
-                // Create brush
-                brush = createBrush();
+                    if (labelsGroup) {
+                        labelsGroup.attr("transform", function (d) {
+                            return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                        });
+                    }
+                    // Create brush
+                    brush = createBrush();
 
-                // Create background grid
-                boxGroup = redrawGrid(boxGroup, boxSize, width / minimalScaleValue, height / minimalScaleValue);
+                    // Create background grid
+                    if (boxGroup)
+                        boxGroup = redrawGrid(boxGroup, boxSize, width / minimalScaleValue, height / minimalScaleValue);
 
-                manageMapTools();
-                applyZoom();
+                    manageMapTools();
+                    applyZoom();
+                }
             }
 
             /**
