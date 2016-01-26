@@ -126,18 +126,22 @@ angular.module('acjim')
 
         nwService.window.on('close', function (event) {
             if (fileHandling.getMapIsChanged()) {
-                var dlg = dialogs.confirm("Save File?", "Map has been modified, do you want to save before exit?", {backdrop: false, size: 'sm'});
+                var dlg = dialogs.create('app/components/dialogs/saveDialog.html', 'customDialogCtrl', {}, {backdrop: false, size: 'sm'});
 
-                dlg.result.then(function(){
-                    // If file should be saved
-                    fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event, $scope.mapData).then(function (output) {
-                        closeWindow(output.triggered_event);
-                    }, function (reason) {
-                        return errorReason(reason); //TODO: This will throw an error!!
-                    });
-                }, function(){
-                    //If no or dialog closed
-                    closeWindow(event);
+                dlg.result.then(function(result){
+                    if (result === 'yes') {
+                        // If file should be saved
+                        fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event, $scope.mapData).then(function (output) {
+                            closeWindow(output.triggered_event);
+                        }, function (reason) {
+                            console.log(reason);
+                        });
+                    } else {
+                        //Don't save file
+                        closeWindow(event);
+                    }
+                }, function(result){
+                    //Don't close window, do nothing
                 });
             } else {
                 closeWindow(event);
