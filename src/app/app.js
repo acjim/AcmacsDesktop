@@ -157,6 +157,14 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('api.set_disconnected_points');
             }
+        },
+        {
+            id: toolbarItems.RANDOMIZE_NODES,
+            caption: 'RanDomize Nodes',
+            icon: 'glyphicon glyphicon-random',
+            callback: function () {
+                $rootScope.$broadcast('map.randomize');
+            }
         }
         //, {
         //    id: toolbarItems.NEW_MAP_FROM_UNSELECTED,
