@@ -890,18 +890,18 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 // using Javascript provided Math.random function to generate random values to add or substract from
                 // a node's coordiantes depending on the random value
                 var tryYourLuck = Math.floor((Math.random() * 10) + 1);
-                if (tryYourLuck > 5) {
-                    d3.selectAll(".point").each(function (d) {
-                        d.x += Math.floor((Math.random() * 1.2));
-                        d.y += Math.floor((Math.random() * 1.3));
-                    });
-                 }
-                else {
-                    d3.selectAll(".point").each(function (d) {
-                        d.x -= Math.floor((Math.random() * 1.3));
-                        d.y -= Math.floor((Math.random() * 1.2));
-                    });
-                }
+                d3.selectAll(".point").each(function (d) {
+                  if ( d.style.fill_color != "#bebebe"){
+                        if (tryYourLuck > 5) {
+                            d.x += Math.floor((Math.random() * 1.2));
+                            d.y += Math.floor((Math.random() * 1.3));
+                        }else {
+                            d.x -= Math.floor((Math.random() * 1.3));
+                            d.y -= Math.floor((Math.random() * 1.2));
+                        }
+                  }
+                });
+
                 scope.pointsMoved = true;
 
             });
