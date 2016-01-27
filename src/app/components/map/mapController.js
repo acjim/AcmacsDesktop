@@ -45,7 +45,6 @@
 
         // updateDisableds the disable array nodes after getting data from backend
         function updateDisabled (){
-
             if ($rootScope.disableArray) {
                 var length = $rootScope.disableArray.length;
                 for (var counter = 0; counter < length; counter++) {

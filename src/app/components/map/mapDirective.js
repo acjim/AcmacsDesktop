@@ -883,6 +883,26 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
             });
 
+            /**
+             * Listens for event to randomize the positions of Nodes
+             */
+            $rootScope.$on('map.randomize', function () {
+                var tryYourLuck = Math.floor((Math.random() * 10) + 1);
+                if (tryYourLuck > 5) {
+                    d3.selectAll(".point").each(function (d) {
+                        d.x += Math.floor((Math.random() * 1.2));
+                        d.y += Math.floor((Math.random() * 1.3));
+                    });
+                 }
+                else {
+                    d3.selectAll(".point").each(function (d) {
+                        d.x -= Math.floor((Math.random() * 1.3));
+                        d.y -= Math.floor((Math.random() * 1.2));
+                    });
+                }
+
+            });
+
 
             /**
              * Watches for a tool change
