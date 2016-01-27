@@ -887,6 +887,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Listens for event to randomize the positions of Nodes
              */
             $rootScope.$on('map.randomize', function () {
+                // using Javascript provided Math.random function to generate random values to add or substract from
+                // a node's coordiantes depending on the random value
                 var tryYourLuck = Math.floor((Math.random() * 10) + 1);
                 if (tryYourLuck > 5) {
                     d3.selectAll(".point").each(function (d) {
@@ -900,7 +902,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         d.y -= Math.floor((Math.random() * 1.2));
                     });
                 }
-
             });
 
 
