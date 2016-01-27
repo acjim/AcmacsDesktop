@@ -902,6 +902,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         d.y -= Math.floor((Math.random() * 1.2));
                     });
                 }
+                $rootScope.pointsMoved = true;
+
             });
 
 
