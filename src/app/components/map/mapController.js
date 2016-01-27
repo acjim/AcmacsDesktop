@@ -37,14 +37,14 @@
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                update();
+                updateDisabled();
                 getErrorConnectionLines();
                 cfpLoadingBar.complete();
             });
         });
 
-        // updates the disable array nodes after getting data from backend
-        function update (){
+        // updateDisableds the disable array nodes after getting data from backend
+        function updateDisabled (){
 
             if ($rootScope.disableArray) {
                 var length = $rootScope.disableArray.length;
@@ -70,7 +70,7 @@
                 fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
-                    update();
+                    updateDisabled();
 
 
                     if (!$scope.showConnectionLines) {
@@ -91,7 +91,7 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                update();
+                updateDisabled();
                 fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
             });
