@@ -512,9 +512,6 @@
                 unmovable: disabledPoints
             };
 
-            disabledPoints.sort(function (a, b) {
-                return b - a;
-            });
 
 
             api.set_unmovable_points(disable_additional_params, acd1File)
