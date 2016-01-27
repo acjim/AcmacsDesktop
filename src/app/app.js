@@ -161,7 +161,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         {
             id: toolbarItems.RANDOMIZE_NODES,
             caption: 'RanDomize Nodes',
-            icon: 'glyphicon glyphicon-random',
+            icon: 'glyphicon glyphicon-erase',
             callback: function () {
                 $rootScope.$broadcast('map.randomize');
             }
