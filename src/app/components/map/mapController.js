@@ -43,6 +43,7 @@
             });
         });
 
+        // updates the disable array nodes after getting data from backend
         function update (){
 
             if ($rootScope.disableArray) {
