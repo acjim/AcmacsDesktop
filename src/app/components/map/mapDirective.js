@@ -66,7 +66,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 nodeGroup,
                 errorlineGroup,
                 connectionlineGroup,
-                labelsGroup;
+                labelsGroup,
+                randSeed;
 
 
             /**
@@ -878,26 +879,47 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Listens for event to randomize the positions of Nodes
+             * Randomizes points
              */
             $rootScope.$on('map.randomize', function () {
-                // using Javascript provided Math.random function to generate random values to add or substract from
-                // a node's coordiantes depending on the random value
-                var tryYourLuck = Math.floor((Math.random() * 10) + 1);
+                var random = Math.floor((Math.random() * 10) + 1);
+                randSeed = 7;
                 d3.selectAll(".point").each(function (d) {
                   if ( d.style.fill_color != "#bebebe"){
-                        if (tryYourLuck > 5) {
-                            d.x += Math.floor((Math.random() * 1.2));
+                        if (random > 5) {
+                            d.x += Math.floor((Math.random() * rand()/rand()));
                             d.y += Math.floor((Math.random() * 1.3));
                         }else {
-                            d.x -= Math.floor((Math.random() * 1.3));
+                            d.x -= Math.floor((Math.random() * rand()/rand()));
                             d.y -= Math.floor((Math.random() * 1.2));
                         }
-                  }
+                    }
                 });
 
                 scope.pointsMoved = true;
 
             });
+
+            /**
+             * // https://en.wikipedia.org/wiki/Linear_congruential_generator
+             * Simple generator using LC algorithm
+             * @returns {number}
+             */
+            var rand = function () {
+                var m = 65;
+                // a - 1 should be divisible by m's prime factors
+                var a = 11;
+                // c and m should be co-prime
+                var c = 17;
+                // define the recurrence relationship
+                randSeed = (a * randSeed + c) % m;
+                // return an integer
+                // Could return a float in (0, 1) by dividing by m
+                if (randSeed == 0) {
+                    rand();
+                }
+                return randSeed;
+            };
 
 
             /**
