@@ -666,7 +666,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @constructor
              */
             scope.fixSelectedNodes = function() {
-                console.log('here');
                 //$rootScope.disableArray = [];
                 var flagDisable;
                 $rootScope.disableArrayFlag = false;
