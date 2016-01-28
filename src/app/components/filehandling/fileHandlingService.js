@@ -46,6 +46,7 @@
         var projection_comment = null;
         var is_changed = false;
         var original_filename = "";
+        var fixedPoints = new Array();
 
         return {
             handleFileOpen: handleFileOpen,
@@ -58,7 +59,8 @@
             createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne,
             setMapIsChanged: setMapIsChanged,
             getMapIsChanged: getMapIsChanged,
-            getOriginalFileName: getOriginalFileName
+            getOriginalFileName: getOriginalFileName,
+            setFixedPoints: setFixedPoints
         };
 
         /**
@@ -150,30 +152,42 @@
                     var data = fs.readFileSync(output_json, 'utf8');
                     var mapJsonData = JSON.parse(data);
                     var projection_number = mapJsonData.projection;
-
-                    // process extension and other export parameters
-                    var extension = ".save";
-                    if ((/[.]/.exec(filename))) {
-                        extension = /[^.]+$/.exec(filename);
-                    } else {
-                        filename = filename + extension;
-                    }
-                    var supported_extension = ["acd1", "save", "lispmds"];
-                    if (supported_extension.indexOf(extension.toString()) < 0) {
-                        extension = "save";
-                    }
-                    var export_params = {format: extension.toString(), filename: filename, projection: projection_number};
-                    return api.export(acd1_file, export_params).then(function (output) {
-                        cfpLoadingBar.complete();
-                        Flash.create('success', 'File saved successfully!');
-                        setMapIsChanged(false);
-                        return {current_window: current_window, triggered_event: triggered_event};
-                    }, function (reason) {
-                        return errorReason(reason);
+                    exportFile(filename, {
+                        current_window: current_window,
+                        triggered_event: triggered_event,
+                        acd1_file: acd1_file,
+                        projection_number: projection_number
                     });
                 }, function (reason) {
                     return errorReason(reason);
                 });
+        }
+
+        function exportFile(filename, options) {
+            // process extension and other export parameters
+            var extension = ".save";
+            if ((/[.]/.exec(filename))) {
+                extension = /[^.]+$/.exec(filename);
+            } else {
+                filename = filename + extension;
+            }
+            var supported_extension = ["acd1", "save", "lispmds"];
+            if (supported_extension.indexOf(extension.toString()) < 0) {
+                extension = "save";
+            }
+            var export_params = {
+                format: extension.toString(),
+                filename: filename,
+                projection: options.projection_number
+            };
+            return api.export(options.acd1_file, export_params).then(function () {
+                cfpLoadingBar.complete();
+                Flash.create('success', 'File saved successfully!');
+                setMapIsChanged(false);
+                return {current_window: options.current_window, triggered_event: options.triggered_event};
+            }, function (reason) {
+                return errorReason(reason);
+            });
         }
 
         /**
@@ -512,12 +526,11 @@
                 unmovable: disabledPoints
             };
 
-
-
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
                     setMapIsChanged(true);
+                    setFixedPoints(disabledPoints);
                     cfpLoadingBar.complete();
                 }, function (reason) {
                     return errorReason(reason);
@@ -800,6 +813,11 @@
          */
         function getOriginalFileName() {
             return original_filename;
+        }
+
+        function setFixedPoints(fixedNodes)
+        {
+            fixedPoints = fixedNodes;
         }
 
 

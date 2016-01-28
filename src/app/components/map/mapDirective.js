@@ -835,13 +835,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             });
 
             /**
-             * Listens for button press on set_unmovable_points (FIX_NODES: Nodes continue to contribute to stress)
-             */
-            //$rootScope.$on('api.set_unmovable_points', function () {
-            //    fixSelectedNodes();
-            //});
-
-            /**
              * Watches to Create  a new Map from Non Selected Nodes
              */
             $rootScope.$on('newMap.create_from_unselected', function () {

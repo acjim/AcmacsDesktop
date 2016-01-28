@@ -51,14 +51,16 @@
             });
         });
 
-        // updateDisableds the disable array nodes after getting data from backend
+        /**
+         *  Updates the disable array nodes after getting data from backend
+         */
         function updateDisabled (){
             if ($rootScope.disableArray) {
-                console.log($rootScope.disableArray);
                 var length = $rootScope.disableArray.length;
                 for (var counter = 0; counter < length; counter++) {
                     $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
                 }
+                fileHandling.setFixedPoints($rootScope.disableArray);
             }
 
         }
