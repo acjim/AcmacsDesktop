@@ -54,6 +54,7 @@
         // updateDisableds the disable array nodes after getting data from backend
         function updateDisabled (){
             if ($rootScope.disableArray) {
+                console.log($rootScope.disableArray);
                 var length = $rootScope.disableArray.length;
                 for (var counter = 0; counter < length; counter++) {
                     $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
@@ -166,6 +167,7 @@
          * Listens for click on Fix Nodes button (FIX_NODES: Nodes continue to contribute to stress)
          */
         $scope.$on('api.set_unmovable_points', function () {
+            $scope.fixSelectedNodes();
             if ($rootScope.disableArrayFlag == true) {
                 fileHandling.fixNodes($scope.data, $rootScope.disableArray);
             }
