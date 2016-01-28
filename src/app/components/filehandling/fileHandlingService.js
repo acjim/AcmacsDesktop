@@ -283,6 +283,14 @@
                         var mapJsonData = JSON.parse(output_data);
                         projection = mapJsonData.projection;
                         projection_comment = mapJsonData.comment;
+                        if(fixedPoints.length > 0) {
+                            var disable_additional_params = {
+                                projection: (projection == 0) ? projection : projection_comment,
+                                unmovable: fixedPoints
+                            };
+                            var filename = api.set_unmovable_points_sync(disable_additional_params, acd1File);
+                            acd1File = filename.updated_acd1;
+                        }
                         return relax_existing(mapData);
                     }, function (reason) {
                         return errorReason(reason);
@@ -325,6 +333,15 @@
                 var mapJsonData = JSON.parse(data);
                 projection = mapJsonData.projection;
                 projection_comment = mapJsonData.comment;
+
+                if(fixedPoints.length > 0) {
+                    var disable_additional_params = {
+                        projection: (projection == 0) ? projection : projection_comment,
+                        unmovable: fixedPoints
+                    };
+                    var filename = api.set_unmovable_points_sync(disable_additional_params, acd1File);
+                    acd1File = filename.updated_acd1;
+                }
 
                 var map_additional_params = {
                     projection: (projection == 0) ? projection : projection_comment
