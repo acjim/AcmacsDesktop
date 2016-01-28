@@ -152,6 +152,14 @@
                     var data = fs.readFileSync(output_json, 'utf8');
                     var mapJsonData = JSON.parse(data);
                     var projection_number = mapJsonData.projection;
+                    if(fixedPoints.length > 0) {
+                        var disable_additional_params = {
+                            projection: projection_number,
+                            unmovable: fixedPoints
+                        };
+                        var op = api.set_unmovable_points_sync(disable_additional_params, acd1_file);
+                        acd1_file = op.updated_acd1;
+                    }
                     exportFile(filename, {
                         current_window: current_window,
                         triggered_event: triggered_event,
