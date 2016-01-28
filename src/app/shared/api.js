@@ -23,6 +23,7 @@
 
 var config = require('./config.js');
 var execFile = require('child_process').execFile;
+var execFileSync = require('child_process').execFileSync;
 var fs = require('fs');
 
 var DATE_NOW = Date.now();
@@ -232,11 +233,7 @@ angular.module('acjim.api', [])
             }
             var json_parameters = JSON.stringify(input_parameter, null, 4);
             var file_path = tmp_path + file_name;
-            fs.writeFile(file_path, json_parameters, function (err) {
-                if (err) {
-                    throw err;
-                }
-            });
+            fs.writeFileSync(file_path, json_parameters);
 
             return file_path;
         };
@@ -484,6 +481,38 @@ angular.module('acjim.api', [])
             }
 
             return deferred.promise;
+        };
+
+        /**
+         * set_unmovable_points synchronous call
+         * Sets unmovable attribute for the listed points. Unmovable points cannot be moved by
+         * the optimization engine, their coordinates are fixed, but they do contribute to stress.
+         * If list is empty, all points are made movable (regular). Passed list contains just point indices,
+         * first come antigens starting with 0, then come sera, index of the first serum is equal to the number
+         * of antigens in the table.
+         * @param additional_params = {  unmovable: list, projection: int }
+         * @param output_acd1
+         * @returns {output_json: output_json, updated_acd1: output_acd1_1}
+         */
+        api.set_unmovable_points_sync = function (additional_params, output_acd1) {
+
+            try {
+                var command = COMMANDS.SET_UNMOVABLE_POINTS;
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
+                execFileSync(script, params);
+                return {output_json: output_json, updated_acd1: output_acd1_1};
+            } catch (Error) {
+                return api.format_error_message(Error.message);
+            }
         };
 
         /**

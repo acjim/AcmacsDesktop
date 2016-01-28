@@ -665,7 +665,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              *
              * @constructor
              */
-            function fixSelectedNodes() {
+            scope.fixSelectedNodes = function() {
                 //$rootScope.disableArray = [];
                 var flagDisable;
                 $rootScope.disableArrayFlag = false;
@@ -831,13 +831,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             $rootScope.$on('api.set_disconnected_points', function () {
                 disconnectSelectedNodes();
-            });
-
-            /**
-             * Listens for button press on set_unmovable_points (FIX_NODES: Nodes continue to contribute to stress)
-             */
-            $rootScope.$on('api.set_unmovable_points', function () {
-                fixSelectedNodes();
             });
 
             /**
