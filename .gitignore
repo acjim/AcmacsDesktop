@@ -10,6 +10,9 @@ src/bower_components/
 /cache/
 /tmp/
 
+#Release folder
+release/
+
 #temporary files
 src/data/tmp/*.json
 src/data/*.json
