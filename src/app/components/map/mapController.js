@@ -34,14 +34,6 @@
          */
 
         $scope.$on('map.reOptimize', function () {
-            if ($rootScope.disableArray){
-                if ($rootScope.disableArray.length> 0){
-                    //make a new projection and set nodes fixed before reoptimizing
-                        fileHandling.getNewProjection($scope.data).then(function (result) {
-                            fileHandling.fixNodes(result, $rootScope.disableArray);
-                        });
-                }
-            }
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
