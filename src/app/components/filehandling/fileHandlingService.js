@@ -192,6 +192,7 @@
                 cfpLoadingBar.complete();
                 Flash.create('success', 'File saved successfully!');
                 setMapIsChanged(false);
+                removeExtraFiles();
                 return {current_window: options.current_window, triggered_event: options.triggered_event};
             }, function (reason) {
                 return errorReason(reason);
@@ -256,6 +257,18 @@
                 }, function (reason) {
                     return errorReason(reason);
                 });
+            }
+        }
+
+        /**
+         * Deletes temporary files created by OSX
+         * while solution is pretty static, but since the file (first)
+         * generated always have same extension added to it; this works.
+         */
+        function removeExtraFiles() {
+            var filePath = getOriginalFileName() + ".~01~";
+            if (fs.existsSync(filePath) && process.platform == 'darwin') {
+                fs.unlinkSync(filePath);
             }
         }
 
