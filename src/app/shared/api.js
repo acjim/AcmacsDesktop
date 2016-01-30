@@ -39,6 +39,7 @@ var COMMANDS = {
     RELAX_EXISTING: 'relax_existing',
     SET_DISCONNECTED_POINTS: 'set_disconnected_points',
     SET_UNMOVABLE_POINTS: 'set_unmovable_points',
+    REMOVE_PROJECTIONS: 'remove_projections'
 };
 
 angular.module('acjim.api', [])
@@ -221,6 +222,17 @@ angular.module('acjim.api', [])
                     input_parameter.data.projection = additional_params.projection;
                     if (additional_params.hasOwnProperty('unmovable')) {
                         input_parameter.data.unmovable = additional_params.unmovable;
+                    }
+                    break;
+                case COMMANDS.REMOVE_PROJECTIONS:
+                    var input_parameter = {command: command, data: {}};
+
+                    if (!additional_params.hasOwnProperty('remove')) {
+                        throw new Error('Missing mandatory parameter, "remove"');
+                    }
+                    input_parameter.data.remove = additional_params.remove;
+                    if (additional_params.hasOwnProperty('keep')) {
+                        input_parameter.data.keep = additional_params.keep;
                     }
                     break;
                 default :
@@ -677,7 +689,7 @@ angular.module('acjim.api', [])
                 var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
                 var file = output_acd1.split('/').pop();
                 file = file.substr(0, file.lastIndexOf("_"));
-                var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "up");
+                var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "NP");
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
@@ -689,6 +701,36 @@ angular.module('acjim.api', [])
             }
             return deferred.promise;
         };
+
+        /**
+         * Removes projection from the chart.
+         * To keep some projections and remove the rest, specify projections to keep in "keep" and leave "remove" empty
+         * additional_params = { remove: list //Mandatory data fields,
+         * keep: list (default: []) //Optional data fields: }
+         *
+         * @param additional_params
+         * @param output_acd1
+         * @returns Object {output_json: output_json, updated_acd1: output_acd1_1}
+         */
+        api.remove_projections_sync = function(additional_params, output_acd1) {
+            try {
+                var command = COMMANDS.REMOVE_PROJECTIONS;
+                // create and fetch input_parameter file
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'RP');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'RP');
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = output_acd1_1;
+                execFileSync(script, params);
+                return output_acd1_1;
+            } catch (Error) {
+                return api.format_error_message(Error.message);
+            }
+        }
 
         /**
          * Create file path
