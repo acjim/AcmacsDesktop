@@ -47,21 +47,7 @@
         var is_changed = false;
         var original_filename = "";
         var fixedPoints = new Array();
-
-        return {
-            handleFileOpen: handleFileOpen,
-            handleFileSaveAs: handleFileSaveAs,
-            reOptimize: reOptimize,
-            getNewProjection: getNewProjection,
-            getErrorConnectionLines: getErrorConnectionLines,
-            disconnectNodes: disconnectNodes,
-            fixNodes: fixNodes,
-            createNewFileFromAlreadyExistingOne: createNewFileFromAlreadyExistingOne,
-            setMapIsChanged: setMapIsChanged,
-            getMapIsChanged: getMapIsChanged,
-            getOriginalFileName: getOriginalFileName,
-            setFixedPoints: setFixedPoints
-        };
+        var fileHandler = {};
 
         /**
          * Displays errors that occurred
@@ -119,12 +105,14 @@
 
         /**
          * Handles the file save
-         * @param filename
-         * @param current_window
-         * @param triggered_event
+         *
+         * @param filename String
+         * @param current_window Int
+         * @param triggered_event evt
+         * @param mapData list
          * @returns {*}
          */
-        function handleFileSaveAs(filename, current_window, triggered_event, mapData) {
+        fileHandler.handleFileSaveAs = function (filename, current_window, triggered_event, mapData) {
 
             cfpLoadingBar.start();
             var acd1_file = acd1File;
@@ -152,7 +140,8 @@
                     var data = fs.readFileSync(output_json, 'utf8');
                     var mapJsonData = JSON.parse(data);
                     var projection_number = mapJsonData.projection;
-                    if(fixedPoints.length > 0) {
+                    // if there are fixed points, add those fixed points to latest projection as well.
+                    if (fixedPoints.length > 0) {
                         var disable_additional_params = {
                             projection: projection_number,
                             unmovable: fixedPoints
@@ -171,6 +160,13 @@
                 });
         }
 
+        /**
+         * Export/Save file
+         *
+         * @param filename String
+         * @param options Object
+         * @returns {*} Object
+         */
         function exportFile(filename, options) {
             // process extension and other export parameters
             var extension = ".save";
@@ -191,7 +187,7 @@
             return api.export(options.acd1_file, export_params).then(function () {
                 cfpLoadingBar.complete();
                 Flash.create('success', 'File saved successfully!');
-                setMapIsChanged(false);
+                fileHandler.setMapIsChanged(false);
                 removeExtraFiles();
                 return {current_window: options.current_window, triggered_event: options.triggered_event};
             }, function (reason) {
@@ -201,9 +197,9 @@
 
         /**
          * Callback function to handle the file opening
-         * @param filename
+         * @param filename String Name of file to be opened
          */
-        function handleFileOpen(filename) {
+        fileHandler.handleFileOpen = function (filename) {
 
             // Start loading bar
             $timeout(function () {
@@ -266,7 +262,7 @@
          * generated always have same extension added to it; this works.
          */
         function removeExtraFiles() {
-            var filePath = getOriginalFileName() + ".~01~";
+            var filePath = fileHandler.getOriginalFileName() + ".~01~";
             if (fs.existsSync(filePath) && process.platform == 'darwin') {
                 fs.unlinkSync(filePath);
             }
@@ -275,10 +271,9 @@
         /**
          * Calls api to re-optimize (relax) the map
          * @param mapData
-         * @param acd1
          * @param pointsMoved
          */
-        function reOptimize(mapData, pointsMoved) {
+        fileHandler.reOptimize = function (mapData, pointsMoved) {
             cfpLoadingBar.start();
 
             // check if a node is moved
@@ -304,7 +299,7 @@
                         var mapJsonData = JSON.parse(output_data);
                         projection = mapJsonData.projection;
                         projection_comment = mapJsonData.comment;
-                        if(fixedPoints.length > 0) {
+                        if (fixedPoints.length > 0) {
                             var disable_additional_params = {
                                 projection: (projection == 0) ? projection : projection_comment,
                                 unmovable: fixedPoints
@@ -325,11 +320,11 @@
 
         /**
          * Creates a new projection without optimization
+         *
          * @param mapData
-         * @param acd1
          * @returns {*}
          */
-        function getNewProjection(mapData) {
+        fileHandler.getNewProjection = function (mapData) {
 
             cfpLoadingBar.start();
 
@@ -355,7 +350,7 @@
                 projection = mapJsonData.projection;
                 projection_comment = mapJsonData.comment;
 
-                if(fixedPoints.length > 0) {
+                if (fixedPoints.length > 0) {
                     var disable_additional_params = {
                         projection: (projection == 0) ? projection : projection_comment,
                         unmovable: fixedPoints
@@ -372,7 +367,7 @@
                         readFile(data)
                     ]).then(function (output_data) {
                         mapData = parseLayoutData(JSON.parse(output_data));
-                        setMapIsChanged(true);
+                        fileHandler.setMapIsChanged(true);
                         return mapData;
                     });
 
@@ -400,7 +395,7 @@
                                 readFile(filename)
                             ]).then(function (data) {
                                 mapData = parseLayoutData(JSON.parse(data));
-                                setMapIsChanged(true);
+                                fileHandler.setMapIsChanged(true);
                                 return mapData;
                             });
                         }, function (reason) {
@@ -498,8 +493,11 @@
 
         /**
          * Calls api to get data for error and connection lines
+         *
+         * @param mapData
+         * @returns {*}
          */
-        function getErrorConnectionLines(mapData) {
+        fileHandler.getErrorConnectionLines = function (mapData) {
             cfpLoadingBar.start();
             var additional_params = {projection: (projection == 0) ? projection : projection_comment};
 
@@ -516,10 +514,12 @@
         }
 
         /**
-         * Calls api to create a new file from an already existing one n
-         * @param mapData and points to remove disabledPoints
+         * Calls api to create a new file from an already existing one
+         *
+         * @param mapData
+         * @param disabledPoints
          */
-        function createNewFileFromAlreadyExistingOne(mapData, disabledPoints) {
+        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
@@ -554,9 +554,11 @@
 
         /**
          * Calls api to disable nodes (without Sress) from a specific  map
-         * @param mapData
+         *
+         * @param mapData List
+         * @param disabledPoints List
          */
-        function fixNodes(mapData, disabledPoints) {
+        fileHandler.fixNodes = function (mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
@@ -567,8 +569,8 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    setMapIsChanged(true);
-                    setFixedPoints(disabledPoints);
+                    fileHandler.setMapIsChanged(true);
+                    fileHandler.setFixedPoints(disabledPoints);
                     cfpLoadingBar.complete();
                 }, function (reason) {
                     return errorReason(reason);
@@ -577,9 +579,11 @@
 
         /**
          * Calls api to disable nodes from a specific  map
+         *
          * @param mapData
+         * @param disabledPoints
          */
-        function disconnectNodes(mapData, disabledPoints) {
+        fileHandler.disconnectNodes = function (mapData, disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
@@ -608,7 +612,7 @@
                                 });
                                 cfpLoadingBar.complete();
                             });
-                            setMapIsChanged(true);
+                            fileHandler.setMapIsChanged(true);
                         }, function (reason) {
                             return errorReason(reason);
                         });
@@ -824,7 +828,7 @@
          *
          * @returns {boolean}
          */
-        function getMapIsChanged() {
+        fileHandler.getMapIsChanged = function () {
             return is_changed;
         }
 
@@ -833,13 +837,13 @@
          *
          * @param changed Boolean
          */
-        function setMapIsChanged(changed) {
+        fileHandler.setMapIsChanged = function (changed) {
             if (is_changed !== changed) {
                 is_changed = changed;
                 if (is_changed) {
                     $document[0].title += "*";
                 } else {
-                    var str =  $document[0].title;
+                    var str = $document[0].title;
                     $document[0].title = str.substring(0, str.length - 1);
                 }
             }
@@ -849,15 +853,19 @@
          *
          * @returns {string} returns original file name
          */
-        function getOriginalFileName() {
+        fileHandler.getOriginalFileName = function () {
             return original_filename;
         }
 
-        function setFixedPoints(fixedNodes)
-        {
+        /**
+         * Set nodes selected to fixed.
+         *
+         * @param fixedNodes List
+         */
+        fileHandler.setFixedPoints = function (fixedNodes) {
             fixedPoints = fixedNodes;
         }
 
-
+        return fileHandler;
     }
 })();
