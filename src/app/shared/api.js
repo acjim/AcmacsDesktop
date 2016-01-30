@@ -726,7 +726,7 @@ angular.module('acjim.api', [])
                 params[params.length] = output_json;
                 params[params.length] = output_acd1_1;
                 execFileSync(script, params);
-                return {output_json: output_json, updated_acd1: output_acd1_1};
+                return output_acd1_1;
             } catch (Error) {
                 return api.format_error_message(Error.message);
             }

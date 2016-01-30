@@ -146,7 +146,7 @@
                             projection: projection_number,
                             unmovable: fixedPoints
                         };
-                        var op = api.set_unmovable_points_sync(disable_additional_params, acd1_file);
+                        var op = api.set_unmovable_points_sync(disable_additional_params, acd1_file); // TODO: what if you get error instead of output
                         acd1_file = op.updated_acd1;
                     }
                     exportFile(filename, {
@@ -178,6 +178,11 @@
             var supported_extension = ["acd1", "save", "lispmds"];
             if (supported_extension.indexOf(extension.toString()) < 0) {
                 extension = "save";
+            }
+            // if format is acd1 then remove all projections except for current projection to be exported
+            if(extension.toString() == "acd1") {
+                var rmvProjectionsParams = {keep: [options.projection_number], remove:[] };
+                options.acd1_file = api.remove_projections_sync(rmvProjectionsParams, options.acd1_file); // TODO: what if you get error instead of output
             }
             var export_params = {
                 format: extension.toString(),
