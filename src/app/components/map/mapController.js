@@ -47,16 +47,14 @@
          *  Updates the disable array nodes after getting data from backend
          */
         function updateDisabled (){
-            if ($rootScope.disableArray) {
-                var length = $rootScope.disableArray.length;
+            if ($rootScope.fixedArray) {
+                var length = $rootScope.fixedArray.length;
                 for (var counter = 0; counter < length; counter++) {
-                    $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
+                    $scope.data.layout[$rootScope.fixedArray[counter]].style.fill_color = "#bebebe";
                 }
-                fileHandling.setFixedPoints($rootScope.disableArray);
+                fileHandling.setFixedPoints($rootScope.fixedArray);
             }
-
         }
-
         /**
          * Calls fileHandlingService for API call to backend to get Error & Connectionlines
          */
@@ -162,8 +160,8 @@
          */
         $scope.$on('api.set_unmovable_points', function () {
             $scope.fixSelectedNodes();
-            if ($rootScope.disableArrayFlag == true) {
-                fileHandling.fixNodes($scope.data, $rootScope.disableArray);
+            if ($rootScope.fixedArrayFlag == true) {
+                fileHandling.fixNodes($scope.data, $rootScope.fixedArray);
             }
 
         });
