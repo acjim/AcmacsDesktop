@@ -37,22 +37,36 @@
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateDisabled();
+                updateFixedNodes();
+                updateDisconnectedNodes();
                 getErrorConnectionLines();
                 cfpLoadingBar.complete();
             });
         });
 
         /**
-         *  Updates the disable array nodes after getting data from backend
+         *  Updates the fixed nodes array after getting data from backend
          */
-        function updateDisabled (){
+        function updateFixedNodes (){
             if ($rootScope.fixedArray) {
                 var length = $rootScope.fixedArray.length;
                 for (var counter = 0; counter < length; counter++) {
                     $scope.data.layout[$rootScope.fixedArray[counter]].style.fill_color = "#bebebe";
                 }
                 fileHandling.setFixedPoints($rootScope.fixedArray);
+            }
+        }
+
+        /**
+         *  Updates the disconnected nodes array after getting data from backend
+         */
+        function updateDisconnectedNodes (){
+            if ($rootScope.disableArray) {
+                var length = $rootScope.disableArray.length;
+                for (var counter = 0; counter < length; counter++) {
+                    $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
+                }
+                fileHandling.setFixedPoints($rootScope.disableArray);
             }
         }
         /**
@@ -70,9 +84,8 @@
                 fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
-                    updateDisabled();
-
-
+                    updateFixedNodes();
+                    updateDisconnectedNodes();
                     if (!$scope.showConnectionLines) {
                         $scope.data.d3ConnectionLines = [];
                     }
@@ -91,7 +104,8 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateDisabled();
+                updateFixedNodes();
+                updateDisconnectedNodes();
                 fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
             });
