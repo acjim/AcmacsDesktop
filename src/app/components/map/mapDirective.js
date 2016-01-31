@@ -54,6 +54,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
+                flagDisconnectDisable= 0,
                 colorArray = [],
                 disableArray = [],
                 fixedArray= [],
@@ -673,53 +674,59 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.fixedArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
-                d3.selectAll(".selected").each(function (d) {
-                    if (d.style.fill_color != "#bebebe") {
-                        flag = 1;
-                        color = d.style.fill_color;
+                areSelectedNodesFixed($rootScope.disableArray);
+                if (flagDisconnectDisable==0) {
+                    d3.selectAll(".selected").each(function (d) {
+                        if (d.style.fill_color != "#bebebe") {
+                            flag = 1;
+                            color = d.style.fill_color;
 
-                        colorArray["" + d.id + ""] = d.style.fill_color;
-                        d.style.fill_color = "#bebebe";
-                        d3.select(this).transition()
-                            .style("stroke", "green")
-                            .style("opacity", .4)
-                            .attr("style", "fill:#bebebe");
-                        d.fixed= true;
-                        for (var c = 0; c < fixedArray.length; c++) {
-                            if (d.id == fixedArray[c]) {
-                                flagDisable= 1;
+                            colorArray["" + d.id + ""] = d.style.fill_color;
+                            d.style.fill_color = "#bebebe";
+                            d3.select(this).transition()
+                                .style("stroke", "green")
+                                .style("opacity", .4)
+                                .attr("style", "fill:#bebebe");
+                            d.fixed = true;
+                            for (var c = 0; c < fixedArray.length; c++) {
+                                if (d.id == fixedArray[c]) {
+                                    flagDisable = 1;
+                                }
                             }
-                        }
-                        if (flagDisable!=1){
-                            fixedArray.push(d.id);
-                            flagDisable= 0;
-                        }
+                            if (flagDisable != 1) {
+                                fixedArray.push(d.id);
+                                flagDisable = 0;
+                            }
 
-                    }
-                    else if ("#bebebe") {
-                        flag = 1;
-                        d3.select(this).transition()
-                            .attr("style", "fill:" + colorArray["" + d.id + ""]);
-                        d.style.fill_color = colorArray["" + d.id + ""];
-                        for (var c = 0; c < fixedArray.length; c++) {
-                            if (d.id == fixedArray[c]) {
-                                fixedArray.splice(c, 1);
-                                c = c - 1;
-                            }
                         }
-                        flag = 1;
+                        else if ("#bebebe") {
+                            flag = 1;
+                            d3.select(this).transition()
+                                .attr("style", "fill:" + colorArray["" + d.id + ""]);
+                            d.style.fill_color = colorArray["" + d.id + ""];
+                            for (var c = 0; c < fixedArray.length; c++) {
+                                if (d.id == fixedArray[c]) {
+                                    fixedArray.splice(c, 1);
+                                    c = c - 1;
+                                }
+                            }
+                            flag = 1;
+                        }
+                        else {
+                        }
+                    });
+                    if (flag === 0) {
+                        var notice = "No nodes selected, please select one or more nodes to be fixed";
+                        var dlg = dialogs.notify('Notice!', notice);
                     }
                     else {
+                        $rootScope.fixedArrayFlag = true;
+                        $rootScope.fixedArray = fixedArray;
+                        $rootScope.colorArray = colorArray;
                     }
-                });
-                if (flag === 0) {
-                    var notice = "No nodes selected, please select one or more nodes to be fixed";
+                }else {
+                    var notice = "Some selected nodes are disconnected. Reconnect them before disconnecting them or do not select them to fix them";
                     var dlg = dialogs.notify('Notice!', notice);
-                }
-                else {
-                    $rootScope.fixedArrayFlag = true;
-                    $rootScope.fixedArray = fixedArray;
-                    $rootScope.colorArray= colorArray;
                 }
             }
 
@@ -733,43 +740,68 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
-                d3.selectAll(".selected").each(function (d) {
-                    if (d.style.fill_color != "#bebebe") {
-                        flag = 1;
-                        colorArray["" + d.id + ""] = d.style.fill_color;
-                        d.style.fill_color = "#bebebe";
-                        d3.select(this).transition()
-                            .style("stroke", "green")
-                            .style("opacity", .4)
-                            .attr("style", "fill:#bebebe");
-                        disableArray.push(d.id);
-                    }
-                    else if ("#bebebe") {
-                        flag = 1;
-                        d3.select(this).transition()
-                            .attr("style", "fill:" + colorArray["" + d.id + ""]);
-                        d.style.fill_color = colorArray["" + d.id + ""];
-                        for (var c = 0; c < disableArray.length; c++) {
-                            if (d.id == disableArray[c]) {
-                                disableArray.splice(c, 1);
-                                c = c - 1;
-                            }
+                areSelectedNodesFixed($rootScope.fixedArray);
+                if (flagDisconnectDisable==0) {
+                    d3.selectAll(".selected").each(function (d) {
+                        if (d.style.fill_color != "#bebebe") {
+                            flag = 1;
+                            colorArray["" + d.id + ""] = d.style.fill_color;
+                            d.style.fill_color = "#bebebe";
+                            d3.select(this).transition()
+                                .style("stroke", "green")
+                                .style("opacity", .4)
+                                .attr("style", "fill:#bebebe");
+                            disableArray.push(d.id);
                         }
-                        flag = 1;
+                        else if ("#bebebe") {
+                            flag = 1;
+                            d3.select(this).transition()
+                                .attr("style", "fill:" + colorArray["" + d.id + ""]);
+                            d.style.fill_color = colorArray["" + d.id + ""];
+                            for (var c = 0; c < disableArray.length; c++) {
+                                if (d.id == disableArray[c]) {
+                                    disableArray.splice(c, 1);
+                                    c = c - 1;
+                                }
+                            }
+                            flag = 1;
+                        }
+                        else {
+                        }
+                    });
+
+                    if (flag === 0) {
+                        var notice = "No nodes selected, please select one or more nodes to disconnect";
+                        var dlg = dialogs.notify('Notice!', notice);
                     }
                     else {
-                    }
-                });
+                        $rootScope.disableArrayFlag = true;
+                        $rootScope.disableArray = disableArray;
+                        $rootScope.colorArray = colorArray;
 
-                if (flag === 0) {
-                    var notice = "No nodes selected, please select one or more nodes to disconnect";
+                    }
+                }else{
+                    var notice = "Some selected nodes are fixed. Unfix them before disconnecting them or do not fix them";
                     var dlg = dialogs.notify('Notice!', notice);
                 }
-                else {
-                    $rootScope.disableArrayFlag = true;
-                    $rootScope.disableArray = disableArray;
-                    $rootScope.colorArray= colorArray;
-
+            }
+            /**
+             * checks if nodes are fixed when clicking on disconnect and vice verca
+             *
+             *
+             */
+            function areSelectedNodesFixed(fixedOrDisconnectedElements){
+                flagDisconnectDisable=0;
+                if (fixedOrDisconnectedElements) {
+                    d3.selectAll(".selected").each(function (d) {
+                        if (d.style.fill_color == "#bebebe") {
+                            for (var c = 0; c < fixedOrDisconnectedElements.length; c++) {
+                                if (d.id == fixedOrDisconnectedElements[c]) {
+                                    flagDisconnectDisable = 1;
+                                }
+                            }
+                        }
+                    });
                 }
             }
 
@@ -886,7 +918,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var random = Math.floor((Math.random() * 10) + 1);
                 randSeed = 7;
                 d3.selectAll(".point").each(function (d) {
-                  if ( d.style.fill_color != "#bebebe"){
+                    if ( d.style.fill_color != "#bebebe"){
                         if (random > 5) {
                             d.x += Math.floor((Math.random() * rand()/rand()));
                             d.y += Math.floor((Math.random() * 1.3));
