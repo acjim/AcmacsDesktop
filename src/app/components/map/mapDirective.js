@@ -56,6 +56,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 boxSize = 1,
                 colorArray = [],
                 disableArray = [],
+                fixedArray= [],
                 color = "",
                 shiftKey;
 
@@ -669,7 +670,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             scope.fixSelectedNodes = function() {
                 //$rootScope.disableArray = [];
                 var flagDisable;
-                $rootScope.disableArrayFlag = false;
+                $rootScope.fixedArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
                 d3.selectAll(".selected").each(function (d) {
@@ -684,13 +685,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             .style("opacity", .4)
                             .attr("style", "fill:#bebebe");
                         d.fixed= true;
-                        for (var c = 0; c < disableArray.length; c++) {
-                            if (d.id == disableArray[c]) {
+                        for (var c = 0; c < fixedArray.length; c++) {
+                            if (d.id == fixedArray[c]) {
                                 flagDisable= 1;
                             }
                         }
                         if (flagDisable!=1){
-                            disableArray.push(d.id);
+                            fixedArray.push(d.id);
                             flagDisable= 0;
                         }
 
@@ -700,9 +701,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         d3.select(this).transition()
                             .attr("style", "fill:" + colorArray["" + d.id + ""]);
                         d.style.fill_color = colorArray["" + d.id + ""];
-                        for (var c = 0; c < disableArray.length; c++) {
-                            if (d.id == disableArray[c]) {
-                                disableArray.splice(c, 1);
+                        for (var c = 0; c < fixedArray.length; c++) {
+                            if (d.id == fixedArray[c]) {
+                                fixedArray.splice(c, 1);
                                 c = c - 1;
                             }
                         }
@@ -716,8 +717,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     var dlg = dialogs.notify('Notice!', notice);
                 }
                 else {
-                    $rootScope.disableArrayFlag = true;
-                    $rootScope.disableArray = disableArray;
+                    $rootScope.fixedArrayFlag = true;
+                    $rootScope.fixedArray = fixedArray;
                     $rootScope.colorArray= colorArray;
                 }
             }
