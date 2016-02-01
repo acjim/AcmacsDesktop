@@ -665,8 +665,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Gets All D3 Selected Elements, makes them fixed (unmovable/deselects on map):
-             *
-             * @constructor
              */
             scope.fixSelectedNodes = function() {
                 //$rootScope.disableArray = [];
@@ -732,8 +730,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Gets All D3 Selected Elements, disconnects the selected points (deselects)
-             *
-             * @constructor
              */
             function disconnectSelectedNodes() {
                 //$rootScope.disableArray = [];
@@ -787,8 +783,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             }
             /**
              * checks if nodes are fixed when clicking on disconnect and vice verca
-             *
-             *
              */
             function areSelectedNodesFixed(fixedOrDisconnectedElements){
                 flagDisconnectDisable=0;
@@ -863,9 +857,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Watches for a set_disconnected_points (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
              */
-            $rootScope.$on('api.set_disconnected_points', function () {
-                disconnectSelectedNodes();
-            });
+            $rootScope.$on('api.set_disconnected_points', disconnectSelectedNodes);
 
             /**
              * Watches to Create  a new Map from Non Selected Nodes
