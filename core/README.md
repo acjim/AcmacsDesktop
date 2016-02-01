@@ -25,3 +25,4 @@ It will create a tree under ~/Desktop/AcmacsCore.bundle on OSX
 	- flex
 	- libncurses-dev
 	- libbz2-dev
+	- g++-multilib
