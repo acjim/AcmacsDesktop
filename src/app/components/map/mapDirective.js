@@ -97,7 +97,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .on("zoom", applyZoom);
 
                 // reapply scales on the data, only if data is already defined, otherwise wait
-                if (nodeGroup) {
+                if (!_.isUndefined(nodeGroup)) {
                     nodeGroup.attr("transform", function (d) {
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     });
