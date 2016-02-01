@@ -818,16 +818,29 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @constructor a Data Array with the new Map Data
              */
             function getNewDataFromCurrentMap(mapDataPoints, indexValue) {
-                $rootScope.newMapArray = [];
+                $rootScope.newMapAntigenArray = [];
+                $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
-                var mapArray = [];
+                var mapAntigenArray = [];
+                var mapSeraArray = [];
                 var length = mapDataPoints.layout.length;
+                console.log(mapDataPoints.layout);
+
                 for (var counter = 0; counter < length; counter++) {
-                    mapArray.push(counter);
-                    $rootScope.newMapArray.push(counter);
+                    // Antigens Case
+                    if (mapDataPoints.layout[counter].style.shape="circle"){
+                        mapAntigenArray.push(counter);
+                    }
+                    //  sera case
+                    else{
+                        mapSeraArray.push(counter);
+                    }
+                    $rootScope.newMapAntigenArray.push(counter);
                 }
+                return;
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
+                    console.log(d.style.shape);
                     flag = 1;
                     mapArray.splice(d.id, 1);
                 });

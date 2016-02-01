@@ -185,7 +185,7 @@
          */
         $scope.$on('newMap.create_from_unselected', function () {
             if ($rootScope.newMapArrayflag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
+                //fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
             }
         });
 
@@ -194,7 +194,7 @@
          */
         $scope.$on('newMap.create_from_selected', function () {
             if ($rootScope.newMapArrayflag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
+                //fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
             }
         });
 
