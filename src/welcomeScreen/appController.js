@@ -34,7 +34,9 @@
                     "new-instance": false,
                     "toolbar": false,
                     "width": 800,
-                    "height": 600
+                    "height": 600,
+                    "min_width": 400,
+                    "min_height": 200
                 }
             );
 
