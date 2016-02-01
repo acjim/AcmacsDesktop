@@ -824,42 +824,50 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var mapAntigenArray = [];
                 var mapSeraArray = [];
                 var length = mapDataPoints.layout.length;
-                console.log(mapDataPoints.layout);
-
                 for (var counter = 0; counter < length; counter++) {
                     // Antigens Case
-                    if (mapDataPoints.layout[counter].style.shape="circle"){
+                    if (mapDataPoints.layout[counter].style.shape=="circle"){
                         mapAntigenArray.push(counter);
+                        $rootScope.newMapAntigenArray.push(counter);
                     }
                     //  sera case
                     else{
                         mapSeraArray.push(counter);
+                        $rootScope.newMapSeraArray.push(counter);
                     }
-                    $rootScope.newMapAntigenArray.push(counter);
                 }
-                return;
+
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
-                    console.log(d.style.shape);
                     flag = 1;
-                    mapArray.splice(d.id, 1);
+                    if (d.style.shape=="circle"){
+                        var indexOfElement = mapAntigenArray.indexOf(d.id); // 1
+                        mapAntigenArray.splice(indexOfElement, 1);
+                    }
+                    else if (d.style.shape=="box"){
+                        var indexOfElement = mapSeraArray.indexOf(d.id); // 1
+                        mapSeraArray.splice(indexOfElement, 1);
+                    }
                 });
-
                 if (flag === 0) {
                     var notice = "No nodes selected to create new map, please select one or more nodes";
                     var dlg = dialogs.notify('Notice!', notice);
                 }
                 else {
-                    for (var counter = 0; counter < mapArray.length; counter++) {
-                        var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
-                        $rootScope.newMapArray.splice(index, 1);
+                    for (var counter = 0; counter < mapAntigenArray.length; counter++) {
+                        var index = $rootScope.newMapAntigenArray.indexOf(mapAntigenArray[counter]);
+                        $rootScope.newMapAntigenArray.splice(index, 1);
+                    }
+                    for (var counter = 0; counter < mapSeraArray.length; counter++) {
+                        var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
+                        $rootScope.newMapSeraArray.splice(index, 1);
                     }
                     if (indexValue === 1) {
-                        $rootScope.newMapArray = mapArray;
+                        $rootScope.newMapSeraArray = mapSeraArray;
+                        $rootScope.newMapAntigenArray = mapAntigenArray;
                     }
                     $rootScope.newMapArrayflag = true;
                 }
-
 
             }
 
