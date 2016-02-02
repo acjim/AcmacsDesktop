@@ -39,7 +39,8 @@ var COMMANDS = {
     RELAX_EXISTING: 'relax_existing',
     SET_DISCONNECTED_POINTS: 'set_disconnected_points',
     SET_UNMOVABLE_POINTS: 'set_unmovable_points',
-    REMOVE_PROJECTIONS: 'remove_projections'
+    REMOVE_PROJECTIONS: 'remove_projections',
+    REMOVE_ANTIGENS_SERA: 'remove_antigens_sera'
 };
 
 angular.module('acjim.api', [])
@@ -234,6 +235,18 @@ angular.module('acjim.api', [])
                     if (additional_params.hasOwnProperty('keep')) {
                         input_parameter.data.keep = additional_params.keep;
                     }
+                    break;
+                case COMMANDS.REMOVE_ANTIGENS_SERA:
+                    var input_parameter = {command: command, data: {}};
+
+                    if (!additional_params.hasOwnProperty('sera')) {
+                        throw new Error('Missing mandatory parameter, "sera"');
+                    }
+                    if (!additional_params.hasOwnProperty('antigens')) {
+                        throw new Error('Missing mandatory parameter, "antigens"');
+                    }
+                    input_parameter.data.antigens = additional_params.antigens;
+                    input_parameter.data.sera = additional_params.sera;
                     break;
                 default :
                     break;
@@ -730,6 +743,47 @@ angular.module('acjim.api', [])
             } catch (Error) {
                 return api.format_error_message(Error.message);
             }
+        }
+
+        /**
+         * Removes Removes antigens and sera from the chart. "antigens" and "sera" are list of indexes starting from 0.
+         *
+         *  additional_params = { antigens: list //Mandatory data fields,
+         *                        keep: sera (default: []) //Mandatory data fields: }
+         *
+         * @param additional_params
+         * @param output_acd1
+         * @returns Object {output_json: output_json, updated_acd1: output_acd1_1}
+         */
+        api.remove_antigens_sera = function (additional_params, output_acd1) {
+
+            try {
+                var command = COMMANDS.REMOVE_ANTIGENS_SERA;
+                var deferred = $q.defer();
+                var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', "RAS");
+                var file = output_acd1.split('/').pop();
+                file = file.substr(0, file.lastIndexOf("_"));
+                var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "RAS");
+                var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
+                params[params.length] = input_param_file;
+                params[params.length] = output_acd1;
+                params[params.length] = output_json;
+                params[params.length] = new_output_acd1;
+                execFile(script, params, callback);
+            } catch (Error) {
+                deferred.reject(api.format_error_message(Error.message));
+            }
+
+            function callback(error, stdout, stderr) {
+                if (error) {
+                    var error_message = api.get_error_message(output_json);
+                    deferred.reject(error_message);
+                }
+                deferred.resolve({output_json: output_json, output_acd1: new_output_acd1});
+            }
+
+            return deferred.promise;
         }
 
         /**

@@ -163,6 +163,7 @@
          * Listens for click event on Disconnect Nodes button (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
          */
         $scope.$on('api.set_disconnected_points', function () {
+            $scope.disconnectSelectedNodes();
             if ($rootScope.disableArrayFlag == true) {
                 fileHandling.disconnectNodes($scope.data, $rootScope.disableArray);
             }
@@ -184,10 +185,9 @@
          * Watches for New Map Create from opposite of Selected Nodes
          */
         $scope.$on('newMap.create_from_unselected', function () {
+            $scope.getNewDataFromCurrentMap($scope.data, 1);
             if ($rootScope.newMapArrayflag == true) {
-                console.log($rootScope.newMapSeraArray);
-                console.log($rootScope.newMapAntigenArray);
-                //fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
             }
         });
 
@@ -195,10 +195,9 @@
          * Watches for New Map Create from Selected Nodes
          */
         $scope.$on('newMap.create_from_selected', function () {
+            $scope.getNewDataFromCurrentMap($scope.data, 2);
             if ($rootScope.newMapArrayflag == true) {
-                console.log($rootScope.newMapSeraArray);
-                console.log($rootScope.newMapAntigenArray);
-                //fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapArray);
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
             }
         });
 

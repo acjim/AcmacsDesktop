@@ -729,7 +729,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Gets All D3 Selected Elements, disconnects the selected points (deselects)
              */
-            function disconnectSelectedNodes() {
+            scope.disconnectSelectedNodes = function() {
                 //$rootScope.disableArray = [];
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
@@ -817,7 +817,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @param indexValue int
              * @constructor a Data Array with the new Map Data
              */
-            function getNewDataFromCurrentMap(mapDataPoints, indexValue) {
+            scope.getNewDataFromCurrentMap = function (mapDataPoints, indexValue) {
                 $rootScope.newMapAntigenArray = [];
                 $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
@@ -826,12 +826,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var length = mapDataPoints.layout.length;
                 for (var counter = 0; counter < length; counter++) {
                     // Antigens Case
-                    if (mapDataPoints.layout[counter].style.shape=="circle"){
+                    if (mapDataPoints.layout[counter].style.shape == "circle") {
                         mapAntigenArray.push(counter);
                         $rootScope.newMapAntigenArray.push(counter);
                     }
                     //  sera case
-                    else{
+                    else {
                         mapSeraArray.push(counter);
                         $rootScope.newMapSeraArray.push(counter);
                     }
@@ -840,11 +840,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
                     flag = 1;
-                    if (d.style.shape=="circle"){
+                    if (d.style.shape == "circle") {
                         var indexOfElement = mapAntigenArray.indexOf(d.id); // 1
                         mapAntigenArray.splice(indexOfElement, 1);
                     }
-                    else if (d.style.shape=="box"){
+                    else if (d.style.shape == "box") {
                         var indexOfElement = mapSeraArray.indexOf(d.id); // 1
                         mapSeraArray.splice(indexOfElement, 1);
                     }
@@ -872,25 +872,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             }
 
             /////////////////////// LISTENERS ///////////////////////
-
-            /**
-             * Watches for a set_disconnected_points (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
-             */
-            $rootScope.$on('api.set_disconnected_points', disconnectSelectedNodes);
-
-            /**
-             * Watches to Create  a new Map from Non Selected Nodes
-             */
-            $rootScope.$on('newMap.create_from_unselected', function () {
-                getNewDataFromCurrentMap(scope.data, 2);
-            });
-
-            /**
-             * Watches to Create  a new Map from Selected Nodes
-             */
-            $rootScope.$on('newMap.create_from_selected', function () {
-                getNewDataFromCurrentMap(scope.data, 1);
-            });
 
             /**
              * Handles zoom events

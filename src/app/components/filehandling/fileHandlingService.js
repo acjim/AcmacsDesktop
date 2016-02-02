@@ -524,34 +524,24 @@
          * @param mapData
          * @param disabledPoints
          */
-        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, disabledPoints) {
+        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, antigens, sera) {
             cfpLoadingBar.start();
 
-            var disable_additional_params = {
-                projection: (projection == 0) ? projection : projection_comment,
-                disconnected: disabledPoints
+            var remove_antigens_sera = {
+                antigens: antigens,
+                sera: sera
             };
-            disabledPoints.sort(function (a, b) {
-                return b - a;
-            });
+            console.log(remove_antigens_sera);
 
-            api.set_disconnected_points(disable_additional_params, acd1File)
+            // @TODO: decide if this is necessary?
+            /*disabledPoints.sort(function (a, b) {
+                return b - a;
+            });*/
+
+            api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
                     new_acd1 = filename.updated_acd1;
-                    var relax_additional_params = {
-                        projection: (projection == 0) ? projection : projection_comment
-                    };
-                    api.relax_existing(relax_additional_params, new_acd1)
-                        .then(function (filename) {
-                            new_acd1 = filename.updated_acd1;
-                            // save the file using the selected (or non-selected points) and open the file in new window.
-                            var data_path = api.get_data_path();
-                            var output_file = api.create_file_path(data_path, acd1File, ".acd1", "np");
-                            $rootScope.$broadcast('save-as', output_file);
-                            $rootScope.$broadcast('open-file', output_file);
-                        }, function (reason) {
-                            return errorReason(reason);
-                        });
+                    $rootScope.$broadcast('open-file', new_acd1);
                 }, function (reason) {
                     return errorReason(reason);
                 });
