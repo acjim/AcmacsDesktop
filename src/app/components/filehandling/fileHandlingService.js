@@ -42,7 +42,6 @@
 
         var acd1File = null;
         var projection = 0;
-        var new_acd1 = "";
         var projection_comment = null;
         var is_changed = false;
         var original_filename = "";
@@ -116,10 +115,7 @@
 
             cfpLoadingBar.start();
             var acd1_file = acd1File;
-            if (new_acd1.length > 0) {
-                acd1_file = new_acd1;
-                new_acd1 = "";
-            }
+
             var list = [];
             mapData.layout.forEach(function (layout, i) {
                 list[i] = [
@@ -531,7 +527,6 @@
                 antigens: antigens,
                 sera: sera
             };
-            console.log(remove_antigens_sera);
 
             // @TODO: decide if this is necessary?
             /*disabledPoints.sort(function (a, b) {
@@ -540,8 +535,8 @@
 
             api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
-                    new_acd1 = filename.updated_acd1;
-                    $rootScope.$broadcast('open-file', new_acd1);
+                    $rootScope.$broadcast('open-file', filename.output_acd1);
+                    cfpLoadingBar.complete();
                 }, function (reason) {
                     return errorReason(reason);
                 });
