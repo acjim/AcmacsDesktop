@@ -821,6 +821,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.newMapAntigenArray = [];
                 $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
+                var seraindex=0;
                 var mapAntigenArray = [];
                 var mapSeraArray = [];
                 var length = mapDataPoints.layout.length;
@@ -832,10 +833,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                     //  sera case
                     else {
-                        mapSeraArray.push(counter);
-                        $rootScope.newMapSeraArray.push(counter);
+                        alert(seraindex);
+                        mapSeraArray["kik"+seraindex]=counter;
+                       // $rootScope.newMapSeraArray[serraindex]=counter;
+                        seraindex++;
                     }
                 }
+                console.log("helllo");
+                console.log(mapSeraArray);
+                console.log("helllo");
 
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
