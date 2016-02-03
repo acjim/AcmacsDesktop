@@ -19,4 +19,17 @@ You can get precompiled binaries for OS X (10.7+) and Ubuntu (14.04) [here](http
 It will create a tree under ~/Desktop/AcmacsCore.bundle on OSX
 
 ## Build AcmacsCore.bundle on Ubuntu
-To Do
+1. Get current version of Acmacs: https://github.com/acorg/acmacs.git
+2. Prerequisites
+	- m4
+	- flex
+	- libncurses-dev
+	- libbz2-dev
+	- g++-multilib
+3. Set $ACMACS_ROOT environment variable to point to the Acmacs folder
+4. Build AcmacsCore package
+   `$ACMACS_ROOT/bin/c2r-build CORE`
+5. Navigate to `$ACMACS_ROOT`
+6. Build core bundle
+`bin/c2env make -j acmacs-core-bundle`
+It will create a tree under ~/AcmacsCore.bundle
