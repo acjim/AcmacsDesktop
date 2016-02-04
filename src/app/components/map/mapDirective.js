@@ -891,7 +891,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     if ($rootScope.newMapSeraArray[v]!="removed")
                         mapSeraArrayTemp.push((v.replace('index','')));
                 }
-
                 $rootScope.newMapSeraArray=mapSeraArrayTemp;
             }
 
