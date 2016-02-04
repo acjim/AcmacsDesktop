@@ -821,7 +821,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.newMapAntigenArray = [];
                 $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
+
                 var seraindex=0;
+                var mapSeraArrayTest = [];
                 var mapAntigenArray = [];
                 var mapSeraArray = [];
                 var length = mapDataPoints.layout.length;
@@ -833,16 +835,17 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                     //  sera case
                     else {
-                        alert(seraindex);
-                        mapSeraArray["kik"+seraindex]=counter;
-                       // $rootScope.newMapSeraArray[serraindex]=counter;
+                        mapSeraArray["index"+seraindex]=counter;
+                       $rootScope.newMapSeraArray["index"+seraindex]=counter;
                         seraindex++;
                     }
                 }
-                console.log("helllo");
-                console.log(mapSeraArray);
-                console.log("helllo");
 
+                /* Testing purposes: remove after
+                for(var v in mapSeraArray {
+                   console.log(v);
+                }
+                // testing purposes: remove after*/
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
                     flag = 1;
@@ -851,8 +854,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         mapAntigenArray.splice(indexOfElement, 1);
                     }
                     else if (d.style.shape == "box") {
-                        var indexOfElement = mapSeraArray.indexOf(d.id); // 1
-                        mapSeraArray.splice(indexOfElement, 1);
+                         for(var v in mapSeraArray) {
+                             if(mapSeraArray[v]=== d.id){
+                                 mapSeraArray[v]='removed';
+                             }
+                         }
                     }
                 });
                 if (flag === 0) {
@@ -865,8 +871,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         $rootScope.newMapAntigenArray.splice(index, 1);
                     }
                     for (var counter = 0; counter < mapSeraArray.length; counter++) {
+                        alert('hello');
                         var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
                         $rootScope.newMapSeraArray.splice(index, 1);
+                    }
+                    for(var v in mapSeraArray) {
+                        if(mapSeraArray[v]=== $rootScope.newMapSeraArray[v]){
+                            $rootScope.newMapSeraArray[v]='removed';
+                        }
                     }
                     if (indexValue === 1) {
                         $rootScope.newMapSeraArray = mapSeraArray;
@@ -874,7 +886,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                     $rootScope.newMapArrayflag = true;
                 }
+                var mapSeraArrayTemp = [];
+                for(var v in $rootScope.newMapSeraArray) {
+                    if ($rootScope.newMapSeraArray[v]!="removed")
+                        mapSeraArrayTemp.push((v.replace('index','')));
+                }
 
+                $rootScope.newMapSeraArray=mapSeraArrayTemp;
             }
 
             /////////////////////// LISTENERS ///////////////////////

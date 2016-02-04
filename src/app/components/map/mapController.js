@@ -186,9 +186,8 @@
          */
         $scope.$on('newMap.create_from_unselected', function () {
             $scope.getNewDataFromCurrentMap($scope.data, 2);
-            console.log($rootScope.newMapSeraArray);
             if ($rootScope.newMapArrayflag == true) {
-               // fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
             }
         });
 
@@ -197,9 +196,8 @@
          */
         $scope.$on('newMap.create_from_selected', function () {
             $scope.getNewDataFromCurrentMap($scope.data, 1);
-            console.log($rootScope.newMapSeraArray);
             if ($rootScope.newMapArrayflag == true) {
-                //fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
+                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
             }
         });
 
