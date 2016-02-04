@@ -1,75 +1,35 @@
-# Antigenic Cartography for Desktop [![Build Status](https://travis-ci.org/acjim/AcmacsDesktop.svg?branch=testing)](https://travis-ci.org/acjim/AcmacsDesktop) [![Codacy Badge](https://api.codacy.com/project/badge/e45c7f2631ad4267b4b91b5c30fefe87)](https://www.codacy.com/app/acjim/AcmacsDesktop)
+# AcmacsCore.bundle
+We use a special version of https://github.com/acorg/acmacs.git as our backend to do all the calculations.
+In order get the application to work, you have to put a compiled version of the core bundle into this folder.
 
-![screen shot 2016-01-11 at 15 18 35](https://cloud.githubusercontent.com/assets/6048968/12235844/c070a126-b876-11e5-8f4e-7bd86264600b.jpeg)
+## Download precompiled binaries
+You can get precompiled binaries for OS X (10.7+) and Ubuntu (14.04) [here](https://drive.google.com/folderview?id=0B3SjWA2XVkqCTERmV1BJUkZOYzA&usp=sharing).
 
-[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
+## Build AcmacsCore.bundle on OS X
+1. Get current version of Acmacs: https://github.com/acorg/acmacs.git
+2. Prerequisites
+	- OS X Command Line Developer Tools
+	- pkg-config (install over homebrew)
+3. Set $ACMACS_ROOT environment variable to point to the Acmacs folder
+4. Build AcmacsCore package
+   `$ACMACS_ROOT/bin/c2r-build CORE`
+5. Navigate to `$ACMACS_ROOT`
+6. Build core bundle
+`bin/c2env make -j acmacs-core-bundle`
+It will create a tree under ~/Desktop/AcmacsCore.bundle on OSX
 
-This project aims at providing a desktop application for working with antigenic maps.
-
-## Include Core
-To be able to use the app you need the latest version of the **AcmacsCore.bundle**. You can download it [here](https://drive.google.com/open?id=0B3SjWA2XVkqCTERmV1BJUkZOYzA).
-
-Unzip and put the binaries in the `core` folder.
-
-## Run the application (development mode)
-You need ``npm`` installed in order to get this working. The best way to install ``npm`` is to install [node.js](http://www.nodejs.org) using its installer.
-
-
-Run the following command in the root folder of the project (where this ``README.md`` is located):
-```sh
-npm install
-```
-And start the application with:
-```sh
-npm start
-```
-
-## Build the application (for deployment)
-You need ``grunt`` installed to get this working. The best option is probably to install it globally:
-```sh
-npm install -g grunt
-```
-
-#### Install dependencies
-Install all project dependencies
-```sh
-npm install
-```
-#### Build AcmacsDesktop application
-The task runner grunt creates a folder `cache`, downloads the right nw.js version and puts the final app into the `build` folder.
-```sh
-grunt build
-```
-To prevent errors, you should only build the application on the system you are building it for. For example, if you would 
-like to make an ``OSX 32-bit`` build then build it on that specific architecture. 
-
-By default, the app is only built for the platform you are on. However, you can provide your desired build targets as parameters:
-```sh
-grunt build --target=<target>
-```
-with the following possible targets:
-```sh
-//Builds 32bit and 64bit ...
-osx
-linux
-win
-//... or provide the arch
-osx32
-linux64
-...
-```
-Keep in mind that you should exchange the **AcmacsCore.bundle** to the target you are building for.
-
-#### Packaging the application
-Currently, only `DMG` packaging for OS X is supported and you need to be on OS X in order for this to work.
-```sh
-grunt package
-```
-
-
-# License
-GNU GENERAL PUBLIC LICENSE  
-Version 3, 29 June 2007  
-Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/>  
-Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
-
+## Build AcmacsCore.bundle on Ubuntu
+1. Get current version of Acmacs: https://github.com/acorg/acmacs.git
+2. Prerequisites
+	- m4
+	- flex
+	- libncurses-dev
+	- libbz2-dev
+	- g++-multilib
+3. Set $ACMACS_ROOT environment variable to point to the Acmacs folder
+4. Build AcmacsCore package
+   `$ACMACS_ROOT/bin/c2r-build CORE`
+5. Navigate to `$ACMACS_ROOT`
+6. Build core bundle
+`bin/c2env make -j acmacs-core-bundle`
+It will create a tree under ~/AcmacsCore.bundle
