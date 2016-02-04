@@ -166,21 +166,21 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
                 $rootScope.$broadcast('map.randomize');
             }
         }
-        //, {
-        //    id: toolbarItems.NEW_MAP_FROM_UNSELECTED,
-        //    caption: 'Create New Map From Selected Elements', // captions are correct here: TODO fix method and var names
-        //    icon: 'glyphicon glyphicon-scissors',
-        //    callback: function () {
-        //        $rootScope.$broadcast('newMap.create_from_unselected');
-        //    }
-        //}, {
-        //    id: toolbarItems.NEW_MAP_FROM_SELECTED,
-        //    caption: 'Create New Map From Non Selected Elements', // captions are correct here: TODO fix method and var names
-        //    icon: 'glyphicon glyphicon-duplicate',
-        //    callback: function () {
-        //        $rootScope.$broadcast('newMap.create_from_selected');
-        //    }
-        //}
+        , {
+             id: toolbarItems.NEW_MAP_FROM_SELECTED,
+             caption: 'Create New Map From Selected Elements',
+             icon: 'glyphicon glyphicon-scissors',
+                callback: function () {
+                    $rootScope.$broadcast('newMap.create_from_selected');
+                }
+            }, {
+                id: toolbarItems.NEW_MAP_FROM_UNSELECTED,
+                caption: 'Create New Map From Non Selected Elements',
+                icon: 'glyphicon glyphicon-duplicate',
+                callback: function () {
+                    $rootScope.$broadcast('newMap.create_from_unselected');
+               }
+            }
     ]);
 
 });

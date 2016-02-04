@@ -42,7 +42,6 @@
 
         var acd1File = null;
         var projection = 0;
-        var new_acd1 = "";
         var projection_comment = null;
         var is_changed = false;
         var original_filename = "";
@@ -116,10 +115,7 @@
 
             cfpLoadingBar.start();
             var acd1_file = acd1File;
-            if (new_acd1.length > 0) {
-                acd1_file = new_acd1;
-                new_acd1 = "";
-            }
+
             var list = [];
             mapData.layout.forEach(function (layout, i) {
                 list[i] = [
@@ -524,34 +520,23 @@
          * @param mapData
          * @param disabledPoints
          */
-        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, disabledPoints) {
+        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, antigens, sera) {
             cfpLoadingBar.start();
 
-            var disable_additional_params = {
-                projection: (projection == 0) ? projection : projection_comment,
-                disconnected: disabledPoints
+            var remove_antigens_sera = {
+                antigens: antigens,
+                sera: sera
             };
-            disabledPoints.sort(function (a, b) {
-                return b - a;
-            });
 
-            api.set_disconnected_points(disable_additional_params, acd1File)
+            // @TODO: decide if this is necessary?
+            /*disabledPoints.sort(function (a, b) {
+                return b - a;
+            });*/
+
+            api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
-                    new_acd1 = filename.updated_acd1;
-                    var relax_additional_params = {
-                        projection: (projection == 0) ? projection : projection_comment
-                    };
-                    api.relax_existing(relax_additional_params, new_acd1)
-                        .then(function (filename) {
-                            new_acd1 = filename.updated_acd1;
-                            // save the file using the selected (or non-selected points) and open the file in new window.
-                            var data_path = api.get_data_path();
-                            var output_file = api.create_file_path(data_path, acd1File, ".acd1", "np");
-                            $rootScope.$broadcast('save-as', output_file);
-                            $rootScope.$broadcast('open-file', output_file);
-                        }, function (reason) {
-                            return errorReason(reason);
-                        });
+                    $rootScope.$broadcast('open-file', filename.output_acd1);
+                    cfpLoadingBar.complete();
                 }, function (reason) {
                     return errorReason(reason);
                 });

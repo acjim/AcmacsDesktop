@@ -729,7 +729,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Gets All D3 Selected Elements, disconnects the selected points (deselects)
              */
-            function disconnectSelectedNodes() {
+            scope.disconnectSelectedNodes = function() {
                 //$rootScope.disableArray = [];
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
@@ -817,59 +817,84 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @param indexValue int
              * @constructor a Data Array with the new Map Data
              */
-            function getNewDataFromCurrentMap(mapDataPoints, indexValue) {
-                $rootScope.newMapArray = [];
+            scope.getNewDataFromCurrentMap = function (mapDataPoints, indexValue) {
+                $rootScope.newMapAntigenArray = [];
+                $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
-                var mapArray = [];
+
+                var seraindex=0;
+                var mapSeraArrayTest = [];
+                var mapAntigenArray = [];
+                var mapSeraArray = [];
                 var length = mapDataPoints.layout.length;
                 for (var counter = 0; counter < length; counter++) {
-                    mapArray.push(counter);
-                    $rootScope.newMapArray.push(counter);
+                    // Antigens Case
+                    if (mapDataPoints.layout[counter].style.shape == "circle") {
+                        mapAntigenArray.push(counter);
+                        $rootScope.newMapAntigenArray.push(counter);
+                    }
+                    //  sera case
+                    else {
+                        mapSeraArray["index"+seraindex]=counter;
+                       $rootScope.newMapSeraArray["index"+seraindex]=counter;
+                        seraindex++;
+                    }
                 }
+
+                /* Testing purposes: remove after
+                for(var v in mapSeraArray {
+                   console.log(v);
+                }
+                // testing purposes: remove after*/
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
                     flag = 1;
-                    mapArray.splice(d.id, 1);
+                    if (d.style.shape == "circle") {
+                        var indexOfElement = mapAntigenArray.indexOf(d.id); // 1
+                        mapAntigenArray.splice(indexOfElement, 1);
+                    }
+                    else if (d.style.shape == "box") {
+                         for(var v in mapSeraArray) {
+                             if(mapSeraArray[v]=== d.id){
+                                 mapSeraArray[v]='removed';
+                             }
+                         }
+                    }
                 });
-
                 if (flag === 0) {
                     var notice = "No nodes selected to create new map, please select one or more nodes";
                     var dlg = dialogs.notify('Notice!', notice);
                 }
                 else {
-                    for (var counter = 0; counter < mapArray.length; counter++) {
-                        var index = $rootScope.newMapArray.indexOf(mapArray[counter]);
-                        $rootScope.newMapArray.splice(index, 1);
+                    for (var counter = 0; counter < mapAntigenArray.length; counter++) {
+                        var index = $rootScope.newMapAntigenArray.indexOf(mapAntigenArray[counter]);
+                        $rootScope.newMapAntigenArray.splice(index, 1);
+                    }
+                    for (var counter = 0; counter < mapSeraArray.length; counter++) {
+                        alert('hello');
+                        var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
+                        $rootScope.newMapSeraArray.splice(index, 1);
+                    }
+                    for(var v in mapSeraArray) {
+                        if(mapSeraArray[v]=== $rootScope.newMapSeraArray[v]){
+                            $rootScope.newMapSeraArray[v]='removed';
+                        }
                     }
                     if (indexValue === 1) {
-                        $rootScope.newMapArray = mapArray;
+                        $rootScope.newMapSeraArray = mapSeraArray;
+                        $rootScope.newMapAntigenArray = mapAntigenArray;
                     }
                     $rootScope.newMapArrayflag = true;
                 }
-
-
+                var mapSeraArrayTemp = [];
+                for(var v in $rootScope.newMapSeraArray) {
+                    if ($rootScope.newMapSeraArray[v]!="removed")
+                        mapSeraArrayTemp.push((v.replace('index','')));
+                }
+                $rootScope.newMapSeraArray=mapSeraArrayTemp;
             }
 
             /////////////////////// LISTENERS ///////////////////////
-
-            /**
-             * Watches for a set_disconnected_points (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
-             */
-            $rootScope.$on('api.set_disconnected_points', disconnectSelectedNodes);
-
-            /**
-             * Watches to Create  a new Map from Non Selected Nodes
-             */
-            $rootScope.$on('newMap.create_from_unselected', function () {
-                getNewDataFromCurrentMap(scope.data, 2);
-            });
-
-            /**
-             * Watches to Create  a new Map from Selected Nodes
-             */
-            $rootScope.$on('newMap.create_from_selected', function () {
-                getNewDataFromCurrentMap(scope.data, 1);
-            });
 
             /**
              * Handles zoom events
