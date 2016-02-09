@@ -78,7 +78,7 @@ angular.module('acjim.api', [])
                         var data_name = this.extract_name(input_file);
                         input_parameter.data.name = data_name.replace('-', '_');
                     }
-                    file_name = file_name + '_' + DATE_NOW + ".json";
+                    file_name = file_name + ID() + ".json";
                     if (additional_params.hasOwnProperty('parse_antigen_names')) {
                         input_parameter.data.parse_antigen_names = additional_params.parse_antigen_names;
                     } else {
@@ -252,15 +252,20 @@ angular.module('acjim.api', [])
                     break;
             }
             if (command !== COMMANDS.IMPORT) {
-                var file_name = this.extract_name(input_file);
-                var random_number = Math.random() * 89;
-                file_name = file_name + '_' + DATE_NOW + random_number + ".json";
+                file_name = command + ID() + ".json";
             }
             var json_parameters = JSON.stringify(input_parameter, null, 4);
             var file_path = tmp_path + file_name;
             fs.writeFileSync(file_path, json_parameters);
 
             return file_path;
+        };
+
+        var ID = function () {
+            // Math.random should be unique because of its seeding algorithm.
+            // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+            // after the decimal.
+            return '_' + Math.random().toString(36).substr(2, 8);
         };
 
         /**
@@ -397,8 +402,8 @@ angular.module('acjim.api', [])
                 // create and fetch input_parameter file
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', "RLX");
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', "RLX");
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
@@ -442,8 +447,8 @@ angular.module('acjim.api', [])
                 // create and fetch input_parameter file
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'dscpts');
-                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'dscpts');
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'DSC');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'DSC');
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
@@ -484,8 +489,8 @@ angular.module('acjim.api', [])
                 // create and fetch input_parameter file
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
-                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'UNM');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'UNM');
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
@@ -526,8 +531,8 @@ angular.module('acjim.api', [])
                 // create and fetch input_parameter file
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'unpts');
-                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'unpts');
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', 'UNM');
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', 'UNM');
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
@@ -558,8 +563,8 @@ angular.module('acjim.api', [])
                 // create and fetch input_parameter file
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
 
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', command);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', "RE");
+                var output_acd1_1 = this.create_file_path(data_path, output_acd1, '.acd1', "RE");
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 if (process.platform === "win32") { //win only needs 1 parameter (it's inside the vagrant ssh -c '<here>')
                     params[params.length - 1] += input_param_file + " " + output_acd1 + " " + output_json + " " + output_acd1;
@@ -620,8 +625,8 @@ angular.module('acjim.api', [])
                 var deferred = $q.defer();
                 // create and fetch input_parameter file
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
-                var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "upt");
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', "UPT");
+                var new_output_acd1 = this.create_file_path(data_path, output_acd1, '.acd1', "UPT");
 
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
@@ -660,7 +665,7 @@ angular.module('acjim.api', [])
                 var deferred = $q.defer();
                 var command = COMMANDS.EXPORT;
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', "EXP");
                 var params = _.compact(config.api.params); //copy the array, we don't want to modify the original
                 params[params.length] = input_param_file;
                 params[params.length] = output_acd1;
@@ -699,7 +704,7 @@ angular.module('acjim.api', [])
                 var command = COMMANDS.NEW_PROJECTION;
                 var deferred = $q.defer();
                 var input_param_file = this.create_input_parameter(command, additional_params, output_acd1);
-                var output_json = this.create_file_path(data_path, output_acd1, '.json', command);
+                var output_json = this.create_file_path(data_path, output_acd1, '.json', "NP");
                 var file = output_acd1.split('/').pop();
                 file = file.substr(0, file.lastIndexOf("_"));
                 var new_output_acd1 = this.create_file_path(data_path, file, '.acd1', "NP");
@@ -796,27 +801,7 @@ angular.module('acjim.api', [])
          * @returns {string}
          */
         api.create_file_path = function (path, file_name, extension, command) {
-            var file = file_name.split('/').pop();
-            if (file.substr(0, file.lastIndexOf(".")).length > 0) {
-                file = file.substr(0, file.lastIndexOf("."));
-            }
-            var date_now = DATE_NOW,
-                output = null;
-
-            // if filename already has command in it then simply add
-            if (file.indexOf(command) > -1) {
-                var randomnumber = Math.floor(Math.random() * (10)) + 1;
-                output = path + file + '_' + randomnumber + extension;
-                return output;
-            }
-            // remove import param from generated file
-            if (command === COMMANDS.IMPORT) {
-                output = path + file + '_' + date_now + extension;
-            } else {
-                output = path + file + '_' + command + '_' + date_now + extension;
-            }
-
-            return output;
+            return path + command + ID() + extension;
         };
 
         /**
