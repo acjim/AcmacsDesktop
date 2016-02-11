@@ -2,6 +2,8 @@
 We use a special version of https://github.com/acorg/acmacs.git as our backend to do all the calculations.
 In order get the application to work, you have to put a compiled version of the core bundle into this folder.
 
+**Attention: The acmacs repository is private. You need to request access from https://github.com/acorg to get the newest source code.**
+
 ## Download precompiled binaries
 You can get precompiled binaries for OS X (10.7+) and Ubuntu (14.04) [here](https://drive.google.com/folderview?id=0B3SjWA2XVkqCTERmV1BJUkZOYzA&usp=sharing).
 
