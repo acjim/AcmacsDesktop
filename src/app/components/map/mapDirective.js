@@ -670,7 +670,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.fixedArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
-                areSelectedNodesFixed($rootScope.disableArray);
+                aredNodesFixedOrDisabled($rootScope.disableArray);
                 if (flagDisconnectDisable==0) {
                     d3.selectAll(".selected").each(function (d) {
                         if (d.style.fill_color != "#bebebe") {
@@ -721,7 +721,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         $rootScope.colorArray = colorArray;
                     }
                 }else {
-                    var notice = "Some selected nodes are disconnected. Reconnect them before disconnecting them or do not select them to fix them";
+                    var notice = "The Disconnect Functionality Cannot Be Combined with the Fix Nodes One. Re-enable Nodes Before Fixing or Create a new map before fixing nodes." +
+                        "";
                     var dlg = dialogs.notify('Notice!', notice);
                 }
             }
@@ -734,7 +735,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
-                areSelectedNodesFixed($rootScope.fixedArray);
+                aredNodesFixedOrDisabled($rootScope.fixedArray);
                 if (flagDisconnectDisable==0) {
                     d3.selectAll(".selected").each(function (d) {
                         if (d.style.fill_color != "#bebebe") {
@@ -775,7 +776,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                     }
                 }else{
-                    var notice = "Some selected nodes are fixed. Unfix them before disconnecting them or do not fix them";
+                    var notice = "The Fix Nodes Functionality Cannot Be Combined with the Disconnect One. Re-Connect Nodes Before Disconnecting please.";
                     var dlg = dialogs.notify('Notice!', notice);
                 }
             }
@@ -796,7 +797,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     });
                 }
             }
-
+            /**
+             * checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca
+             */
+            function aredNodesFixedOrDisabled(fixedOrDisconnectedElements){
+                flagDisconnectDisable=0;
+                if (fixedOrDisconnectedElements) {
+                    if (fixedOrDisconnectedElements.length>0)
+                        flagDisconnectDisable = 1;
+                }
+            }
             /**
              * Returns the node labels of nodes or removes them depending on the case
              *
