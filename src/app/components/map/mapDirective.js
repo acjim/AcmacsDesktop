@@ -825,11 +825,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns none
              */
             function renderSerraIds() {
-                d3.selectAll(".selected").each(function (d) {
-                 // alert("id is: "+d.id);
-                    //console.log(d.style.shape);
-
+                var tempArray=[];
+                var arrayofSerras =[];
+                d3.selectAll(".point").each(function (d) {
+                 if( d.style.shape=="box"){
+                     arrayofSerras.push(d.id);
+                 }
                 });
+                for (var i=0; i<$rootScope.newMapSeraArray.length; i++){
+                    var indexOfSerra = arrayofSerras.indexOf($rootScope.newMapSeraArray[i]);
+                    tempArray.push(indexOfSerra);
+
+                }
+                $rootScope.newMapSeraArray= tempArray;
             }
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
@@ -842,11 +850,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.newMapAntigenArray = [];
                 $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
-                renderSerraIds();
-
-
-                var seraindex=0;
-                var mapSeraArrayTest = [];
                 var mapAntigenArray = [];
                 var mapSeraArray = [];
                 var length = mapDataPoints.layout.length;
@@ -858,9 +861,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                     //  sera case
                     else {
-                        mapSeraArray["index"+seraindex]=counter;
-                       $rootScope.newMapSeraArray["index"+seraindex]=counter;
-                        seraindex++;
+                        mapSeraArray.push(counter);
+                       $rootScope.newMapSeraArray.push(counter);
                     }
                 }
 
@@ -877,11 +879,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         mapAntigenArray.splice(indexOfElement, 1);
                     }
                     else if (d.style.shape == "box") {
-                         for(var v in mapSeraArray) {
-                             if(mapSeraArray[v]=== d.id){
-                                 mapSeraArray[v]='removed';
-                             }
-                         }
+                        var indexOfElement = mapSeraArray.indexOf(d.id); // 1
+                        mapSeraArray.splice(indexOfElement, 1);
                     }
                 });
                 if (flag === 0) {
@@ -897,23 +896,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
                         $rootScope.newMapSeraArray.splice(index, 1);
                     }
-                    for(var v in mapSeraArray) {
-                        if(mapSeraArray[v]=== $rootScope.newMapSeraArray[v]){
-                            $rootScope.newMapSeraArray[v]='removed';
-                        }
-                    }
+
                     if (indexValue === 1) {
                         $rootScope.newMapSeraArray = mapSeraArray;
                         $rootScope.newMapAntigenArray = mapAntigenArray;
                     }
+                    renderSerraIds ();
                     $rootScope.newMapArrayflag = true;
                 }
-                var mapSeraArrayTemp = [];
-                for(var v in $rootScope.newMapSeraArray) {
-                    if ($rootScope.newMapSeraArray[v]!="removed")
-                        mapSeraArrayTemp.push((v.replace('index','')));
-                }
-                $rootScope.newMapSeraArray=mapSeraArrayTemp;
+
             }
 
             /////////////////////// LISTENERS ///////////////////////
