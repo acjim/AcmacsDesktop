@@ -197,6 +197,7 @@
         $scope.$on('newMap.create_from_selected', function () {
             $scope.getNewDataFromCurrentMap($scope.data, 1);
             if ($rootScope.newMapArrayflag == true) {
+               console.log($rootScope.newMapSeraArray);
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
             }
         });
