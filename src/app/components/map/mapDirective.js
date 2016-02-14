@@ -819,7 +819,18 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     d3.selectAll(".text").style("visibility", "hidden");
                 }
             }
+            /**
+             * This function re-renders Serra Ids the right form after loading them from the backend
+             *
+             * @returns none
+             */
+            function renderSerraIds() {
+                d3.selectAll(".selected").each(function (d) {
+                 // alert("id is: "+d.id);
+                    //console.log(d.style.shape);
 
+                });
+            }
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
              *
@@ -831,6 +842,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 $rootScope.newMapAntigenArray = [];
                 $rootScope.newMapSeraArray = [];
                 $rootScope.newMapArrayflag = false;
+                renderSerraIds();
+
 
                 var seraindex=0;
                 var mapSeraArrayTest = [];
@@ -881,7 +894,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         $rootScope.newMapAntigenArray.splice(index, 1);
                     }
                     for (var counter = 0; counter < mapSeraArray.length; counter++) {
-                        alert('hello');
                         var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
                         $rootScope.newMapSeraArray.splice(index, 1);
                     }
@@ -934,6 +946,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     toggleNodeLabels(item.active);
                 });
             });
+
+
 
             /**
              * Listens for event to randomize the positions of Nodes
