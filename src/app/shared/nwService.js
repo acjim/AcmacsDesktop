@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('acjim')
-        .service('nwService', ['$rootScope', function($rootScope)  {
+        .service('nwService', ['$rootScope', '$timeout', function($rootScope, $timeout)  {
 
             var gui = require("nw.gui"),
                 window = gui.Window.get(),
@@ -16,7 +16,7 @@
 
             // will be called when a menu item is clicked
             window.on('menu-action', function (eventName) {
-                $rootScope.$broadcast(eventName);
+                $timeout($rootScope.$broadcast(eventName));
             });
 
             window.show();
