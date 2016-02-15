@@ -58,7 +58,8 @@
                     {
                         label: 'Map', items: [
                         {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'o'},
-                        {label: 'Create new Map', click: 'map.create_from_selected', modifiers: osModifier + 'alt', key: 'o'},
+                        {label: 'Randomize Nodes', click: 'map.randomize', modifiers: osModifier + 'alt', key: 'r'},
+                        {label: 'Create New Map From Selected', click: 'map.create_from_selected', modifiers: osModifier + 'alt', key: 'n'},
                         {type: 'separator'},
                         {
                             label: 'Zoom', items: [
@@ -72,6 +73,9 @@
                             {label: 'Selection Tool', click: 'map.selectionTool', modifiers: osModifier + 'alt', key: 'v'},
                             {label: 'Movement Tool', click: 'map.movementTool', modifiers: osModifier + 'alt', key: 'm'}
                         ]},
+                        {type: 'separator'},
+                        {label: 'Fix Selected Nodes', click: 'api.set_unmovable_points'},
+                        {label: 'Disconnect Selected Nodes', click: 'api.set_disconnected_points'},
                         {type: 'separator'},
                         {label: 'Toggle Error Lines', click: 'map.showErrorLines'},
                         {label: 'Toggle Connection Lines', click: 'map.showConnectionLines'},
