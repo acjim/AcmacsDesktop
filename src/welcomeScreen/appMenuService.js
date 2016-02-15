@@ -86,7 +86,10 @@
                         label: 'Select', items: [
                         {label: 'All', click: 'map.selectAll', modifiers: osModifier, key: 'a'},
                         {label: 'Deselect', click: 'map.deselect', modifiers: osModifier, key: 'd'},
-                        {label: 'Inverse', click: 'map.invertSelection', modifiers: osModifier + 'shift', key: 'i'}
+                        {label: 'Inverse', click: 'map.invertSelection', modifiers: osModifier + 'shift', key: 'i'},
+                        {type: 'separator'},
+                        {label: 'Select All Sera', click: 'map.selectSera'},
+                        {label: 'Select All Antigen', click: 'map.selectAntigen'}
                     ]
                     },
                     {
