@@ -36,7 +36,6 @@
             SHOW_LABELS: 6,
             RE_OPTIMIZE: 7,
             DISCONNECT_NODES: 8,
-            NEW_MAP_FROM_UNSELECTED: 9,
             ZOOM_IN: 14,
             ZOOM_OUT: 15,
             MAP_TOOLS: 10,

@@ -665,12 +665,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Gets All D3 Selected Elements, makes them fixed (unmovable/deselects on map):
              */
             scope.fixSelectedNodes = function() {
-                //$rootScope.disableArray = [];
                 var flagDisable;
                 $rootScope.fixedArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
-                aredNodesFixedOrDisabled($rootScope.disableArray);
+                areNodesFixedOrDisabled($rootScope.disableArray);
                 if (flagDisconnectDisable==0) {
                     d3.selectAll(".selected").each(function (d) {
                         if (d.style.fill_color != "#bebebe") {
@@ -694,8 +693,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                                 flagDisable = 0;
                             }
 
-                        }
-                        else if ("#bebebe") {
+                        } else if ("#bebebe") {
                             flag = 1;
                             d3.select(this).transition()
                                 .attr("style", "fill:" + colorArray["" + d.id + ""]);
@@ -708,34 +706,28 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             }
                             flag = 1;
                         }
-                        else {
-                        }
                     });
                     if (flag === 0) {
-                        var notice = "No nodes selected, please select one or more nodes to be fixed";
-                        var dlg = dialogs.notify('Notice!', notice);
+                        dialogs.notify('Notice!', "No nodes selected, please select one or more nodes to be fixed");
                     }
                     else {
                         $rootScope.fixedArrayFlag = true;
                         $rootScope.fixedArray = fixedArray;
                         $rootScope.colorArray = colorArray;
                     }
-                }else {
-                    var notice = "The Disconnect Functionality Cannot Be Combined with the Fix Nodes One. Re-enable Nodes Before Fixing or Create a new map before fixing nodes." +
-                        "";
-                    var dlg = dialogs.notify('Notice!', notice);
+                } else {
+                    dialogs.notify('Notice!', "The disconnect functionality can not be combined with the fix nodes one. Re-enable nodes or create a new map before fixing nodes.");
                 }
-            }
+            };
 
             /**
              * Gets All D3 Selected Elements, disconnects the selected points (deselects)
              */
             scope.disconnectSelectedNodes = function() {
-                //$rootScope.disableArray = [];
                 $rootScope.disableArrayFlag = false;
                 var flag = 0;
                 // Disable Button Functionality
-                aredNodesFixedOrDisabled($rootScope.fixedArray);
+                areNodesFixedOrDisabled($rootScope.fixedArray);
                 if (flagDisconnectDisable==0) {
                     d3.selectAll(".selected").each(function (d) {
                         if (d.style.fill_color != "#bebebe") {
@@ -747,8 +739,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                                 .style("opacity", .4)
                                 .attr("style", "fill:#bebebe");
                             disableArray.push(d.id);
-                        }
-                        else if ("#bebebe") {
+                        } else if ("#bebebe") {
                             flag = 1;
                             d3.select(this).transition()
                                 .attr("style", "fill:" + colorArray["" + d.id + ""]);
@@ -761,52 +752,32 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             }
                             flag = 1;
                         }
-                        else {
-                        }
                     });
 
                     if (flag === 0) {
-                        var notice = "No nodes selected, please select one or more nodes to disconnect";
-                        var dlg = dialogs.notify('Notice!', notice);
-                    }
-                    else {
+                        dialogs.notify('Notice!', "No nodes selected, please select one or more nodes to disconnect");
+                    } else {
                         $rootScope.disableArrayFlag = true;
                         $rootScope.disableArray = disableArray;
                         $rootScope.colorArray = colorArray;
-
                     }
-                }else{
-                    var notice = "The Fix Nodes Functionality Cannot Be Combined with the Disconnect One. Re-Connect Nodes Before Disconnecting please.";
-                    var dlg = dialogs.notify('Notice!', notice);
+                } else {
+                    dialogs.notify('Notice!', "The fix nodes functionality cannot be combined with the disconnect one. Re-connect nodes before disconnecting please.");
                 }
-            }
-            /**
-             * checks if nodes are fixed when clicking on disconnect and vice verca
-             */
-            function areSelectedNodesFixed(fixedOrDisconnectedElements){
-                flagDisconnectDisable=0;
-                if (fixedOrDisconnectedElements) {
-                    d3.selectAll(".selected").each(function (d) {
-                        if (d.style.fill_color == "#bebebe") {
-                            for (var c = 0; c < fixedOrDisconnectedElements.length; c++) {
-                                if (d.id == fixedOrDisconnectedElements[c]) {
-                                    flagDisconnectDisable = 1;
-                                }
-                            }
-                        }
-                    });
-                }
-            }
+            };
+
+
             /**
              * checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca
              */
-            function aredNodesFixedOrDisabled(fixedOrDisconnectedElements){
+            function areNodesFixedOrDisabled(fixedOrDisconnectedElements){
                 flagDisconnectDisable=0;
                 if (fixedOrDisconnectedElements) {
                     if (fixedOrDisconnectedElements.length>0)
                         flagDisconnectDisable = 1;
                 }
             }
+
             /**
              * Returns the node labels of nodes or removes them depending on the case
              *
@@ -819,6 +790,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     d3.selectAll(".text").style("visibility", "hidden");
                 }
             }
+
             /**
              * This function re-renders Serra Ids the right form after loading them from the backend
              *
@@ -839,6 +811,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }
                 $rootScope.newMapSeraArray= tempArray;
             }
+
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
              *
@@ -866,11 +839,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                 }
 
-                /* Testing purposes: remove after
-                for(var v in mapSeraArray {
-                   console.log(v);
-                }
-                // testing purposes: remove after*/
                 var flag = 0;
                 d3.selectAll(".selected").each(function (d) {
                     flag = 1;
@@ -884,10 +852,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                 });
                 if (flag === 0) {
-                    var notice = "No nodes selected to create new map, please select one or more nodes";
-                    var dlg = dialogs.notify('Notice!', notice);
-                }
-                else {
+                    dialogs.notify('Notice!', "No nodes selected to create new map, please select one or more nodes");
+                } else {
                     for (var counter = 0; counter < mapAntigenArray.length; counter++) {
                         var index = $rootScope.newMapAntigenArray.indexOf(mapAntigenArray[counter]);
                         $rootScope.newMapAntigenArray.splice(index, 1);
@@ -905,7 +871,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     $rootScope.newMapArrayflag = true;
                 }
 
-            }
+            };
 
             /////////////////////// LISTENERS ///////////////////////
 

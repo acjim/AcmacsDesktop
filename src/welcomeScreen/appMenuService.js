@@ -58,6 +58,7 @@
                     {
                         label: 'Map', items: [
                         {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'o'},
+                        {label: 'Create new Map', click: 'map.create_from_selected', modifiers: osModifier + 'alt', key: 'o'},
                         {type: 'separator'},
                         {
                             label: 'Zoom', items: [
