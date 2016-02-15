@@ -182,19 +182,9 @@
         });
 
         /**
-         * Watches for New Map Create from opposite of Selected Nodes
-         */
-        $scope.$on('newMap.create_from_unselected', function () {
-            $scope.getNewDataFromCurrentMap($scope.data, 2);
-            if ($rootScope.newMapArrayflag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
-            }
-        });
-
-        /**
          * Watches for New Map Create from Selected Nodes
          */
-        $scope.$on('newMap.create_from_selected', function () {
+        $scope.$on('map.create_from_selected', function () {
             $scope.getNewDataFromCurrentMap($scope.data, 1);
             if ($rootScope.newMapArrayflag == true) {
                 fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
