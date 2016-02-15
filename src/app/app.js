@@ -85,7 +85,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
                 {
                     id: toolbarItems.ZOOM_IN,
                     caption: 'Zoom In',
-                    icon: 'glyphicon glyphicon-zoom-in',
+                    icon: 'icon acmacs-zoom-in',
                     togglable: false,
                     callback: function () {
                         $rootScope.$emit('map.zoomIn');
@@ -94,7 +94,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
                 {
                     id: toolbarItems.ZOOM_OUT,
                     caption: 'Zoom Out',
-                    icon: 'glyphicon glyphicon-zoom-out',
+                    icon: 'icon acmacs-zoom-out',
                     togglable: false,
                     callback: function () {
                         $rootScope.$emit('map.zoomOut');
@@ -145,7 +145,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         {
             id: toolbarItems.FIX_NODES,
             caption: 'Fix Selected Nodes',
-            icon: 'glyphicon glyphicon-scale',
+            icon: 'icon acmacs-fix',
             callback: function () {
                 $rootScope.$broadcast('api.set_unmovable_points');
             }
@@ -153,7 +153,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         {
             id: toolbarItems.DISCONNECT_NODES,
             caption: 'Disconnect Selected Nodes',
-            icon: 'glyphicon glyphicon-erase',
+            icon: 'icon acmacs-disconnect',
             callback: function () {
                 $rootScope.$broadcast('api.set_disconnected_points');
             }
@@ -161,7 +161,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         {
             id: toolbarItems.RANDOMIZE_NODES,
             caption: 'Randomise Nodes',
-            icon: 'glyphicon glyphicon-random',
+            icon: 'icon acmacs-random',
             callback: function () {
                 $rootScope.$broadcast('map.randomize');
             }
@@ -169,7 +169,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         {
             id: toolbarItems.NEW_MAP_FROM_SELECTED,
             caption: 'Create New Map From Selected Elements',
-            icon: 'glyphicon glyphicon-duplicate',
+            icon: 'icon acmacs-windows',
             callback: function () {
                 $rootScope.$broadcast('map.create_from_selected');
             }
