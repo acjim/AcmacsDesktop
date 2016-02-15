@@ -852,9 +852,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                 });
                 if (flag === 0) {
-                    $rootScope.newMapArrayflag = true;
-                    renderSerraIds ();
-                    //dialogs.notify('Notice!', "No nodes selected to create new map, please select one or more nodes");
+                    dialogs.notify('Notice!', "No nodes selected to create new map, please select one or more nodes");
                 } else {
                     for (var counter = 0; counter < mapAntigenArray.length; counter++) {
                         var index = $rootScope.newMapAntigenArray.indexOf(mapAntigenArray[counter]);
