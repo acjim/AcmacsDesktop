@@ -847,12 +847,12 @@ angular.module('acjim.api', [])
                 var rx = /runtime_error:(.*)/g;
                 var rx_1 = /RuntimeError:(.*)/g;
                 var arr = rx.exec(output_data.errors[0]);
-                var arr_1 = rx.exec(output_data.errors[0]);
+                var arr_1 = rx_1.exec(output_data.errors[0]);
                 var warnMsg = output_data.errors[0];
                 if (_.isArray(arr) && arr[1]) {
                     warnMsg = arr[1];
                 } else if(_.isArray(arr_1) && arr_1[1]) {
-                    warnMsg = arr_1[1];
+                    warnMsg = arr_1[1].replace("(forgot to check conformance?)", "");
                 }
                 return "INFO " + warnMsg + "[acmacs-api, source: core-bundle]"
             }  else {
