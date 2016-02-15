@@ -93,7 +93,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .y(yScale)
                     .translate(translate)
                     .scale(scale)
-                    .on("zoomstart", zoomStart)
+                    .on("zoomstart", deselectNodes)
                     .on("zoom", applyZoom);
 
                 // reapply scales on the data, only if data is already defined, otherwise wait
@@ -444,8 +444,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             d.x += dx / zoom.scale();
                             d.y += dy / zoom.scale();
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
-                        }
-                        else {
+                        } else {
                             d.x += 0 / zoom.scale();
                             d.y += 0 / zoom.scale();
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
@@ -515,14 +514,26 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
 
             /**
-             * Deselects all nodes when using the zoom
+             * Deselects all nodes
              */
-            function zoomStart() {
-                nodeGroup.each(function(d) {
-                    d.selected = false;
-                    d.previouslySelected = false;
-                });
+            function deselectNodes() {
                 nodeGroup.classed("selected", false);
+            }
+
+            /**
+             * Selects all nodes
+             */
+            function selectAllNodes() {
+                nodeGroup.classed("selected", true);
+            }
+
+            /**
+             * Inverts the current node selection
+             */
+            function invertSelection() {
+                nodeGroup.each(function(d) {
+                    d3.select(this).classed("selected", d.selected = !d.selected);
+                });
             }
 
 
@@ -926,6 +937,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Watches for a tool change
              */
             $rootScope.$on('tool.selected', manageMapTools);
+
+
+            /**
+             * Selection modification
+             */
+            $rootScope.$on('map.selectAll', selectAllNodes);
+            $rootScope.$on('map.deselect', deselectNodes);
+            $rootScope.$on('map.invertSelection', invertSelection);
 
 
             /**

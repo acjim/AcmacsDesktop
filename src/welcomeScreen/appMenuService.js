@@ -79,6 +79,13 @@
                     ]
                     },
                     {
+                        label: 'Select', items: [
+                        {label: 'All', click: 'map.selectAll', modifiers: osModifier, key: 'a'},
+                        {label: 'Deselect', click: 'map.deselect', modifiers: osModifier, key: 'd'},
+                        {label: 'Inverse', click: 'map.invertSelection', modifiers: osModifier + 'shift', key: 'i'}
+                    ]
+                    },
+                    {
                         label: 'View', items: [
                         {label: 'Toggle Toolbar', click: 'layout.toolbar'},
                         {label: 'Toggle Table', click: 'layout.table'},
