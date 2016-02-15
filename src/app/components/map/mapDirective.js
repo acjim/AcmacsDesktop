@@ -540,6 +540,31 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
             }
 
+            /**
+             * Selects all antigens
+             */
+            function selectAntigen() {
+                select("box");
+            }
+
+            /**
+             * Selects all sera
+             */
+            function selectSera() {
+                select("circle");
+            }
+
+            /**
+             * Selects only nodes with the specified shape. Deselects all others.
+             * @param shape
+             */
+            function select(shape) {
+                nodeGroup.each(function(d) {
+                    d.selected = d.style.shape === shape;
+                    d3.select(this).classed("selected", d.selected);
+                });
+            }
+
 
             /**
              * Applies the current zoom and moves the objects accordingly.
@@ -949,6 +974,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             $rootScope.$on('map.selectAll', selectAllNodes);
             $rootScope.$on('map.deselect', deselectNodes);
             $rootScope.$on('map.invertSelection', invertSelection);
+            $rootScope.$on('map.selectSera', selectSera);
+            $rootScope.$on('map.selectAntigen', selectAntigen);
 
 
             /**
