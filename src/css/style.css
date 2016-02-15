@@ -167,24 +167,27 @@ html {
 .acmacs-select:before {
   content: "\6b";
 }
-.acmacs-optimize2:before {
-  content: "\6a";
-}
-.acmacs-optimize3:before {
-  content: "\6c";
-}
-.acmacs-clone3:before {
-  content: "\6e";
-}
-.acmacs-clone2:before {
-  content: "\70";
-}
-.acmacs-clone:before {
-  content: "\71";
-}
 .acmacs-error-line:before {
   content: "\6f";
 }
 .acmacs-connection:before {
   content: "\62";
+}
+.acmacs-zoom-in:before {
+  content: "\61";
+}
+.acmacs-zoom-out:before {
+  content: "\63";
+}
+.acmacs-fix:before {
+  content: "\68";
+}
+.acmacs-disconnect:before {
+  content: "\69";
+}
+.acmacs-windows:before {
+  content: "\6a";
+}
+.acmacs-random:before {
+  content: "\64";
 }
