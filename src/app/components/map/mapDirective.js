@@ -544,14 +544,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Selects all antigens
              */
             function selectAntigen() {
-                select("box");
+                select("circle");
             }
 
             /**
              * Selects all sera
              */
             function selectSera() {
-                select("circle");
+                select("box");
             }
 
             /**
