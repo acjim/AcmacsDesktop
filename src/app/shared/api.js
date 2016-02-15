@@ -842,7 +842,22 @@ angular.module('acjim.api', [])
         api.get_error_message = function (output_file) {
             var output_raw = fs.readFileSync(output_file, 'utf8');
             var output_data = JSON.parse(output_raw);
-            return (typeof output_data.errors[0] !== 'undefined') ? "INFO " + output_data.errors[0] + "[acmacs-api, source: core-bundle]" : 'Error Occurred!';
+            if (typeof output_data.errors[0] !== 'undefined') {
+
+                var rx = /runtime_error:(.*)/g;
+                var rx_1 = /RuntimeError:(.*)/g;
+                var arr = rx.exec(output_data.errors[0]);
+                var arr_1 = rx.exec(output_data.errors[0]);
+                var warnMsg = output_data.errors[0];
+                if (_.isArray(arr) && arr[1]) {
+                    warnMsg = arr[1];
+                } else if(_.isArray(arr_1) && arr_1[1]) {
+                    warnMsg = arr_1[1];
+                }
+                return "INFO " + warnMsg + "[acmacs-api, source: core-bundle]"
+            }  else {
+                return 'Error Occurred!';
+            }
         }
 
         api.format_error_message = function (error) {
