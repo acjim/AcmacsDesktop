@@ -517,14 +517,18 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Deselects all nodes
              */
             function deselectNodes() {
-                nodeGroup.classed("selected", false);
+                nodeGroup.each(function(d) {
+                    d3.select(this).classed("selected", d.selected = false);
+                });
             }
 
             /**
              * Selects all nodes
              */
             function selectAllNodes() {
-                nodeGroup.classed("selected", true);
+                nodeGroup.each(function(d) {
+                    d3.select(this).classed("selected", d.selected = true);
+                });
             }
 
             /**
