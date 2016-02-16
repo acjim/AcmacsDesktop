@@ -31,8 +31,8 @@
                         {type: 'separator'},
                         {label: 'Save', tooltip: 'Save a file', click: 'save-file', modifiers: osModifier, key: 's', enabled: true},
                         {
-                            label: 'Export file as...',
-                            tooltip: 'Export file as...',
+                            label: 'Export File As...',
+                            tooltip: 'Export File As...',
                             click: 'save-as',
                             modifiers: osModifier + 'shift',
                             key: 's',
