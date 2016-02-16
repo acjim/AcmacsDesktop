@@ -1,6 +1,6 @@
 # Antigenic Cartography for Desktop [![Build Status](https://travis-ci.org/acjim/AcmacsDesktop.svg?branch=testing)](https://travis-ci.org/acjim/AcmacsDesktop) [![Codacy Badge](https://api.codacy.com/project/badge/e45c7f2631ad4267b4b91b5c30fefe87)](https://www.codacy.com/app/acjim/AcmacsDesktop)
 
-![screen shot 2016-01-11 at 15 18 35](https://cloud.githubusercontent.com/assets/6048968/12235844/c070a126-b876-11e5-8f4e-7bd86264600b.jpeg)
+![screen shot 2016-02-16 at 10 56 43](https://cloud.githubusercontent.com/assets/6048968/13072894/008d593e-d49c-11e5-9305-3da0995b46a4.jpeg)
 
 [Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.
 
