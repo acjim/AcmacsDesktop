@@ -143,28 +143,33 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             }
         },
         {
-            id: toolbarItems.FIX_NODES,
-            caption: 'Fix Selected Nodes',
-            icon: 'icon acmacs-fix',
-            callback: function () {
-                $rootScope.$broadcast('api.set_unmovable_points');
-            }
-        },
-        {
-            id: toolbarItems.DISCONNECT_NODES,
-            caption: 'Disconnect Selected Nodes',
-            icon: 'icon acmacs-disconnect',
-            callback: function () {
-                $rootScope.$broadcast('api.set_disconnected_points');
-            }
-        },
-        {
             id: toolbarItems.RANDOMIZE_NODES,
             caption: 'Randomise Nodes',
             icon: 'icon acmacs-random',
             callback: function () {
                 $rootScope.$broadcast('map.randomize');
             }
+        },
+        {
+            type: "buttonGroup",
+            buttons: [
+                {
+                    id: toolbarItems.FIX_NODES,
+                    caption: 'Fix Selected Nodes',
+                    icon: 'icon acmacs-fix',
+                    callback: function () {
+                        $rootScope.$broadcast('api.set_unmovable_points');
+                    }
+                },
+                {
+                    id: toolbarItems.DISCONNECT_NODES,
+                    caption: 'Disconnect Selected Nodes',
+                    icon: 'icon acmacs-disconnect',
+                    callback: function () {
+                        $rootScope.$broadcast('api.set_disconnected_points');
+                    }
+                }
+            ]
         },
         {
             id: toolbarItems.NEW_MAP_FROM_SELECTED,
