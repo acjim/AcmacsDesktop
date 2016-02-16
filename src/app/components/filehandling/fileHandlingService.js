@@ -168,13 +168,13 @@
             var extension = ".save";
             if ((/[.]/.exec(filename))) {
                 extension = /[^.]+$/.exec(filename);
-            } else {
-                filename = filename + extension;
             }
             var supported_extension = ["acd1", "save", "lispmds"];
             if (supported_extension.indexOf(extension.toString()) < 0) {
                 extension = "save";
             }
+            filename = filename.substr(0, filename.lastIndexOf('.')) || filename;
+            filename = filename + "." + extension;
             // if format is acd1 then remove all projections except for current projection to be exported
             if(extension.toString() == "acd1") {
                 var rmvProjectionsParams = {keep: [options.projection_number], remove:[] };
