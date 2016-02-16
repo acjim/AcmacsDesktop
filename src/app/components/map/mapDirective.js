@@ -990,7 +990,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              *  Watch for data changes and re-render
              */
             scope.$watch('data', function (newVals) {
-                if (newVals) {
+                if (!_.isUndefined(newVals)) {
                     renderWithData(newVals);
                 }
             }, true);

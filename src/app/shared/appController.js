@@ -169,10 +169,6 @@ angular.module('acjim')
         $scope.cloak = true;
 
         $scope.$on('map.loaded', function () {
-            // FIXME: This hotfix enables hiding the table on startup.
-            // When omitting this, the collapsed state gets changed to
-            // false by the ui.layout directive.
-            $scope.layout.table = true;
 
             $scope.cloak = false;
             cfpLoadingBar.complete();
