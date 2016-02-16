@@ -105,6 +105,17 @@ module.exports = function(grunt) {
                     to: 'dev_mode = 0'
                 }]
             }
+        },
+        jsdoc: {
+            dist: {
+                src: ['src/**/*.js', 'README.md'],
+                options: {
+                    destination: 'docs',
+                    configure: 'node_modules/angular-jsdoc/common/conf.json',
+                    template: 'node_modules/angular-jsdoc/angular-template',
+                    readme: './README.md'
+                }
+            }
         }
     });
 
@@ -112,7 +123,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-appdmg');
+    //grunt.loadNpmTasks('grunt-appdmg');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-text-replace');
 
@@ -130,4 +141,8 @@ module.exports = function(grunt) {
     // Task for travisCI
     grunt.registerTask('test', ['karma:travis']);
 
+    // Task for jsdoc
+    grunt.registerTask('jsdoc', ['jsdoc']);
+
+    grunt.loadNpmTasks('grunt-jsdoc');
 };

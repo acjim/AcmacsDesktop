@@ -23,17 +23,28 @@
 
 var app = angular.module('acjim.table', []);
 
+/**
+ * @memberof acjim
+ * @ngdoc controller
+ */
 app.controller('tableCtrl',  ['$rootScope', '$scope', function ($rootScope, $scope) {
-}])
+}]).directive('acTable', acTable);
 
-    .directive('acTable', function () {
-        return {
-            controller: 'tableCtrl',
-            controllerAs: 'data',
-            templateUrl: './app/components/table/tableView.html',
-            restrict: 'E',
-            bindToController: {
-                table: '='
-            }
+/**
+ * Table Directive
+ *
+ * @memberof acjim
+ * @ngdoc directive
+ * @example <div acjim-table options="{...}"></div>
+ */
+function acTable() {
+    return {
+        controller: 'tableCtrl',
+        controllerAs: 'data',
+        templateUrl: './app/components/table/tableView.html',
+        restrict: 'E',
+        bindToController: {
+            table: '='
         }
-    });
+    };
+};

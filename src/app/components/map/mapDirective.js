@@ -24,10 +24,16 @@
 
 var app = angular.module('acjim.map');
 
-/*
- * D3 directive
+app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', 'dialogs', mapDirective]);
+
+/**
+ * Directive to draw the map
+ *
+ * @memberof acjim
+ * @ngdoc directive
+ * @example <div d3Map options="{...}"></div>
  */
-app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', 'dialogs', function ($rootScope, $window, $timeout, toolbar, toolbarItems, dialogs) {
+var mapDirective = function ($rootScope, $window, $timeout, toolbar, toolbarItems, dialogs) {
     return {
         restrict: 'A',
         scope: {
@@ -75,6 +81,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Redefines x and y scales and reapplies them to the zoom, nodes and brush.
              * Initializes zoom (with cached values if possible).
              * Creates background grid.
+             * @memberof mapDirective
              */
             function renderWithoutData() {
 
@@ -121,6 +128,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Renders the complete d3 map with data
+             * @memberof mapDirective
              * @param data
              */
             function renderWithData(data) {
@@ -291,6 +299,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Adds the selected tool functionality to the d3 map
+             * @memberof mapDirective
              */
             function manageMapTools() {
 
@@ -312,6 +321,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Enables the selection tool (brush) on the SVG
+             * @memberof mapDirective
              */
             function enableSelectionTool() {
                 // Remove zoom
@@ -325,6 +335,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Enables the movement tool (zoom) on the SVG
+             * @memberof mapDirective
              */
             function enableMovementTool() {
                 // Disable brush
@@ -341,6 +352,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Initializes the svg. This function should only be called once for each directive.
+             * @memberof mapDirective
              */
             function initializeSVG() {
 
@@ -403,6 +415,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Creates the brush
+             * @memberof mapDirective
              * @returns {d3.svg.brush}
              */
             function createBrush() {
@@ -432,6 +445,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Moves each selected point the distance provided by the parameters
+             * @memberof mapDirective
              * @param dx The delta x value
              * @param dy The delta y value
              */
@@ -460,6 +474,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Center the nodes in the middle of the svg
+             * @memberof mapDirective
              */
             function centerNodes() {
 
@@ -482,6 +497,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Handles zoom clicks over the toolbar buttons
+             * @memberof mapDirective
              * @returns {boolean}
              */
             function zoomClick(direction) {
@@ -502,11 +518,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 applyZoom();
             }
 
+            /**
+             * Deselects all nodes
+             * @memberof mapDirective
+             */
             function coordinates(point) {
                 var scale = zoom.scale(), translate = zoom.translate();
                 return [(point[0] - translate[0]) / scale, (point[1] - translate[1]) / scale];
             }
 
+            /**
+             * Deselects all nodes
+             * @memberof mapDirective
+             */
             function point(coordinates) {
                 var scale = zoom.scale(), translate = zoom.translate();
                 return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
@@ -515,6 +539,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Deselects all nodes
+             * @memberof mapDirective
              */
             function deselectNodes() {
                 nodeGroup.each(function(d) {
@@ -524,6 +549,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Selects all nodes
+             * @memberof mapDirective
              */
             function selectAllNodes() {
                 nodeGroup.each(function(d) {
@@ -533,6 +559,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Inverts the current node selection
+             * @memberof mapDirective
              */
             function invertSelection() {
                 nodeGroup.each(function(d) {
@@ -542,6 +569,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Selects all antigens
+             * @memberof mapDirective
              */
             function selectAntigen() {
                 select("circle");
@@ -549,6 +577,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Selects all sera
+             * @memberof mapDirective
              */
             function selectSera() {
                 select("box");
@@ -556,6 +585,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Selects only nodes with the specified shape. Deselects all others.
+             * @memberof mapDirective
              * @param shape
              */
             function select(shape) {
@@ -569,6 +599,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Applies the current zoom and moves the objects accordingly.
              * Also caches translate and scale values of the zoom for later use.
+             * @memberof mapDirective
              */
             function applyZoom() {
 
@@ -617,6 +648,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Redraws/creates only the background grid of the map
+             * @memberof mapDirective
              * @param parentContainer d3 container to append the grid to
              * @param boxSize the box size of the grid
              * @param width intended width of the grid
@@ -659,6 +691,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Checks the width of the svg container
+             * @memberof mapDirective
              * @returns {number} width
              */
             function getContainerWidth() {
@@ -667,6 +700,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Checks the height of the svg container
+             * @memberof mapDirective
              * @returns {number} height
              */
             function getContainerHeight() {
@@ -675,6 +709,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Handles keydown events
+             * @memberof mapDirective
              */
             function keydown() {
                 if (!d3.event.metaKey) switch (d3.event.keyCode) {
@@ -696,6 +731,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Handles keyup events
+             * @memberof mapDirective
              */
             function keyup() {
                 shiftKey = d3.event.shiftKey;
@@ -703,6 +739,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Gets All D3 Selected Elements, makes them fixed (unmovable/deselects on map):
+             * @memberof ajcim.mapDirective
              */
             scope.fixSelectedNodes = function() {
                 var flagDisable;
@@ -762,6 +799,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * Gets All D3 Selected Elements, disconnects the selected points (deselects)
+             * @memberof ajcim.mapDirective
              */
             scope.disconnectSelectedNodes = function() {
                 $rootScope.disableArrayFlag = false;
@@ -809,6 +847,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             /**
              * checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca
+             * @memberof mapDirective
              */
             function areNodesFixedOrDisabled(fixedOrDisconnectedElements){
                 flagDisconnectDisable=0;
@@ -821,6 +860,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Returns the node labels of nodes or removes them depending on the case
              *
+             * @memberof mapDirective
              * @returns none
              */
             function toggleNodeLabels(showLabels) {
@@ -834,15 +874,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * This function re-renders Serra Ids the right form after loading them from the backend
              *
+             * @memberof mapDirective
              * @returns none
              */
             function renderSerraIds() {
                 var tempArray=[];
                 var arrayofSerras =[];
                 d3.selectAll(".point").each(function (d) {
-                 if( d.style.shape=="box"){
-                     arrayofSerras.push(d.id);
-                 }
+                    if( d.style.shape=="box"){
+                        arrayofSerras.push(d.id);
+                    }
                 });
                 for (var i=0; i<$rootScope.newMapSeraArray.length; i++){
                     var indexOfSerra = arrayofSerras.indexOf($rootScope.newMapSeraArray[i]);
@@ -855,9 +896,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             /**
              * Gets a new Map  Selected Elements With Their Respective Data.
              *
+             * @memberof ajcim.mapDirective
              * @param mapDataPoints Object {} mapDataPoints should be assigned to scope.data before passing it to the function
              * @param indexValue int
-             * @constructor a Data Array with the new Map Data
+             * @description a Data Array with the new Map Data
              */
             scope.getNewDataFromCurrentMap = function (mapDataPoints, indexValue) {
                 $rootScope.newMapAntigenArray = [];
@@ -875,7 +917,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     //  sera case
                     else {
                         mapSeraArray.push(counter);
-                       $rootScope.newMapSeraArray.push(counter);
+                        $rootScope.newMapSeraArray.push(counter);
                     }
                 }
 
@@ -996,4 +1038,4 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             }, true);
         }
     };
-}]);
+}

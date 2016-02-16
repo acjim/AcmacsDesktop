@@ -38,7 +38,11 @@
             fileHandling
         ]);
 
-    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document) {
+    /**
+     * @memberof acjim
+     * @ngdoc service
+     */
+    var fileHandling = function($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document) {
 
         var acd1File = null;
         var projection = 0;
@@ -105,6 +109,7 @@
         /**
          * Handles the file save
          *
+         * @memberof acjim.fileHandling
          * @param filename String
          * @param current_window Int
          * @param triggered_event evt
@@ -198,6 +203,7 @@
 
         /**
          * Callback function to handle the file opening
+         * @memberof acjim.fileHandling
          * @param filename String Name of file to be opened
          */
         fileHandler.handleFileOpen = function (filename) {
@@ -271,6 +277,7 @@
 
         /**
          * Calls api to re-optimize (relax) the map
+         * @memberof acjim.fileHandling
          * @param mapData
          * @param pointsMoved
          */
@@ -322,6 +329,7 @@
         /**
          * Creates a new projection without optimization
          *
+         * @memberof acjim.fileHandling
          * @param mapData
          * @returns {*}
          */
@@ -495,6 +503,7 @@
         /**
          * Calls api to get data for error and connection lines
          *
+         * @memberof acjim.fileHandling
          * @param mapData
          * @returns {*}
          */
@@ -517,6 +526,7 @@
         /**
          * Calls api to create a new file from an already existing one
          *
+         * @memberof acjim.fileHandling
          * @param mapData
          * @param disabledPoints
          */
@@ -545,6 +555,7 @@
         /**
          * Calls api to disable nodes (without Sress) from a specific  map
          *
+         * @memberof acjim.fileHandling
          * @param mapData List
          * @param disabledPoints List
          */
@@ -570,6 +581,7 @@
         /**
          * Calls api to disable nodes from a specific  map
          *
+         * @memberof acjim.fileHandling
          * @param mapData
          * @param disabledPoints
          */
@@ -816,6 +828,7 @@
 
         /**
          *
+         * @memberof acjim.fileHandling
          * @returns {boolean}
          */
         fileHandler.getMapIsChanged = function () {
@@ -825,6 +838,7 @@
         /**
          * If opened map has been changed in any way set as true else false
          *
+         * @memberof acjim.fileHandling
          * @param changed Boolean
          */
         fileHandler.setMapIsChanged = function (changed) {
@@ -841,6 +855,7 @@
 
         /**
          *
+         * @memberof acjim.fileHandling
          * @returns {string} returns original file name
          */
         fileHandler.getOriginalFileName = function () {
@@ -850,6 +865,7 @@
         /**
          * Set nodes selected to fixed.
          *
+         * @memberof acjim.fileHandling
          * @param fixedNodes List
          */
         fileHandler.setFixedPoints = function (fixedNodes) {

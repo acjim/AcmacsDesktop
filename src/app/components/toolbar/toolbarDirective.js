@@ -23,14 +23,16 @@
 (function() {
     'use strict';
 
+    angular.module('acjim.toolbar')
+        .directive('acjimToolbar', ['toolbar', acjimToolbar]);
+
     /**
+     * @memberof acjim
+     * @ngdoc directive
      * @desc Provides the application toolbar
      * @example <div acjim-toolbar options="{...}"></div>
      */
-    angular.module('acjim.toolbar')
-        .directive('acjimToolbar', ['toolbar', toolbar]);
-
-    function toolbar(toolbar) {
+    function acjimToolbar(toolbar) {
         var directive = {
             link: link,
             templateUrl: './app/components/toolbar/toolbarTemplate.html',

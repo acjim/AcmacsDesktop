@@ -26,6 +26,10 @@
     angular.module('acjim.map', [])
         .controller('mapCtrl', ['$rootScope', '$scope', '$timeout', 'fileHandling', 'toolbar', 'toolbarItems', 'cfpLoadingBar', mapCtrl]);
 
+    /**
+     * @memberof acjim
+     * @ngdoc controller
+     */
     function mapCtrl($rootScope, $scope, $timeout, fileHandling, toolbar, toolbarItems, cfpLoadingBar) {
 
 

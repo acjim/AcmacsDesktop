@@ -26,6 +26,10 @@
     angular.module('acjim.toolbar', [])
         .factory('toolbar', [toolbar]);
 
+    /**
+     * @memberof acjim
+     * @ngdoc factory
+     */
     function toolbar () {
 
         var structure = [],

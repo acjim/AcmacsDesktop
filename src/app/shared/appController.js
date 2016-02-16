@@ -26,7 +26,14 @@
 angular.module('acjim')
     .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$timeout', '$document', 'dialogs', appCtrl]);
 
-    function appCtrl ($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $timeout, $document, dialogs) {
+    /**
+     * Global controller to handle the Application
+     *
+     * @name appCtrl
+     * @memberof acjim
+     * @ngdoc controller
+     */
+    var appCtrl = function($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $timeout, $document, dialogs) {
 
 
         /******************** File Handling *******************/

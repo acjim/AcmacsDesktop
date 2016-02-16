@@ -4,7 +4,7 @@
     angular.module('acjim')
         .controller('customDialogCtrl', customDialogCtrl);
 
-    function customDialogCtrl ($scope, $uibModalInstance){
+    var customDialogCtrl = function($scope, $uibModalInstance){
     //-- Methods --//
 
     $scope.cancel = function(){
