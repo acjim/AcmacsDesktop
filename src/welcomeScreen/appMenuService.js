@@ -24,7 +24,7 @@
                     {
                         label: 'File',
                         items: [
-                        {label: 'New...', tooltip: 'Create a new file', click: 'new-file', modifiers: osModifier, key: 'n', enabled: false},
+                        //{label: 'New...', tooltip: 'Create a new file', click: 'new-file', modifiers: osModifier, key: 'n', enabled: false},
                         {label: 'Open...', tooltip: 'Open a file', click: 'open-file', modifiers: osModifier, key: 'o'},
                         {label: 'Close Window', tooltip: 'Close Window', click: 'close-window', modifiers: osModifier, key: 'w'},
                         //{label: 'Close All', tooltip: 'Close all currently open files', click: 'close-all', modifiers: osModifier + 'shift', key: 'w' },
@@ -89,7 +89,7 @@
                         {label: 'Inverse', click: 'map.invertSelection', modifiers: osModifier + 'shift', key: 'i'},
                         {type: 'separator'},
                         {label: 'Select All Sera', click: 'map.selectSera'},
-                        {label: 'Select All Antigen', click: 'map.selectAntigen'}
+                        {label: 'Select All Antigens', click: 'map.selectAntigen'}
                     ]
                     },
                     {
