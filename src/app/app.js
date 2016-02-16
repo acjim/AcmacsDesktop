@@ -127,7 +127,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.SHOW_LABELS,
-            caption: 'Show Labels',
+            caption: 'Show Node Labels',
             icon: 'icon acmacs-label',
             togglable: true,
             callback: function () {
@@ -136,35 +136,40 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.RE_OPTIMIZE,
-            caption: 'Reoptimize',
+            caption: 'Optimize Map',
             icon: 'icon acmacs-optimize',
             callback: function () {
                 $rootScope.$broadcast('map.reOptimize');
             }
         },
         {
-            id: toolbarItems.FIX_NODES,
-            caption: 'Fix Selected Nodes',
-            icon: 'icon acmacs-fix',
-            callback: function () {
-                $rootScope.$broadcast('api.set_unmovable_points');
-            }
-        },
-        {
-            id: toolbarItems.DISCONNECT_NODES,
-            caption: 'Disconnect Selected Nodes',
-            icon: 'icon acmacs-disconnect',
-            callback: function () {
-                $rootScope.$broadcast('api.set_disconnected_points');
-            }
-        },
-        {
             id: toolbarItems.RANDOMIZE_NODES,
-            caption: 'Randomise Nodes',
+            caption: 'Randomize Nodes',
             icon: 'icon acmacs-random',
             callback: function () {
                 $rootScope.$broadcast('map.randomize');
             }
+        },
+        {
+            type: "buttonGroup",
+            buttons: [
+                {
+                    id: toolbarItems.FIX_NODES,
+                    caption: 'Fix Selected Nodes',
+                    icon: 'icon acmacs-fix',
+                    callback: function () {
+                        $rootScope.$broadcast('api.set_unmovable_points');
+                    }
+                },
+                {
+                    id: toolbarItems.DISCONNECT_NODES,
+                    caption: 'Disconnect Selected Nodes',
+                    icon: 'icon acmacs-disconnect',
+                    callback: function () {
+                        $rootScope.$broadcast('api.set_disconnected_points');
+                    }
+                }
+            ]
         },
         {
             id: toolbarItems.NEW_MAP_FROM_SELECTED,
