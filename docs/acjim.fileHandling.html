@@ -1,0 +1,1044 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JSDoc: fileHandling</title>
+    <link type="text/css" rel="stylesheet" href="css/jsdoc-default.css">
+    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css">
+    <link href="css/custom.css" type="text/css" rel="stylesheet">
+    <script src="js/prettify.js"></script>
+    <script src="js/angular.min.js"></script>
+  </head>
+  <body ng-app="">
+    <nav>
+      <h2><a href="index.html">Index</a></h2>
+      <ul class="module">
+        <!-- acjim -->
+        <h3>
+          <a href="" ng-click="moduleacjim = !moduleacjim">
+            module: acjim
+          </a>
+          <i ng-cloak="" ng-show="moduleacjim">+</i>
+        </h3>
+        <li id="acjim" ng-hide="moduleacjim">
+          <ul class="group">
+            <h3>
+              <a href="" ng-click="acjimdirective = !acjimdirective">
+                directive
+              </a>
+              <i ng-cloak="" ng-show="acjimdirective">+</i>
+            </h3>
+            <ul ng-hide="acjimdirective">
+              <li>
+                <a href="acjim.acjimToolbar.html">acjimToolbar</a>
+              </li><li>
+                <a href="acjim.acTable.html">acTable</a>
+              </li><li>
+                <a href="acjim.mapDirective.html">mapDirective</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimfactory = !acjimfactory">
+                factory
+              </a>
+              <i ng-cloak="" ng-show="acjimfactory">+</i>
+            </h3>
+            <ul ng-hide="acjimfactory">
+              <li>
+                <a href="acjim.api.html">api</a>
+              </li><li>
+                <a href="acjim.toolbar.html">toolbar</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimcontroller = !acjimcontroller">
+                controller
+              </a>
+              <i ng-cloak="" ng-show="acjimcontroller">+</i>
+            </h3>
+            <ul ng-hide="acjimcontroller">
+              <li>
+                <a href="acjim.appCtrl.html">appCtrl</a>
+              </li><li>
+                <a href="acjim.mapCtrl.html">mapCtrl</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimservice = !acjimservice">
+                service
+              </a>
+              <i ng-cloak="" ng-show="acjimservice">+</i>
+            </h3>
+            <ul ng-hide="acjimservice">
+              <li>
+                <a href="acjim.fileHandling.html">fileHandling</a>
+              </li>
+            </ul>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="content" class="page-wrap">
+      <h3 style="float:right; color:#ccc">
+        Angular service
+      </h3>
+      <h1 class="title">
+        fileHandling
+        <a class="name-link signature-attributes" href="source/acjim.fileHandling.html#line45">source</a>
+      </h1>
+      <div id="main" class="big-container">
+        <!-- source code html -->
+        <!-- index.html -->
+        <!-- class files -->
+        <div>
+          <div><div class="container-overview">
+      <dt></dt>
+      <dd>
+        <div class="description">
+        </div>
+        <div class="details"></div>
+      </dd>
+    </div>
+    <section>
+      <div class="members">
+        <h3 class="subsection-title">Members</h3>
+        <table class="props">
+          <thead>
+            <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name" nowrap="">acd1File</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr><tr>
+              <td class="name" nowrap="">fileHandler</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr><tr>
+              <td class="name" nowrap="">fixedPoints</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr><tr>
+              <td class="name" nowrap="">is_changed</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr><tr>
+              <td class="name" nowrap="">original_filename</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr><tr>
+              <td class="name" nowrap="">projection</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr><tr>
+              <td class="name" nowrap="">projection_comment</td>
+              <td class="type"><span class="param-type">
+              </span></td>
+              <td class="description last"></td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <br>
+      </div>
+      <div class="functions">
+        <h3 class="subsection-title">Methods</h3>
+        <dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.createNewFileFromAlreadyExistingOne
+                <span class="signature">(mapData, disabledPoints)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Calls api to create a new file from an already existing one</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">disabledPoints</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.disconnectNodes
+                <span class="signature">(mapData, disabledPoints)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Calls api to disable nodes from a specific  map</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">disabledPoints</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.fixNodes
+                <span class="signature">(mapData, disabledPoints)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Calls api to disable nodes (without Sress) from a specific  map</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>List</p></td>
+                  </tr><tr>
+                    <td class="name">disabledPoints</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>List</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.getErrorConnectionLines
+                <span class="signature">(mapData)</span>
+                <span class="type-signature">
+                  -&gt; *
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Calls api to get data for error and connection lines</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      *
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.getMapIsChanged
+                <span class="type-signature">
+                  -&gt; boolean
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      boolean
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.getNewProjection
+                <span class="signature">(mapData)</span>
+                <span class="type-signature">
+                  -&gt; *
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Creates a new projection without optimization</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      *
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.getOriginalFileName
+                <span class="type-signature">
+                  -&gt; string
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      string
+                    </span></td>
+                    <td class="description last"><p>returns original file name</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.handleFileOpen
+                <span class="signature">(filename)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Callback function to handle the file opening</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">filename</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>String Name of file to be opened</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.handleFileSaveAs
+                <span class="signature">(filename, current_window, triggered_event, mapData)</span>
+                <span class="type-signature">
+                  -&gt; *
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Handles the file save</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">filename</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>String</p></td>
+                  </tr><tr>
+                    <td class="name">current_window</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>Int</p></td>
+                  </tr><tr>
+                    <td class="name">triggered_event</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>evt</p></td>
+                  </tr><tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>list</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      *
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.reOptimize
+                <span class="signature">(mapData, pointsMoved)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Calls api to re-optimize (relax) the map</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">mapData</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">pointsMoved</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.setFixedPoints
+                <span class="signature">(fixedNodes)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Set nodes selected to fixed.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">fixedNodes</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>List</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                fileHandler.setMapIsChanged
+                <span class="signature">(changed)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>If opened map has been changed in any way set as true else false</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">changed</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>Boolean</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                calculateLines
+                <span class="signature">(errorLines, layout)</span>
+                <span class="type-signature">
+                  -&gt; Object
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Calculate error and connection lines</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">errorLines</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">layout</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      Object
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                connect
+                <span class="signature">(arg, errorLines, layout, result)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Connect lines (error/connection) in one direction</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">arg</td>
+                    <td class="type"><span class="param-type">
+                      Object
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">errorLines</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">layout</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">result</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                errorReason
+                <span class="signature">(reason)</span>
+                <span class="type-signature">
+                  -&gt; Promise
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Displays errors that occurred</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">reason</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      Promise
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                exportFile
+                <span class="signature">(filename, options)</span>
+                <span class="type-signature">
+                  -&gt; *
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Export/Save file</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">filename</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>String</p></td>
+                  </tr><tr>
+                    <td class="name">options</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>Object</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      *
+                    </span></td>
+                    <td class="description last"><p>Object</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                parseLayoutData
+                <span class="signature">(data)</span>
+                <span class="type-signature">
+                  -&gt; Object
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Creates the data structure of the map data object and returns it.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">data</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      Object
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                positive
+                <span class="signature">(p1, p2, probe)</span>
+                <span class="type-signature">
+                  -&gt; boolean
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Determine the sign of the error (line). Created different calculation because Eugene was using on matrices on SVG
+DOM elements. (I think..). Didn't want to touch DOM from here.
+Assumption: p1 and p2 are connected points, probe is the end of Error_Line, from viewpoint of p1</p>
+<ul>
+<li>if probe lies on line in between points = red</li>
+<li>if probe lies outside and is further away from p2 than p1 = blue</li>
+</ul>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">p1</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">p2</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr><tr>
+                    <td class="name">probe</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      boolean
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                readFile
+                <span class="signature">(filename)</span>
+                <span class="type-signature">
+                  -&gt; *
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Reads the file //TODO</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">filename</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      *
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                relax_existing
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="" class="name-link">
+              <h4 class="name">
+                removeExtraFiles
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Deletes temporary files created by OSX
+while solution is pretty static, but since the file (first)
+generated always have same extension added to it; this works.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl>
+      </div>
+    </section></div>
+        </div>
+      </div>
+      <footer style="clear:both">
+        Documentation generated by
+        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+        using
+        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>
+      </footer>
+    </div>
+    <!--%= prettyJson %-->
+    <script>
+      prettyPrint();
+      var lineNo = window.location.hash.match(/#line([0-9]+)$/);
+      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();
+    </script>
+  </body>
+</html>

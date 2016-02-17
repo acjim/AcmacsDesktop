@@ -1,0 +1,949 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JSDoc: mapDirective</title>
+    <link type="text/css" rel="stylesheet" href="css/jsdoc-default.css">
+    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css">
+    <link href="css/custom.css" type="text/css" rel="stylesheet">
+    <script src="js/prettify.js"></script>
+    <script src="js/angular.min.js"></script>
+  </head>
+  <body ng-app="">
+    <nav>
+      <h2><a href="index.html">Index</a></h2>
+      <ul class="module">
+        <!-- acjim -->
+        <h3>
+          <a href="" ng-click="moduleacjim = !moduleacjim">
+            module: acjim
+          </a>
+          <i ng-cloak="" ng-show="moduleacjim">+</i>
+        </h3>
+        <li id="acjim" ng-hide="moduleacjim">
+          <ul class="group">
+            <h3>
+              <a href="" ng-click="acjimdirective = !acjimdirective">
+                directive
+              </a>
+              <i ng-cloak="" ng-show="acjimdirective">+</i>
+            </h3>
+            <ul ng-hide="acjimdirective">
+              <li>
+                <a href="acjim.acjimToolbar.html">acjimToolbar</a>
+              </li><li>
+                <a href="acjim.acTable.html">acTable</a>
+              </li><li>
+                <a href="acjim.mapDirective.html">mapDirective</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimfactory = !acjimfactory">
+                factory
+              </a>
+              <i ng-cloak="" ng-show="acjimfactory">+</i>
+            </h3>
+            <ul ng-hide="acjimfactory">
+              <li>
+                <a href="acjim.api.html">api</a>
+              </li><li>
+                <a href="acjim.toolbar.html">toolbar</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimcontroller = !acjimcontroller">
+                controller
+              </a>
+              <i ng-cloak="" ng-show="acjimcontroller">+</i>
+            </h3>
+            <ul ng-hide="acjimcontroller">
+              <li>
+                <a href="acjim.appCtrl.html">appCtrl</a>
+              </li><li>
+                <a href="acjim.mapCtrl.html">mapCtrl</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimservice = !acjimservice">
+                service
+              </a>
+              <i ng-cloak="" ng-show="acjimservice">+</i>
+            </h3>
+            <ul ng-hide="acjimservice">
+              <li>
+                <a href="acjim.fileHandling.html">fileHandling</a>
+              </li>
+            </ul>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="content" class="page-wrap">
+      <h3 style="float:right; color:#ccc">
+        Angular directive
+      </h3>
+      <h1 class="title">
+        mapDirective
+        <a class="name-link signature-attributes" href="source/acjim.mapDirective.html#line36">source</a>
+      </h1>
+      <div id="main" class="big-container">
+        <!-- source code html -->
+        <!-- index.html -->
+        <!-- class files -->
+        <div>
+          <div><div class="container-overview">
+      <dt></dt>
+      <dd>
+        <div class="description">
+          <p>Directive to draw the map</p>
+        </div>
+        <div class="details"></div>
+        <div>
+          <h5>Example</h5>
+          <pre class="prettyprint"><code><span class="str">&lt;div d3Map options="{...}">&lt;/div></span></code></pre>
+        </div>
+      </dd>
+    </div>
+    <section>
+      <div class="functions">
+        <h3 class="subsection-title">Methods</h3>
+        <dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line604" class="name-link">
+              <h4 class="name">
+                applyZoom
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Applies the current zoom and moves the objects accordingly.
+Also caches translate and scale values of the zoom for later use.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line852" class="name-link">
+              <h4 class="name">
+                areNodesFixedOrDisabled
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line479" class="name-link">
+              <h4 class="name">
+                centerNodes
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Center the nodes in the middle of the svg</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line525" class="name-link">
+              <h4 class="name">
+                coordinates
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Deselects all nodes</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line421" class="name-link">
+              <h4 class="name">
+                createBrush
+                <span class="signature">()</span>
+                <span class="type-signature">
+                  -&gt; d3.svg.brush
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Creates the brush</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      d3.svg.brush
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line544" class="name-link">
+              <h4 class="name">
+                deselectNodes
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Deselects all nodes</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line340" class="name-link">
+              <h4 class="name">
+                enableMovementTool
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Enables the movement tool (zoom) on the SVG</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line326" class="name-link">
+              <h4 class="name">
+                enableSelectionTool
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Enables the selection tool (brush) on the SVG</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line706" class="name-link">
+              <h4 class="name">
+                getContainerHeight
+                <span class="signature">()</span>
+                <span class="type-signature">
+                  -&gt; number
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Checks the height of the svg container</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      number
+                    </span></td>
+                    <td class="description last"><p>height</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line697" class="name-link">
+              <h4 class="name">
+                getContainerWidth
+                <span class="signature">()</span>
+                <span class="type-signature">
+                  -&gt; number
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Checks the width of the svg container</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      number
+                    </span></td>
+                    <td class="description last"><p>width</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line357" class="name-link">
+              <h4 class="name">
+                initializeSVG
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Initializes the svg. This function should only be called once for each directive.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line564" class="name-link">
+              <h4 class="name">
+                invertSelection
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Inverts the current node selection</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line714" class="name-link">
+              <h4 class="name">
+                keydown
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Handles keydown events</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line736" class="name-link">
+              <h4 class="name">
+                keyup
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Handles keyup events</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line304" class="name-link">
+              <h4 class="name">
+                manageMapTools
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Adds the selected tool functionality to the d3 map</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line452" class="name-link">
+              <h4 class="name">
+                nudge
+                <span class="signature">(dx, dy)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Moves each selected point the distance provided by the parameters</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">dx</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>The delta x value</p></td>
+                  </tr><tr>
+                    <td class="name">dy</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>The delta y value</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line534" class="name-link">
+              <h4 class="name">
+                point
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Deselects all nodes</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line658" class="name-link">
+              <h4 class="name">
+                redrawGrid
+                <span class="signature">(parentContainer, boxSize, width, height)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Redraws/creates only the background grid of the map</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">parentContainer</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>d3 container to append the grid to</p></td>
+                  </tr><tr>
+                    <td class="name">boxSize</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>the box size of the grid</p></td>
+                  </tr><tr>
+                    <td class="name">width</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>intended width of the grid</p></td>
+                  </tr><tr>
+                    <td class="name">height</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>intended heiht of the grid</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>parentContainer</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line880" class="name-link">
+              <h4 class="name">
+                renderSerraIds
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>This function re-renders Serra Ids the right form after loading them from the backend</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>none</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line134" class="name-link">
+              <h4 class="name">
+                renderWithData
+                <span class="signature">(data)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Renders the complete d3 map with data</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">data</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line86" class="name-link">
+              <h4 class="name">
+                renderWithoutData
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>(Re)draws the d3 map without removing the data points.
+Redefines x and y scales and reapplies them to the zoom, nodes and brush.
+Initializes zoom (with cached values if possible).
+Creates background grid.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line591" class="name-link">
+              <h4 class="name">
+                select
+                <span class="signature">(shape)</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Selects only nodes with the specified shape. Deselects all others.</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="name">shape</td>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line554" class="name-link">
+              <h4 class="name">
+                selectAllNodes
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Selects all nodes</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line574" class="name-link">
+              <h4 class="name">
+                selectAntigen
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Selects all antigens</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line582" class="name-link">
+              <h4 class="name">
+                selectSera
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Selects all sera</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line866" class="name-link">
+              <h4 class="name">
+                toggleNodeLabels
+                <span class="signature">()</span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Returns the node labels of nodes or removes them depending on the case</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                    </span></td>
+                    <td class="description last"><p>none</p></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl><dl>
+          <dt>
+            <a href="source/acjim.mapDirective.html#line503" class="name-link">
+              <h4 class="name">
+                zoomClick
+                <span class="signature">()</span>
+                <span class="type-signature">
+                  -&gt; boolean
+                </span>
+              </h4>
+            </a>
+          </dt>
+          <dd>
+            <div class="description">
+              <p>Handles zoom clicks over the toolbar buttons</p>
+            </div>
+            <div>
+              <h5>Parameters:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Name</th><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h5>Returns:</h5>
+              <table class="params">
+                <thead>
+                  <tr><th>Type</th><th class="last">Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="type"><span class="param-type">
+                      boolean
+                    </span></td>
+                    <td class="description last"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </dd>
+        </dl>
+      </div>
+    </section></div>
+        </div>
+      </div>
+      <footer style="clear:both">
+        Documentation generated by
+        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+        using
+        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>
+      </footer>
+    </div>
+    <!--%= prettyJson %-->
+    <script>
+      prettyPrint();
+      var lineNo = window.location.hash.match(/#line([0-9]+)$/);
+      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();
+    </script>
+  </body>
+</html>
