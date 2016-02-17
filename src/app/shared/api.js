@@ -843,17 +843,22 @@ angular.module('acjim.api', [])
             var output_raw = fs.readFileSync(output_file, 'utf8');
             var output_data = JSON.parse(output_raw);
             if (typeof output_data.errors[0] !== 'undefined') {
-
+                //TODO: proper handling of error messages.
                 var rx = /runtime_error:(.*)/g;
                 var rx_1 = /RuntimeError:(.*)/g;
                 var arr = rx.exec(output_data.errors[0]);
                 var arr_1 = rx_1.exec(output_data.errors[0]);
                 var warnMsg = output_data.errors[0];
+                var index_rx = /IndexError:(.*)/g;
+                var index_arr = index_rx.exec(output_data.errors[0]);
                 if (_.isArray(arr) && arr[1]) {
                     warnMsg = arr[1];
                 } else if(_.isArray(arr_1) && arr_1[1]) {
                     warnMsg = arr_1[1].replace("(forgot to check conformance?)", "");
+                } else if(_.isArray(index_arr) && index_arr[1]) {
+                    warnMsg = "This file is not compatible and cannot be opened";
                 }
+                console.warn(output_data.errors[0]);
                 return "INFO " + warnMsg + "[acmacs-api, source: core-bundle]"
             }  else {
                 return 'Error Occurred!';

@@ -127,7 +127,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.SHOW_LABELS,
-            caption: 'Show Labels',
+            caption: 'Show Node Labels',
             icon: 'icon acmacs-label',
             togglable: true,
             callback: function () {
@@ -136,7 +136,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.RE_OPTIMIZE,
-            caption: 'Reoptimize',
+            caption: 'Optimize Map',
             icon: 'icon acmacs-optimize',
             callback: function () {
                 $rootScope.$broadcast('map.reOptimize');
@@ -144,7 +144,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.RANDOMIZE_NODES,
-            caption: 'Randomise Nodes',
+            caption: 'Randomize Nodes',
             icon: 'icon acmacs-random',
             callback: function () {
                 $rootScope.$broadcast('map.randomize');
