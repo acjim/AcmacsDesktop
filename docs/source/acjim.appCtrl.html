@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <base href="../">
+    <title>JSDoc: source : appController.js</title>
+    <link type="text/css" rel="stylesheet" href="css/jsdoc-default.css">
+    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css">
+    <link href="css/custom.css" type="text/css" rel="stylesheet">
+    <script src="js/prettify.js"></script>
+    <script src="js/angular.min.js"></script>
+  </head>
+  <body ng-app="">
+    <nav>
+      <h2><a href="index.html">Index</a></h2>
+      <ul class="module">
+        <!-- acjim -->
+        <h3>
+          <a href="" ng-click="moduleacjim = !moduleacjim">
+            module: acjim
+          </a>
+          <i ng-cloak="" ng-show="moduleacjim">+</i>
+        </h3>
+        <li id="acjim" ng-hide="moduleacjim">
+          <ul class="group">
+            <h3>
+              <a href="" ng-click="acjimdirective = !acjimdirective">
+                directive
+              </a>
+              <i ng-cloak="" ng-show="acjimdirective">+</i>
+            </h3>
+            <ul ng-hide="acjimdirective">
+              <li>
+                <a href="acjim.acjimToolbar.html">acjimToolbar</a>
+              </li><li>
+                <a href="acjim.acTable.html">acTable</a>
+              </li><li>
+                <a href="acjim.mapDirective.html">mapDirective</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimfactory = !acjimfactory">
+                factory
+              </a>
+              <i ng-cloak="" ng-show="acjimfactory">+</i>
+            </h3>
+            <ul ng-hide="acjimfactory">
+              <li>
+                <a href="acjim.api.html">api</a>
+              </li><li>
+                <a href="acjim.toolbar.html">toolbar</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimcontroller = !acjimcontroller">
+                controller
+              </a>
+              <i ng-cloak="" ng-show="acjimcontroller">+</i>
+            </h3>
+            <ul ng-hide="acjimcontroller">
+              <li>
+                <a href="acjim.appCtrl.html">appCtrl</a>
+              </li><li>
+                <a href="acjim.mapCtrl.html">mapCtrl</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimservice = !acjimservice">
+                service
+              </a>
+              <i ng-cloak="" ng-show="acjimservice">+</i>
+            </h3>
+            <ul ng-hide="acjimservice">
+              <li>
+                <a href="acjim.fileHandling.html">fileHandling</a>
+              </li>
+            </ul>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="content" class="page-wrap">
+      <h1 class="title">
+        source : appController.js
+      </h1>
+      <div id="main" class="big-container">
+        <!-- source code html -->
+        <article>
+          <pre class="prettyprint source linenums"><code>/*	Antigenic Cartography for Desktop	[Antigenic Cartography](http://www.antigenic-cartography.org/) is the process of creating maps of antigenically variable pathogens. 	In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.	This project aims at providing a desktop application for working with antigenic maps.	© 2015 The Antigenic Cartography Group at the University of Cambridge	This program is free software: you can redistribute it and/or modify	it under the terms of the GNU General Public License as published by    the Free Software Foundation, either version 3 of the License, or    (at your option) any later version.    This program is distributed in the hope that it will be useful,    but WITHOUT ANY WARRANTY; without even the implied warranty of    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the    GNU General Public License for more details.    You should have received a copy of the GNU General Public License    along with this program.  If not, see &lt;http://www.gnu.org/licenses/>.*/(function() {    'use strict';angular.module('acjim')    .controller('appCtrl', ['$scope', 'nwService', 'fileHandling', 'fileDialog', 'cfpLoadingBar', '$timeout', '$document', 'dialogs', appCtrl]);    /**     * Global controller to handle the Application     *     * @name appCtrl     * @memberof acjim     * @ngdoc controller     */    var appCtrl = function($scope, nwService, fileHandling, fileDialog, cfpLoadingBar, $timeout, $document, dialogs) {        /******************** File Handling *******************/        $scope.$on('open-file', function (event, filename) {            if (_.isEmpty(filename)) {                fileDialog.openFile(                    handleFileOpen,                    false,                    '.xls,.xlsx,.txt,.save,.acd1,.acd1.bz2,.acd1.xz,.acp1,.acp1.bz2,.acp1.xz'                );            } else {                handleFileOpen(filename);            }        });        $scope.$on('save-as', function (event, filename) {            if (_.isEmpty(filename)) {                fileDialog.saveAs(                    handleFileSaveAs,                    'NewChart.save',                    "'.acd1','.lispmds','save'"                );            } else {                handleFileSaveAs(filename);            }        });        $scope.$on('save-file', function () {            fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), null, null, $scope.mapData);        });        function handleFileSaveAs(filename) {            fileHandling.handleFileSaveAs(filename, null, null, $scope.mapData);        }        function handleFileOpen(filename) {            if (!_.isEmpty($scope.tableData)) {                //open file in new window                nwService.parentWindow.emit("openFileInNewWindow", filename);                return;            }            fileHandling.handleFileOpen(filename).then(function(result) {                $scope.tableData = result.table;                $scope.mapData = result.map;                $document[0].title += " - " + filename;            });        }        /**         * Handle file opening on application startup         */        var Url = {            get get(){                var vars= {};                if(window.location.search.length!==0) {                    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {                        key = decodeURIComponent(key);                        if (typeof vars[key] === "undefined") {                            vars[key] = decodeURIComponent(value);                        } else {                            vars[key] = [].concat(vars[key], decodeURIComponent(value));                        }                    });                }                return vars;            }        };        if(!_.isUndefined(Url.get.filename) && Url.get.filename !== "undefined") {            handleFileOpen(Url.get.filename);        }        /******************** Window management *******************/        // Open Debug Window        $scope.$on('open-debug', function () {            nwService.gui.Window.get().showDevTools();        });        // Reload        $scope.$on('reload-app', function () {            nwService.window.removeAllListeners();            nwService.window.reload();        });        // Close window        $scope.$on('close-window', function () {            nwService.gui.Window.get().close();        });        // Close app        $scope.$on('exit-app', function () {            nwService.gui.App.quit();        });        nwService.window.on('close', function (event) {            if (fileHandling.getMapIsChanged()) {                var dlg = dialogs.create('app/components/dialogs/saveDialog.html', 'customDialogCtrl', {}, {backdrop: false, size: 'sm'});                dlg.result.then(function(result){                    if (result === 'yes') {                        // If file should be saved                        fileHandling.handleFileSaveAs(fileHandling.getOriginalFileName(), this, event, $scope.mapData).then(function (output) {                            closeWindow(output.triggered_event);                        }, function (reason) {                            console.log(reason);                        });                    } else {                        //Don't save file                        closeWindow(event);                    }                }, function(result){                    //Don't close window, do nothing                });            } else {                closeWindow(event);            }        });        function closeWindow(event_triggered) {            // Pretend to be closed already            nwService.window.hide();            if (event_triggered !== "quit") {                nwService.parentWindow.emit("window-close", nwService.window.id);                return;            }            nwService.window.close(true);        }        /******************** Layout *******************/        $scope.layout = {            toolbar: false,            table: true        };        $scope.cloak = true;        $scope.$on('map.loaded', function () {            $scope.cloak = false;            cfpLoadingBar.complete();        });        $scope.$on('layout.table', function () {            $timeout(function() {                $scope.layout.table = !$scope.layout.table;            });        });        $scope.$on('layout.toolbar', function () {            $timeout(function() {                $scope.layout.toolbar = !$scope.layout.toolbar;            });        });    }})();</code></pre>
+        </article>
+        <!-- index.html -->
+        <!-- class files -->
+      </div>
+      <footer style="clear:both">
+        Documentation generated by
+        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+        using
+        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>
+      </footer>
+    </div>
+    <!--%= prettyJson %-->
+    <script>
+      prettyPrint();
+      var lineNo = window.location.hash.match(/#line([0-9]+)$/);
+      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();
+    </script>
+  </body>
+</html>

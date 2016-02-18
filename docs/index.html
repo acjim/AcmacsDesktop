@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <title>JSDoc: Index</title>
+    <link type="text/css" rel="stylesheet" href="css/jsdoc-default.css">
+    <link href="css/prettify-tomorrow.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700" rel="stylesheet" type="text/css">
+    <link href="css/custom.css" type="text/css" rel="stylesheet">
+    <script src="js/prettify.js"></script>
+    <script src="js/angular.min.js"></script>
+  </head>
+  <body ng-app="">
+    <nav>
+      <h2><a href="index.html">Index</a></h2>
+      <ul class="module">
+        <!-- acjim -->
+        <h3>
+          <a href="" ng-click="moduleacjim = !moduleacjim">
+            module: acjim
+          </a>
+          <i ng-cloak="" ng-show="moduleacjim">+</i>
+        </h3>
+        <li id="acjim" ng-hide="moduleacjim">
+          <ul class="group">
+            <h3>
+              <a href="" ng-click="acjimdirective = !acjimdirective">
+                directive
+              </a>
+              <i ng-cloak="" ng-show="acjimdirective">+</i>
+            </h3>
+            <ul ng-hide="acjimdirective">
+              <li>
+                <a href="acjim.acjimToolbar.html">acjimToolbar</a>
+              </li><li>
+                <a href="acjim.acTable.html">acTable</a>
+              </li><li>
+                <a href="acjim.mapDirective.html">mapDirective</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimfactory = !acjimfactory">
+                factory
+              </a>
+              <i ng-cloak="" ng-show="acjimfactory">+</i>
+            </h3>
+            <ul ng-hide="acjimfactory">
+              <li>
+                <a href="acjim.api.html">api</a>
+              </li><li>
+                <a href="acjim.toolbar.html">toolbar</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimcontroller = !acjimcontroller">
+                controller
+              </a>
+              <i ng-cloak="" ng-show="acjimcontroller">+</i>
+            </h3>
+            <ul ng-hide="acjimcontroller">
+              <li>
+                <a href="acjim.appCtrl.html">appCtrl</a>
+              </li><li>
+                <a href="acjim.mapCtrl.html">mapCtrl</a>
+              </li>
+            </ul>
+          </ul><ul class="group">
+            <h3>
+              <a href="" ng-click="acjimservice = !acjimservice">
+                service
+              </a>
+              <i ng-cloak="" ng-show="acjimservice">+</i>
+            </h3>
+            <ul ng-hide="acjimservice">
+              <li>
+                <a href="acjim.fileHandling.html">fileHandling</a>
+              </li>
+            </ul>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="content" class="page-wrap">
+      <h1 class="title">
+        Index
+      </h1>
+      <div id="main" class="big-container">
+        <!-- source code html -->
+        <!-- index.html -->
+        <section class="section-readme">
+          <article>
+            <h1>Antigenic Cartography for Desktop <a href="https://travis-ci.org/acjim/AcmacsDesktop"><img src="https://travis-ci.org/acjim/AcmacsDesktop.svg?branch=testing" alt="Build Status"></a> <a href="https://www.codacy.com/app/acjim/AcmacsDesktop"><img src="https://api.codacy.com/project/badge/e45c7f2631ad4267b4b91b5c30fefe87" alt="Codacy Badge"></a></h1><p><img src="https://cloud.githubusercontent.com/assets/6048968/13072894/008d593e-d49c-11e5-9305-3da0995b46a4.jpeg" alt="screen shot 2016-02-16 at 10 56 43"></p>
+<p><a href="http://www.antigenic-cartography.org/">Antigenic Cartography</a> is the process of creating maps of antigenically variable pathogens. In some cases two-dimensional maps can be produced which reveal interesting information about the antigenic evolution of a pathogen.</p>
+<p>This project aims at providing a desktop application for working with antigenic maps.</p>
+<h2>Include Core</h2><p>To be able to use the app you need the latest version of the <strong>AcmacsCore.bundle</strong>. You can download it <a href="https://drive.google.com/open?id=0B3SjWA2XVkqCTERmV1BJUkZOYzA">here</a>.</p>
+<p>Unzip and put the binaries in the <code>core</code> folder.</p>
+<h2>Run the application (development mode)</h2><p>You need <code>npm</code> installed in order to get this working. The best way to install <code>npm</code> is to install <a href="http://www.nodejs.org">node.js</a> using its installer.</p>
+<p>Run the following command in the root folder of the project (where this <code>README.md</code> is located):</p>
+<pre class="prettyprint source lang-sh"><code>npm install</code></pre><p>And start the application with:</p>
+<pre class="prettyprint source lang-sh"><code>npm start</code></pre><h2>Build the application (for deployment)</h2><p>You need <code>grunt</code> installed to get this working. The best option is probably to install it globally:</p>
+<pre class="prettyprint source lang-sh"><code>npm install -g grunt</code></pre><h4>Install dependencies</h4><p>Install all project dependencies</p>
+<pre class="prettyprint source lang-sh"><code>npm install</code></pre><h4>Build AcmacsDesktop application</h4><p>The task runner grunt creates a folder <code>cache</code>, downloads the right nw.js version and puts the final app into the <code>build</code> folder.</p>
+<pre class="prettyprint source lang-sh"><code>grunt build</code></pre><p>To prevent errors, you should only build the application on the system you are building it for. For example, if you would 
+like to make an <code>OSX 32-bit</code> build then build it on that specific architecture. </p>
+<p>By default, the app is only built for the platform you are on. However, you can provide your desired build targets as parameters:</p>
+<pre class="prettyprint source lang-sh"><code>grunt build --target=&lt;target></code></pre><p>with the following possible targets:</p>
+<pre class="prettyprint source lang-sh"><code>//Builds 32bit and 64bit ...
+osx
+linux
+win
+//... or provide the arch
+osx32
+linux64
+...</code></pre><p>Keep in mind that you should exchange the <strong>AcmacsCore.bundle</strong> to the target you are building for.</p>
+<h4>Packaging the application</h4><p>Currently, only <code>DMG</code> packaging for OS X is supported and you need to be on OS X in order for this to work.</p>
+<pre class="prettyprint source lang-sh"><code>grunt package</code></pre><h1>License</h1><p>GNU GENERAL PUBLIC LICENSE<br>Version 3, 29 June 2007<br>Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/><br>Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.</p>
+          </article>
+        </section>
+        <!-- class files -->
+      </div>
+      <footer style="clear:both">
+        Documentation generated by
+        <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+        using
+        <a href="https://github.com/allenhwkim/angular-jsdoc">Angular-JSDoc template</a>
+      </footer>
+    </div>
+    <!--%= prettyJson %-->
+    <script>
+      prettyPrint();
+      var lineNo = window.location.hash.match(/#line([0-9]+)$/);
+      lineNo && document.querySelector("ol li:nth-child("+(lineNo[1])+")").scrollIntoView();
+    </script>
+  </body>
+</html>
