@@ -35,10 +35,11 @@
             'cfpLoadingBar',
             '$timeout',
             '$document',
+            'dialogs',
             fileHandling
         ]);
 
-    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document) {
+    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document, dialogs) {
 
         var acd1File = null;
         var projection = 0;
@@ -439,10 +440,10 @@
                     "x": layout[0],
                     "y": layout[1],
                     "fixed": _.contains(fixedPoints, i),
+                    "disconnected": _.contains(disconnectedPoints, i),
                     "id": i
                 };
             });
-
 
             oldMap.point_info.forEach(function (point_info, i) {
 
@@ -538,12 +539,6 @@
                 });
         };
 
-        /**
-         * Checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca
-         */
-        function areNodesFixedOrDisabled(fixedOrDisconnectedElements){
-            return !_.isUndefined(fixedOrDisconnectedElements) && fixedOrDisconnectedElements.length > 0;
-        }
 
         /**
          * Calls api to disable nodes (without Stress) from a specific  map
@@ -553,11 +548,6 @@
         fileHandler.fixNodes = function (disabledPoints) {
             cfpLoadingBar.start();
 
-            if (areNodesFixedOrDisabled(disconnectedPoints)) {
-                dialogs.notify('Notice!', "The disconnect functionality can not be combined with the fix nodes one. Re-enable nodes or create a new map before fixing nodes.");
-                return;
-            }
-
             var disable_additional_params = {
                 projection: (projection === 0) ? projection : projection_comment,
                 unmovable: disabledPoints
@@ -566,7 +556,7 @@
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    fileHandler.setMapIsChanged(true);
+                    //fileHandler.setMapIsChanged(true);
                     fileHandler.setFixedPoints(disabledPoints);
                     cfpLoadingBar.complete();
                 }, function (reason) {
@@ -577,7 +567,6 @@
         /**
          * Calls api to disable nodes from a specific  map
          *
-         * @param mapData
          * @param disabledPoints
          */
         fileHandler.disconnectNodes = function (mapData, disabledPoints) {
@@ -592,24 +581,22 @@
                 return b - a;
             });
 
-
-            api.set_disconnected_points(disable_additional_params, acd1File)
+            return api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
                     var map_additional_params = {projection: (projection == 0) ? projection : projection_comment};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                    return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
-                            var output_json = filename;
-                            fs.readFile(output_json, 'utf8', function (err, data) {
-                                var mapJsonData = JSON.parse(data);
-                                mapData.stress = mapJsonData.stress;
-                                mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.layout[i].x = layout[0];
-                                    mapData.layout[i].y = layout[1];
-                                });
+                            return $q.all([
+                                readFile(filename)
+                            ]).then(function (output_data) {
+                                mapData = parseLayoutData(JSON.parse(output_data));
+                                //fileHandler.setMapIsChanged(true);
+                                fileHandler.setDisconnectedNodes(disabledPoints);
                                 cfpLoadingBar.complete();
+                                return mapData;
                             });
-                            fileHandler.setMapIsChanged(true);
+
                         }, function (reason) {
                             return errorReason(reason);
                         });
@@ -861,6 +848,15 @@
          */
         fileHandler.setFixedPoints = function (fixedNodes) {
             fixedPoints = fixedNodes;
+        };
+
+        /**
+         * Set nodes selected to disconnected.
+         *
+         * @param fixedNodes List
+         */
+        fileHandler.setDisconnectedNodes = function (disconnectedNodes) {
+            disconnectedPoints = disconnectedNodes;
         };
 
         return fileHandler;

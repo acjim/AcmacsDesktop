@@ -37,25 +37,11 @@
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateDisconnectedNodes();
                 getErrorConnectionLines();
                 cfpLoadingBar.complete();
             });
         });
 
-
-        /**
-         *  Updates the disconnected nodes array after getting data from backend
-         */
-        function updateDisconnectedNodes (){
-            if ($rootScope.disableArray) {
-                var length = $rootScope.disableArray.length;
-                for (var counter = 0; counter < length; counter++) {
-                    $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
-                }
-                fileHandling.setFixedPoints($rootScope.disableArray);
-            }
-        }
         /**
          * Calls fileHandlingService for API call to backend to get Error & Connectionlines
          */
@@ -71,7 +57,6 @@
                 fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
-                    updateDisconnectedNodes();
                     if (!$scope.showConnectionLines) {
                         $scope.data.d3ConnectionLines = [];
                     }
@@ -90,7 +75,6 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateDisconnectedNodes();
                 fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
             });
@@ -148,11 +132,7 @@
          * Listens for click event on Disconnect Nodes button (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
          */
         $scope.$on('api.set_disconnected_points', function () {
-            $scope.disconnectSelectedNodes();
-            if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disconnectNodes($scope.data, $rootScope.disableArray);
-            }
-
+            fileHandling.disconnectNodes($scope.data, $scope.disconnectSelectedNodes());
         });
 
         /**

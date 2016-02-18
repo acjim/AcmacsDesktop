@@ -54,11 +54,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
-                flagDisconnectDisable= 0,
-                colorArray = [],
-                disableArray = [],
-                fixedArray= [],
-                color = "",
+                nodesFixed = false,
+                nodesDisconnected = false,
                 shiftKey;
 
             // d3 groups
@@ -144,7 +141,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     })
                     .attr("fill", function (d) {
-                        if (d.fixed) {
+                        if (d.fixed || d.disconnected) {
                             return "#bebebe";
                         } else {
                             // color as string
@@ -444,7 +441,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         return d.selected;
                     })
                     .attr("transform", function (d) {
-                        if (!d.fixed) {
+                        if (!d.fixed && !d.disconnected) {
                             d.x += dx / zoom.scale();
                             d.y += dy / zoom.scale();
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
@@ -705,10 +702,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 shiftKey = d3.event.shiftKey;
             }
 
+
             /**
              * Gets all selected elements, makes them fixed (unmovable/deselects on map):
+             * @returns {Array}
              */
             scope.fixSelectedNodes = function() {
+                if (nodesDisconnected) {
+                    dialogs.notify('Notice!', "The fix nodes functionality cannot be combined with the disconnect one. Re-connect nodes before disconnecting please.");
+                    return [];
+                }
                 var nodesToFix = [],
                     nodesSelected = false;
 
@@ -718,7 +721,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
 
                 if (!nodesSelected) {
-                    dialogs.notify('Notice!', "No nodes selected, please select one or more nodes to be fixed");
+                    dialogs.notify('Notice!', "No nodes selected, please select one or more nodes.");
                 }
 
                 nodeGroup.filter(function(d) {
@@ -726,54 +729,42 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }).each(function(d) {
                     nodesToFix.push(d.id);
                 });
+                nodesFixed = !_.isEmpty(nodesToFix);
                 return nodesToFix;
             };
 
             /**
-             * Gets All D3 Selected Elements, disconnects the selected points (deselects)
+             * Gets all selected elements and  (deselects)
+             *
+             * @returns {Array}
              */
             scope.disconnectSelectedNodes = function() {
-                $rootScope.disableArrayFlag = false;
-                var flag = 0;
-                // Disable Button Functionality
-
-                if (areNodesFixedOrDisabled($rootScope.fixedArray)) {
+                if (nodesFixed) {
                     dialogs.notify('Notice!', "The fix nodes functionality cannot be combined with the disconnect one. Re-connect nodes before disconnecting please.");
-                    return;
+                    return [];
                 }
+
+                var nodesToDisconnect = [],
+                    nodesSelected = false;
 
                 d3.selectAll(".selected").each(function (d) {
-                    if (d.style.fill_color != "#bebebe") {
-                        flag = 1;
-                        colorArray["" + d.id + ""] = d.style.fill_color;
-                        d.style.fill_color = "#bebebe";
-                        d3.select(this).transition()
-                            .style("stroke", "green")
-                            .style("opacity", .4)
-                            .attr("style", "fill:#bebebe");
-                        disableArray.push(d.id);
-                    } else if ("#bebebe") {
-                        flag = 1;
-                        d3.select(this).transition()
-                            .attr("style", "fill:" + colorArray["" + d.id + ""]);
-                        d.style.fill_color = colorArray["" + d.id + ""];
-                        for (var c = 0; c < disableArray.length; c++) {
-                            if (d.id == disableArray[c]) {
-                                disableArray.splice(c, 1);
-                                c = c - 1;
-                            }
-                        }
-                        flag = 1;
-                    }
+                    nodesSelected = true;
+                    d.disconnected = !d.disconnected;
                 });
 
-                if (flag === 0) {
-                    dialogs.notify('Notice!', "No nodes selected, please select one or more nodes to disconnect");
-                } else {
-                    $rootScope.disableArrayFlag = true;
-                    $rootScope.disableArray = disableArray;
-                    $rootScope.colorArray = colorArray;
+                if (!nodesSelected) {
+                    dialogs.notify('Notice!', "No nodes selected, please select one or more nodes.");
                 }
+
+                nodeGroup.filter(function(d) {
+                    return d.disconnected;
+                }).each(function(d) {
+                    nodesToDisconnect.push(d.id);
+                });
+                nodesDisconnected = !_.isEmpty(nodesToDisconnect);
+                return nodesToDisconnect;
+
+
             };
 
             /**
@@ -889,7 +880,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             $rootScope.$on('map.randomize', function () {
                 var data = scope.data;
                 _.forEach(data.layout, function (d) {
-                    if (!d.fixed) {
+                    if (!d.fixed && !d.disconnected) {
                         d.x = (Math.random() * (dataExtentX[1] * 1.3 - dataExtentX[0] * 0.9) + dataExtentX[0] * 0.9);
                         d.y = (Math.random() * (dataExtentY[1] * 1.3 - dataExtentY[0] * 0.9) + dataExtentY[0] * 0.9);
                     }
