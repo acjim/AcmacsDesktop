@@ -45,7 +45,8 @@
         var projection_comment = null;
         var is_changed = false;
         var original_filename = "";
-        var fixedPoints = new Array();
+        var fixedPoints = [];
+        var disconnectedPoints = [];
         var fileHandler = {};
 
         /**
@@ -316,7 +317,7 @@
                 return relax_existing(mapData);
             }
 
-        }
+        };
 
 
         /**
@@ -379,7 +380,7 @@
             }, function (reason) {
                 return errorReason(reason);
             });
-        }
+        };
 
 
         function relax_existing(mapData) {
@@ -437,6 +438,8 @@
                 newData.layout[i] = {
                     "x": layout[0],
                     "y": layout[1],
+                    "fixed": _.contains(fixedPoints, i),
+                    "disconnected": _.contains(disconnectedPoints, i),
                     "id": i
                 };
             });
@@ -516,22 +519,15 @@
 
         /**
          * Calls api to create a new file from an already existing one
-         *
-         * @param mapData
-         * @param disabledPoints
+         * @param selectedNodes {{sera: Array, antigens: Array}}
          */
-        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, antigens, sera) {
+        fileHandler.createNewFileFromAlreadyExistingOne = function (selectedNodes) {
             cfpLoadingBar.start();
 
             var remove_antigens_sera = {
-                antigens: antigens,
-                sera: sera
+                antigens: selectedNodes.antigens,
+                sera: selectedNodes.sera
             };
-
-            // @TODO: decide if this is necessary?
-            /*disabledPoints.sort(function (a, b) {
-                return b - a;
-            });*/
 
             api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
@@ -540,37 +536,36 @@
                 }, function (reason) {
                     return errorReason(reason);
                 });
-        }
+        };
+
 
         /**
-         * Calls api to disable nodes (without Sress) from a specific  map
+         * Calls api to disable nodes (without Stress) from a specific  map
          *
-         * @param mapData List
          * @param disabledPoints List
          */
-        fileHandler.fixNodes = function (mapData, disabledPoints) {
+        fileHandler.fixNodes = function (disabledPoints) {
             cfpLoadingBar.start();
 
             var disable_additional_params = {
-                projection: (projection == 0) ? projection : projection_comment,
+                projection: (projection === 0) ? projection : projection_comment,
                 unmovable: disabledPoints
             };
 
             api.set_unmovable_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    fileHandler.setMapIsChanged(true);
+                    //fileHandler.setMapIsChanged(true);
                     fileHandler.setFixedPoints(disabledPoints);
                     cfpLoadingBar.complete();
                 }, function (reason) {
                     return errorReason(reason);
                 });
-        }
+        };
 
         /**
          * Calls api to disable nodes from a specific  map
          *
-         * @param mapData
          * @param disabledPoints
          */
         fileHandler.disconnectNodes = function (mapData, disabledPoints) {
@@ -585,24 +580,22 @@
                 return b - a;
             });
 
-
-            api.set_disconnected_points(disable_additional_params, acd1File)
+            return api.set_disconnected_points(disable_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
                     var map_additional_params = {projection: (projection == 0) ? projection : projection_comment};
-                    api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
+                    return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
                         .then(function (filename) {
-                            var output_json = filename;
-                            fs.readFile(output_json, 'utf8', function (err, data) {
-                                var mapJsonData = JSON.parse(data);
-                                mapData.stress = mapJsonData.stress;
-                                mapJsonData.map.layout.forEach(function (layout, i) {
-                                    mapData.layout[i].x = layout[0];
-                                    mapData.layout[i].y = layout[1];
-                                });
+                            return $q.all([
+                                readFile(filename)
+                            ]).then(function (output_data) {
+                                mapData = parseLayoutData(JSON.parse(output_data));
+                                //fileHandler.setMapIsChanged(true);
+                                fileHandler.setDisconnectedNodes(disabledPoints);
                                 cfpLoadingBar.complete();
+                                return mapData;
                             });
-                            fileHandler.setMapIsChanged(true);
+
                         }, function (reason) {
                             return errorReason(reason);
                         });
@@ -611,7 +604,7 @@
                     return errorReason(reason);
                 });
 
-        }
+        };
 
 
         /**
@@ -854,7 +847,16 @@
          */
         fileHandler.setFixedPoints = function (fixedNodes) {
             fixedPoints = fixedNodes;
-        }
+        };
+
+        /**
+         * Set nodes selected to disconnected.
+         *
+         * @param fixedNodes List
+         */
+        fileHandler.setDisconnectedNodes = function (disconnectedNodes) {
+            disconnectedPoints = disconnectedNodes;
+        };
 
         return fileHandler;
     }

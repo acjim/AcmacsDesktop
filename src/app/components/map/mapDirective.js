@@ -54,11 +54,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 dataExtentX = null,
                 dataExtentY = null,
                 boxSize = 1,
-                flagDisconnectDisable= 0,
-                colorArray = [],
-                disableArray = [],
-                fixedArray= [],
-                color = "",
+                nodesFixed = false,
+                nodesDisconnected = false,
                 shiftKey;
 
             // d3 groups
@@ -144,11 +141,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     })
                     .attr("fill", function (d) {
-                        // color as string
-                        if (_.isArray(d.style.fill_color)) {
-                            return d.style.fill_color[0];
+                        if (d.fixed || d.disconnected) {
+                            return "#bebebe";
                         } else {
-                            return d.style.fill_color;
+                            // color as string
+                            if (_.isArray(d.style.fill_color)) {
+                                return d.style.fill_color[0];
+                            } else {
+                                return d.style.fill_color;
+                            }
                         }
                     })
                     .attr("fill-opacity", function (d) {
@@ -440,7 +441,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         return d.selected;
                     })
                     .attr("transform", function (d) {
-                        if (d.style.fill_color != "#bebebe") {
+                        if (!d.fixed && !d.disconnected) {
                             d.x += dx / zoom.scale();
                             d.y += dy / zoom.scale();
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
@@ -561,6 +562,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             function select(shape) {
                 nodeGroup.each(function(d) {
                     d.selected = d.style.shape === shape;
+                    d3.select(this).classed("selected", d.selected);
+                });
+            }
+
+            /**
+             * Selects all disabled (disconnected or fixed) nodes
+             */
+            function selectDisabled() {
+                nodeGroup.each(function(d) {
+                    d.selected = d.fixed || d.disconnected;
                     d3.select(this).classed("selected", d.selected);
                 });
             }
@@ -701,122 +712,70 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 shiftKey = d3.event.shiftKey;
             }
 
+
             /**
-             * Gets All D3 Selected Elements, makes them fixed (unmovable/deselects on map):
+             * Gets all selected elements, makes them fixed (unmovable/deselects on map):
+             * @returns {Array}
              */
             scope.fixSelectedNodes = function() {
-                var flagDisable;
-                $rootScope.fixedArrayFlag = false;
-                var flag = 0;
-                // Disable Button Functionality
-                areNodesFixedOrDisabled($rootScope.disableArray);
-                if (flagDisconnectDisable==0) {
-                    d3.selectAll(".selected").each(function (d) {
-                        if (d.style.fill_color != "#bebebe") {
-                            flag = 1;
-                            color = d.style.fill_color;
-
-                            colorArray["" + d.id + ""] = d.style.fill_color;
-                            d.style.fill_color = "#bebebe";
-                            d3.select(this).transition()
-                                .style("stroke", "green")
-                                .style("opacity", .4)
-                                .attr("style", "fill:#bebebe");
-                            d.fixed = true;
-                            for (var c = 0; c < fixedArray.length; c++) {
-                                if (d.id == fixedArray[c]) {
-                                    flagDisable = 1;
-                                }
-                            }
-                            if (flagDisable != 1) {
-                                fixedArray.push(d.id);
-                                flagDisable = 0;
-                            }
-
-                        } else if ("#bebebe") {
-                            flag = 1;
-                            d3.select(this).transition()
-                                .attr("style", "fill:" + colorArray["" + d.id + ""]);
-                            d.style.fill_color = colorArray["" + d.id + ""];
-                            for (var c = 0; c < fixedArray.length; c++) {
-                                if (d.id == fixedArray[c]) {
-                                    fixedArray.splice(c, 1);
-                                    c = c - 1;
-                                }
-                            }
-                            flag = 1;
-                        }
-                    });
-                    if (flag === 0) {
-                        dialogs.notify('Notice!', "No nodes selected, please select one or more nodes to be fixed");
-                    }
-                    else {
-                        $rootScope.fixedArrayFlag = true;
-                        $rootScope.fixedArray = fixedArray;
-                        $rootScope.colorArray = colorArray;
-                    }
-                } else {
-                    dialogs.notify('Notice!', "The disconnect functionality can not be combined with the fix nodes one. Re-enable nodes or create a new map before fixing nodes.");
+                if (nodesDisconnected) {
+                    dialogs.notify('Notice!', "The fix nodes functionality cannot be combined with the disconnect one. Re-connect nodes before disconnecting please.");
+                    return [];
                 }
+                var nodesToFix = [],
+                    nodesSelected = false;
+
+                d3.selectAll(".selected").each(function (d) {
+                    nodesSelected = true;
+                    d.fixed = !d.fixed;
+                });
+
+                if (!nodesSelected) {
+                    dialogs.notify('Notice!', "No nodes selected, please select one or more nodes.");
+                }
+
+                nodeGroup.filter(function(d) {
+                    return d.fixed;
+                }).each(function(d) {
+                    nodesToFix.push(d.id);
+                });
+                nodesFixed = !_.isEmpty(nodesToFix);
+                return nodesToFix;
             };
 
             /**
-             * Gets All D3 Selected Elements, disconnects the selected points (deselects)
+             * Gets all selected elements and  (deselects)
+             *
+             * @returns {Array}
              */
             scope.disconnectSelectedNodes = function() {
-                $rootScope.disableArrayFlag = false;
-                var flag = 0;
-                // Disable Button Functionality
-                areNodesFixedOrDisabled($rootScope.fixedArray);
-                if (flagDisconnectDisable==0) {
-                    d3.selectAll(".selected").each(function (d) {
-                        if (d.style.fill_color != "#bebebe") {
-                            flag = 1;
-                            colorArray["" + d.id + ""] = d.style.fill_color;
-                            d.style.fill_color = "#bebebe";
-                            d3.select(this).transition()
-                                .style("stroke", "green")
-                                .style("opacity", .4)
-                                .attr("style", "fill:#bebebe");
-                            disableArray.push(d.id);
-                        } else if ("#bebebe") {
-                            flag = 1;
-                            d3.select(this).transition()
-                                .attr("style", "fill:" + colorArray["" + d.id + ""]);
-                            d.style.fill_color = colorArray["" + d.id + ""];
-                            for (var c = 0; c < disableArray.length; c++) {
-                                if (d.id == disableArray[c]) {
-                                    disableArray.splice(c, 1);
-                                    c = c - 1;
-                                }
-                            }
-                            flag = 1;
-                        }
-                    });
-
-                    if (flag === 0) {
-                        dialogs.notify('Notice!', "No nodes selected, please select one or more nodes to disconnect");
-                    } else {
-                        $rootScope.disableArrayFlag = true;
-                        $rootScope.disableArray = disableArray;
-                        $rootScope.colorArray = colorArray;
-                    }
-                } else {
+                if (nodesFixed) {
                     dialogs.notify('Notice!', "The fix nodes functionality cannot be combined with the disconnect one. Re-connect nodes before disconnecting please.");
+                    return [];
                 }
+
+                var nodesToDisconnect = [],
+                    nodesSelected = false;
+
+                d3.selectAll(".selected").each(function (d) {
+                    nodesSelected = true;
+                    d.disconnected = !d.disconnected;
+                });
+
+                if (!nodesSelected) {
+                    dialogs.notify('Notice!', "No nodes selected, please select one or more nodes.");
+                }
+
+                nodeGroup.filter(function(d) {
+                    return d.disconnected;
+                }).each(function(d) {
+                    nodesToDisconnect.push(d.id);
+                });
+                nodesDisconnected = !_.isEmpty(nodesToDisconnect);
+                return nodesToDisconnect;
+
+
             };
-
-
-            /**
-             * checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca
-             */
-            function areNodesFixedOrDisabled(fixedOrDisconnectedElements){
-                flagDisconnectDisable=0;
-                if (fixedOrDisconnectedElements) {
-                    if (fixedOrDisconnectedElements.length>0)
-                        flagDisconnectDisable = 1;
-                }
-            }
 
             /**
              * Returns the node labels of nodes or removes them depending on the case
@@ -832,85 +791,63 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             }
 
             /**
-             * This function re-renders Serra Ids the right form after loading them from the backend
-             *
-             * @returns none
+             * This function re-renders sera Ids to the right form needed by the backend
+             * @param sera
+             * @returns {Array}
              */
-            function renderSerraIds() {
-                var tempArray=[];
-                var arrayofSerras =[];
-                d3.selectAll(".point").each(function (d) {
-                 if( d.style.shape=="box"){
-                     arrayofSerras.push(d.id);
-                 }
-                });
-                for (var i=0; i<$rootScope.newMapSeraArray.length; i++){
-                    var indexOfSerra = arrayofSerras.indexOf($rootScope.newMapSeraArray[i]);
-                    tempArray.push(indexOfSerra);
+            function renderSeraIDs(sera) {
+                var orderedSera=[];
+                var allSera =[];
 
-                }
-                $rootScope.newMapSeraArray= tempArray;
+                nodeGroup.each(function (d) {
+                    if (d.style.shape === "box") {
+                        allSera.push(d.id);
+                    }
+                });
+                _.forEach(sera, function(serum) {
+                    var indexOfSerra = allSera.indexOf(serum);
+                    orderedSera.push(indexOfSerra);
+                });
+                return orderedSera;
             }
 
             /**
-             * Gets a new Map  Selected Elements With Their Respective Data.
-             *
-             * @param mapDataPoints Object {} mapDataPoints should be assigned to scope.data before passing it to the function
-             * @param indexValue int
-             * @constructor a Data Array with the new Map Data
+             * Gets the data for a new map from selected nodes. Returns an array of nodes to remove in new map.
+             * @returns {{sera: Array, antigens: Array}}
              */
-            scope.getNewDataFromCurrentMap = function (mapDataPoints, indexValue) {
-                $rootScope.newMapAntigenArray = [];
-                $rootScope.newMapSeraArray = [];
-                $rootScope.newMapArrayflag = false;
-                var mapAntigenArray = [];
-                var mapSeraArray = [];
-                var length = mapDataPoints.layout.length;
-                for (var counter = 0; counter < length; counter++) {
-                    // Antigens Case
-                    if (mapDataPoints.layout[counter].style.shape == "circle") {
-                        mapAntigenArray.push(counter);
-                        $rootScope.newMapAntigenArray.push(counter);
-                    }
-                    //  sera case
-                    else {
-                        mapSeraArray.push(counter);
-                       $rootScope.newMapSeraArray.push(counter);
-                    }
+            scope.getSelectedFromCurrentMap = function () {
+                var selectedNodes = [],
+                    nodesToRemove = {
+                        sera: [],
+                        antigens: []
+                    };
+
+                // If no nodes are selected, create new map from all nodes
+                nodeGroup
+                    .filter(function (d) {
+                        return d.selected;
+                    })
+                    .each(function(d) {
+                        selectedNodes.push(d);
+                    });
+                if (_.isEmpty(selectedNodes)) {
+                    return nodesToRemove;
                 }
 
-                var flag = 0;
-                d3.selectAll(".selected").each(function (d) {
-                    flag = 1;
-                    if (d.style.shape == "circle") {
-                        var indexOfElement = mapAntigenArray.indexOf(d.id); // 1
-                        mapAntigenArray.splice(indexOfElement, 1);
-                    }
-                    else if (d.style.shape == "box") {
-                        var indexOfElement = mapSeraArray.indexOf(d.id); // 1
-                        mapSeraArray.splice(indexOfElement, 1);
-                    }
-                });
-                if (flag === 0) {
-                    dialogs.notify('Notice!', "No nodes selected to create new map, please select one or more nodes");
-                } else {
-                    for (var counter = 0; counter < mapAntigenArray.length; counter++) {
-                        var index = $rootScope.newMapAntigenArray.indexOf(mapAntigenArray[counter]);
-                        $rootScope.newMapAntigenArray.splice(index, 1);
-                    }
-                    for (var counter = 0; counter < mapSeraArray.length; counter++) {
-                        var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
-                        $rootScope.newMapSeraArray.splice(index, 1);
-                    }
-
-                    if (indexValue === 1) {
-                        $rootScope.newMapSeraArray = mapSeraArray;
-                        $rootScope.newMapAntigenArray = mapAntigenArray;
-                    }
-                    renderSerraIds ();
-                    $rootScope.newMapArrayflag = true;
-                }
-
+                //If nodes are selected, take the non-selected ones and create an array with nodes to remove
+                nodeGroup
+                    .filter(function (d) {
+                        return !d.selected;
+                    })
+                    .each(function(d) {
+                        if (d.style.shape === "circle") {
+                            nodesToRemove.antigens.push(d.id);
+                        } else if (d.style.shape === "box") {
+                            nodesToRemove.sera.push(d.id);
+                        }
+                    });
+                nodesToRemove.sera = renderSeraIDs(nodesToRemove.sera);
+                return nodesToRemove;
             };
 
             /////////////////////// LISTENERS ///////////////////////
@@ -953,7 +890,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             $rootScope.$on('map.randomize', function () {
                 var data = scope.data;
                 _.forEach(data.layout, function (d) {
-                    if (d.style.fill_color != "#bebebe") { //TODO: Check if nodes are unmovable or disconnected with d.unmovable || d.disconnected
+                    if (!d.fixed && !d.disconnected) {
                         d.x = (Math.random() * (dataExtentX[1] * 1.3 - dataExtentX[0] * 0.9) + dataExtentX[0] * 0.9);
                         d.y = (Math.random() * (dataExtentY[1] * 1.3 - dataExtentY[0] * 0.9) + dataExtentY[0] * 0.9);
                     }
@@ -976,6 +913,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             $rootScope.$on('map.invertSelection', invertSelection);
             $rootScope.$on('map.selectSera', selectSera);
             $rootScope.$on('map.selectAntigen', selectAntigen);
+            $rootScope.$on('map.selectDisabled', selectDisabled);
 
 
             /**

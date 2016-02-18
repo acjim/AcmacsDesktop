@@ -37,38 +37,11 @@
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateFixedNodes();
-                updateDisconnectedNodes();
                 getErrorConnectionLines();
                 cfpLoadingBar.complete();
             });
         });
 
-        /**
-         *  Updates the fixed nodes array after getting data from backend
-         */
-        function updateFixedNodes (){
-            if ($rootScope.fixedArray) {
-                var length = $rootScope.fixedArray.length;
-                for (var counter = 0; counter < length; counter++) {
-                    $scope.data.layout[$rootScope.fixedArray[counter]].style.fill_color = "#bebebe";
-                }
-                fileHandling.setFixedPoints($rootScope.fixedArray);
-            }
-        }
-
-        /**
-         *  Updates the disconnected nodes array after getting data from backend
-         */
-        function updateDisconnectedNodes (){
-            if ($rootScope.disableArray) {
-                var length = $rootScope.disableArray.length;
-                for (var counter = 0; counter < length; counter++) {
-                    $scope.data.layout[$rootScope.disableArray[counter]].style.fill_color = "#bebebe";
-                }
-                fileHandling.setFixedPoints($rootScope.disableArray);
-            }
-        }
         /**
          * Calls fileHandlingService for API call to backend to get Error & Connectionlines
          */
@@ -84,8 +57,6 @@
                 fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
-                    updateFixedNodes();
-                    updateDisconnectedNodes();
                     if (!$scope.showConnectionLines) {
                         $scope.data.d3ConnectionLines = [];
                     }
@@ -104,8 +75,6 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateFixedNodes();
-                updateDisconnectedNodes();
                 fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
             });
@@ -163,32 +132,21 @@
          * Listens for click event on Disconnect Nodes button (DISCONNECT_NODES: Nodes are removed and do not contribute to stress)
          */
         $scope.$on('api.set_disconnected_points', function () {
-            $scope.disconnectSelectedNodes();
-            if ($rootScope.disableArrayFlag == true) {
-                fileHandling.disconnectNodes($scope.data, $rootScope.disableArray);
-            }
-
+            fileHandling.disconnectNodes($scope.data, $scope.disconnectSelectedNodes());
         });
 
         /**
          * Listens for click on Fix Nodes button (FIX_NODES: Nodes continue to contribute to stress)
          */
         $scope.$on('api.set_unmovable_points', function () {
-            $scope.fixSelectedNodes();
-            if ($rootScope.fixedArrayFlag == true) {
-                fileHandling.fixNodes($scope.data, $rootScope.fixedArray);
-            }
-
+            fileHandling.fixNodes($scope.fixSelectedNodes());
         });
 
         /**
          * Watches for New Map Create from Selected Nodes
          */
         $scope.$on('map.create_from_selected', function () {
-            $scope.getNewDataFromCurrentMap($scope.data, 1);
-            if ($rootScope.newMapArrayflag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
-            }
+            fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
         });
 
         /**
