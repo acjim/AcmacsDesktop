@@ -89,7 +89,9 @@
                         {label: 'Inverse', click: 'map.invertSelection', modifiers: osModifier + 'shift', key: 'i'},
                         {type: 'separator'},
                         {label: 'Select All Sera', click: 'map.selectSera'},
-                        {label: 'Select All Antigens', click: 'map.selectAntigen'}
+                        {label: 'Select All Antigens', click: 'map.selectAntigen'},
+                        {type: 'separator'},
+                        {label: 'Select Disabled Nodes', tooltip: 'Selects all disconnected or fixed nodes.', click: 'map.selectDisabled'}
                     ]
                     },
                     {

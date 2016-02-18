@@ -566,6 +566,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
             }
 
+            /**
+             * Selects all disabled (disconnected or fixed) nodes
+             */
+            function selectDisabled() {
+                nodeGroup.each(function(d) {
+                    d.selected = d.fixed || d.disconnected;
+                    d3.select(this).classed("selected", d.selected);
+                });
+            }
+
 
             /**
              * Applies the current zoom and moves the objects accordingly.
@@ -903,6 +913,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             $rootScope.$on('map.invertSelection', invertSelection);
             $rootScope.$on('map.selectSera', selectSera);
             $rootScope.$on('map.selectAntigen', selectAntigen);
+            $rootScope.$on('map.selectDisabled', selectDisabled);
 
 
             /**
