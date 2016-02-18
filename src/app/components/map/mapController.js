@@ -37,25 +37,12 @@
             fileHandling.reOptimize($scope.data, $scope.pointsMoved).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateFixedNodes();
                 updateDisconnectedNodes();
                 getErrorConnectionLines();
                 cfpLoadingBar.complete();
             });
         });
 
-        /**
-         *  Updates the fixed nodes array after getting data from backend
-         */
-        function updateFixedNodes (){
-            if ($rootScope.fixedArray) {
-                var length = $rootScope.fixedArray.length;
-                for (var counter = 0; counter < length; counter++) {
-                    $scope.data.layout[$rootScope.fixedArray[counter]].style.fill_color = "#bebebe";
-                }
-                fileHandling.setFixedPoints($rootScope.fixedArray);
-            }
-        }
 
         /**
          *  Updates the disconnected nodes array after getting data from backend
@@ -84,7 +71,6 @@
                 fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
-                    updateFixedNodes();
                     updateDisconnectedNodes();
                     if (!$scope.showConnectionLines) {
                         $scope.data.d3ConnectionLines = [];
@@ -104,7 +90,6 @@
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                updateFixedNodes();
                 updateDisconnectedNodes();
                 fileHandling.setMapIsChanged(true);
                 getErrorConnectionLines();
@@ -174,11 +159,7 @@
          * Listens for click on Fix Nodes button (FIX_NODES: Nodes continue to contribute to stress)
          */
         $scope.$on('api.set_unmovable_points', function () {
-            $scope.fixSelectedNodes();
-            if ($rootScope.fixedArrayFlag == true) {
-                fileHandling.fixNodes($scope.data, $rootScope.fixedArray);
-            }
-
+            fileHandling.fixNodes($scope.fixSelectedNodes());
         });
 
         /**

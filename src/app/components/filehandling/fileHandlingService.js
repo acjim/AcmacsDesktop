@@ -45,7 +45,8 @@
         var projection_comment = null;
         var is_changed = false;
         var original_filename = "";
-        var fixedPoints = new Array();
+        var fixedPoints = [];
+        var disconnectedPoints = [];
         var fileHandler = {};
 
         /**
@@ -316,7 +317,7 @@
                 return relax_existing(mapData);
             }
 
-        }
+        };
 
 
         /**
@@ -379,7 +380,7 @@
             }, function (reason) {
                 return errorReason(reason);
             });
-        }
+        };
 
 
         function relax_existing(mapData) {
@@ -437,9 +438,11 @@
                 newData.layout[i] = {
                     "x": layout[0],
                     "y": layout[1],
+                    "fixed": _.contains(fixedPoints, i),
                     "id": i
                 };
             });
+
 
             oldMap.point_info.forEach(function (point_info, i) {
 
@@ -536,16 +539,27 @@
         };
 
         /**
+         * Checks if any nodes are fixed or disabled when clicking on disconnect or disable and vice verca
+         */
+        function areNodesFixedOrDisabled(fixedOrDisconnectedElements){
+            return !_.isUndefined(fixedOrDisconnectedElements) && fixedOrDisconnectedElements.length > 0;
+        }
+
+        /**
          * Calls api to disable nodes (without Stress) from a specific  map
          *
-         * @param mapData List
          * @param disabledPoints List
          */
-        fileHandler.fixNodes = function (mapData, disabledPoints) {
+        fileHandler.fixNodes = function (disabledPoints) {
             cfpLoadingBar.start();
 
+            if (areNodesFixedOrDisabled(disconnectedPoints)) {
+                dialogs.notify('Notice!', "The disconnect functionality can not be combined with the fix nodes one. Re-enable nodes or create a new map before fixing nodes.");
+                return;
+            }
+
             var disable_additional_params = {
-                projection: (projection == 0) ? projection : projection_comment,
+                projection: (projection === 0) ? projection : projection_comment,
                 unmovable: disabledPoints
             };
 
@@ -558,7 +572,7 @@
                 }, function (reason) {
                     return errorReason(reason);
                 });
-        }
+        };
 
         /**
          * Calls api to disable nodes from a specific  map
@@ -604,7 +618,7 @@
                     return errorReason(reason);
                 });
 
-        }
+        };
 
 
         /**
@@ -847,7 +861,7 @@
          */
         fileHandler.setFixedPoints = function (fixedNodes) {
             fixedPoints = fixedNodes;
-        }
+        };
 
         return fileHandler;
     }
