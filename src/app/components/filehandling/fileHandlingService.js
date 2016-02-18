@@ -516,22 +516,15 @@
 
         /**
          * Calls api to create a new file from an already existing one
-         *
-         * @param mapData
-         * @param disabledPoints
+         * @param selectedNodes {{sera: Array, antigens: Array}}
          */
-        fileHandler.createNewFileFromAlreadyExistingOne = function (mapData, antigens, sera) {
+        fileHandler.createNewFileFromAlreadyExistingOne = function (selectedNodes) {
             cfpLoadingBar.start();
 
             var remove_antigens_sera = {
-                antigens: antigens,
-                sera: sera
+                antigens: selectedNodes.antigens,
+                sera: selectedNodes.sera
             };
-
-            // @TODO: decide if this is necessary?
-            /*disabledPoints.sort(function (a, b) {
-                return b - a;
-            });*/
 
             api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
@@ -540,10 +533,10 @@
                 }, function (reason) {
                     return errorReason(reason);
                 });
-        }
+        };
 
         /**
-         * Calls api to disable nodes (without Sress) from a specific  map
+         * Calls api to disable nodes (without Stress) from a specific  map
          *
          * @param mapData List
          * @param disabledPoints List

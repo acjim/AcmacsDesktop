@@ -832,85 +832,63 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             }
 
             /**
-             * This function re-renders Serra Ids the right form after loading them from the backend
-             *
-             * @returns none
+             * This function re-renders sera Ids to the right form needed by the backend
+             * @param sera
+             * @returns {Array}
              */
-            function renderSerraIds() {
-                var tempArray=[];
-                var arrayofSerras =[];
-                d3.selectAll(".point").each(function (d) {
-                 if( d.style.shape=="box"){
-                     arrayofSerras.push(d.id);
-                 }
-                });
-                for (var i=0; i<$rootScope.newMapSeraArray.length; i++){
-                    var indexOfSerra = arrayofSerras.indexOf($rootScope.newMapSeraArray[i]);
-                    tempArray.push(indexOfSerra);
+            function renderSeraIDs(sera) {
+                var orderedSera=[];
+                var allSera =[];
 
-                }
-                $rootScope.newMapSeraArray= tempArray;
+                nodeGroup.each(function (d) {
+                    if (d.style.shape === "box") {
+                        allSera.push(d.id);
+                    }
+                });
+                _.forEach(sera, function(serum) {
+                    var indexOfSerra = allSera.indexOf(serum);
+                    orderedSera.push(indexOfSerra);
+                });
+                return orderedSera;
             }
 
             /**
-             * Gets a new Map  Selected Elements With Their Respective Data.
-             *
-             * @param mapDataPoints Object {} mapDataPoints should be assigned to scope.data before passing it to the function
-             * @param indexValue int
-             * @constructor a Data Array with the new Map Data
+             * Gets the data for a new map from selected nodes. Returns an array of nodes to remove in new map.
+             * @returns {{sera: Array, antigens: Array}}
              */
-            scope.getNewDataFromCurrentMap = function (mapDataPoints, indexValue) {
-                $rootScope.newMapAntigenArray = [];
-                $rootScope.newMapSeraArray = [];
-                $rootScope.newMapArrayflag = false;
-                var mapAntigenArray = [];
-                var mapSeraArray = [];
-                var length = mapDataPoints.layout.length;
-                for (var counter = 0; counter < length; counter++) {
-                    // Antigens Case
-                    if (mapDataPoints.layout[counter].style.shape == "circle") {
-                        mapAntigenArray.push(counter);
-                        $rootScope.newMapAntigenArray.push(counter);
-                    }
-                    //  sera case
-                    else {
-                        mapSeraArray.push(counter);
-                       $rootScope.newMapSeraArray.push(counter);
-                    }
+            scope.getSelectedFromCurrentMap = function () {
+                var selectedNodes = [],
+                    nodesToRemove = {
+                        sera: [],
+                        antigens: []
+                    };
+
+                // If no nodes are selected, create new map from all nodes
+                nodeGroup
+                    .filter(function (d) {
+                        return d.selected;
+                    })
+                    .each(function(d) {
+                        selectedNodes.push(d);
+                    });
+                if (_.isEmpty(selectedNodes)) {
+                    return nodesToRemove;
                 }
 
-                var flag = 0;
-                d3.selectAll(".selected").each(function (d) {
-                    flag = 1;
-                    if (d.style.shape == "circle") {
-                        var indexOfElement = mapAntigenArray.indexOf(d.id); // 1
-                        mapAntigenArray.splice(indexOfElement, 1);
-                    }
-                    else if (d.style.shape == "box") {
-                        var indexOfElement = mapSeraArray.indexOf(d.id); // 1
-                        mapSeraArray.splice(indexOfElement, 1);
-                    }
-                });
-                if (flag === 0) {
-                    dialogs.notify('Notice!', "No nodes selected to create new map, please select one or more nodes");
-                } else {
-                    for (var counter = 0; counter < mapAntigenArray.length; counter++) {
-                        var index = $rootScope.newMapAntigenArray.indexOf(mapAntigenArray[counter]);
-                        $rootScope.newMapAntigenArray.splice(index, 1);
-                    }
-                    for (var counter = 0; counter < mapSeraArray.length; counter++) {
-                        var index = $rootScope.newMapSeraArray.indexOf(mapSeraArray[counter]);
-                        $rootScope.newMapSeraArray.splice(index, 1);
-                    }
-
-                    if (indexValue === 1) {
-                        $rootScope.newMapSeraArray = mapSeraArray;
-                        $rootScope.newMapAntigenArray = mapAntigenArray;
-                    }
-                    renderSerraIds ();
-                    $rootScope.newMapArrayflag = true;
-                }
-
+                //If nodes are selected, take the non-selected ones and create an array with nodes to remove
+                nodeGroup
+                    .filter(function (d) {
+                        return !d.selected;
+                    })
+                    .each(function(d) {
+                        if (d.style.shape === "circle") {
+                            nodesToRemove.antigens.push(d.id);
+                        } else if (d.style.shape === "box") {
+                            nodesToRemove.sera.push(d.id);
+                        }
+                    });
+                nodesToRemove.sera = renderSeraIDs(nodesToRemove.sera);
+                return nodesToRemove;
             };
 
             /////////////////////// LISTENERS ///////////////////////

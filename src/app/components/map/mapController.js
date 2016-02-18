@@ -185,10 +185,7 @@
          * Watches for New Map Create from Selected Nodes
          */
         $scope.$on('map.create_from_selected', function () {
-            $scope.getNewDataFromCurrentMap($scope.data, 1);
-            if ($rootScope.newMapArrayflag == true) {
-                fileHandling.createNewFileFromAlreadyExistingOne($scope.data, $rootScope.newMapAntigenArray, $rootScope.newMapSeraArray);
-            }
+            fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
         });
 
         /**

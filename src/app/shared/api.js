@@ -748,7 +748,7 @@ angular.module('acjim.api', [])
             } catch (Error) {
                 return api.format_error_message(Error.message);
             }
-        }
+        };
 
         /**
          * Removes Removes antigens and sera from the chart. "antigens" and "sera" are list of indexes starting from 0.
@@ -789,7 +789,7 @@ angular.module('acjim.api', [])
             }
 
             return deferred.promise;
-        }
+        };
 
         /**
          * Create file path
