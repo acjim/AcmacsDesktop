@@ -35,11 +35,10 @@
             'cfpLoadingBar',
             '$timeout',
             '$document',
-            'dialogs',
             fileHandling
         ]);
 
-    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document, dialogs) {
+    function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document) {
 
         var acd1File = null;
         var projection = 0;
