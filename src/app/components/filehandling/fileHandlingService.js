@@ -858,6 +858,72 @@
             disconnectedPoints = disconnectedNodes;
         };
 
+        fileHandler.updateTable = function (data, maps) {
+            var tableData = data.table;
+            var version = tableData.version;
+            var info = tableData.info;
+            var table = tableData.table;
+            var table_modified = (data.modified != undefined) ? data.modified : false;
+            if (table_modified == false) {
+                Flash.create('danger', "Table has not been modified, unable to create new map");
+                return;
+            }
+            var additional_params = {
+                version: version,
+                table: table,
+                info: info,
+                remove_existing_projections: table_modified // cannot be false if the points have been modified.
+            };
+
+            return ;
+
+            api.update_table(additional_params, acd1File)
+                .then(function (output) {
+                    acd1File = output; // update acd1 file
+
+                    //@todo change to relax_existing() or check if relax is not necessary at all
+
+                    var relax_additional_params = {
+                        number_of_dimensions: 2,
+                        number_of_optimizations: 1,
+                        best_map: true
+                    };
+
+                    api.relax(relax_additional_params, acd1File)
+                        .then(function (filename) {
+                            acd1File = filename.updated_acd1;
+                            var output_json = filename.output_json;
+                            fs.readFile(output_json, 'utf8', function (err, data) {
+
+                                //TODO decide on which map should be updated: currently a new map is created
+                                var mapJsonData = JSON.parse(data);
+                                var mapData = {data: {map: '', stress: ''}, options: {}};
+                                mapData.data.map = mapJsonData.best_map;
+                                mapData.data.stress = mapJsonData.stresses[0];
+                                for (var prop in maps) {
+                                    var map = maps[prop];
+                                    break;
+                                }
+                                var id = maps.length;
+                                mapData.options = map.options;
+                                mapData.options.id = id;
+                                mapData.options.title = 'Map ' + (id + 1);
+                                maps.push(mapData);
+
+
+                                cfpLoadingBar.complete();
+
+                            });
+
+                        }, function (reason) {
+                            return errorReason(reason);
+                        });
+
+                }, function (reason) {
+                    return errorReason(reason);
+                });
+        }
+
         return fileHandler;
     }
 })();
