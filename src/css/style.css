@@ -191,3 +191,17 @@ html {
 .acmacs-random:before {
   content: "\64";
 }
+
+.acmacs-table-condensed > thead > tr > th,
+.acmacs-table-condensed > tbody > tr > th,
+.acmacs-table-condensed > tfoot > tr > th,
+.acmacs-table-condensed > thead > tr > td,
+.acmacs-table-condensed > tbody > tr > td,
+.acmacs-table-condensed > tfoot > tr > td {
+  padding: 0px;
+}
+
+.acmacs-borderless td, .acmacs-borderless th {
+  border: none;
+  border-top: none !important;
+}
