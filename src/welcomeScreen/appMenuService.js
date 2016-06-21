@@ -96,8 +96,8 @@
                     },
                     {
                         label: 'View', items: [
-                        {label: 'Toggle Toolbar', click: 'layout.toolbar'},
-                        {label: 'Toggle Table', click: 'layout.table'},
+                        {label: 'Toggle Toolbar', click: 'layout.toolbar', modifiers: osModifier + 'shift', key: 'm'},
+                        {label: 'Toggle Table', click: 'layout.table', modifiers: osModifier + 'shift', key: 't'},
                         {type: 'separator'}
                     ]
                     },

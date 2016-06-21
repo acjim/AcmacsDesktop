@@ -1,9 +1,9 @@
 <div class="tablePane">
-    <table class="table table-bordered table-hover table-condensed">
+    <table class="table table-hover acmacs-table-condensed acmacs-borderless">
         <thead>
         <tr>
             <th>Antigens/Sera</th>
-            <th ng-repeat="sera in data.table.table.sera"><span class="fullsize" tooltip-placement="bottom" uib-tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
+            <th style="text-align: right;" ng-repeat="sera in data.table.table.sera"><span class="fullsize" tooltip-placement="bottom" uib-tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
         </tr>
         </thead>
         <tbody>
@@ -12,7 +12,7 @@
             <td ng-repeat="antigen in data.table.table.antigens[$index]" width="10%">
                 <span class="fullsize" tooltip-placement="right" uib-tooltip="{{antigen}}">{{antigen}}</span>
             </td>
-            <td ng-repeat="titer in titer_list track by $index">
+            <td align="right" ng-repeat="titer in titer_list track by $index">
                 <span ng-dblclick="editItem($event, $parent.$index, $index)">{{titer}}</span>
             </td>
         </tr>
@@ -20,7 +20,7 @@
             <td ng-if="$first" ng-repeat="antigen in data.table.antigens[$index]" width="10%">
                 <span class="fullsize" tooltip-placement="right" uib-tooltip="{{antigen}}">{{antigen}}</span>
             </td>
-            <td ng-repeat="titer in titer_list track by $index">
+            <td align="right" ng-repeat="titer in titer_list track by $index">
                 <span ng-dblclick="editItem($event, $parent.$index, $index)">{{titer}}</span>
             </td>
         </tr>
