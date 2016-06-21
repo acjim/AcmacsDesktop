@@ -15,6 +15,7 @@
     "angular-dialog-service": "^5.2.11"
   },
   "resolutions": {
-    "angular": "1.4.9"
+    "angular": "1.4.9",
+    "angular-bootstrap": "^1.1.2"
   }
 }
