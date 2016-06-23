@@ -316,7 +316,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function enableSelectionTool() {
                 // Remove zoom
-                svg.on('.zoom', null);
+                svg.on('.zoom', null).on("dblclick.zoom", function(){
+                    $rootScope.$emit('map.zoomIn');
+                });
 
                 // Enable brush
                 brushGroup.select('.background').style('cursor', 'crosshair');
