@@ -337,7 +337,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 brushGroup.select('.background').style('cursor', 'move');
 
                 //Enable zoom
-                svg.call(zoom);
+                svg.call(zoom).on("dblclick.zoom", function(){
+                    $rootScope.$emit('map.zoomIn');
+                });
             }
 
             /**
