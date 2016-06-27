@@ -67,6 +67,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 connectionlineGroup,
                 labelsGroup;
 
+            $rootScope.zoomed_center = undefined;
+
             /**
              * (Re)draws the d3 map without removing the data points.
              * Redefines x and y scales and reapplies them to the zoom, nodes and brush.
@@ -317,6 +319,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             function enableSelectionTool() {
                 // Remove zoom
                 svg.on('.zoom', null).on("dblclick.zoom", function(){
+                    $rootScope.zoomed_center = d3.mouse(this);
                     $rootScope.$emit('map.zoomIn');
                 });
 
@@ -340,6 +343,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 //Enable zoom
                 svg.call(zoom).on("dblclick.zoom", function(){
+                    $rootScope.zoomed_center = d3.mouse(this);
                     $rootScope.$emit('map.zoomIn');
                 });
             }
@@ -496,6 +500,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var center0 = [width / 2, height / 2],
                     translate0 = zoom.translate(),
                     coordinates0 = coordinates(center0);
+
+                if($rootScope.zoomed_center != undefined) {
+                    coordinates0 = coordinates($rootScope.zoomed_center);
+                    $rootScope.zoomed_center = undefined;
+                }
 
                 zoom.scale(zoom.scale() * Math.pow(2, +direction));
 
