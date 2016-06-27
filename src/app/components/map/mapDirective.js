@@ -236,7 +236,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .style("font-size", "10px")
                     .style("fill", "#330066")
                     .text(function (d) {
-                        return d.name;
+                        console.log(d);
+                        if (d.style.shape=="box") {
+                            var abbreviation = d.name.slice(0, 2) + "/" + d.name.slice(d.name.length - 2, d.name.length);
+                            return abbreviation;
+                        }
+                        else{
+                            return d.name;
+                        }
                     });
                 labelsGroup.exit().remove();
 
