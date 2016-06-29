@@ -236,7 +236,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .style("font-size", "10px")
                     .style("fill", "#330066")
                     .text(function (d) {
-                        console.log(d);
                         if (d.style.shape=="box") {
                             return d.name;
                         }
