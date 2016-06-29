@@ -238,8 +238,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .text(function (d) {
                         console.log(d);
                         if (d.style.shape=="box") {
-                            var abbreviation = d.name.slice(0, 2) + "/" + d.name.slice(d.name.length - 2, d.name.length);
-                            return abbreviation;
+                            return d.name;
                         }
                         else{
                             return d.name;
