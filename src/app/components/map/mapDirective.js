@@ -56,7 +56,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 boxSize = 1,
                 nodesFixed = false,
                 nodesDisconnected = false,
-                shiftKey;
+                shiftKey,
+                abbrevArr = [];
 
             // d3 groups
             var boxGroup,
@@ -237,12 +238,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .style("fill", "#330066")
                     .text(function (d) {
                         if (d.style.shape=="box") {
+                            var abbrev = d.name.slice(0, 2) + "" + d.name.slice(d.name.length - 2, d.name.length);
+                            abbrevArr.push(abbrev);
                             return d.name;
                         }
                         else{
                             return d.name;
                         }
                     });
+                abbreviateSerraNames();
                 labelsGroup.exit().remove();
 
 
@@ -806,8 +810,22 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 } else {
                     d3.selectAll(".text").style("visibility", "hidden");
                 }
-            }
+            }/**
+             *Abbreviating the values of seras when data is ready:
+             * Unfortunatly the only way to do it by acting directely on the dom
+             * as Angular.Js cannot process them as data is not ready at table initialization time
 
+             * @returns none
+             */
+            function abbreviateSerraNames() {
+                var children=  document.getElementById("abbrev");
+                for(var i=0; i<abbrevArr.length; i++) {
+                    var newel = document.createElement('td');
+                    newel.innerHTML = abbrevArr[i];
+                    newel.style.textAlign="right";
+                    children.appendChild(newel);
+                }
+            }
             /**
              * This function re-renders sera Ids to the right form needed by the backend
              * @param sera
