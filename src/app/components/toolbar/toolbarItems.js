@@ -41,7 +41,8 @@
             MAP_TOOLS: 10,
             FIX_NODES:13,
             NEW_MAP_FROM_SELECTED: 16,
-            RANDOMIZE_NODES: 17
+            RANDOMIZE_NODES: 17,
+            FLIP_MAP_LEFT: 18,
 
         };
     }
