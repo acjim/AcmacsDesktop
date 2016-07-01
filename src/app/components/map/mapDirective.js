@@ -86,8 +86,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                // Scale
-                xScale = d3.scale.linear().domain([0, width]).range([0, width]);
+                if (flipMapRight==1){
+                    indentationX = width*1.2/100;
+                    indentationY=-width;
+                    //var indentationY = width*1.2/100;
+                }
+                else{
+                    indentationX = 0;
+                    indentationY = width;
+                    // indentationY = (height*1.8)/100;
+                    // indentationY= -height;
+                }
+
+                // Scaling
+                xScale = d3.scale.linear().domain([0, width]).range([indentationX, indentationY]);
                 yScale = d3.scale.linear().domain([0, height]).range([0, height]);
 
                 // Zoom
