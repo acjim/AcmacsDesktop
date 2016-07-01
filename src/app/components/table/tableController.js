@@ -24,16 +24,20 @@
 var app = angular.module('acjim.table', []);
 
 app.controller('tableCtrl',  ['$rootScope', '$scope', function ($rootScope, $scope) {
+
 }])
+
 
     .directive('acTable', function () {
         return {
             controller: 'tableCtrl',
             controllerAs: 'data',
             templateUrl: './app/components/table/tableView.html',
-            restrict: 'E',
+            restrict: 'AEC',
             bindToController: {
                 table: '='
             }
         }
-    });
+
+        }
+    );
