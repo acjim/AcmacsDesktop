@@ -58,6 +58,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 nodesDisconnected = false,
                 seraFlag= 0,
                 shiftKey,
+                flipMapRight= 0,
+                indentationX= 0,
+                indentationY=0,
                 abbrevArr = [];
 
             // d3 groups
