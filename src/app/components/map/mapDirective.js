@@ -475,8 +475,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     })
                     .attr("transform", function (d) {
                         if (!d.fixed && !d.disconnected) {
-                            d.x += dx / zoom.scale();
                             d.y += dy / zoom.scale();
+                            if(flipMapRight==1){
+                                d.x -= dx / zoom.scale();
+
+                            } else if (flipMapRight==0){
+                                d.x += dx / zoom.scale();
+                            }
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                         } else {
                             d.x += 0 / zoom.scale();
