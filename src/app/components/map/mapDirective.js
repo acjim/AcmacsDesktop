@@ -939,7 +939,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
                 scope.pointsMoved = true;
             });
-
+            /**
+             * Listens for event to Flip Map
+             */
+            $rootScope.$on('map.flip_map_left', function () {
+                if (flipMapRight==0){
+                    flipMapRight=1;
+                    renderWithoutData();
+                }
+                else if (flipMapRight==1){
+                    flipMapRight=0;
+                    renderWithoutData();
+                }
+            });
 
             /**
              * Watches for a tool change
