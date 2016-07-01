@@ -58,6 +58,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 nodesDisconnected = false,
                 seraFlag= 0,
                 shiftKey,
+                flipMapRight= 0,
+                indentationX= 0,
+                indentationY=0,
                 abbrevArr = [];
 
             // d3 groups
@@ -83,8 +86,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                // Scale
-                xScale = d3.scale.linear().domain([0, width]).range([0, width]);
+                if (flipMapRight==1){
+                    indentationX = width*1.2/100;
+                    indentationY=-width;
+                    //var indentationY = width*1.2/100;
+                }
+                else{
+                    indentationX = 0;
+                    indentationY = width;
+                    // indentationY = (height*1.8)/100;
+                    // indentationY= -height;
+                }
+
+                // Scaling
+                xScale = d3.scale.linear().domain([0, width]).range([indentationX, indentationY]);
                 yScale = d3.scale.linear().domain([0, height]).range([0, height]);
 
                 // Zoom
@@ -460,8 +475,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     })
                     .attr("transform", function (d) {
                         if (!d.fixed && !d.disconnected) {
-                            d.x += dx / zoom.scale();
                             d.y += dy / zoom.scale();
+                            if(flipMapRight==1){
+                                d.x -= dx / zoom.scale();
+
+                            } else if (flipMapRight==0){
+                                d.x += dx / zoom.scale();
+                            }
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                         } else {
                             d.x += 0 / zoom.scale();
@@ -939,7 +959,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
                 scope.pointsMoved = true;
             });
-
+            /**
+             * Listens for event to Flip Map
+             */
+            $rootScope.$on('map.flip_map_left', function () {
+                if (flipMapRight==0){
+                    flipMapRight=1;
+                    renderWithoutData();
+                }
+                else if (flipMapRight==1){
+                    flipMapRight=0;
+                    renderWithoutData();
+                }
+            });
 
             /**
              * Watches for a tool change
