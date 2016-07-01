@@ -56,6 +56,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 boxSize = 1,
                 nodesFixed = false,
                 nodesDisconnected = false,
+                seraFlag= 0,
                 shiftKey,
                 abbrevArr = [];
 
@@ -818,13 +819,18 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns none
              */
             function abbreviateSerraNames() {
-                var children=  document.getElementById("abbrev");
-                for(var i=0; i<abbrevArr.length; i++) {
-                    var newel = document.createElement('td');
-                    newel.innerHTML = abbrevArr[i];
-                    newel.style.textAlign="right";
-                    children.appendChild(newel);
+                if (seraFlag==0){
+                    var children=  document.getElementById("abbrev");
+                    for(var i=0; i<abbrevArr.length; i++) {
+                        var newel = document.createElement('td');
+                        newel.innerHTML = abbrevArr[i];
+                        newel.style.textAlign="right";
+                        newel.style.fontWeight="bold";
+                        children.appendChild(newel);
+                    }
+                    seraFlag=1;
                 }
+
             }
             /**
              * This function re-renders sera Ids to the right form needed by the backend
