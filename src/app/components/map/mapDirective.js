@@ -59,8 +59,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 seraFlag= 0,
                 shiftKey,
                 flipMapRight= 0,
-                indentationX= 0,
-                indentationY=0,
+                flipMapDown = 0,
+                indentationWidthX= 0,
+                indentationWidthY=0,
+                indentationHeightX = 0,
+                indentationHeightY = 0,
                 abbrevArr = [];
 
             // d3 groups
@@ -87,20 +90,31 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 height = getContainerHeight();
 
                 if (flipMapRight==1){
-                    indentationX = width*1.2/100;
-                    indentationY=-width;
-                    //var indentationY = width*1.2/100;
+                    indentationWidthX = width*1.2/100;
+                    indentationWidthY=-width;
+                    //var indentationWidthY = width*1.2/100;
                 }
                 else{
-                    indentationX = 0;
-                    indentationY = width;
-                    // indentationY = (height*1.8)/100;
-                    // indentationY= -height;
+                    indentationWidthX = 0;
+                    indentationWidthY = width;
+                    // indentationWidthY = (height*1.8)/100;
+                    // indentationWidthY= -height;
+                }
+                if (flipMapDown==1){
+                    indentationHeightX = height*1.8/100;
+                    indentationHeightY=-height;
+                    //var indentationWidthY = width*1.2/100;
+                }
+                else{
+                    indentationHeightX = 0;
+                    indentationHeightY = height;
+                    // indentationWidthY = (height*1.8)/100;
+                    // indentationWidthY= -height;
                 }
 
                 // Scaling
-                xScale = d3.scale.linear().domain([0, width]).range([indentationX, indentationY]);
-                yScale = d3.scale.linear().domain([0, height]).range([0, height]);
+                xScale = d3.scale.linear().domain([0, width]).range([indentationWidthX, indentationWidthY]);
+                yScale = d3.scale.linear().domain([0, height]).range([indentationHeightX, indentationHeightY]);
 
                 // Zoom
                 zoom = d3.behavior.zoom()
@@ -475,13 +489,23 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     })
                     .attr("transform", function (d) {
                         if (!d.fixed && !d.disconnected) {
-                            d.y += dy / zoom.scale();
-                            if(flipMapRight==1){
+                            if(flipMapRight==1&& flipMapDown==0){
                                 d.x -= dx / zoom.scale();
+                                d.y += dy / zoom.scale();
 
-                            } else if (flipMapRight==0){
+                            } else if (flipMapRight==0 && flipMapDown==0){
                                 d.x += dx / zoom.scale();
+                                d.y += dy / zoom.scale();
                             }
+                            else if (flipMapRight==0 && flipMapDown==1){
+                                d.x += dx / zoom.scale();
+                                d.y -= dy / zoom.scale();
+                            }
+                            else if (flipMapRight==1&& flipMapDown==1){
+                                d.x -= dx / zoom.scale();
+                                d.y -= dy / zoom.scale();
+                            }
+
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                         } else {
                             d.x += 0 / zoom.scale();
@@ -493,7 +517,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 if (d3.event.preventDefault) {
                     d3.event.preventDefault();
                 }
-
                 scope.pointsMoved = true;
             }
 
@@ -960,7 +983,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 scope.pointsMoved = true;
             });
             /**
-             * Listens for event to Flip Map
+             * Listens for event to Flip Map Vertically
              */
             $rootScope.$on('map.flip_map_left', function () {
                 if (flipMapRight==0){
@@ -969,6 +992,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }
                 else if (flipMapRight==1){
                     flipMapRight=0;
+                    renderWithoutData();
+                }
+            });
+            
+            /**
+             * Listens for event to Flip Map Horizentally
+             */
+            $rootScope.$on('map.flip_map_horizental', function () {
+                if (flipMapDown==0){
+                    flipMapDown=1;
+                    renderWithoutData();
+                }
+                else if (flipMapDown==1){
+                    flipMapDown=0;
                     renderWithoutData();
                 }
             });
