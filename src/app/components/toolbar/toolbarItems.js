@@ -44,6 +44,7 @@
             RANDOMIZE_NODES: 17,
             FLIP_MAP_LEFT: 18,
             FLIP_MAP_HORIZENTAL: 19,
+            UPDATE_TABLE: 20
 
         };
     }

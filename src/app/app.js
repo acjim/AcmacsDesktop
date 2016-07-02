@@ -192,6 +192,14 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('map.flip_map_horizental');
             }
+        },
+        {
+            id: toolbarItems.UPDATE_TABLE,
+            caption: 'Update table',
+            icon: 'icon glyphicon glyphicon-pencil',
+            callback: function () {
+                $rootScope.$broadcast('api.update_table');
+            }
         }
     ]);
 
