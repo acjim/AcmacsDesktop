@@ -193,7 +193,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('api.update_table');
             }
-
+        }
     ]);
 
 });
