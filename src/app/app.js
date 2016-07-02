@@ -180,10 +180,25 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             }
         }, {
             id: toolbarItems.FLIP_MAP_LEFT,
-            caption: 'FLIP MAP',
-            icon: 'icon acmacs-windows',
+            caption: 'FLip Map Vertically',
+            icon: 'glyphicon glyphicon-transfer',
             callback: function () {
                 $rootScope.$broadcast('map.flip_map_left');
+            }
+        }, {
+            id: toolbarItems.FLIP_MAP_HORIZENTAL,
+            caption: 'FLip Map',
+            icon: 'glyphicon glyphicon-sort',
+            callback: function () {
+                $rootScope.$broadcast('map.flip_map_horizental');
+            }
+        },
+        {
+            id: toolbarItems.UPDATE_TABLE,
+            caption: 'Update table',
+            icon: 'icon glyphicon glyphicon-pencil',
+            callback: function () {
+                $rootScope.$broadcast('api.update_table');
             }
         }
     ]);

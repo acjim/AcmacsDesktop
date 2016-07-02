@@ -23,21 +23,41 @@
 
 var app = angular.module('acjim.table', []);
 
-app.controller('tableCtrl',  ['$rootScope', '$scope', function ($rootScope, $scope) {
+app.controller('tableCtrl', ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
-}])
+        $scope.$on('api.update_table', function () {
+            fileHandling.updateTable($scope);
+        });
 
-
+    }])
     .directive('acTable', function () {
         return {
             controller: 'tableCtrl',
             controllerAs: 'data',
             templateUrl: './app/components/table/tableView.html',
+            link: function (scope, iElement) {
+                scope.editItem = function (obj, parent_index, index) {
+                    obj.target.setAttribute("contenteditable", true);
+                    obj.target.focus();
+                    var element = angular.element(event.currentTarget);
+                    element.bind("keydown keypress", function (event) {
+                        if (event.which === 13 || event.which === 27) {
+                            obj.target.setAttribute("contenteditable", false);
+                            event.preventDefault();
+                            if (scope.data.table.table.titers.titers_list_of_list) {
+                                scope.data.table.table.titers.titers_list_of_list[parent_index][index] = element.text();
+                            } else if (scope.data.table.table.titers.titers_list_of_dict) {
+                                scope.data.table.table.titers.titers_list_of_dict[parent_index][index] = element.text();
+                            }
+                            scope.data.modified = true;
+                            scope.$apply();
+                        }
+                    });
+                };
+            },
             restrict: 'AEC',
             bindToController: {
                 table: '='
             }
         }
-
-        }
-    );
+    });
