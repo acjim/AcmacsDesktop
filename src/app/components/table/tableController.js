@@ -55,7 +55,7 @@ app.controller('tableCtrl', ['$rootScope', '$scope', 'fileHandling', function ($
                     });
                 };
             },
-            restrict: 'E',
+            restrict: 'AEC',
             bindToController: {
                 table: '='
             }

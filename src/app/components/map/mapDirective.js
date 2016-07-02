@@ -56,7 +56,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 boxSize = 1,
                 nodesFixed = false,
                 nodesDisconnected = false,
-                shiftKey;
+                seraFlag= 0,
+                shiftKey,
+                flipMapRight= 0,
+                indentationX= 0,
+                indentationY=0,
+                abbrevArr = [];
 
             // d3 groups
             var boxGroup,
@@ -66,6 +71,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 errorlineGroup,
                 connectionlineGroup,
                 labelsGroup;
+
+            $rootScope.zoomed_center = undefined;
 
             /**
              * (Re)draws the d3 map without removing the data points.
@@ -79,8 +86,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 width = getContainerWidth();
                 height = getContainerHeight();
 
-                // Scale
-                xScale = d3.scale.linear().domain([0, width]).range([0, width]);
+                if (flipMapRight==1){
+                    indentationX = width*1.2/100;
+                    indentationY=-width;
+                    //var indentationY = width*1.2/100;
+                }
+                else{
+                    indentationX = 0;
+                    indentationY = width;
+                    // indentationY = (height*1.8)/100;
+                    // indentationY= -height;
+                }
+
+                // Scaling
+                xScale = d3.scale.linear().domain([0, width]).range([indentationX, indentationY]);
                 yScale = d3.scale.linear().domain([0, height]).range([0, height]);
 
                 // Zoom
@@ -234,8 +253,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .style("font-size", "10px")
                     .style("fill", "#330066")
                     .text(function (d) {
-                        return d.name;
+                        if (d.style.shape=="box") {
+                            var abbrev = d.name.slice(0, 2) + "" + d.name.slice(d.name.length - 2, d.name.length);
+                            abbrevArr.push(abbrev);
+                            return d.name;
+                        }
+                        else{
+                            return d.name;
+                        }
                     });
+                abbreviateSerraNames();
                 labelsGroup.exit().remove();
 
 
@@ -316,7 +343,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function enableSelectionTool() {
                 // Remove zoom
-                svg.on('.zoom', null);
+                svg.on('.zoom', null).on("dblclick.zoom", function(){
+                    $rootScope.zoomed_center = d3.mouse(this);
+                    $rootScope.$emit('map.zoomIn');
+                });
 
                 // Enable brush
                 brushGroup.select('.background').style('cursor', 'crosshair');
@@ -337,7 +367,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 brushGroup.select('.background').style('cursor', 'move');
 
                 //Enable zoom
-                svg.call(zoom);
+                svg.call(zoom).on("dblclick.zoom", function(){
+                    $rootScope.zoomed_center = d3.mouse(this);
+                    $rootScope.$emit('map.zoomIn');
+                });
             }
 
             /**
@@ -442,8 +475,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     })
                     .attr("transform", function (d) {
                         if (!d.fixed && !d.disconnected) {
-                            d.x += dx / zoom.scale();
                             d.y += dy / zoom.scale();
+                            if(flipMapRight==1){
+                                d.x -= dx / zoom.scale();
+
+                            } else if (flipMapRight==0){
+                                d.x += dx / zoom.scale();
+                            }
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                         } else {
                             d.x += 0 / zoom.scale();
@@ -492,6 +530,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var center0 = [width / 2, height / 2],
                     translate0 = zoom.translate(),
                     coordinates0 = coordinates(center0);
+
+                if($rootScope.zoomed_center != undefined) {
+                    coordinates0 = coordinates($rootScope.zoomed_center);
+                    $rootScope.zoomed_center = undefined;
+                }
 
                 zoom.scale(zoom.scale() * Math.pow(2, +direction));
 
@@ -788,8 +831,27 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 } else {
                     d3.selectAll(".text").style("visibility", "hidden");
                 }
-            }
+            }/**
+             *Abbreviating the values of seras when data is ready:
+             * Unfortunatly the only way to do it by acting directely on the dom
+             * as Angular.Js cannot process them as data is not ready at table initialization time
 
+             * @returns none
+             */
+            function abbreviateSerraNames() {
+                if (seraFlag==0){
+                    var children=  document.getElementById("abbrev");
+                    for(var i=0; i<abbrevArr.length; i++) {
+                        var newel = document.createElement('td');
+                        newel.innerHTML = abbrevArr[i];
+                        newel.style.textAlign="right";
+                        newel.style.fontWeight="bold";
+                        children.appendChild(newel);
+                    }
+                    seraFlag=1;
+                }
+
+            }
             /**
              * This function re-renders sera Ids to the right form needed by the backend
              * @param sera
@@ -897,7 +959,19 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
                 scope.pointsMoved = true;
             });
-
+            /**
+             * Listens for event to Flip Map
+             */
+            $rootScope.$on('map.flip_map_left', function () {
+                if (flipMapRight==0){
+                    flipMapRight=1;
+                    renderWithoutData();
+                }
+                else if (flipMapRight==1){
+                    flipMapRight=0;
+                    renderWithoutData();
+                }
+            });
 
             /**
              * Watches for a tool change

@@ -42,7 +42,8 @@
             FIX_NODES:13,
             NEW_MAP_FROM_SELECTED: 16,
             RANDOMIZE_NODES: 17,
-            UPDATE_TABLE: 18
+            FLIP_MAP_LEFT: 18,
+            UPDATE_TABLE: 19
 
         };
     }

@@ -178,6 +178,13 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('map.create_from_selected');
             }
+        }, {
+            id: toolbarItems.FLIP_MAP_LEFT,
+            caption: 'FLIP MAP',
+            icon: 'icon acmacs-windows',
+            callback: function () {
+                $rootScope.$broadcast('map.flip_map_left');
+            }
         },
         {
             id: toolbarItems.UPDATE_TABLE,
@@ -186,7 +193,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('api.update_table');
             }
-        }
+
     ]);
 
 });
