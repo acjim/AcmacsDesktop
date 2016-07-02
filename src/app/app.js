@@ -180,10 +180,17 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             }
         }, {
             id: toolbarItems.FLIP_MAP_LEFT,
-            caption: 'FLIP MAP',
+            caption: 'FLip Map Vertically',
             icon: 'icon acmacs-windows',
             callback: function () {
                 $rootScope.$broadcast('map.flip_map_left');
+            }
+        }, {
+            id: toolbarItems.FLIP_MAP_HORIZENTAL,
+            caption: 'FLip Map',
+            icon: 'icon acmacs-windows',
+            callback: function () {
+                $rootScope.$broadcast('map.flip_map_horizental');
             }
         }
     ]);
