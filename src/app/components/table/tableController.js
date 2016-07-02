@@ -26,7 +26,7 @@ var app = angular.module('acjim.table', []);
 app.controller('tableCtrl', ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
         $scope.$on('api.update_table', function () {
-            fileHandling.updateTable($scope.data, $scope.openMaps);
+            fileHandling.updateTable($scope);
         });
 
     }])
