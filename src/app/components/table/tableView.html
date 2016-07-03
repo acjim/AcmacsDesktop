@@ -3,13 +3,14 @@
         <thead>
         <tr id="abbrev">
             <th>Antigens/Sera</th>
+            <th style="text-align: right;" ng-repeat="sera in data.table.table.sera"><span  ng-click="antigenColumnClick(sera.name)" class="fullsize" tooltip-placement="bottom" uib-tooltip="{{sera.name || sera.raw_name}}">{{sera.name || sera.raw_name  | limitTo: 4}}</span></th>
         </tr>
         </thead>
         <tbody>
         <!-- http://jsfiddle.net/7MhLd/1266/ -->
         <tr ng-if="data.table.table.titers.titers_list_of_list" ng-repeat="titer_list in data.table.table.titers.titers_list_of_list track by $index">
             <td ng-repeat="antigen in data.table.table.antigens[$index]" width="10%">
-                <span class="fullsize" tooltip-placement="right" uib-tooltip="{{antigen}}">{{antigen}}</span>
+                <span  ng-class="{tblantigenhighlight: antigen === clickedAntigen}" class="fullsize" tooltip-placement="right" ng-click="antigenColumnClick(antigen)" uib-tooltip="{{antigen}}">{{antigen}}</span>
             </td>
             <td align="right" ng-repeat="titer in titer_list track by $index">
                 <span ng-dblclick="editItem($event, $parent.$index, $index)">{{titer}}</span>
