@@ -110,6 +110,10 @@ html {
   margin-top: 5px;
 }
 
+.tblantigenhighlight {
+  background-color: #d4d4d4;
+}
+
 /*********** Toolbar Icon Font **************/
 
 .menubar .btn {

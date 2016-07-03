@@ -25,6 +25,15 @@ var app = angular.module('acjim.table', []);
 
 app.controller('tableCtrl', ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
+        $scope.clickedAntigen = '';
+
+        $scope.antigenColumnClick = function (antigen) {
+            $scope.clickedAntigen = antigen;
+            $rootScope.$broadcast('clicked-table', {
+                antigens: antigen // send antigen
+            });
+        };
+
         $scope.$on('api.update_table', function () {
             fileHandling.updateTable($scope);
         });

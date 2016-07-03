@@ -166,7 +166,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 nodeGroup = nodeGroup.data(data.layout);
 
                 nodeGroup.enter().append("path")
-                    .attr("class", "point");
+                    .attr("class", "point")
+                    .attr("id", function(d) {
+                        return 'full-name-'+d.name;
+                    })
+                    .attr("full_name", function(d){
+                        return d.name;
+                    });
 
                 //Update
                 nodeGroup
@@ -936,6 +942,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             };
 
             /////////////////////// LISTENERS ///////////////////////
+
+            /**
+             * Table Antigen and Sera  row click event
+             */
+            $rootScope.$on('clicked-table', function (event, data) {
+                var targetElem = document.getElementById('full-name-' + data.antigens);
+                d3.selectAll('.point').classed("selected", false);
+                d3.select(targetElem).classed("selected", true);
+            });
 
             /**
              * Handles zoom events
