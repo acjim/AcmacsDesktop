@@ -59,7 +59,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 seraFlag= 0,
                 shiftKey,
                 commandKey,
-                commandKeyFlag = false,
                 flipMapRight= 0,
                 flipMapDown = 0,
                 indentationWidthX= 0,
@@ -458,7 +457,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .y(yScale)
                     .on("brushstart", function () {
                         nodeGroup.each(function (d) {
-                            d.previouslySelected = (shiftKey && d.selected) || (commandKeyFlag && d.selected);
+                            d.previouslySelected = (shiftKey && d.selected) || (commandKey && d.selected);
                         });
                     })
                     .on("brush", function () {
@@ -768,6 +767,9 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         break; // RIGHT
                 }
                 shiftKey = d3.event.shiftKey;
+                if (d3.event.keyCode==91)
+                    commandKey= true;
+
             }
 
             /**
@@ -775,15 +777,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function keyup() {
                 shiftKey = d3.event.shiftKey;
-                commandKey = d3.event.metaKey;
-                if (commandKey){
-                    if (!commandKeyFlag){
-                        commandKeyFlag=true;
-                    }
-                    else {
-                        commandKeyFlag=false;
-                    }
-                }
+                commandKey = false;
             }
 
 
