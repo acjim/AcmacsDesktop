@@ -23,6 +23,18 @@
 
 var app = angular.module('acjim.table', []);
 
+/**
+ * Filter which Abbreviates the values of seras
+ *
+ * @returns abbrev abbreviated Sera names
+ */
+app.filter('abbreviateSeraNames', function() {
+    return function(input) {
+        var abbrev = input.slice(0, 2) + "" + input.slice(input.length - 2, input.length);
+        return abbrev;
+    }
+});
+
 app.controller('tableCtrl', ['$rootScope', '$scope', 'fileHandling', function ($rootScope, $scope, fileHandling) {
 
         $scope.clickedAntigen = '';
