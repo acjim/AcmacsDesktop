@@ -3,7 +3,7 @@
         <thead>
         <tr id="abbrev">
             <th>Antigens/Sera</th>
-            <th style="text-align: right;" ng-repeat="sera in data.table.table.sera"><span  ng-click="antigenColumnClick(sera.name)" class="fullsize" tooltip-placement="bottom" uib-tooltip="{{sera.name || sera.raw_name}}">{{sera.name  | abbreviateSeraNames}}</span></th>
+            <th style="text-align: right;" ng-repeat="sera in data.table.table.sera"><span  ng-click="antigenColumnClick(sera.name)" class="fullsize" tooltip-placement="bottom" uib-tooltip="{{sera.name || sera.raw_name}}">{{(sera.name || sera.raw_name)  | abbreviateSeraNames}}</span></th>
         </tr>
         </thead>
         <tbody>
