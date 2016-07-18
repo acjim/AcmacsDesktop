@@ -71,12 +71,14 @@
         /**
          * Gets new Projection before calling Errorlines from API. This is necessary when nodes where moved, pushes information of new coordinates to backend.
          */
-        function getProjectionBeforeErrorLines() {
+        function getProjectionBeforeErrorLines(avoidErrorLines) {
             fileHandling.getNewProjection($scope.data).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 fileHandling.setMapIsChanged(true);
-                getErrorConnectionLines();
+                if(!avoidErrorLines){
+                    getErrorConnectionLines();
+                }
             });
         }
 
@@ -106,7 +108,7 @@
             }
             $scope.showConnectionLines = item.active;
             if ($scope.pointsMoved) {
-                getProjectionBeforeErrorLines()
+                getProjectionBeforeErrorLines();
             } else {
                 getErrorConnectionLines();
             }
@@ -152,8 +154,8 @@
         /**
          * Watches for moved nodes while lines(error/connection) are displayed
          */
-        $scope.$on('map.nudgeTriggeredOnLine', function () {
-            getProjectionBeforeErrorLines();
+        $scope.$on('map.nudgeTriggeredOnLine', function (avoidErrorLines) {
+            getProjectionBeforeErrorLines(avoidErrorLines);
         });
 
         /**
