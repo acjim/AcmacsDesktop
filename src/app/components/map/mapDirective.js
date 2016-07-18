@@ -27,7 +27,7 @@ var app = angular.module('acjim.map');
 /*
  * D3 directive
  */
-app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', 'dialogs', function ($rootScope, $window, $timeout, toolbar, toolbarItems, dialogs) {
+app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbarItems', 'dialogs','cfpLoadingBar', function ($rootScope, $window, $timeout, toolbar, toolbarItems, dialogs,cfpLoadingBar) {
     return {
         restrict: 'A',
         scope: {
@@ -965,6 +965,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             $rootScope.$on('map.randomize', function () {
                 var data = scope.data;
+                var avoidErrorLineCalculation = true;
+                // NOTE: Boolean Value is not referenced but copied
+                var connection_visible = scope.showConnectionLines || false;
+                var error_visible  =  scope.showErrorLines || false;
+                if (connection_visible){
+                    scope.$emit('map.showConnectionLines');
+                }
+                if (error_visible){
+                    scope.$emit('map.showErrorLines');
+                }
                 _.forEach(data.layout, function (d) {
                     if (!d.fixed && !d.disconnected) {
                         d.x = (Math.random() * (dataExtentX[1] * 1.3 - dataExtentX[0] * 0.9) + dataExtentX[0] * 0.9);
@@ -972,6 +982,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                 });
                 scope.pointsMoved = true;
+                if (connection_visible){
+                    scope.$emit('map.showConnectionLines');
+                }
+                if (error_visible){
+                    scope.$emit('map.showErrorLines');
+                }
+                if(!connection_visible && !error_visible){
+                    scope.$emit('map.nudgeTriggeredOnLine',avoidErrorLineCalculation);
+                }
+                cfpLoadingBar.complete();
             });
             /**
              * Listens for event to Flip Map Vertically
@@ -986,7 +1006,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     renderWithoutData();
                 }
             });
-            
+
             /**
              * Listens for event to Flip Map Horizentally
              */
