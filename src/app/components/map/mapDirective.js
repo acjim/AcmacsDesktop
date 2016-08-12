@@ -90,8 +90,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 height = getContainerHeight();
 
                 if (flipMapRight==1){
-                    indentationWidthX = width*1.2/100;
-                    indentationWidthY=-width;
+
                     //var indentationWidthY = width*1.2/100;
                 }
                 else{
@@ -101,8 +100,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     // indentationWidthY= -height;
                 }
                 if (flipMapDown==1){
-                    indentationHeightX = height*1.8/100;
-                    indentationHeightY=-height;
+
                     //var indentationWidthY = width*1.2/100;
                 }
                 else{
@@ -1011,14 +1009,37 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Listens for event to Flip Map Horizentally
              */
             $rootScope.$on('map.flip_map_horizental', function () {
-                if (flipMapDown==0){
-                    flipMapDown=1;
-                    renderWithoutData();
-                }
-                else if (flipMapDown==1){
-                    flipMapDown=0;
-                    renderWithoutData();
-                }
+                var i=0;
+                var min;
+                var max;
+                var center;
+                d3.selectAll(".selected").each(function (d) {
+                    if (i==0){
+                        min = d.x;
+                        max = d.x;
+                        console.log(d.x);
+                    }
+                    else{
+                       if (min> d.x){
+                           min = d.x;
+                       }
+                       if (max< d.x){
+                           max = d.x;
+                       }
+                        console.log(d.x);
+                    }
+                    i++;
+                });
+                console.log(min);
+                console.log(max);
+                center= (min+max)/2;
+
+                d3.selectAll(".selected").each(function (d) {
+                    var z=  center- d.x;
+                    d.x =z+ center;
+                });
+
+
             });
 
             /**
