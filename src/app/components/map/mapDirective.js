@@ -549,7 +549,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var center0 = [width / 2, height / 2],
                     translate0 = zoom.translate(),
                     coordinates0 = coordinates(center0);
-
                 if($rootScope.zoomed_center != undefined) {
                     coordinates0 = coordinates($rootScope.zoomed_center);
                     $rootScope.zoomed_center = undefined;
