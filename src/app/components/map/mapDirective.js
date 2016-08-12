@@ -616,6 +616,22 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             function selectSera() {
                 select("box");
             }
+            /**
+             * Checks if at least one node is selected
+             * @returns {boolean}
+             */
+            function isSelected(){
+                var i=0;
+                d3.selectAll(".selected").each(function (d) {
+                    i++;
+                });
+                if (i==0){
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
 
             /**
              * Selects only nodes with the specified shape. Deselects all others.
@@ -855,6 +871,59 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     d3.selectAll(".text").style("visibility", "hidden");
                 }
             }
+
+            function flipNodes(selectedPoints, coordinate){
+                var i=0;
+                var min;
+                var max;
+                var center;
+                d3.selectAll(selectedPoints).each(function (d) {
+                    if (i==0) {
+                        if (coordinate == "x") {
+                            min = d.x;
+                            max = d.x;
+                        }
+                        if (coordinate =="y"){
+                            min = d.y;
+                            max = d.y;
+                        }
+                    }
+                    else {
+                        if (coordinate == "x") {
+                            if (min > d.x) {
+                                min = d.x;
+                            }
+                            if (max < d.x) {
+                                max = d.x;
+                            }
+                        }
+                        if (coordinate == "y") {
+                            if (min >= d.y) {
+                                min = d.y;
+                            }
+                            if (max <= d.y) {
+                                max = d.y;
+                            }
+                        }
+                    }
+
+                    i++;
+
+                });
+                center= (min+max)/2;
+                d3.selectAll(selectedPoints).each(function (d) {
+                    var z=0;
+                    if (coordinate == "x") {
+                        z = center - d.x;
+                        d.x = z + center;
+                    }
+                    if (coordinate == "y") {
+                        z = center - d.y;
+                        d.y = center+z;
+                    }
+                });
+
+            }
             /**
              * This function re-renders sera Ids to the right form needed by the backend
              * @param sera
@@ -995,51 +1064,27 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Listens for event to Flip Map Vertically
              */
             $rootScope.$on('map.flip_map_left', function () {
-                if (flipMapRight==0){
-                    flipMapRight=1;
-                    renderWithoutData();
+                if (isSelected()){
+                    flipNodes(".selected","x");
                 }
-                else if (flipMapRight==1){
-                    flipMapRight=0;
-                    renderWithoutData();
+                else{
+                    flipNodes(".point","x");
                 }
+
             });
 
             /**
              * Listens for event to Flip Map Horizentally
              */
             $rootScope.$on('map.flip_map_horizental', function () {
-                var i=0;
-                var min;
-                var max;
-                var center;
-                d3.selectAll(".selected").each(function (d) {
-                    if (i==0){
-                        min = d.x;
-                        max = d.x;
-                        console.log(d.x);
-                    }
-                    else{
-                       if (min> d.x){
-                           min = d.x;
-                       }
-                       if (max< d.x){
-                           max = d.x;
-                       }
-                        console.log(d.x);
-                    }
-                    i++;
-                });
-                console.log(min);
-                console.log(max);
-                center= (min+max)/2;
-
-                d3.selectAll(".selected").each(function (d) {
-                    var z=  center- d.x;
-                    d.x =z+ center;
-                });
-
-
+                if (isSelected()){
+                    flipNodes(".selected","y");
+                    d3.selectAll(".selected").each(function (d) {
+                    });
+                }
+                else{
+                    flipNodes(".point","y");
+                }
             });
 
             /**
