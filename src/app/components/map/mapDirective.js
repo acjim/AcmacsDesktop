@@ -870,7 +870,11 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     d3.selectAll(".text").style("visibility", "hidden");
                 }
             }
-
+            /**
+             * flips nodes depending on the selected points and the X,Y coordinate
+             *
+             * @returns none
+             */
             function flipNodes(selectedPoints, coordinate){
                 var i=0;
                 var min;
@@ -1078,8 +1082,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             $rootScope.$on('map.flip_map_horizental', function () {
                 if (isSelected()){
                     flipNodes(".selected","y");
-                    d3.selectAll(".selected").each(function (d) {
-                    });
                 }
                 else{
                     flipNodes(".point","y");
