@@ -42,19 +42,12 @@
                         {label: 'Exit Application', tooltip: 'Quit Application', click: 'exit-app'}
                     ]
                     },
-                    //{
-                    //    label: 'Edit', items: [
-                    //    {label: 'Undo', click: 'undo', modifiers: osModifier, key: 'z'},
-                    //    {label: 'Redo', click: 'redo', modifiers: osModifier + 'shift', key: 'z'},
-                    //    {type: 'separator'},
-                    //    {label: 'Cut', click: 'cut', modifiers: osModifier, key: 'x'},
-                    //    {label: 'Copy', click: 'copy', modifiers: osModifier, key: 'c'},
-                    //    {label: 'Paste', click: 'paste', modifiers: osModifier, key: 'v'},
-                    //    {type: 'separator'},
-                    //    {label: 'Find', click: 'find', modifiers: osModifier, key: 'f'},
-                    //    {label: 'Replace', click: 'find-replace', modifiers: osModifier + 'alt', key: 'z'}
-                    //]
-                    //},
+                    {
+                       label: 'Edit ', items: [
+                       {label: 'Undo', click: 'map.undo', modifiers: osModifier, key: 'z'},
+                       {label: 'Redo', click: 'map.redo', modifiers: osModifier + 'shift', key: 'z'},
+                    ]
+                    },
                     {
                         label: 'Map', items: [
                         {label: 'Optimize', click: 'map.reOptimize', modifiers: osModifier + 'alt', key: 'o'},
