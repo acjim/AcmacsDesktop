@@ -90,8 +90,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 height = getContainerHeight();
 
                 if (flipMapRight==1){
-                    indentationWidthX = width*1.2/100;
-                    indentationWidthY=-width;
+
                     //var indentationWidthY = width*1.2/100;
                 }
                 else{
@@ -101,8 +100,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     // indentationWidthY= -height;
                 }
                 if (flipMapDown==1){
-                    indentationHeightX = height*1.8/100;
-                    indentationHeightY=-height;
+
                     //var indentationWidthY = width*1.2/100;
                 }
                 else{
@@ -457,15 +455,27 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .y(yScale)
                     .on("brushstart", function () {
                         nodeGroup.each(function (d) {
-                            d.previouslySelected = (shiftKey && d.selected) || (commandKey && d.selected);
+                            d.previouslySelected = shiftKey && d.selected;
+                            if(typeof d.previouslySelected === 'undefined' || d.previouslySelected === 0) {
+                                d.previouslySelected = false;
+                            } else if(d.previouslySelected === 1) {
+                                d.previouslySelected = true;
+                            }
                         });
                     })
                     .on("brush", function () {
                         var extent = d3.event.target.extent();
                         nodeGroup.classed("selected", function (d) {
-                            return d.selected = d.previouslySelected ^
+                            d.selected = d.previouslySelected ^
                                 (extent[0][0] <= d.x && d.x < extent[1][0]
                                 && extent[0][1] <= d.y && d.y < extent[1][1]);
+                            //if(d.selected == true) {
+                            //    d.selected_class = "selected";
+                            //}
+                            if(typeof d.selected === 'undefined' || d.selected === 0) {
+                                d.selected = false;
+                            }
+                            return d.selected;
                         });
                     })
                     .on("brushend", function () {
@@ -551,7 +561,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var center0 = [width / 2, height / 2],
                     translate0 = zoom.translate(),
                     coordinates0 = coordinates(center0);
-
                 if($rootScope.zoomed_center != undefined) {
                     coordinates0 = coordinates($rootScope.zoomed_center);
                     $rootScope.zoomed_center = undefined;
@@ -617,6 +626,22 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             function selectSera() {
                 select("box");
+            }
+            /**
+             * Checks if at least one node is selected
+             * @returns {boolean}
+             */
+            function isSelected(){
+                var i=0;
+                d3.selectAll(".selected").each(function (d) {
+                    i++;
+                });
+                if (i==0){
+                    return false;
+                }
+                else {
+                    return true;
+                }
             }
 
             /**
@@ -858,6 +883,63 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }
             }
             /**
+             * flips nodes depending on the selected points and the X,Y coordinate
+             *
+             * @returns none
+             */
+            function flipNodes(selectedPoints, coordinate){
+                var i=0;
+                var min;
+                var max;
+                var center;
+                d3.selectAll(selectedPoints).each(function (d) {
+                    if (i==0) {
+                        if (coordinate == "x") {
+                            min = d.x;
+                            max = d.x;
+                        }
+                        if (coordinate =="y"){
+                            min = d.y;
+                            max = d.y;
+                        }
+                    }
+                    else {
+                        if (coordinate == "x") {
+                            if (min > d.x) {
+                                min = d.x;
+                            }
+                            if (max < d.x) {
+                                max = d.x;
+                            }
+                        }
+                        if (coordinate == "y") {
+                            if (min >= d.y) {
+                                min = d.y;
+                            }
+                            if (max <= d.y) {
+                                max = d.y;
+                            }
+                        }
+                    }
+
+                    i++;
+
+                });
+                center= (min+max)/2;
+                d3.selectAll(selectedPoints).each(function (d) {
+                    var z=0;
+                    if (coordinate == "x") {
+                        z = center - d.x;
+                        d.x = z + center;
+                    }
+                    if (coordinate == "y") {
+                        z = center - d.y;
+                        d.y = center+z;
+                    }
+                });
+
+            }
+            /**
              * This function re-renders sera Ids to the right form needed by the backend
              * @param sera
              * @returns {Array}
@@ -997,27 +1079,24 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * Listens for event to Flip Map Vertically
              */
             $rootScope.$on('map.flip_map_left', function () {
-                if (flipMapRight==0){
-                    flipMapRight=1;
-                    renderWithoutData();
+                if (isSelected()){
+                    flipNodes(".selected","x");
                 }
-                else if (flipMapRight==1){
-                    flipMapRight=0;
-                    renderWithoutData();
+                else{
+                    flipNodes(".point","x");
                 }
+
             });
 
             /**
              * Listens for event to Flip Map Horizentally
              */
             $rootScope.$on('map.flip_map_horizental', function () {
-                if (flipMapDown==0){
-                    flipMapDown=1;
-                    renderWithoutData();
+                if (isSelected()){
+                    flipNodes(".selected","y");
                 }
-                else if (flipMapDown==1){
-                    flipMapDown=0;
-                    renderWithoutData();
+                else{
+                    flipNodes(".point","y");
                 }
             });
 

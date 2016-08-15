@@ -36,7 +36,8 @@ var app = angular.module('acjim', [
     'acjim.appMenu',
     'angular-loading-bar',
     'ngAnimate',
-    'DWand.nw-fileDialog'
+    'DWand.nw-fileDialog',
+    'decipher.history'
 ]);
 
 app.config(['cfpLoadingBarProvider', function (cfpLoadingBarProvider) {
