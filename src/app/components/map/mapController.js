@@ -24,10 +24,18 @@
     'use strict';
 
     angular.module('acjim.map', [])
-        .controller('mapCtrl', ['$rootScope', '$scope', '$timeout', 'fileHandling', 'toolbar', 'toolbarItems', 'cfpLoadingBar', mapCtrl]);
+        .controller('mapCtrl', [ '$rootScope', '$scope', '$timeout', 'fileHandling', 'toolbar', 'toolbarItems', 'cfpLoadingBar', 'History', mapCtrl ]);
 
-    function mapCtrl($rootScope, $scope, $timeout, fileHandling, toolbar, toolbarItems, cfpLoadingBar) {
+    function mapCtrl($rootScope, $scope, $timeout, fileHandling, toolbar, toolbarItems, cfpLoadingBar, History, mapCtrl) {
 
+        /**
+         * Track history event of data
+         *
+         * @method
+         * @params Object
+         */
+
+        History.watch('data', $scope);
 
         /**
          * Watches for a the reoptimize button
@@ -163,6 +171,84 @@
          */
         $scope.$on('map.nudgeTriggered', function () {
             fileHandling.setMapIsChanged(true);
+        });
+
+        /**
+         * Watches broadcast event fro map.undo
+         * Undos the recent change in data
+         */
+        $scope.$on('map.undo', function() {
+            if(History.canUndo('data',$scope) && History.pointers[7].data > 1){
+                History.undo('data', $scope);
+            }
+            $timeout(function() {
+                // this function is here just so that scope is applied
+            }, 10);
+        });
+
+        /**
+         * Watches broadcast event fro map.undo
+         * Redo the recent change in data
+         */
+        $scope.$on('map.redo', function() {
+            if(History.canRedo('data',$scope)){
+                History.redo('data', $scope);
+            }
+            $timeout(function() {
+                // this function is here just so that scope is applied
+            }, 10);
+        });
+
+        /**
+         * Watches broadcast event fro map.undo
+         * Redo the recent change in data
+         */
+        $scope.$on('History.undone', function(event, data) {
+            var itemErrorLines, itemConnectionLines;
+            itemErrorLines = toolbar.getItemByID(toolbarItems.SHOW_ERROR_LINES);
+
+            itemConnectionLines = toolbar.getItemByID(toolbarItems.SHOW_CONNECTION_LINES);
+
+            if(data.newValue.d3ErrorLines.length > 0) {
+                itemErrorLines.active = true;
+            }
+            else {
+                itemErrorLines.active = false;
+            }
+
+            if(data.newValue.d3ConnectionLines.length > 0) {
+                itemConnectionLines.active = true;
+            }
+            else {
+                itemConnectionLines.active = false;
+            }
+
+        });
+
+        /**
+         * Watches broadcast event fro map.undo
+         * Redo the recent change in data
+         */
+        $scope.$on('History.redone', function(event, data) {
+            var itemErrorLines, itemConnectionLines;
+            itemErrorLines = toolbar.getItemByID(toolbarItems.SHOW_ERROR_LINES);
+
+            itemConnectionLines = toolbar.getItemByID(toolbarItems.SHOW_CONNECTION_LINES);
+
+            if(data.oldValue.d3ErrorLines.length > 0) {
+                itemErrorLines.active = true;
+            }
+            else {
+                itemErrorLines.active = false;
+            }
+
+            if(data.oldValue.d3ConnectionLines.length > 0) {
+                itemConnectionLines.active = true;
+            }
+            else {
+                itemConnectionLines.active = false;
+            }
+
         });
     }
 })();
