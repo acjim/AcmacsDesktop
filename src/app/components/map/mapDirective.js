@@ -455,15 +455,27 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .y(yScale)
                     .on("brushstart", function () {
                         nodeGroup.each(function (d) {
-                            d.previouslySelected = (shiftKey && d.selected) || (commandKey && d.selected);
+                            d.previouslySelected = shiftKey && d.selected;
+                            if(typeof d.previouslySelected === 'undefined' || d.previouslySelected === 0) {
+                                d.previouslySelected = false;
+                            } else if(d.previouslySelected === 1) {
+                                d.previouslySelected = true;
+                            }
                         });
                     })
                     .on("brush", function () {
                         var extent = d3.event.target.extent();
                         nodeGroup.classed("selected", function (d) {
-                            return d.selected = d.previouslySelected ^
+                            d.selected = d.previouslySelected ^
                                 (extent[0][0] <= d.x && d.x < extent[1][0]
                                 && extent[0][1] <= d.y && d.y < extent[1][1]);
+                            //if(d.selected == true) {
+                            //    d.selected_class = "selected";
+                            //}
+                            if(typeof d.selected === 'undefined' || d.selected === 0) {
+                                d.selected = false;
+                            }
+                            return d.selected;
                         });
                     })
                     .on("brushend", function () {

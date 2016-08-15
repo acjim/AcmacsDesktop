@@ -438,6 +438,8 @@
                 newData.layout[i] = {
                     "x": layout[0],
                     "y": layout[1],
+                    "previouslySelected": false,
+                    "selected": false,
                     "fixed": _.contains(fixedPoints, i),
                     "disconnected": _.contains(disconnectedPoints, i),
                     "id": i
