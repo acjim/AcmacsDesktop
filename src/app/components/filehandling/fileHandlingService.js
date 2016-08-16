@@ -227,7 +227,7 @@
             } else {
                 var additional_params = {};
                 var table_additional_params = {}; // check documentation on execute>get_table for additional params
-                var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
+                var map_additional_params = {blobs:true,}; // check documentation on execute>get_map for what params can be passed
                 original_filename = filename;
                 return api.import_user_data(filename, additional_params).then(function (output) {
                     cfpLoadingBar.set(0.3);
@@ -422,6 +422,7 @@
         function parseLayoutData(data) {
 
             var oldMap = data.map;
+            console.log(data);
 
             if (_.isUndefined(oldMap)) {
                 //TODO: Throw error what went wrong
@@ -433,6 +434,7 @@
             newData.d3ConnectionLines = [];
             newData.d3ErrorLines = [];
             newData.stress = data.stress;
+            newData.blobs= data.blobs;
 
             oldMap.layout.forEach(function (layout, i) {
                 newData.layout[i] = {

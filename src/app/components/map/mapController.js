@@ -54,6 +54,7 @@
          * Calls fileHandlingService for API call to backend to get Error & Connectionlines
          */
         function getErrorConnectionLines() {
+            console.log($scope.data);
             if (!$scope.showConnectionLines) {
                 $scope.data.d3ConnectionLines = [];
             }
@@ -157,6 +158,13 @@
          */
         $scope.$on('map.create_from_selected', function () {
             fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
+        });
+
+        /**
+         * Watches for Get Blob event
+         */
+        $scope.$on('map.get_blobs', function () {
+            $scope.displayBlobs()
         });
 
         /**

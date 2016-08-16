@@ -959,6 +959,166 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 });
                 return orderedSera;
             }
+            /**
+             * computes the nodes and features them
+             * @returns none
+             */
+            scope.displayBlobs = function () {
+                console.log(scope.data);
+
+
+            }
+
+            /**
+             * This function calculate the Blob contour and returns a path for the blob
+             * @param sera
+             * @returns {Array}
+             */
+            function pathFromPolar (point, contour, smoothing) {
+                // Local variables:
+                var
+                // The number of vertices
+                    n = contour.length,
+
+                // * The list of path vertices
+                    vertex = [],
+
+                // * Set a threshold for smooth edges whose appearance is indistinguishable
+                // from a straight line segment.
+                    notRounded = (Math.abs(smoothing) < 1e-4),
+
+                // * Vertex index
+                    i,
+
+                // * Index angle
+                    alpha,
+
+                // * A disposable 2D point
+                    p,
+
+                // * The resulting path
+                    path = [];
+
+                // From an array of vertices, calculate the co-ordinates of the spline curve
+                // handle for the edge identified by the arguments `index` and `edge`
+                // ('leading', 'trailing').
+                function curveHandle(index, edge) {
+                    var
+                        pi,
+                        ni,
+                        prev,
+                        next,
+                        o,
+                        prevLength,
+                        nextLength,
+                        prevToNext,
+                        handle,
+                        rounded = smoothing / 2 || 0; // To avoid bizarre effects at smoothing > 0.5, divide by 2
+
+                    // The point whose curve handle we're calculating
+                    o = vertex[index];
+
+                    // Indices of previous and next points
+                    if (index > 0) {
+                        pi = index - 1;
+                    }
+                    else {
+                        pi = n - 1;
+                    }
+
+                    if (index < n - 1) {
+                        ni = index + 1;
+                    }
+                    else {
+                        ni = 0;
+                    }
+
+                    // The neighbors of `o`.
+                    prev = vertex[pi];
+                    next = vertex[ni];
+
+                    // Lengths of the edges connecting to `prev` and `next`
+                    prevLength = distance(prev, o);
+                    nextLength = distance(next, o);
+
+                    // Length of the chord between `prev` and `next`
+                    prevToNext = distance(prev, next);
+
+                    if (edge === 'trailing') {
+                        handle = {
+                            x: o.x + rounded * nextLength * (next.x - prev.x) / prevToNext,
+                            y: o.y + rounded * nextLength * (next.y - prev.y) / prevToNext
+                        };
+                    }
+                    else {
+                        handle = {
+                            x: o.x - rounded * prevLength * (next.x - prev.x) / prevToNext,
+                            y: o.y - rounded * prevLength * (next.y - prev.y) / prevToNext
+                        };
+                    }
+                    return handle;
+                }
+
+                // calculate vertices
+                for (i = 0; i < n; i += 1) {
+                    alpha = i * 2.0 * Math.PI / n;
+                    vertex[i] = {};
+                    vertex[i].x = contour[i] * Math.cos(alpha);
+                    vertex[i].y = contour[i] * Math.sin(alpha);
+                }
+
+                // Calculate the first segment, starting at 12 o'clock.
+                path[0] = ["M", vertex[0].x, vertex[0].y];
+
+                // All segments between the first and the final.
+                for (i = 1; i < n; i += 1) {
+                    if (notRounded) {
+                        p = vertex[i];
+                        path.push(["L", p.x, p.y]);
+                    } else {
+                        p = curveHandle(i - 1, 'trailing');
+                        path.push(["C", p.x, p.y]);
+                        p = curveHandle(i, 'leading');
+                        path[path.length - 1].push([p.x, p.y]);
+                        p = vertex[i];
+                        path[path.length - 1].push([p.x, p.y]);
+                    }
+                }
+
+                // The final segment
+                if (notRounded) {
+                    p = vertex[0];
+                    path.push(["L", p.x, p.y]);
+                } else {
+                    p = curveHandle(n - 1, 'trailing');
+                    path.push(["C", p.x, p.y]);
+                    p = curveHandle(0, 'leading');
+                    path[path.length - 1].push([p.x, p.y]);
+                    p = vertex[0];
+                    path[path.length - 1].push([p.x, p.y]);
+                }
+
+                // Terminate the path spec
+                path[path.length - 1].push(['z']);
+
+                return path;
+            }; // pathFromPolar
+
+            /**
+             * Calculate Euclidean distance between two points. A point is an object
+             * containing two properties named `x` and `y`.
+             *
+             * @method distance
+             * @param {SVGPoint|Object} p1
+             * @param {SVGPoint|Object} p2
+             * @return Number distance
+             */
+            function  distance(p1, p2) {
+                return Math.sqrt(
+                    (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
+                );
+            };
+
 
             /**
              * Gets the data for a new map from selected nodes. Returns an array of nodes to remove in new map.
