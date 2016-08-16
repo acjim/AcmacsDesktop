@@ -1,5 +1,5 @@
 {
-  "name": "AcmacsDesktop",
+  "name": "acmacs-desktop",
   "dependencies": {
     "bootstrap": "^3.3.5",
     "angular": "1.4.9",
@@ -12,7 +12,8 @@
     "angular-loading-bar": "^0.8.0",
     "angular-animate": "^1.0.0",
     "angular-ui-layout": "^1.4.1",
-    "angular-dialog-service": "^5.2.11"
+    "angular-dialog-service": "^5.2.11",
+    "angular-history": "^0.8.1"
   },
   "resolutions": {
     "angular": "1.4.9",
