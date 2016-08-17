@@ -40,14 +40,21 @@
 
     function fileHandling($rootScope, $q, api, Flash, cfpLoadingBar, $timeout, $document) {
 
-        var acd1File = null;
-        var projection = 0;
-        var projection_comment = null;
-        var is_changed = false;
-        var original_filename = "";
-        var fixedPoints = [];
-        var disconnectedPoints = [];
-        var fileHandler = {};
+            var acd1File = null,
+            projection = 0,
+            projection_comment = null,
+            is_changed = false,
+            original_filename = "",
+            fixedPoints = [],
+            disconnectedPoints = [],
+            fileHandler = {},
+            scale = 1,
+            BlobData,
+            globalData = new Array(),
+            smoothing=0.5,
+            subData = new Array(),
+            globalsmallY,
+            globalsmallX;
 
         /**
          * Displays errors that occurred
@@ -422,8 +429,6 @@
         function parseLayoutData(data) {
 
             var oldMap = data.map;
-            console.log(data);
-
             if (_.isUndefined(oldMap)) {
                 //TODO: Throw error what went wrong
                 return {};
@@ -434,8 +439,10 @@
             newData.d3ConnectionLines = [];
             newData.d3ErrorLines = [];
             newData.stress = data.stress;
-            newData.blobs= data.blobs;
-
+            newData.blobs = data.blobs;
+            if (data.blobs){
+                newData.blobs=computeBlobsCountour(data);
+            }
             oldMap.layout.forEach(function (layout, i) {
                 newData.layout[i] = {
                     "x": layout[0],
@@ -810,6 +817,206 @@
 
             return result;
         }
+
+        /**
+         * *This function computes the blobs raadi points, format data, and then returns a path
+         */
+
+        function computeBlobsCountour(dataElement){
+            var data = new Array();
+            var subData=new Array();
+            var subData2=new Array();
+            var counter=0;
+            // computing the contour for every point
+            dataElement.blobs.radii_for_points.forEach(function (d, i){
+                subData = new Array();
+                subData[counter] = pathFromPolar(dataElement.map.layout[i],d,smoothing);
+                //data[counter2]=subData;
+                data[counter]=subData;
+                counter++;
+            });
+            //formating  the data
+            for(var i=0; i< data.length; i++){
+                BlobData= data[i];
+                subData2 = new Array();
+                var k=0;
+
+                while(BlobData[0] == undefined){
+                    BlobData.splice(0, 1);
+                }
+                BlobData=BlobData[0];
+                for (var j=0; j< (BlobData.length);j++){
+                    subData2[k] = {
+                        "x": (BlobData[j][1])*scale,
+                        "y": (BlobData[j][2])*scale
+                    };
+                    if (k!=0){
+                        subData2[k+1] = {
+                            "x": (BlobData[j][3][0])*scale,
+                            "y": (BlobData[j][3][1])*scale
+                        };
+                        subData2[k+2] = {
+                            "x": (BlobData[j][4][0])*scale,
+                            "y": (BlobData[j][4][1])*scale
+                        };
+                        k=k+2;
+                    }
+                    k=k+1;
+                }
+                globalData[i] = subData2;
+            }
+            return globalData;
+    }
+
+        /**
+         * This function calculate the Blob contour and returns a path for the blob
+         * @param sera
+         * @returns {Array}
+         */
+        function pathFromPolar (point, contour, smoothing) {
+            // Local variables:
+            var
+            // The number of vertices
+                n = contour.length,
+
+            // * The list of path vertices
+                vertex = [],
+
+            // * Set a threshold for smooth edges whose appearance is indistinguishable
+            // from a straight line segment.
+                notRounded = (Math.abs(smoothing) < 1e-4),
+
+            // * Vertex index
+                i,
+
+            // * Index angle
+                alpha,
+
+            // * A disposable 2D point
+                p,
+
+            // * The resulting path
+                path = [];
+
+            // From an array of vertices, calculate the co-ordinates of the spline curve
+            // handle for the edge identified by the arguments `index` and `edge`
+            // ('leading', 'trailing').
+            function curveHandle(index, edge) {
+                var
+                    pi,
+                    ni,
+                    prev,
+                    next,
+                    o,
+                    prevLength,
+                    nextLength,
+                    prevToNext,
+                    handle,
+                    rounded = smoothing / 2 || 0; // To avoid bizarre effects at smoothing > 0.5, divide by 2
+
+                // The point whose curve handle we're calculating
+                o = vertex[index];
+
+                // Indices of previous and next points
+                if (index > 0) {
+                    pi = index - 1;
+                }
+                else {
+                    pi = n - 1;
+                }
+
+                if (index < n - 1) {
+                    ni = index + 1;
+                }
+                else {
+                    ni = 0;
+                }
+
+                // The neighbors of `o`.
+                prev = vertex[pi];
+                next = vertex[ni];
+
+                // Lengths of the edges connecting to `prev` and `next`
+                prevLength = distance(prev, o);
+                nextLength = distance(next, o);
+
+                // Length of the chord between `prev` and `next`
+                prevToNext = distance(prev, next);
+
+                if (edge === 'trailing') {
+                    handle = {
+                        x: o.x + rounded * nextLength * (next.x - prev.x) / prevToNext,
+                        y: o.y + rounded * nextLength * (next.y - prev.y) / prevToNext
+                    };
+                }
+                else {
+                    handle = {
+                        x: o.x - rounded * prevLength * (next.x - prev.x) / prevToNext,
+                        y: o.y - rounded * prevLength * (next.y - prev.y) / prevToNext
+                    };
+                }
+                return handle;
+            }
+
+            // calculate vertices
+            for (i = 0; i < n; i += 1) {
+                alpha = i * 2.0 * Math.PI / n;
+                vertex[i] = {};
+                vertex[i].x = contour[i] * Math.cos(alpha);
+                vertex[i].y = contour[i] * Math.sin(alpha);
+            }
+
+            // Calculate the first segment, starting at 12 o'clock.
+            path[0] = ["M", vertex[0].x, vertex[0].y];
+
+            // All segments between the first and the final.
+            for (i = 1; i < n; i += 1) {
+                if (notRounded) {
+                    p = vertex[i];
+                    path.push(["L", p.x, p.y]);
+                } else {
+                    p = curveHandle(i - 1, 'trailing');
+                    path.push(["C", p.x, p.y]);
+                    p = curveHandle(i, 'leading');
+                    path[path.length - 1].push([p.x, p.y]);
+                    p = vertex[i];
+                    path[path.length - 1].push([p.x, p.y]);
+                }
+            }
+
+            // The final segment
+            if (notRounded) {
+                p = vertex[0];
+                path.push(["L", p.x, p.y]);
+            } else {
+                p = curveHandle(n - 1, 'trailing');
+                path.push(["C", p.x, p.y]);
+                p = curveHandle(0, 'leading');
+                path[path.length - 1].push([p.x, p.y]);
+                p = vertex[0];
+                path[path.length - 1].push([p.x, p.y]);
+            }
+
+            // Terminate the path spec
+            path[path.length - 1].push(['z']);
+
+            return path;
+        }; // pathFromPolar
+
+        /**
+         * Calculate Euclidean distance between two points. A point is an object
+         * containing two properties named `x` and `y`.
+         *
+         * @method distance
+         * @param {SVGPoint|Object} p1
+         * @param {SVGPoint|Object} p2
+         * @return Number distance
+         */
+        function  distance(p1, p2) {
+            return Math.sqrt(
+                (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
+            );
+        };
 
         /**
          *

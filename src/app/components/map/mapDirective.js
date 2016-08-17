@@ -64,7 +64,15 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 indentationWidthX= 0,
                 indentationWidthY=0,
                 indentationHeightX = 0,
-                indentationHeightY = 0;
+                indentationHeightY = 0,
+                showblobs= true,
+                scale = 1,
+                BlobData,
+                globalData = new Array(),
+                smoothing=0.5,
+                subData = new Array(),
+                globalsmallY,
+                globalsmallX;
 
             // d3 groups
             var boxGroup,
@@ -73,7 +81,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 nodeGroup,
                 errorlineGroup,
                 connectionlineGroup,
-                labelsGroup;
+                labelsGroup,
+                blobsGroup;
 
             $rootScope.zoomed_center = undefined;
 
@@ -135,6 +144,12 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                             return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                         });
                     }
+
+                    if (nodeGroup) {
+                        nodeGroup.attr("transform", function (d) {
+                            return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
+                        });
+                    }
                     // Create brush
                     brush = createBrush();
 
@@ -165,10 +180,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 nodeGroup.enter().append("path")
                     .attr("class", "point")
-                    .attr("id", function(d) {
-                        return 'full-name-'+d.name;
+                    .attr("id", function (d) {
+                        return 'full-name-' + d.name;
                     })
-                    .attr("full_name", function(d){
+                    .attr("full_name", function (d) {
                         return d.name;
                     });
 
@@ -275,7 +290,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     });
                 labelsGroup.exit().remove();
 
-
                 errorlineGroup = errorlineGroup.data(data.d3ErrorLines);
                 errorlineGroup.enter().append("line")
                     .attr("class", "errorline")
@@ -302,6 +316,45 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }));
                 errorlineGroup.exit().remove();
 
+               //This is the accessor function we talked about above
+                var lineFunction = d3.svg.line()
+                        .x(function(d) { return xScale(d.x); })
+                        .y(function(d) { return yScale(d.y); })
+                        .interpolate("linear");
+
+                for (var i=0; i<data.blobs.length; i++ ){
+                    svg.append("path")
+                        .attr("d", lineFunction(data.blobs[i]))
+                        .attr("stroke", "green")
+                        .attr("stroke-width", 0.1)
+                        .attr("fill", "blue")
+                        .attr("class", "blobs")
+                        .style("visibility", "hidden");
+
+                }
+
+/*
+                blobsGroup = blobsGroup.data(data.blobs[0]);
+                blobsGroup.enter().append("path")
+                    .attr("class", "blobs")
+                    .attr("x", function (d) {
+                        return xScale(d.x);
+                    })
+                    .attr("y", function (d) {
+                        return yScale(d.y);
+                    })
+                    attr("d",data.blobs[0])
+                        .interpolate("cardinal-closed")
+                        .style("stroke", "gray")
+                    .style("stroke-width", "5")
+                    .text(function (d) {
+                        return ".";
+                    });
+
+                blobsGroup.exit().remove();
+  */
+
+
                 connectionlineGroup = connectionlineGroup.data(data.d3ConnectionLines);
                 connectionlineGroup.enter().append("line")
                     .attr("class", "connectionline")
@@ -324,6 +377,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                         return d.width;
                     }));
                 connectionlineGroup.exit().remove();
+
 
             }
 
@@ -429,6 +483,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 connectionlineGroup = elementGroup.append("g")
                     .attr("class", "connectionline")
                     .selectAll(".connectionline");
+
+                blobsGroup = elementGroup.append("g")
+                    .attr("class", "blobslines")
+                    .selectAll(".blobs");
 
                 errorlineGroup = elementGroup.append("g")
                     .attr("class", "errorline")
@@ -686,6 +744,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 labelsGroup.attr("transform", function (d) {
                     return "translate(" + xScale(d.x) + ", " + yScale(d.y) + ")";
                 });
+
                 errorlineGroup
                     .attr("x1", (function (d) {
                         return xScale(d.x1);
@@ -698,6 +757,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }))
                     .attr("y2", (function (d) {
                         return yScale(d.y2);
+                    }));
+                blobsGroup
+                    .attr("x", (function (d) {
+                        return xScale(d.x);
+                    }))
+                    .attr("y", (function (d) {
+                        return yScale(d.y);
                     }));
 
                 connectionlineGroup
@@ -964,161 +1030,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns none
              */
             scope.displayBlobs = function () {
-                console.log(scope.data);
-
-
-            }
-
-            /**
-             * This function calculate the Blob contour and returns a path for the blob
-             * @param sera
-             * @returns {Array}
-             */
-            function pathFromPolar (point, contour, smoothing) {
-                // Local variables:
-                var
-                // The number of vertices
-                    n = contour.length,
-
-                // * The list of path vertices
-                    vertex = [],
-
-                // * Set a threshold for smooth edges whose appearance is indistinguishable
-                // from a straight line segment.
-                    notRounded = (Math.abs(smoothing) < 1e-4),
-
-                // * Vertex index
-                    i,
-
-                // * Index angle
-                    alpha,
-
-                // * A disposable 2D point
-                    p,
-
-                // * The resulting path
-                    path = [];
-
-                // From an array of vertices, calculate the co-ordinates of the spline curve
-                // handle for the edge identified by the arguments `index` and `edge`
-                // ('leading', 'trailing').
-                function curveHandle(index, edge) {
-                    var
-                        pi,
-                        ni,
-                        prev,
-                        next,
-                        o,
-                        prevLength,
-                        nextLength,
-                        prevToNext,
-                        handle,
-                        rounded = smoothing / 2 || 0; // To avoid bizarre effects at smoothing > 0.5, divide by 2
-
-                    // The point whose curve handle we're calculating
-                    o = vertex[index];
-
-                    // Indices of previous and next points
-                    if (index > 0) {
-                        pi = index - 1;
-                    }
-                    else {
-                        pi = n - 1;
-                    }
-
-                    if (index < n - 1) {
-                        ni = index + 1;
-                    }
-                    else {
-                        ni = 0;
-                    }
-
-                    // The neighbors of `o`.
-                    prev = vertex[pi];
-                    next = vertex[ni];
-
-                    // Lengths of the edges connecting to `prev` and `next`
-                    prevLength = distance(prev, o);
-                    nextLength = distance(next, o);
-
-                    // Length of the chord between `prev` and `next`
-                    prevToNext = distance(prev, next);
-
-                    if (edge === 'trailing') {
-                        handle = {
-                            x: o.x + rounded * nextLength * (next.x - prev.x) / prevToNext,
-                            y: o.y + rounded * nextLength * (next.y - prev.y) / prevToNext
-                        };
-                    }
-                    else {
-                        handle = {
-                            x: o.x - rounded * prevLength * (next.x - prev.x) / prevToNext,
-                            y: o.y - rounded * prevLength * (next.y - prev.y) / prevToNext
-                        };
-                    }
-                    return handle;
-                }
-
-                // calculate vertices
-                for (i = 0; i < n; i += 1) {
-                    alpha = i * 2.0 * Math.PI / n;
-                    vertex[i] = {};
-                    vertex[i].x = contour[i] * Math.cos(alpha);
-                    vertex[i].y = contour[i] * Math.sin(alpha);
-                }
-
-                // Calculate the first segment, starting at 12 o'clock.
-                path[0] = ["M", vertex[0].x, vertex[0].y];
-
-                // All segments between the first and the final.
-                for (i = 1; i < n; i += 1) {
-                    if (notRounded) {
-                        p = vertex[i];
-                        path.push(["L", p.x, p.y]);
-                    } else {
-                        p = curveHandle(i - 1, 'trailing');
-                        path.push(["C", p.x, p.y]);
-                        p = curveHandle(i, 'leading');
-                        path[path.length - 1].push([p.x, p.y]);
-                        p = vertex[i];
-                        path[path.length - 1].push([p.x, p.y]);
-                    }
-                }
-
-                // The final segment
-                if (notRounded) {
-                    p = vertex[0];
-                    path.push(["L", p.x, p.y]);
+                if (showblobs) {
+                    d3.selectAll(".blobs").style("visibility", "visible");
+                    showblobs=false;
                 } else {
-                    p = curveHandle(n - 1, 'trailing');
-                    path.push(["C", p.x, p.y]);
-                    p = curveHandle(0, 'leading');
-                    path[path.length - 1].push([p.x, p.y]);
-                    p = vertex[0];
-                    path[path.length - 1].push([p.x, p.y]);
+                    d3.selectAll(".blobs").style("visibility", "hidden");
+                    showblobs=true;
                 }
-
-                // Terminate the path spec
-                path[path.length - 1].push(['z']);
-
-                return path;
-            }; // pathFromPolar
-
-            /**
-             * Calculate Euclidean distance between two points. A point is an object
-             * containing two properties named `x` and `y`.
-             *
-             * @method distance
-             * @param {SVGPoint|Object} p1
-             * @param {SVGPoint|Object} p2
-             * @return Number distance
-             */
-            function  distance(p1, p2) {
-                return Math.sqrt(
-                    (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
-                );
-            };
-
+            }
 
             /**
              * Gets the data for a new map from selected nodes. Returns an array of nodes to remove in new map.
