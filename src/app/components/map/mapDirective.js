@@ -317,6 +317,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 errorlineGroup.exit().remove();
 
                //This is the accessor function we talked about above
+
                 var lineFunction = d3.svg.line()
                         .x(function(d) { return xScale(d.x); })
                         .y(function(d) { return yScale(d.y); })
@@ -326,8 +327,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     svg.append("path")
                         .attr("d", lineFunction(data.blobs[i]))
                         .attr("stroke", "green")
-                        .attr("stroke-width", 0.1)
-                        .attr("fill", "blue")
+                        .attr("stroke-width", 1)
+                        .attr("fill", "orange")
                         .attr("class", "blobs")
                         .style("visibility", "hidden");
 

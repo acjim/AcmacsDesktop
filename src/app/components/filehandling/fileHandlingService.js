@@ -440,9 +440,7 @@
             newData.d3ErrorLines = [];
             newData.stress = data.stress;
             newData.blobs = data.blobs;
-            if (data.blobs){
-                newData.blobs=computeBlobsCountour(data);
-            }
+
             oldMap.layout.forEach(function (layout, i) {
                 newData.layout[i] = {
                     "x": layout[0],
@@ -469,6 +467,16 @@
             oldMap.styles.points.forEach(function (point, i) {
                 newData.layout[i].style = oldMap.styles.styles[point];
             });
+                // Computing blobs and centering them
+            if (data.blobs){
+                newData.blobs=computeBlobsCountour(data);
+                for (var i=0; i< newData.blobs.length; i++){
+                    for (var j= 0; j<newData.blobs[i].length; j++){
+                        newData.blobs[i][j].x+=(newData.layout[i].x);
+                        newData.blobs[i][j].y+=(newData.layout[i].y);
+                    }
+                }
+            }
 
             // checking if the drawing order is available
             if (!_.isUndefined(oldMap.styles.drawing_order)) {
@@ -489,7 +497,6 @@
                             var temp = order_list[j - 1];
                             order_list[j - 1] = order_list[j];
                             order_list[j] = temp;
-
                             // swapping the data
                             temp = newData.layout[j - 1];
                             newData.layout[j - 1] = newData.layout[j];
@@ -502,6 +509,7 @@
                 }
 
             }
+            console.log(newData);
 
             return newData;
         }
