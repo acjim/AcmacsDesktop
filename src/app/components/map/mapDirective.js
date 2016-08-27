@@ -876,11 +876,60 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              * @returns none
              */
             function toggleNodeLabels(showLabels) {
-                if (showLabels) {
-                    d3.selectAll(".text").style("visibility", "visible");
-                } else {
-                    d3.selectAll(".text").style("visibility", "hidden");
+                var selectedNodes = getSelectedNodes('labelsGroup');
+                if(!selectedNodes){
+                    if (showLabels) {
+                        d3.selectAll(".text").style("visibility", "visible");
+                    } else {
+                        d3.selectAll(".text").style("visibility", "hidden");
+                    }
+                    return true;
+                } else{
+                    var selectedTextNodes = selectedNodes;
+                    // if (showLabels) {
+                    selectedTextNodes.each(function(){
+                        var temp = d3.select(this);
+                        if(temp.style("visibility")=='hidden'){
+                            temp.style("visibility","visible");
+                        } else{
+                            temp.style("visibility","hidden");
+                        }
+                    });
+                    // } else {
+                    //     selectedTextNodes.style("visibility", "hidden");
+                    // }
+                    return false
                 }
+            }
+            /*
+             ** Returns selected nodes for [labelsGroup,nodeGroup] or false
+             **
+             */
+            function getSelectedNodes(type,returnMappedValue){
+                var selectedGroup;
+                switch(type){
+                    case 'nodeGroup':
+                        selectedGroup = nodeGroup;
+                        break;
+                    case 'labelsGroup':
+                        selectedGroup = labelsGroup;
+                        break;
+                    default:
+                        return false;
+                }
+                var mappedValue = [];
+                var selectedNodes = selectedGroup.filter(function(d) {
+                    if(d.selected){
+                        mappedValue.push(d.id);
+                    }
+                    return d.selected;
+                });
+                if(returnMappedValue){
+                    return mappedValue;
+                }
+                if(selectedNodes.size()){ // Using falsy value technique to get selected nodes
+                    return selectedNodes;
+                } return false;
             }
             /**
              * flips nodes depending on the selected points and the X,Y coordinate
