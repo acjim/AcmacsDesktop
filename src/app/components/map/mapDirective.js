@@ -72,7 +72,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 smoothing=0.5,
                 subData = new Array(),
                 globalsmallY,
-                globalsmallX;
+                globalsmallX,
+                lineFunction ;
 
             // d3 groups
             var boxGroup,
@@ -122,6 +123,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 // Scaling
                 xScale = d3.scale.linear().domain([0, width]).range([indentationWidthX, indentationWidthY]);
                 yScale = d3.scale.linear().domain([0, height]).range([indentationHeightX, indentationHeightY]);
+                lineFunction = d3.svg.line()
+                    .x(function(d) { return xScale(d.x); })
+                    .y(function(d) { return yScale(d.y); })
+                    .interpolate("linear");
 
                 // Zoom
                 zoom = d3.behavior.zoom()
@@ -281,13 +286,14 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .attr("y", function (d) {
                         return d.y;
                     })
-                    .style("visibility", "hidden")
                     .style("font-family", "sans-serif")
                     .style("font-size", "10px")
+                    .style("visibility", "hidden")
                     .style("fill", "#330066")
                     .text(function (d) {
                         return d.name;
-                    });
+                    }
+                    );
                 labelsGroup.exit().remove();
 
                 errorlineGroup = errorlineGroup.data(data.d3ErrorLines);
@@ -318,42 +324,40 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                //This is the accessor function we talked about above
 
-                var lineFunction = d3.svg.line()
-                        .x(function(d) { return xScale(d.x); })
-                        .y(function(d) { return yScale(d.y); })
-                        .interpolate("linear");
 
-                for (var i=0; i<data.blobs.length; i++ ){
+
+              /*  for (var i=0; i<data.blobs.length; i++ ){
                     svg.append("path")
                         .attr("d", lineFunction(data.blobs[i]))
-                        .attr("stroke", "green")
+                        .attr("stroke", "black")
                         .attr("stroke-width", 1)
                         .attr("fill", "orange")
                         .attr("class", "blobs")
-                        .style("visibility", "hidden");
+                        .style("opacity", 0.55)
+                        .style("visibility", "hidden")
+                        .on("click", function(d){
+                            console.log(d.x);
 
-                }
+                        });
 
-/*
-                blobsGroup = blobsGroup.data(data.blobs[0]);
+                }*/
+
+
+                blobsGroup = blobsGroup.data(data.blobs);
                 blobsGroup.enter().append("path")
-                    .attr("class", "blobs")
-                    .attr("x", function (d) {
-                        return xScale(d.x);
+                    .attr("d", function (d) {
+                        return lineFunction(d);
                     })
-                    .attr("y", function (d) {
-                        return yScale(d.y);
-                    })
-                    attr("d",data.blobs[0])
-                        .interpolate("cardinal-closed")
-                        .style("stroke", "gray")
-                    .style("stroke-width", "5")
-                    .text(function (d) {
-                        return ".";
-                    });
 
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 1)
+                    .attr("fill", "orange")
+                    .attr("class", "blobs")
+                    .style("opacity", 0.4)
+                    .style("visibility", "hidden")
+                ;
                 blobsGroup.exit().remove();
-  */
+
 
 
                 connectionlineGroup = connectionlineGroup.data(data.d3ConnectionLines);
@@ -759,13 +763,10 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .attr("y2", (function (d) {
                         return yScale(d.y2);
                     }));
-                blobsGroup
-                    .attr("x", (function (d) {
-                        return xScale(d.x);
-                    }))
-                    .attr("y", (function (d) {
-                        return yScale(d.y);
-                    }));
+
+                blobsGroup.attr("d", (function (d) {
+                    return lineFunction(d);
+                }))
 
                 connectionlineGroup
                     .attr("x1", (function (d) {
@@ -1034,9 +1035,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 if (showblobs) {
                     d3.selectAll(".blobs").style("visibility", "visible");
                     showblobs=false;
+                    selectAllNodes();
+                    d3.selectAll(".point").style("visibility", "hidden");
+                    deselectNodes();
+
                 } else {
                     d3.selectAll(".blobs").style("visibility", "hidden");
                     showblobs=true;
+                    selectAllNodes();
+                    d3.selectAll(".point").style("visibility", "visible");
+                    deselectNodes();
                 }
             }
 

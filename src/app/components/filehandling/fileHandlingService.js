@@ -139,6 +139,8 @@
             // get new projection before export
             return api.new_projection(additional_params, acd1_file)
                 .then(function (output) {
+                    var map_additional_params = {blobs:true,}; // check documentation on execute>get_map for what params can be passed
+
                     acd1_file = output.output_acd1;
                     var output_json = output.output_json;
                     var data = fs.readFileSync(output_json, 'utf8');
