@@ -335,7 +335,11 @@
          * @param mapData
          * @returns {*}
          */
-        fileHandler.getNewProjection = function (mapData) {
+        fileHandler.getNewProjection = function (mapData, blobsvalue) {
+            var getblobs=false;
+            if (blobsvalue==true){
+                getblobs=true;
+            }
 
             cfpLoadingBar.start();
 
@@ -372,7 +376,7 @@
 
                 var map_additional_params = {
                     projection: (projection == 0) ? projection : projection_comment,
-                    blobs: true
+                    blobs: getblobs
                 };
                 return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File).then(function (data) {
                     return $q.all([
@@ -552,8 +556,11 @@
             api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
                     $rootScope.$broadcast('open-file', filename.output_acd1);
-                    $rootScope.$broadcast('open-file', filename.output_acd1);
                     cfpLoadingBar.complete();
+                    $rootScope.$emit('map.showErrorLines');
+
+
+
                 }, function (reason) {
                     return errorReason(reason);
                 });
@@ -736,7 +743,7 @@
                         y1: from.y,
                         x2: to.x,
                         y2: to.y,
-                        stroke: colour,
+                        stroke: "grey",
                         width: 0.4,
                         opacity: 1.0
                     });

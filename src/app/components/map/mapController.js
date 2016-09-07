@@ -55,7 +55,6 @@
          * Calls fileHandlingService for API call to backend to get Error & Connectionlines
          */
         function getErrorConnectionLines() {
-            console.log($scope.data);
             if (!$scope.showConnectionLines) {
                 $scope.data.d3ConnectionLines = [];
             }
@@ -96,10 +95,10 @@
          * Gets new Projection for Blobs
          */
         function getBlobsProjection() {
-            fileHandling.getNewProjection($scope.data).then(function (result) {
+            fileHandling.getNewProjection($scope.data,true).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
-                fileHandling.setMapIsChanged(false);
+                fileHandling.setMapIsChanged(true);
                 cfpLoadingBar.complete();
                 $scope.displayBlobs()
             });
@@ -173,21 +172,27 @@
         $scope.$on('map.create_from_selected', function () {
             fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
         });
+        /**
+         * Watches for New Map Create from Selected Nodes
+         */
+        $scope.$on('map.duplicate', function () {
+            fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
+        });
 
         /**
          * Watches for Get Blob event
          */
         $scope.$on('map.get_blobs', function () {
+            alert($scope.pointsMoved);
             if(!$scope.blobsLoaded()){
                 getBlobsProjection()
                 $scope.setBloabsFlag(true);
             }
            else {
                 if ($scope.pointsMoved) {
-                    alert("moved");
+                    alert("casenotworking");
                     getBlobsProjection()
                 } else {
-                    alert("not moved");
                     $scope.displayBlobs()
                 }
             }

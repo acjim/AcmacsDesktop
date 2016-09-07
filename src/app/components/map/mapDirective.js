@@ -40,7 +40,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             ' <input class="col-xs-4" id="blobs_stress" placeholder="Stress: 0.1 default"> </input>' +
             '<div class="col-xs-1"></div> ' +
             '<input class="col-xs-5" id="smoothing" placeholder="Smoothing: 0.5 default"> </input>' +
-            '<button class="col-xs-1 btn-success" > ok </button>'+
+            '<button id="blobclick" class="col-xs-1 btn-success" > ok </button>'+
         '</div>',
 
 
@@ -133,10 +133,13 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 // Scaling
                 xScale = d3.scale.linear().domain([0, width]).range([indentationWidthX, indentationWidthY]);
                 yScale = d3.scale.linear().domain([0, height]).range([indentationHeightX, indentationHeightY]);
-                lineFunction = d3.svg.line()
-                    .x(function(d) { return xScale(d.x); })
-                    .y(function(d) { return yScale(d.y); })
-                    .interpolate("linear");
+
+               if (blobsGroup){
+                    lineFunction = d3.svg.line()
+                        .x(function(d) { return xScale(d.x); })
+                        .y(function(d) { return yScale(d.y); })
+                        .interpolate("linear");
+               }
 
                 // Zoom
                 zoom = d3.behavior.zoom()
@@ -353,21 +356,24 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 }*/
 
 
-                blobsGroup = blobsGroup.data(data.blobs);
-                blobsGroup.enter().append("path")
-                    .attr("d", function (d) {
-                        return lineFunction(d);
-                    })
+                if (data.blobs) {
+                    alert("blobs updating 2");
+                    blobsGroup = blobsGroup.data(data.blobs);
 
-                    .attr("stroke", "black")
-                    .attr("stroke-width", 1)
-                    .attr("fill", "orange")
-                    .attr("class", "blobs")
-                    .style("opacity", 0.4)
-                    .style("visibility", "visible")
-                ;
-                blobsGroup.exit().remove();
+                    blobsGroup.enter().append("path")
+                        .attr("d", function (d) {
+                            return lineFunction(d);
+                        })
 
+                        .attr("stroke", "black")
+                        .attr("stroke-width", 1)
+                        .attr("fill", "orange")
+                        .attr("class", "blobs")
+                        .style("opacity", 0.4)
+                        .style("visibility", "visible")
+                    ;
+                    blobsGroup.exit().remove();
+                }
 
 
                 connectionlineGroup = connectionlineGroup.data(data.d3ConnectionLines);
@@ -658,7 +664,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 var scale = zoom.scale(), translate = zoom.translate();
                 return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
             }
-
+                var element= document.getElementById("blobclick");
+             element.onclick=function(){alert("hello blob")};
 
             /**
              * Deselects all nodes
@@ -1043,7 +1050,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             scope.displayBlobs = function () {
                 if (showblobs) {
-                    alert("visible");
                     d3.selectAll(".blobs").style("visibility", "visible");
                     showblobs=false;
                     selectAllNodes();
@@ -1177,6 +1183,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     }
                 });
                 scope.pointsMoved = true;
+
                 if (connection_visible){
                     scope.$emit('map.showConnectionLines');
                 }
@@ -1186,6 +1193,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 if(!connection_visible && !error_visible){
                     scope.$emit('map.nudgeTriggeredOnLine',avoidErrorLineCalculation);
                 }
+                scope.pointsMoved = true;
                 cfpLoadingBar.complete();
             });
             /**

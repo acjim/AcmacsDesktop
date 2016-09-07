@@ -209,6 +209,14 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('map.get_blobs');
             }
+        },
+        {
+            id: toolbarItems.COMPUTE_BLOBS,
+            caption: 'Get Blobs',
+            icon: 'glyphicon glyphicon-bold',
+            callback: function () {
+                $rootScope.$broadcast('map.duplicate');
+            }
         }
     ]);
 
