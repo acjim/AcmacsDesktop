@@ -139,7 +139,7 @@
             // get new projection before export
             return api.new_projection(additional_params, acd1_file)
                 .then(function (output) {
-                    var map_additional_params = {blobs:true,}; // check documentation on execute>get_map for what params can be passed
+                    var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
 
                     acd1_file = output.output_acd1;
                     var output_json = output.output_json;
@@ -236,7 +236,7 @@
             } else {
                 var additional_params = {};
                 var table_additional_params = {}; // check documentation on execute>get_table for additional params
-                var map_additional_params = {blobs:true,}; // check documentation on execute>get_map for what params can be passed
+                var map_additional_params = {}; // check documentation on execute>get_map for what params can be passed
                 original_filename = filename;
                 return api.import_user_data(filename, additional_params).then(function (output) {
                     cfpLoadingBar.set(0.3);
@@ -371,7 +371,8 @@
                 }
 
                 var map_additional_params = {
-                    projection: (projection == 0) ? projection : projection_comment
+                    projection: (projection == 0) ? projection : projection_comment,
+                    blobs: true
                 };
                 return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File).then(function (data) {
                     return $q.all([
@@ -511,8 +512,6 @@
                 }
 
             }
-            console.log(newData);
-
             return newData;
         }
 
@@ -552,6 +551,7 @@
 
             api.remove_antigens_sera(remove_antigens_sera, acd1File)
                 .then(function (filename) {
+                    $rootScope.$broadcast('open-file', filename.output_acd1);
                     $rootScope.$broadcast('open-file', filename.output_acd1);
                     cfpLoadingBar.complete();
                 }, function (reason) {
@@ -736,7 +736,7 @@
                         y1: from.y,
                         x2: to.x,
                         y2: to.y,
-                        stroke: 'grey',
+                        stroke: colour,
                         width: 0.4,
                         opacity: 1.0
                     });

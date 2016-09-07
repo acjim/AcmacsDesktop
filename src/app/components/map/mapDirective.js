@@ -34,7 +34,16 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             data: "="
         },
         controller: 'mapCtrl',
-        template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>',
+        template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>' +
+        '<div class=" blobs ">' +
+            '<div class="col-xs-1"></div> ' +
+            ' <input class="col-xs-4" id="blobs_stress" placeholder="Stress: 0.1 default"> </input>' +
+            '<div class="col-xs-1"></div> ' +
+            '<input class="col-xs-5" id="smoothing" placeholder="Smoothing: 0.5 default"> </input>' +
+            '<button class="col-xs-1 btn-success" > ok </button>'+
+        '</div>',
+
+
         link: function (scope, iElement) {
 
             var svg = null,
@@ -66,6 +75,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 indentationHeightX = 0,
                 indentationHeightY = 0,
                 showblobs= true,
+                loadedblobs=false,
                 scale = 1,
                 BlobData,
                 globalData = new Array(),
@@ -354,7 +364,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     .attr("fill", "orange")
                     .attr("class", "blobs")
                     .style("opacity", 0.4)
-                    .style("visibility", "hidden")
+                    .style("visibility", "visible")
                 ;
                 blobsGroup.exit().remove();
 
@@ -1033,6 +1043,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             scope.displayBlobs = function () {
                 if (showblobs) {
+                    alert("visible");
                     d3.selectAll(".blobs").style("visibility", "visible");
                     showblobs=false;
                     selectAllNodes();
@@ -1046,6 +1057,20 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                     d3.selectAll(".point").style("visibility", "visible");
                     deselectNodes();
                 }
+            }
+            /**
+             * checks if blobs are loaded from the backend or not
+             * @returns boolean
+             */
+            scope.blobsLoaded = function () {
+                return loadedblobs;
+            }
+            /**
+             * Sets the right flag if bloabs are loaded from the backend
+             * @returns none
+             */
+            scope.setBloabsFlag = function (trueorfalse) {
+                 loadedblobs= trueorfalse;
             }
 
             /**

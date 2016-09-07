@@ -46,6 +46,7 @@
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();
+                $scope.pointsMoved = true;
                 cfpLoadingBar.complete();
             });
         });
@@ -88,6 +89,19 @@
                 if(!avoidErrorLines){
                     getErrorConnectionLines();
                 }
+            });
+        }
+
+        /**
+         * Gets new Projection for Blobs
+         */
+        function getBlobsProjection() {
+            fileHandling.getNewProjection($scope.data).then(function (result) {
+                $scope.pointsMoved = false;
+                $scope.data = result;
+                fileHandling.setMapIsChanged(false);
+                cfpLoadingBar.complete();
+                $scope.displayBlobs()
             });
         }
 
@@ -164,7 +178,19 @@
          * Watches for Get Blob event
          */
         $scope.$on('map.get_blobs', function () {
-            $scope.displayBlobs()
+            if(!$scope.blobsLoaded()){
+                getBlobsProjection()
+                $scope.setBloabsFlag(true);
+            }
+           else {
+                if ($scope.pointsMoved) {
+                    alert("moved");
+                    getBlobsProjection()
+                } else {
+                    alert("not moved");
+                    $scope.displayBlobs()
+                }
+            }
         });
 
         /**
