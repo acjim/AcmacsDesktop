@@ -110,6 +110,16 @@ html {
   margin-left: 10px;
   margin-top: 5px;
 }
+.blobs{
+    height: 30px;
+    color: rgb(0,0,128);
+    font-weight: bold;
+    position: absolute;
+    margin-left: 140px;
+    margin-top: 5px;
+    visibility: hidden;
+
+}
 
 .tblantigenhighlight {
   background-color: #d4d4d4;
