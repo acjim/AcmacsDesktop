@@ -36,11 +36,6 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
         controller: 'mapCtrl',
         template: '<p class="stressLabel">Stress: {{(data.stress || "Undefined Value") | number: 3}}</p>' +
         '<div class=" blobs ">' +
-            '<div class="col-xs-1"></div> ' +
-            ' <input  class="col-xs-4" id="blobs_stress" placeholder="Stress: 0.1 default"> </input>' +
-            '<div class="col-xs-1"></div> ' +
-            '<input class="col-xs-5" id="smoothing" placeholder="Smoothing: 0.5 default"> </input>' +
-            '<button id="blobclick" class="col-xs-1 btn-success" > ok </button>'+
         '</div>',
 
 
@@ -682,13 +677,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                 return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
             }
 
-             var element= document.getElementById("blobclick");
-             element.onclick=function() {
-                 var blobs_stress = document.getElementById("blobs_stress");
-                 alert("Functionality not yet complete");
-                 var smoothing = document.getElementById("smoothing");
 
-             }
             /**
              * Deselects all nodes
              */
