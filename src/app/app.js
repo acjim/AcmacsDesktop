@@ -212,7 +212,7 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
         },
         {
             id: toolbarItems.COMPUTE_BLOBS,
-            caption: 'Get Blobs',
+            caption: 'Duplicate Map',
             icon: ' glyphicon glyphicon-duplicate',
             callback: function () {
                 $rootScope.$broadcast('map.duplicate');

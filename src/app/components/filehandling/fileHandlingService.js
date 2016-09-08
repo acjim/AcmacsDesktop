@@ -340,7 +340,6 @@
             if (blobsvalue==true){
                 getblobs=true;
             }
-
             cfpLoadingBar.start();
 
             var list = [];
@@ -557,7 +556,6 @@
                 .then(function (filename) {
                     $rootScope.$broadcast('open-file', filename.output_acd1);
                     cfpLoadingBar.complete();
-                    $rootScope.$emit('map.showErrorLines');
 
 
 
@@ -743,7 +741,7 @@
                         y1: from.y,
                         x2: to.x,
                         y2: to.y,
-                        stroke: "grey",
+                        stroke: colour,
                         width: 0.4,
                         opacity: 1.0
                     });

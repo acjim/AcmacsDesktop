@@ -98,9 +98,14 @@
             fileHandling.getNewProjection($scope.data,true).then(function (result) {
                 $scope.pointsMoved = false;
                 $scope.data = result;
+                $scope.data.blobs=result.blobs;
                 fileHandling.setMapIsChanged(true);
                 cfpLoadingBar.complete();
                 $scope.displayBlobs()
+                $rootScope.$emit('map.zoomIn');
+                $rootScope.$emit('map.zoomOut');
+
+
             });
         }
 
@@ -183,14 +188,12 @@
          * Watches for Get Blob event
          */
         $scope.$on('map.get_blobs', function () {
-            alert($scope.pointsMoved);
             if(!$scope.blobsLoaded()){
                 getBlobsProjection()
                 $scope.setBloabsFlag(true);
             }
            else {
                 if ($scope.pointsMoved) {
-                    alert("casenotworking");
                     getBlobsProjection()
                 } else {
                     $scope.displayBlobs()
