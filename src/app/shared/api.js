@@ -193,7 +193,7 @@ angular.module('acjim.api', [])
                     input_parameter.data.format = additional_params.format;
                     break;
                 case COMMANDS.RELAX_EXISTING:
-                    var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0}};
+                    var input_parameter = {command: COMMANDS.RELAX_EXISTING, data: {projection: 0, record_intermediate_layouts: true}};
 
                     if (!additional_params.hasOwnProperty('projection')) {
                         throw new Error('Missing mandatory parameter, projection');
@@ -550,6 +550,7 @@ angular.module('acjim.api', [])
          *
          * @param additional_params = {
          *                      projection: int, //mandatory
+         *                      record_intermediate_layouts: bool (default: Fals)
          *                      rough_optimization: bool (default: False)
          *                      };
          * Result object:

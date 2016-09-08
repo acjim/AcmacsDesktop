@@ -174,9 +174,27 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 //Update
                 nodeGroup
+                    .transition()  // Transition from old to new
+                    .duration(1500)
+                    .delay(function(d, i) {
+                        return 5;  // Dynamic delay (i.e. each item delays a little longer)
+                    })
                     .attr("transform", function (d) {
                         return "translate(" + xScale(d.x) + "," + yScale(d.y) + ")";
                     })
+                    .attr("cx", function(d) {
+                        return xScale(d[0]);  // Circle's X
+                    })
+                    .attr("cy", function(d) {
+                        return yScale(d[1]);  // Circle's Y
+                    })
+                    .each("end", function() {  // End animation
+                        d3.select(this)  // 'this' means the current element
+                            .transition()
+                            .duration(1000);
+
+                    })
+
                     .attr("fill", function (d) {
                         if (d.fixed || d.disconnected) {
                             return "#bebebe";
@@ -1179,7 +1197,23 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
              */
             scope.$watch('data', function (newVals) {
                 if (!_.isUndefined(newVals)) {
-                    renderWithData(newVals);
+                    if(_.isArray(newVals)) {
+                        var size = newVals.length;
+                        var count = 0;
+                        _.each(newVals, function(newVal) {
+                            $timeout(function () {
+                                renderWithData(newVal);
+                                count++;
+                                if(size == count) {
+                                    scope.data = newVal;
+                                    scope.data.stress = newVal.stress;
+                                }
+                            }, 2000);
+                        })
+                    }
+                    else {
+                        renderWithData(newVals);
+                    }
                 }
             }, true);
         }

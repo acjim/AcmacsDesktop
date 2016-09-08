@@ -390,22 +390,46 @@
             return api.relax_existing(relax_additional_params, acd1File)
                 .then(function (filename) {
                     acd1File = filename.updated_acd1;
-                    var map_additional_params = {projection: (projection == 0) ? projection : projection_comment};
-                    return api.execute(api.get_commands().GET_MAP, map_additional_params, acd1File)
-                        .then(function (filename) {
-                            return $q.all([
-                                readFile(filename)
-                            ]).then(function (data) {
-                                mapData = parseLayoutData(JSON.parse(data));
-                                fileHandler.setMapIsChanged(true);
-                                return mapData;
-                            });
-                        }, function (reason) {
-                            return errorReason(reason);
+                    var output_json = filename.output_json;
+                    return $q.all([
+                        readFile(output_json)
+                    ]).then(function (data) {
+                        var unprocessed_data = JSON.parse(data);
+                        var progressive_data = [];
+                        var intermediate_size = unprocessed_data.intermediate_layouts.length;
+                        var frequency = parseInt(intermediate_size/40); // selected intermediate states so that total number of steps be 40 (40 has been selected randomly)
+                        //@TODO, write an algorithm which finds most distinguished changes to show as animation/intermediate states
+                        var count = 0;
+                        unprocessed_data.intermediate_layouts.forEach(function (layout, index) {
+                            if(index ==0 || (index%frequency) == 0 || isNaN(index%frequency)  || index == intermediate_size) {
+                                progressive_data[count] = parseLayoutData(formatDataForIntermediateLayout(unprocessed_data, index));
+                                count ++;
+                            }
                         });
+                        var map = unprocessed_data.map;
+                        var map_data = {map:map[0], stress: map[0].stress};
+                        mapData = parseLayoutData((map_data));
+                        progressive_data[progressive_data.length] = mapData;
+                        fileHandler.setMapIsChanged(true);
+                        return progressive_data;
+                    });
                 }, function (reason) {
                     return errorReason(reason);
                 });
+        }
+
+        function formatDataForIntermediateLayout(data, index)
+        {
+            var map = data.map[0];
+            var map_data = {map: {}};
+            map_data.stress = data.intermediate_stresses[0][index];
+            map_data.map.layout = data.intermediate_layouts[index];
+            for (var property in map) {
+                if (map.hasOwnProperty(property) && property != 'layout') {
+                    map_data.map[property] = map[property];
+                }
+            }
+            return map_data;
         }
 
 
