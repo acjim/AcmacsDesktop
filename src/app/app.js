@@ -201,6 +201,22 @@ app.run(function ($rootScope, toolbar, toolbarItems, appMenuService) {
             callback: function () {
                 $rootScope.$broadcast('api.update_table');
             }
+        },
+        {
+            id: toolbarItems.COMPUTE_BLOBS,
+            caption: 'Get Blobs',
+            icon: 'glyphicon glyphicon-bold',
+            callback: function () {
+                $rootScope.$broadcast('map.get_blobs');
+            }
+        },
+        {
+            id: toolbarItems.COMPUTE_BLOBS,
+            caption: 'Duplicate Map',
+            icon: ' glyphicon glyphicon-duplicate',
+            callback: function () {
+                $rootScope.$broadcast('map.duplicate');
+            }
         }
     ]);
 

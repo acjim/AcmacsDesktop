@@ -46,6 +46,7 @@
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();
+                $scope.pointsMoved = true;
                 cfpLoadingBar.complete();
             });
         });
@@ -87,6 +88,24 @@
                 if(!avoidErrorLines){
                     getErrorConnectionLines();
                 }
+            });
+        }
+
+        /**
+         * Gets new Projection for Blobs
+         */
+        function getBlobsProjection() {
+            fileHandling.getNewProjection($scope.data,true).then(function (result) {
+                $scope.pointsMoved = false;
+                $scope.data = result;
+                $scope.data.blobs=result.blobs;
+                fileHandling.setMapIsChanged(true);
+                cfpLoadingBar.complete();
+                $scope.displayBlobs()
+                $rootScope.$emit('map.zoomIn');
+                $rootScope.$emit('map.zoomOut');
+
+
             });
         }
 
@@ -157,6 +176,29 @@
          */
         $scope.$on('map.create_from_selected', function () {
             fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
+        });
+        /**
+         * Watches for New Map Create from Selected Nodes
+         */
+        $scope.$on('map.duplicate', function () {
+            fileHandling.createNewFileFromAlreadyExistingOne($scope.getSelectedFromCurrentMap());
+        });
+
+        /**
+         * Watches for Get Blob event
+         */
+        $scope.$on('map.get_blobs', function () {
+            if(!$scope.blobsLoaded()){
+                getBlobsProjection()
+                $scope.setBloabsFlag(true);
+            }
+           else {
+                if ($scope.pointsMoved) {
+                    getBlobsProjection()
+                } else {
+                    $scope.displayBlobs()
+                }
+            }
         });
 
         /**
