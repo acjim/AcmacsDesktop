@@ -162,6 +162,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
                 // Enter
                 nodeGroup = nodeGroup.data(data.layout);
+                scope.data.stress = data.stress;
 
                 nodeGroup.enter().append("path")
                     .attr("class", "point")
@@ -1198,6 +1199,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
             scope.$watch('data', function (newVals) {
                 if (!_.isUndefined(newVals)) {
                     if(_.isArray(newVals)) {
+                        cfpLoadingBar.set(0.7);
                         var size = newVals.length;
                         var count = 0;
                         _.each(newVals, function(newVal) {
@@ -1207,6 +1209,7 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
                                 if(size == count) {
                                     scope.data = newVal;
                                     scope.data.stress = newVal.stress;
+                                    cfpLoadingBar.complete();
                                 }
                             }, 2000);
                         })

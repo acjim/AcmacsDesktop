@@ -46,7 +46,6 @@
                 $scope.pointsMoved = false;
                 $scope.data = result;
                 getErrorConnectionLines();
-                cfpLoadingBar.complete();
             });
         });
 
