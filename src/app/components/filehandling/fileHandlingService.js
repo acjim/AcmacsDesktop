@@ -215,7 +215,7 @@
             // Start loading bar
             $timeout(function () {
                 cfpLoadingBar.start();
-            }, 100);
+            }, 77);
 
             if (!fs.existsSync(config.api.script)) { // If there is no AcmacsCore.bundle
                 return api.asyncTest().then(function () {
@@ -409,21 +409,24 @@
                     ]).then(function (data) {
                         var unprocessed_data = JSON.parse(data);
                         var progressive_data = [];
-                        var intermediate_size = unprocessed_data.intermediate_layouts.length;
-                        var frequency = parseInt(intermediate_size/40); // selected intermediate states so that total number of steps be 40 (40 has been selected randomly)
-                        //@TODO, write an algorithm which finds most distinguished changes to show as animation/intermediate states
-                        var count = 0;
-                        unprocessed_data.intermediate_layouts.forEach(function (layout, index) {
-                            if(index ==0 || (index%frequency) == 0 || isNaN(index%frequency)  || index == intermediate_size) {
-                                progressive_data[count] = parseLayoutData(formatDataForIntermediateLayout(unprocessed_data, index));
-                                count ++;
-                            }
-                        });
+                        if(unprocessed_data.intermediate_layouts) {
+                            var intermediate_size = unprocessed_data.intermediate_layouts.length;
+                            var frequency = parseInt(intermediate_size / 77); // selected intermediate states so that total number of steps be 77 (77 has been selected randomly)
+                            //@TODO, write an algorithm which finds most distinguished changes to show as animation/intermediate states
+                            var count = 0;
+                            unprocessed_data.intermediate_layouts.forEach(function (layout, index) {
+                                if (index == 0 || (index % frequency) == 0 || isNaN(index % frequency) || index == intermediate_size) {
+                                    progressive_data[count] = parseLayoutData(formatDataForIntermediateLayout(unprocessed_data, index));
+                                    count++;
+                                }
+                            });
+                        }
                         var map = unprocessed_data.map;
                         var map_data = {map:map[0], stress: map[0].stress};
                         mapData = parseLayoutData((map_data));
                         progressive_data[progressive_data.length] = mapData;
                         fileHandler.setMapIsChanged(true);
+                        cfpLoadingBar.set(0.7);
                         return progressive_data;
                     });
                 }, function (reason) {
