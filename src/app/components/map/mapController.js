@@ -59,9 +59,26 @@
             if (!$scope.showErrorLines) {
                 $scope.data.d3ErrorLines = [];
             }
+            // Get selectedNodes Here
+            var selectedNodesIds = $scope.getSelectedNodes('nodeGroup',true);
+            var selectedData = $scope.data;
+            if(selectedNodesIds.length>0){
+                selectedData = {};
+                selectedData.layout = [];
+                selectedData.layout = $scope.data.layout.filter(function(d){
+                    if(selectedNodesIds.indexOf(d.id)>-1){
+                        return true;
+                    }
+                });
+                selectedData.stress = $scope.data.stress;
 
+            }
             if ($scope.showConnectionLines || $scope.showErrorLines) {
-                fileHandling.getErrorConnectionLines($scope.data).then(function (result) {
+                var partial_selection = true;
+                if(selectedData == $scope.data) {
+                    partial_selection = false;
+                }
+                fileHandling.getErrorConnectionLines($scope.data, partial_selection).then(function (result) {
                     $scope.data.d3ConnectionLines = result.d3ConnectionLines;
                     $scope.data.d3ErrorLines = result.d3ErrorLines;
                     if (!$scope.showConnectionLines) {

@@ -710,7 +710,7 @@
          * @param layout
          * @param result
          */
-        function connect(arg, errorLines, layout, result) {
+        function connect(arg, errorLines, layout, result, partial_selection) {
             var errorLineEnd,   // The set of pre-calculated error line endpoints pointing to the opposite end of each of the the current point's connections
                 from,           // The co-ordinates of the current line's origin
                 to,             // The co-ordinates of the current line's destination
@@ -732,6 +732,9 @@
                 }
 
                 from = layout[originIndex];
+                if(partial_selection == true && from.selected == false) {
+                    continue;
+                }
                 pointsConnected[from] = true;
 
                 // Cache this point's selection status to reduce complex property
@@ -797,6 +800,9 @@
                     destIndex = d;
                 }
                 to = layout[destIndex];
+                if(partial_selection == true && to.selected == false) {
+                    continue;
+                }
 
                 errorLineEnd = errorLines[arg.to][d];
                 for (o = 0; o < errorLineEnd.length; o += 1) {
@@ -814,7 +820,7 @@
                     }
 
                     // This filter selects only the error lines corresponding to selected points
-                    if (selected[originIndex]) {
+                    if (selected[originIndex] || partial_selection) {
                         // Note the reversal of `to` and `from` in this case.
                         if (positive(to, from, errorLineEnd[o])) {
                             colour = 'red';
@@ -822,6 +828,16 @@
                         else {
                             colour = 'blue';
                         }
+
+                        result.d3ConnectionLines.push({
+                            x1: from.x,
+                            y1: from.y,
+                            x2: to.x,
+                            y2: to.y,
+                            stroke: color,
+                            width: 0.4,
+                            opacity: 1.0
+                        });
 
                         result.d3ErrorLines.push({
                             x1: to.x,
@@ -845,7 +861,7 @@
          * @param layout
          @returns {{d3ErrorLines: Array, d3ConnectionLines: Array}}
          */
-        function calculateLines(errorLines, layout) {
+        function calculateLines(errorLines, layout, partial_selection) {
             if (!layout || !errorLines) {
                 return {};
             }
@@ -854,7 +870,7 @@
                 d3ConnectionLines: []
             };
             // First, draw the error lines for antigens
-            connect({from: 'antigens', to: 'sera'}, errorLines, layout, result);
+            connect({from: 'antigens', to: 'sera'}, errorLines, layout, result, partial_selection);
             //connect({from: 'sera', to: 'antigens'}, errorLines, layout, result);
 
             return result;
