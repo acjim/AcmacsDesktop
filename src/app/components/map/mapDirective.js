@@ -967,6 +967,8 @@ app.directive('d3Map', ['$rootScope', '$window', '$timeout', 'toolbar', 'toolbar
 
             };
 
+            scope.getSelectedNodes = getSelectedNodes;
+
             /**
              * Returns the node labels of nodes or removes them depending on the case
              *
