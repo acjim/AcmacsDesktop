@@ -551,7 +551,7 @@
          * @param mapData
          * @returns {*}
          */
-        fileHandler.getErrorConnectionLines = function (mapData) {
+        fileHandler.getErrorConnectionLines = function (mapData, partial_selection) {
             cfpLoadingBar.start();
             var additional_params = {projection: (projection == 0) ? projection : projection_comment};
 
@@ -560,7 +560,7 @@
                     readFile(filename)
                 ]).then(function (data) {
                     // relax returns array of error_lines.
-                    var result = calculateLines(JSON.parse(data).error_lines, mapData.layout);
+                    var result = calculateLines(JSON.parse(data).error_lines, mapData.layout, partial_selection);
                     cfpLoadingBar.complete();
                     return result;
                 });
@@ -834,7 +834,7 @@
                             y1: from.y,
                             x2: to.x,
                             y2: to.y,
-                            stroke: color,
+                            stroke: colour,
                             width: 0.4,
                             opacity: 1.0
                         });
